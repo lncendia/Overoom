@@ -1,4 +1,4 @@
-using AuthService.Application.Services.Commands;
+using AuthService.Application.Services.Commands.Create;
 
 namespace AuthService.Start.Extensions;
 

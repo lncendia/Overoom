@@ -23,14 +23,14 @@ public class UserLoginsQueryHandler(UserManager<UserData> userManager)
     public async Task<IReadOnlyCollection<string>> Handle(UserLoginsQuery request, CancellationToken cancellationToken)
     {
         // Поиск пользователя по идентификатору; 
-        var user = await userManager.FindByIdAsync(request.Id.ToString());
-
+        var user = await userManager.FindByIdAsync(request.UserId.ToString());
+        
         // Если не найден, вызываем исключение UserNotFoundException.
-        if (user == null) throw new UserNotFoundException();
-
+        if(user == null) throw new UserNotFoundException();
+        
         // Получение списка внешних учетных записей пользователя.
         var logins = await userManager.GetLoginsAsync(user);
-
+        
         // Возвращение списка внешних учетных записей в виде массива строк.
         return logins.Select(info => info.LoginProvider).ToArray();
     }

@@ -2,4 +2,4 @@
 
 namespace AuthService.Application.Abstractions.Entities;
 
-public class RoleData(string name) : IdentityRole<long>(name);
+public class RoleData(string name) : IdentityRole<Guid>(name);

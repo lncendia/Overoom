@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AuthService.Infrastructure.Storage;
 
 public class ApplicationContext(DbContextOptions<ApplicationContext> options)
-    : IdentityDbContext<UserData, RoleData, long>(options)
+    : IdentityDbContext<UserData, RoleData, Guid>(options)
 {
     public DbSet<UserData>? ApplicationUsers { get; set; }
     public DbSet<RoleData>? ApplicationRoles { get; set; }

@@ -22,6 +22,6 @@ public class UserByIdQueryHandler(UserManager<UserData> userManager) : IRequestH
     public async Task<UserData> Handle(UserByIdQuery request, CancellationToken cancellationToken)
     {
         // Поиск пользователя по идентификатору; если не найден, вызываем исключение UserNotFoundException.
-        return await userManager.FindByIdAsync(request.Id.ToString()) ?? throw new UserNotFoundException();
+        return await userManager.FindByIdAsync(request.UserId.ToString()) ?? throw new UserNotFoundException();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace AuthService.Application.Abstractions.Entities;
 
-public sealed class UserData : IdentityUser<long>
+public sealed class UserData : IdentityUser<Guid>
 {
     public UserData(string userName, string email, Uri avatarUrl, DateTime timeLastAuth) : base(userName)
     {

@@ -17,7 +17,7 @@ public class TokenController(IMediator mediator, IJwtService jwtService) : Contr
 
         var user = await mediator.Send(new UserByIdQuery
         {
-            Id = User.Id()
+            UserId = User.Id()
         });
         var token = await jwtService.GenerateJwt(user);
         return Redirect(GetReturnUrlWithToken(returnUrl, token));

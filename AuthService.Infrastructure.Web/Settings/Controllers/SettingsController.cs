@@ -1,4 +1,5 @@
 ﻿using AuthService.Application.Abstractions.Commands;
+using AuthService.Application.Abstractions.Commands.Profile;
 using AuthService.Application.Abstractions.Entities;
 using AuthService.Application.Abstractions.Exceptions;
 using AuthService.Application.Abstractions.Queries;
@@ -67,7 +68,7 @@ public class SettingsController : Controller
     public async Task<IActionResult> Index(string? message, string returnUrl = "/", int expandElem = 1)
     {
         // Получаем аутентифицированного пользователя
-        var user = await _mediator.Send(new UserByIdQuery { Id = User.Id() });
+        var user = await _mediator.Send(new UserByIdQuery { UserId = User.Id() });
 
         // Создаем модель представления
         var settingsModel = await BuildViewModelAsync(user, returnUrl, expandElem);
@@ -462,7 +463,7 @@ public class SettingsController : Controller
     private async Task<SettingsViewModel> BuildViewModelAsync(UserData user, string returnUrl, int expandElem)
     {
         // Получаем список входов пользователя
-        var logins = await _mediator.Send(new UserLoginsQuery { Id = user.Id });
+        var logins = await _mediator.Send(new UserLoginsQuery { UserId = user.Id });
 
         // Получаем все схемы аутентификации
         var schemes = await _schemeProvider.GetAllSchemesAsync();

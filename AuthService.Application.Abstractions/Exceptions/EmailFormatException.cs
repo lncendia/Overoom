@@ -3,4 +3,4 @@
 /// <summary>
 /// Исключение, возникающее при недопустимом формате электронной почты.
 /// </summary>
-public class EmailFormatException() : Exception("Email must be in format: <user>@<domain>");
+public class EmailFormatException() : Exception("Email must be in format: <user>@<domain>.");
