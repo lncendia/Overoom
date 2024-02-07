@@ -24,13 +24,13 @@
         </value>
     </resheader>
     <data name="ProviderLinked" xml:space="preserve">
-        <value>Provider is linked</value>
+        <value>The provider is linked</value>
     </data>
     <data name="ProviderUnlinked" xml:space="preserve">
-        <value>Provider is unlinked</value>
+        <value>The provider is disconnected</value>
     </data>
     <data name="PasswordChanged" xml:space="preserve">
-        <value>Password changed successfully</value>
+        <value>The password has been successfully changed</value>
     </data>
     <data name="CheckCorrectness" xml:space="preserve">
         <value>Check the correctness of the input data</value>
@@ -48,7 +48,7 @@
         <value>The password must contain numbers</value>
     </data>
     <data name="PasswordLengthInvalid" xml:space="preserve">
-        <value>Password length is invalid</value>
+        <value>Incorrect password length</value>
     </data>
     <data name="PasswordMismatch" xml:space="preserve">
         <value>The old password is incorrect</value>
@@ -57,10 +57,10 @@
         <value>The request has been sent to your old email address</value>
     </data>
     <data name="EmailChanged" xml:space="preserve">
-        <value>Mail changed</value>
+        <value>The mail has been changed</value>
     </data>
     <data name="EmailFormatInvalid" xml:space="preserve">
-        <value>Mail format is not valid</value>
+        <value>The mail format is not correct</value>
     </data>
     <data name="EmailAlreadyTaken" xml:space="preserve">
         <value>The mail is already in use</value>
@@ -74,19 +74,7 @@
     <data name="OldPasswordMatchNew" xml:space="preserve">
         <value>The new password cannot match the old one</value>
     </data>
-    <data name="UserNameFormatInvalid" xml:space="preserve">
-        <value>The username has an incorrect format</value>
-    </data>
-    <data name="UserNameLengthInvalid" xml:space="preserve">
-        <value>The length of the user name should not be from 3 to 20 characters</value>
-    </data>
-    <data name="UserNameChanged" xml:space="preserve">
-        <value>The user's name has been changed</value>
-    </data>
-    <data name="AvatarChanged" xml:space="preserve">
-        <value>Profile photo has been changed</value>
-    </data>
     <data name="SessionsClosed" xml:space="preserve">
-        <value>Other sessions completed successfully</value>
+        <value>Other sessions have been completed successfully</value>
     </data>
 </root>

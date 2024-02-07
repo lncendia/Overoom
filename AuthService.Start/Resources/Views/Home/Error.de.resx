@@ -15,6 +15,6 @@
         <value>Ein Fehler ist aufgetreten</value>
     </data>
     <data name="RequestId" xml:space="preserve">
-        <value>Abfrage-ID: </value>
+        <value>Abfrage-ID:</value>
     </data>
 </root>

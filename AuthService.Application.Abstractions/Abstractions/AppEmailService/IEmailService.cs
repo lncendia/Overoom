@@ -1,6 +1,6 @@
-﻿using AuthService.Application.Abstractions.Abstractions.AppEmailService.Structs;
+﻿using PJMS.AuthService.Abstractions.Abstractions.AppEmailService.Structs;
 
-namespace AuthService.Application.Abstractions.Abstractions.AppEmailService;
+namespace PJMS.AuthService.Abstractions.Abstractions.AppEmailService;
 
 /// <summary>
 /// Интерфейс отправки Email

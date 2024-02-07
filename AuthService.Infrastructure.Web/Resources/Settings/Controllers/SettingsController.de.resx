@@ -18,10 +18,10 @@
         <value>Das Passwort wurde erfolgreich geändert</value>
     </data>
     <data name="ProviderLinked" xml:space="preserve">
-        <value>Anbieter ist verlinkt</value>
+        <value>Der Anbieter ist gebunden</value>
     </data>
     <data name="ProviderUnlinked" xml:space="preserve">
-        <value>Anbieter ist nicht verbunden</value>
+        <value>Der Anbieter ist entkoppelt</value>
     </data>
     <data name="PasswordRequiresDigit" xml:space="preserve">
         <value>Das Passwort muss Zahlen enthalten</value>
@@ -36,7 +36,7 @@
         <value>Das Passwort muss Sonderzeichen enthalten</value>
     </data>
     <data name="PasswordLengthInvalid" xml:space="preserve">
-        <value>Die Passwortlänge ist ungültig</value>
+        <value>Falsche Passwortlänge</value>
     </data>
     <data name="PasswordMismatch" xml:space="preserve">
         <value>Das alte Passwort ist falsch angegeben</value>
@@ -48,7 +48,7 @@
         <value>Mail geändert</value>
     </data>
     <data name="EmailFormatInvalid" xml:space="preserve">
-        <value>Das Mail-Format ist ungültig</value>
+        <value>Das E-Mail-Format ist nicht korrekt</value>
     </data>
     <data name="EmailAlreadyTaken" xml:space="preserve">
         <value>Mail wird bereits verwendet</value>
@@ -61,18 +61,6 @@
     </data>
     <data name="OldPasswordMatchNew" xml:space="preserve">
         <value>Das neue Passwort kann nicht mit dem alten Passwort übereinstimmen</value>
-    </data>
-    <data name="UserNameLengthInvalid" xml:space="preserve">
-        <value>Der Benutzername darf nicht zwischen 3 und 20 Zeichen lang sein</value>
-    </data>
-    <data name="UserNameFormatInvalid" xml:space="preserve">
-        <value>Der Benutzername hat ein falsches Format</value>
-    </data>
-    <data name="UserNameChanged" xml:space="preserve">
-        <value>Benutzername geändert</value>
-    </data>
-    <data name="AvatarChanged" xml:space="preserve">
-        <value>Profilfoto geändert</value>
     </data>
     <data name="SessionsClosed" xml:space="preserve">
         <value>Andere Sitzungen wurden erfolgreich abgeschlossen</value>

@@ -1,13 +1,15 @@
-﻿using System.Web;
-using AuthService.Application.Abstractions.Commands;
+﻿using System.Security.Claims;
+using System.Web;
+using AuthService.Application.Abstractions.Commands.Authentication;
+using AuthService.Application.Abstractions.Commands.Password;
 using AuthService.Application.Abstractions.Entities;
 using AuthService.Application.Abstractions.Exceptions;
 using AuthService.Infrastructure.Web.Account.InputModels;
 using AuthService.Infrastructure.Web.Account.ViewModels;
 using AuthService.Infrastructure.Web.Exceptions;
+using IdentityModel;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -120,17 +122,46 @@ public class AccountController : Controller
 
                 // В случае если исключение ex является InvalidPasswordException добавляем код ошибки в модель
                 case InvalidPasswordException:
-                    
+
                     // Добавляем локализованную ошибку в модель
                     ModelState.AddModelError(string.Empty, _localizer["InvalidCredentials"]);
                     break;
 
-                // В случае если исключение ex является UserNotFoundException добавляем код ошибки в модель
+                // В случае если исключение ex является UserLockoutException добавляем код ошибки в модель
                 case UserLockoutException:
-                    
+
                     // Добавляем локализованную ошибку в модель
                     ModelState.AddModelError(string.Empty, _localizer["UserLockout"]);
                     break;
+
+                case TwoFactorRequiredException tfaException:
+
+                    // Получаем, был ли запомнен пользователь системой 2FA
+                    var isRemebered = await _signInManager.IsTwoFactorClientRememberedAsync(tfaException.User);
+
+                    // Если пользователь был запомнен
+                    if (isRemebered)
+                    {
+                        // Устанавливаем пользователю аутентификационные куки
+                        await _signInManager.SignInAsync(tfaException.User, model.RememberLogin);
+
+                        // Перенаправляем по url возврата
+                        return Redirect(model.ReturnUrl);
+                    }
+
+                    // Формируем объект ClaimsIdentity на основе схемы 2FA
+                    var identity = new ClaimsIdentity(IdentityConstants.TwoFactorUserIdScheme);
+
+                    // Добавляем новый Claim на основе имени пользователя
+                    identity.AddClaim(new Claim(JwtClaimTypes.Subject, tfaException.User.Id.ToString()));
+
+                    // Осуществляем вход пользователя по схеме 2FA 
+                    await HttpContext.SignInAsync(IdentityConstants.TwoFactorUserIdScheme,
+                        new ClaimsPrincipal(identity));
+
+                    // Перенаправляем пользователя на страницу прохождения 2FA
+                    return RedirectToAction("LoginTwoStep", "TwoFactor",
+                        new { returnUrl = model.ReturnUrl, rememberMe = model.RememberLogin });
 
                 // Если исключение ex не является ни одним их типов, то вызываем исключение дальше
                 default: throw;
@@ -153,7 +184,7 @@ public class AccountController : Controller
     public IActionResult RecoverPassword(string returnUrl = "/")
     {
         // Возвращаем представление с моделью
-        return View(new RecoverPasswordInputModel { ReturnUrl = returnUrl });
+        return View(new ResetPasswordInputModel { ReturnUrl = returnUrl });
     }
 
     /// <summary>
@@ -163,7 +194,7 @@ public class AccountController : Controller
     /// <returns>Результат действия после сброса пароля.</returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> RecoverPassword(RecoverPasswordInputModel model)
+    public async Task<IActionResult> RecoverPassword(ResetPasswordInputModel model)
     {
         // Если модель не валида - возвращаем представление
         if (!ModelState.IsValid) return View(model);
@@ -175,15 +206,23 @@ public class AccountController : Controller
         var url = Url.Action(
             "NewPassword", "Account", new { returnUrl = model.ReturnUrl }, HttpContext.Request.Scheme)!;
 
-        // Отправляем команду на смену пароля
-        await _mediator.Send(new RequestRecoverPasswordCommand
+        try
         {
-            // Почта
-            Email = model.Email!,
+            // Отправляем команду на смену пароля
+            await _mediator.Send(new RequestRecoverPasswordCommand
+            {
+                // Почта
+                Email = model.Email!,
 
-            // Url смены пароля
-            ResetUrl = url
-        });
+                // Url смены пароля
+                ResetUrl = url
+            });
+        }
+        catch (EmailNotConfirmedException)
+        {
+            // Если почта не подтверждена, то устанавливаем соответствующее сообщение
+            ModelState.AddModelError(string.Empty, _localizer["EmailNotConfirmed"]);
+        }
 
         // Перенаправляем на страницу MailSent
         return RedirectToAction("MailSent");
@@ -250,45 +289,48 @@ public class AccountController : Controller
             // Перенаправляем пользователя на страницу входа и устанавливаем returnUrl
             return RedirectToAction("Login", new { returnUrl = model.ReturnUrl });
         }
-        catch (Exception ex)
+        catch (PasswordValidationException ex)
         {
-            switch (ex)
+            // Добавляем код(ключ) всех ошибок, содержащихся в passwordValidationException.ValidationErrors
+            foreach (var error in ex.ValidationErrors)
             {
-                //В случае если исключение ex является UserNotFoundException добавляем код ошибки в модель
-                case UserNotFoundException:
-                    ModelState.AddModelError("", _localizer["UserNotFound"]);
-                    break;
-
-                //В случае если исключение ex является PasswordValidationException
-                case PasswordValidationException passwordValidationException:
-
-                    // Добавляем код(ключ) всех ошибок, содержащихся в passwordValidationException.ValidationErrors
-                    foreach (var error in passwordValidationException.ValidationErrors)
-                    {
-                        ModelState.AddModelError("", _localizer[error.Key]);
-                    }
-
-                    break;
-
-                //Если исключение ex не является ни одним их типов, то вызываем исключение дальше
-                default: throw;
+                ModelState.AddModelError("", _localizer[error.Key]);
             }
-
-            return View(model);
         }
+
+        return View(model);
     }
 
-    [Authorize]
-    public async Task<IActionResult> Logout(string returnUrl = "/")
+
+    /// <summary>
+    /// Показать страницу выхода
+    /// </summary>
+    [HttpGet]
+    public IActionResult Logout(string returnUrl = "/")
     {
-        await _signInManager.SignOutAsync();
-        return Redirect(returnUrl);
+        return View(new LogoutInputModel { ReturnUrl = returnUrl });
     }
 
+    /// <summary>
+    /// Обработка постбэка страницы выхода
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout(LogoutInputModel model)
+    {
+        // если пользователь аутентифицирован
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            // удалить локальный файл cookie аутентификации
+            await _signInManager.SignOutAsync();
+        }
 
-    /*****************************************/
-    /* вспомогательные API для AccountController */
-    /*****************************************/
+        return Redirect(model.ReturnUrl);
+    }
+
+/*****************************************/
+/* вспомогательные API для AccountController */
+/*****************************************/
 
     /// <summary>
     /// Создает модель представления входа
@@ -320,7 +362,7 @@ public class AccountController : Controller
     /// Построить асинхронную модель представления входа
     /// </summary>
     /// <param name="model">Модель, прилетевшая в контроллер</param>
-    /// <returns>Модель представления входа</returns>
+    /// <returns></returns>
     private async Task<LoginViewModel> BuildLoginViewModelAsync(LoginInputModel model)
     {
         //формируем вью модель из returnUrl
@@ -334,7 +376,7 @@ public class AccountController : Controller
 
         //добавляем password из прилетевшей в контроллер модели
         vm.Password = model.Password;
-        
+
         //возвращаем модель
         return vm;
     }

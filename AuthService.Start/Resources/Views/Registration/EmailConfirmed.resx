@@ -18,10 +18,10 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="EmailConfirmedTitle" xml:space="preserve">
-        <value>Mail confirmed</value>
-    </data>
     <data name="EmailConfirmedBody" xml:space="preserve">
         <value>Your email has been successfully verified</value>
+    </data>
+    <data name="EmailConfirmedTitle" xml:space="preserve">
+        <value>The mail has been confirmed</value>
     </data>
 </root>

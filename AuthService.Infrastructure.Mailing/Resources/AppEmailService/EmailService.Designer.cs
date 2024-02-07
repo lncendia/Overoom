@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Infrastructure.Mailing.Resources.AppEmailService {
+namespace PJMS.AuthService.Mail.Resources.AppEmailService {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace AuthService.Infrastructure.Mailing.Resources.AppEmailService {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Infrastructure.Mailing.Resources.AppEmailService.EmailService", typeof(EmailService).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Mail.Resources.AppEmailService.EmailService", typeof(EmailService).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -56,6 +56,15 @@ namespace AuthService.Infrastructure.Mailing.Resources.AppEmailService {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The code expires 1 minute after generation..
+        /// </summary>
+        internal static string CodeExpires {
+            get {
+                return ResourceManager.GetString("CodeExpires", resourceCulture);
             }
         }
         
@@ -141,7 +150,7 @@ namespace AuthService.Infrastructure.Mailing.Resources.AppEmailService {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You have received this message because you have recently registered an account..
+        ///   Looks up a localized string similar to You have received this email because you have recently registered an account..
         /// </summary>
         internal static string ConfirmRegistrationEmailExplanation {
             get {
@@ -186,11 +195,38 @@ namespace AuthService.Infrastructure.Mailing.Resources.AppEmailService {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thanks.
+        ///   Looks up a localized string similar to Thank you.
         /// </summary>
         internal static string Thanks {
             get {
                 return ResourceManager.GetString("Thanks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You received this email because you requested a two-factor authentication code..
+        /// </summary>
+        internal static string TwoFactorCodeEmailExplanation {
+            get {
+                return ResourceManager.GetString("TwoFactorCodeEmailExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requesting a two-factor authentication code.
+        /// </summary>
+        internal static string TwoFactorCodeEmailSubject {
+            get {
+                return ResourceManager.GetString("TwoFactorCodeEmailSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the code below into the application to complete two-factor authentication..
+        /// </summary>
+        internal static string TwoFactorCodeEmailText {
+            get {
+                return ResourceManager.GetString("TwoFactorCodeEmailText", resourceCulture);
             }
         }
         

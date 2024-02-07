@@ -35,7 +35,7 @@ namespace AuthService.Infrastructure.Web.Resources.Settings.InputModels {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Infrastructure.Web.Resources.Settings.InputModels.RequestChangeEmailInputModel", typeof(RequestChangeEmailInputModel).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Web.Resources.Settings.InputModels.RequestChangeEmailInputModel", typeof(RequestChangeEmailInputModel).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

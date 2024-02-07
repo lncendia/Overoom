@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Settings {
+namespace PJMS.AuthService.Resources.Views.Settings {
     using System;
     
     
@@ -60,7 +60,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Avatar change.
+        ///   Looks up a localized string similar to .
         /// </summary>
         internal static string AvatarChange {
             get {
@@ -69,7 +69,25 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Email change.
+        ///   Looks up a localized string similar to Plug.
+        /// </summary>
+        internal static string Connect {
+            get {
+                return ResourceManager.GetString("Connect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unplug.
+        /// </summary>
+        internal static string Disconnect {
+            get {
+                return ResourceManager.GetString("Disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changing the mail.
         /// </summary>
         internal static string EmailChange {
             get {
@@ -87,7 +105,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Username change.
+        ///   Looks up a localized string similar to .
         /// </summary>
         internal static string NicknameChange {
             get {
@@ -96,7 +114,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password change.
+        ///   Looks up a localized string similar to Changing the password.
         /// </summary>
         internal static string PasswordChange {
             get {
@@ -105,7 +123,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Return.
+        ///   Looks up a localized string similar to To return.
         /// </summary>
         internal static string Return {
             get {
@@ -123,7 +141,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Terminate sessions.
+        ///   Looks up a localized string similar to End sessions.
         /// </summary>
         internal static string TerminateSessions {
             get {
@@ -132,8 +150,16 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Changing the data will terminate the remaining sessions!
-        ///.
+        ///   Looks up a localized string similar to Two-factor authentication.
+        /// </summary>
+        internal static string TwoFactor {
+            get {
+                return ResourceManager.GetString("TwoFactor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changing the data will end the remaining sessions!.
         /// </summary>
         internal static string WarningInfo {
             get {

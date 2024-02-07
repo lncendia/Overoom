@@ -1,11 +1,11 @@
 using AuthService.Application.Abstractions;
-using AuthService.Application.Abstractions.Abstractions.AppEmailService;
-using AuthService.Application.Abstractions.Abstractions.AppEmailService.Structs;
 using AuthService.Application.Abstractions.Commands.Create;
 using AuthService.Application.Abstractions.Entities;
 using AuthService.Application.Abstractions.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using PJMS.AuthService.Abstractions.Abstractions.AppEmailService;
+using PJMS.AuthService.Abstractions.Abstractions.AppEmailService.Structs;
 
 namespace AuthService.Application.Services.Commands.Create;
 
@@ -43,6 +43,12 @@ public class CreateUserCommandHandler(UserManager<UserData> userManager, IEmailS
 
             // Если хоть одна ошибка InvalidEmail, то вызываем исключение 
             if (result.Errors.Any(e => e.Code == "InvalidEmail")) throw new EmailFormatException();
+            
+            // Если хоть одна ошибка InvalidUserName, то вызываем исключение 
+            if (result.Errors.Any(e => e.Code == "InvalidUserName")) throw new UserNameFormatException();
+
+            // Если хоть одна ошибка InvalidUserNameLength, то вызываем исключение 
+            if (result.Errors.Any(e => e.Code == "InvalidUserNameLength")) throw new UserNameLengthException();
 
             // Создаем словарь для хранения ошибок
             var passwordValidationErrors = result.Errors.ToDictionary(e => e.Code, e => e.Description);

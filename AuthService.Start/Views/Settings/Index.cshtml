@@ -100,6 +100,30 @@
                 </div>
             </div>
         </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="False" aria-controls="collapseSix">
+                    @Localizer["TwoFactor"]
+                </button>
+            </h2>
+            <div id="collapseSix" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <div class="container-btn">
+                        <div class="wrap-btn on-load mb-2">
+                            <div class="bg-btn"></div>
+                            @if (Model.TwoFactorEnabled)
+                            {
+                                <a class="m-btn" asp-controller="TwoFactor" asp-action="ResetTwoFactor">@Localizer["Disconnect"]</a>
+                            }
+                            else
+                            {
+                                <a class="m-btn" asp-controller="TwoFactor" asp-action="Setup">@Localizer["Connect"]</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="container-btn">
         <div class="wrap-btn on-hover">

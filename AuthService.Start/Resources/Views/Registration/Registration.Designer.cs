@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Registration {
+namespace PJMS.AuthService.Resources.Views.Registration {
     using System;
     
     
@@ -78,7 +78,7 @@ namespace AuthService.Start.Resources.Views.Registration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Have account?.
+        ///   Looks up a localized string similar to Do you have an account?.
         /// </summary>
         internal static string HaveAccount {
             get {
@@ -87,16 +87,7 @@ namespace AuthService.Start.Resources.Views.Registration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid login request.
-        /// </summary>
-        internal static string InvalidRequest {
-            get {
-                return ResourceManager.GetString("InvalidRequest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Log in.
+        ///   Looks up a localized string similar to Enter.
         /// </summary>
         internal static string Login {
             get {
@@ -105,7 +96,7 @@ namespace AuthService.Start.Resources.Views.Registration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Medium password.
+        ///   Looks up a localized string similar to The average password.
         /// </summary>
         internal static string MediumPass {
             get {
@@ -141,7 +132,7 @@ namespace AuthService.Start.Resources.Views.Registration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Strong password.
+        ///   Looks up a localized string similar to A strong password.
         /// </summary>
         internal static string StrongPass {
             get {

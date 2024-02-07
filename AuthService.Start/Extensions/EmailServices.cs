@@ -1,8 +1,8 @@
-using AuthService.Application.Abstractions.Abstractions.AppEmailService;
 using AuthService.Infrastructure.Mailing.AppEmailService;
-using AuthService.Infrastructure.Mailing.AppEmailService.Structs;
 using AuthService.Start.Exceptions;
 using Microsoft.Extensions.Localization;
+using PJMS.AuthService.Abstractions.Abstractions.AppEmailService;
+using PJMS.AuthService.Mail.AppEmailService.Structs;
 
 namespace AuthService.Start.Extensions;
 

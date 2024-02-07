@@ -30,16 +30,13 @@
     <data name="Registration" xml:space="preserve">
         <value>Registration</value>
     </data>
-    <data name="InvalidRequest" xml:space="preserve">
-        <value>Invalid login request</value>
-    </data>
     <data name="LoginTitle" xml:space="preserve">
-        <value>Authentication</value>
+        <value>Entrance</value>
     </data>
     <data name="LogIn" xml:space="preserve">
-        <value>Log in</value>
+        <value>Enter</value>
     </data>
     <data name="UserLockout" xml:space="preserve">
-        <value>Your account has been temporarily locked due to exceeding the number of failed login attempts.</value>
+        <value>Your account has been temporarily blocked due to exceeding the number of failed login attempts.</value>
     </data>
 </root>

@@ -12,7 +12,7 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="UserAlreadyExist" xml:space="preserve">
-        <value>Benutzer bereits registriert</value>
+        <value>Der Benutzer ist bereits registriert</value>
     </data>
     <data name="PasswordRequiresDigit" xml:space="preserve">
         <value>Das Passwort muss Zahlen enthalten</value>
@@ -27,15 +27,9 @@
         <value>Das Passwort muss Sonderzeichen enthalten</value>
     </data>
     <data name="EmailFormatInvalid" xml:space="preserve">
-        <value>Das Mail-Format ist ungültig</value>
+        <value>Das E-Mail-Format ist nicht korrekt</value>
     </data>
-    <data name="InvalidPasswordLength" xml:space="preserve">
-        <value>Die Passwortlänge ist ungültig</value>
-    </data>
-    <data name="UserNameLengthInvalid" xml:space="preserve">
-        <value>Der Benutzername darf nicht zwischen 3 und 20 Zeichen lang sein</value>
-    </data>
-    <data name="UserNameFormatInvalid" xml:space="preserve">
-        <value>Der Benutzername hat ein falsches Format</value>
+    <data name="PasswordLengthInvalid" xml:space="preserve">
+        <value>Falsche Passwortlänge</value>
     </data>
 </root>

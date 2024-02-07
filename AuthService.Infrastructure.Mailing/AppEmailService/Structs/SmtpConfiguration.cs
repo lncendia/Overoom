@@ -1,4 +1,4 @@
-﻿namespace AuthService.Infrastructure.Mailing.AppEmailService.Structs;
+﻿namespace PJMS.AuthService.Mail.AppEmailService.Structs;
 
 /// <summary>
 /// Объект данных SMTP настроек для Email 

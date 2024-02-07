@@ -12,13 +12,13 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="InvalidCredentials" xml:space="preserve">
-        <value>Ungültige Anmeldeinformationen</value>
+        <value>Falsche Anmeldeinformationen</value>
     </data>
     <data name="PasswordRequiresDigit" xml:space="preserve">
         <value>Das Passwort muss Zahlen enthalten</value>
     </data>
-    <data name="InvalidPasswordLength" xml:space="preserve">
-        <value>Die Passwortlänge ist ungültig</value>
+    <data name="PasswordLengthInvalid" xml:space="preserve">
+        <value>Falsche Passwortlänge</value>
     </data>
     <data name="PasswordRequiresUpper" xml:space="preserve">
         <value>Das Passwort muss Großbuchstaben enthalten</value>
@@ -30,12 +30,15 @@
         <value>Das Passwort muss Kleinbuchstaben enthalten</value>
     </data>
     <data name="UserNotFound" xml:space="preserve">
-        <value>Benutzer nicht gefunden</value>
+        <value>Kein Benutzer gefunden</value>
     </data>
     <data name="EmailFormatInvalid" xml:space="preserve">
-        <value>Das Mail-Format ist ungültig</value>
+        <value>Das E-Mail-Format ist nicht korrekt</value>
     </data>
     <data name="UserLockout" xml:space="preserve">
-        <value>Sie wurden aufgrund einer großen Anzahl fehlgeschlagener Anmeldeversuche gesperrt. Versuchen Sie später, sich anzumelden</value>
+        <value>Sie wurden aufgrund einer großen Anzahl fehlgeschlagener Anmeldeversuche gesperrt. Melden Sie sich später an</value>
+    </data>
+    <data name="EmailNotConfirmed" xml:space="preserve">
+        <value>Bestätigen Sie Ihre E-Mails, um diese Aktion auszuführen</value>
     </data>
 </root>

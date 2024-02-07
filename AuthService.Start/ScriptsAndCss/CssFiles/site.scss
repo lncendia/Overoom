@@ -1,14 +1,9 @@
-﻿body{
+﻿.body-container {
   background-blend-mode: screen;
   background: linear-gradient(#b721ff, transparent),
   linear-gradient(90deg, #21d4fd, transparent),
   linear-gradient(-90deg, coral, transparent);
   background-size: cover;
-  --link-color: #232323;
-  --link-hover-color: #4f0000;
-}
-
-.body-container {
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -20,15 +15,8 @@
   --logo-size: 60px;
   --logo-text-size: 40px;
   --text-input-up: -15px;
-}
 
-svg {
-  position: relative;
-  bottom: 2px;
-}
-
-@media (max-width: 670px) {
-  .body-container {
+  @media (max-width: 670px) {
     --main-size: 13px;
     --side-size: 11px;
     --big-size: 13px;
@@ -40,6 +28,19 @@ svg {
 
 .main-card {
   --bs-card-border-radius: 0.6rem;
+  width: 35vw;
+  
+  @media (max-width: 1500px) {
+    width: 50vw;
+  }
+
+  @media (max-width: 900px) {
+    width: 70vw;
+  }
+
+  @media (max-width: 670px) {
+    width: 85vw;
+  }
 
   .card-body {
     padding: 0;
@@ -82,7 +83,7 @@ svg {
   }
 
   .card-subtitle {
-    font-size: var(--main-size);
+    font-size: var(--main-size) - 6;
     font-family: Montserrat-Regular, serif;
 
     .card-link {
@@ -289,6 +290,7 @@ input:checked {
     z-index: 1;
     overflow: hidden;
     margin: 0 auto;
+    text-align: center;
 
     .bg-btn {
       position: absolute;
@@ -337,7 +339,7 @@ input:checked {
       }
     }
   }
-  
+
   .wrap-btn.on-load {
     box-shadow: 0 5px 30px 0px rgba(3, 216, 222, 0.2);
     -moz-box-shadow: 0 5px 30px 0px rgba(3, 216, 222, 0.2);
@@ -400,4 +402,16 @@ input:checked {
     padding: 5px;
     color: #666666;
   }
+}
+
+.auth-key {
+  cursor: pointer;
+  transition: color 0.3s;
+  @media (max-width: 670px) {
+    margin-top: 14px;
+  }
+}
+
+.auth-key:hover {
+  color: cornflowerblue;
 }

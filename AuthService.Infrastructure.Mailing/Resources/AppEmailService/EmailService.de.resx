@@ -38,9 +38,6 @@
     <data name="ConfirmRegistrationEmailButtonName" xml:space="preserve">
         <value>Registrierung bestätigen</value>
     </data>
-    <data name="ConfirmRegistrationEmailExplanation" xml:space="preserve">
-        <value>Sie haben diese Nachricht erhalten, weil Sie kürzlich ein Konto registriert haben.</value>
-    </data>
     <data name="ConfirmRegistrationEmailSubject" xml:space="preserve">
         <value>Konto aktivieren</value>
     </data>
@@ -57,6 +54,21 @@
         <value>Begrüßen</value>
     </data>
     <data name="PrivacyPolicy" xml:space="preserve">
-        <value>Datenschutzerklärung</value>
+        <value>Datenschutz</value>
+    </data>
+    <data name="TwoFactorCodeEmailText" xml:space="preserve">
+        <value>Geben Sie den folgenden Code in die Anwendung ein, um sich der Zwei-Faktor-Authentifizierung zu unterziehen.</value>
+    </data>
+    <data name="TwoFactorCodeEmailExplanation" xml:space="preserve">
+        <value>Sie haben diese E-Mail erhalten, weil Sie einen Zwei-Faktor-Authentifizierungscode angefordert haben.</value>
+    </data>
+    <data name="CodeExpires" xml:space="preserve">
+        <value>Der Code läuft 1 Minute nach der Generierung ab.</value>
+    </data>
+    <data name="ConfirmRegistrationEmailExplanation" xml:space="preserve">
+        <value>Sie haben diese E-Mail erhalten, weil Sie kürzlich ein Konto registriert haben.</value>
+    </data>
+    <data name="TwoFactorCodeEmailSubject" xml:space="preserve">
+        <value>Anfordern eines Zwei-Faktor-Authentifizierungscodes</value>
     </data>
 </root>

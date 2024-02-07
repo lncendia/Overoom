@@ -9,8 +9,7 @@ namespace AuthService.Infrastructure.Web;
 /// </summary>
 public static class Extensions
 {
-    public static long Id(this ClaimsPrincipal principal) =>
-        long.Parse(principal.FindFirstValue(JwtClaimTypes.Subject)!);
+    public static Guid Id(this ClaimsPrincipal principal) => Guid.Parse(principal.FindFirstValue(JwtClaimTypes.Subject)!);
     
     public static Uri GetAvatar(this ClaimsPrincipal user) => new(user.FindFirstValue(JwtClaimTypes.Picture)!, UriKind.Relative);
 

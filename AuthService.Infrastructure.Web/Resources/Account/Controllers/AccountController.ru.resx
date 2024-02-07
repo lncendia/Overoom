@@ -26,16 +26,19 @@
     <data name="PasswordRequiresUpper" xml:space="preserve">
         <value>Пароль должен содержать буквы в верхнем регистре</value>
     </data>
-    <data name="InvalidPasswordLength" xml:space="preserve">
+    <data name="PasswordLengthInvalid" xml:space="preserve">
         <value>Неверная длина пароля</value>
     </data>
     <data name="UserNotFound" xml:space="preserve">
         <value>Пользователь не найден</value>
     </data>
     <data name="EmailFormatInvalid" xml:space="preserve">
-        <value>Формат почты не валиден</value>
+        <value>Формат почты не корректен</value>
     </data>
     <data name="UserLockout" xml:space="preserve">
         <value>Вы были заблокированы из-за большого количества неудачных попыток входа. Попробуйте войти позже</value>
+    </data>
+    <data name="EmailNotConfirmed" xml:space="preserve">
+        <value>Для выполнения этого действия подтвердите свою почту</value>
     </data>
 </root>

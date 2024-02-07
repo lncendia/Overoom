@@ -15,13 +15,10 @@
         <value>Die Nachricht konnte Ihnen nicht per E-Mail gesendet werden.</value>
     </data>
     <data name="DefaultException" xml:space="preserve">
-        <value>Fehler beim Verarbeiten der Anforderung.</value>
+        <value>Bei der Verarbeitung der Anforderung ist ein Fehler aufgetreten.</value>
     </data>
     <data name="UserNotFoundException" xml:space="preserve">
-        <value>Benutzer nicht gefunden</value>
-    </data>
-    <data name="ExternalLoginException" xml:space="preserve">
-        <value>Fehler bei der Authentifizierung mit einem externen Anbieter</value>
+        <value>Kein Benutzer gefunden</value>
     </data>
     <data name="QueryParameterMissingException" xml:space="preserve">
         <value>Der Abfragezeichenfolgenparameter fehlt</value>
@@ -39,18 +36,15 @@
         <value>Der Link ist abgelaufen</value>
     </data>
     <data name="EmailFormatException" xml:space="preserve">
-        <value>Das Mail-Format ist ungültig</value>
+        <value>Das E-Mail-Format ist nicht korrekt</value>
     </data>
     <data name="EmailAlreadyTakenException" xml:space="preserve">
         <value>Mail wird bereits verwendet</value>
     </data>
     <data name="UserLockoutException" xml:space="preserve">
-        <value>Sie wurden aufgrund einer großen Anzahl fehlgeschlagener Anmeldeversuche gesperrt. Versuchen Sie später, sich anzumelden</value>
+        <value>Sie wurden aufgrund einer großen Anzahl fehlgeschlagener Anmeldeversuche gesperrt. Melden Sie sich später an</value>
     </data>
-    <data name="UserNameFormatException" xml:space="preserve">
-        <value>Der Benutzername hat ein falsches Format</value>
-    </data>
-    <data name="UserNameLengthException" xml:space="preserve">
-        <value>Der Benutzername darf nicht zwischen 3 und 20 Zeichen lang sein</value>
+    <data name="TwoFactorAlreadyEnabledException" xml:space="preserve">
+        <value>Die Zwei-Faktor-Authentifizierung ist bereits verbunden</value>
     </data>
 </root>

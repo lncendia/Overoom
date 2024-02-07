@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Shared {
+namespace PJMS.AuthService.Resources.Views.Shared {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace AuthService.Start.Resources.Views.Shared {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Start.Resources.Views.Shared._ValidationSummary", typeof(_ValidationSummary).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Resources.Views.Shared._ValidationSummary", typeof(_ValidationSummary).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,7 +60,7 @@ namespace AuthService.Start.Resources.Views.Shared {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error.
+        ///   Looks up a localized string similar to Mistake.
         /// </summary>
         internal static string Error {
             get {

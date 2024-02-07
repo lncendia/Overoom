@@ -30,7 +30,7 @@
         <value>Подтвердить регистрацию</value>
     </data>
     <data name="ConfirmRegistrationEmailExplanation" xml:space="preserve">
-        <value>Вы получили это сообщение, потому что недавно зарегистрировали учетную запись.</value>
+        <value>Вы получили это письмо, потому что недавно зарегистрировали учетную запись.</value>
     </data>
     <data name="ConfirmRegistrationEmailText" xml:space="preserve">
         <value>Подтвердите свой адрес электронной почты, нажав на кнопку ниже. Этот шаг повышает безопасность вашего бизнеса, подтверждая, что вы являетесь владельцем этого почтового адреса.</value>
@@ -58,5 +58,17 @@
     </data>
     <data name="PrivacyPolicy" xml:space="preserve">
         <value>Политика конфиденциальности</value>
+    </data>
+    <data name="TwoFactorCodeEmailSubject" xml:space="preserve">
+        <value>Запрос кода двухфакторной аутентификации</value>
+    </data>
+    <data name="TwoFactorCodeEmailText" xml:space="preserve">
+        <value>Введите код представленный ниже в приложение чтобы пройти двухфакторную аутентификацию.</value>
+    </data>
+    <data name="TwoFactorCodeEmailExplanation" xml:space="preserve">
+        <value>Вы получили это письмо, потому что запросили код двухфакторной аутентификации.</value>
+    </data>
+    <data name="CodeExpires" xml:space="preserve">
+        <value>Код истекает через 1 минуту после генерации.</value>
     </data>
 </root>

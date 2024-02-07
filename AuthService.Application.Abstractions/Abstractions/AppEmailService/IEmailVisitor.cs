@@ -1,6 +1,6 @@
-using AuthService.Application.Abstractions.Abstractions.AppEmailService.Structs;
+using PJMS.AuthService.Abstractions.Abstractions.AppEmailService.Structs;
 
-namespace AuthService.Application.Abstractions.Abstractions.AppEmailService;
+namespace PJMS.AuthService.Abstractions.Abstractions.AppEmailService;
 
 /// <summary>
 /// Интерфейс посетителя Email
@@ -24,4 +24,16 @@ public interface IEmailVisitor
     /// </summary>
     /// <param name="email">Объект ConfirmMailChangeEmail.</param>
     void Visit(ConfirmMailChangeEmail email);
+
+    /// <summary>
+    /// Посещает TwoFactorCodeEmail.
+    /// </summary>
+    /// <param name="email">Объект TwoFactorCodeEmail.</param>
+    void Visit(TwoFactorCodeEmail email);
+    
+    ///// <summary>
+    ///// Посещает TwoFactorCodeEmail.
+    ///// </summary>
+    ///// <param name="email">Объект TwoFactorCodeEmail.</param>
+    //void Visit(TwoFactorResetCodeEmail email);
 }

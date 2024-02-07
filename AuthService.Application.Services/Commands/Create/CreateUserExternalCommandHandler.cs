@@ -1,7 +1,10 @@
 using System.Security.Claims;
+using AuthService.Application.Abstractions;
+using AuthService.Application.Abstractions.Abstractions.AppThumbnailStore;
 using AuthService.Application.Abstractions.Commands.Create;
 using AuthService.Application.Abstractions.Entities;
 using AuthService.Application.Abstractions.Exceptions;
+using IdentityModel;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,9 +14,12 @@ namespace AuthService.Application.Services.Commands.Create;
 /// Обработчик команды создания пользователя с внешней учетной записью.
 /// </summary>
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
-public class CreateUserExternalCommandHandler(UserManager<UserData> userManager)
+/// <param name="thumbnailStore">Хранилище фотографий.</param>
+public class CreateUserExternalCommandHandler(UserManager<UserData> userManager, IThumbnailStore thumbnailStore)
     : IRequestHandler<CreateUserExternalCommand, UserData>
 {
+    private const string ThumbnailClaimType = "photo_thumb:link";
+    
     /// <summary>
     /// Метод обработки команды создания пользователя с внешней учетной записью.
     /// </summary>
@@ -25,7 +31,7 @@ public class CreateUserExternalCommandHandler(UserManager<UserData> userManager)
     /// <exception cref="EmailFormatException">Вызывается, если логин связан с другим пользователем.</exception>
     public async Task<UserData> Handle(CreateUserExternalCommand request, CancellationToken cancellationToken)
     {
-        // Пытаемся получить пользователя по логину
+       // Пытаемся получить пользователя по логину
         var loginUser =
             await userManager.FindByLoginAsync(request.LoginInfo.LoginProvider, request.LoginInfo.ProviderKey);
 
@@ -35,8 +41,24 @@ public class CreateUserExternalCommandHandler(UserManager<UserData> userManager)
         // Пытаемся получить почту из утверждений, если почты нет - вызываем исключение
         var email = request.LoginInfo.Principal.FindFirstValue(ClaimTypes.Email) ?? throw new EmailFormatException();
 
+        // Пытаемся получить почту из утверждений, если почты нет - вызываем исключение
+        var username = request.LoginInfo.Principal.FindFirstValue(ClaimTypes.Name) ??
+                       throw new UserNameFormatException();
+
+        // Пытаемся получить ссылку на аватар из утверждений
+        var thumbnailClaim = request.LoginInfo.Principal.FindFirstValue(ThumbnailClaimType);
+
+        // Переменная ссылки на аватар
+        Uri thumbnail;
+        
+        // Если аватар есть в утверждениях, то сохраняем его локально
+        if (thumbnailClaim != null) thumbnail = await thumbnailStore.SaveAsync(new Uri(thumbnailClaim));
+        
+        // Иначе устанавливаем аватар по умолчанию
+        else thumbnail = ApplicationConstants.DefaultAvatar;
+
         // Создаем пользователя
-        var user = new UserData(email, request.Locale, DateTimeOffset.Now, DateTimeOffset.Now)
+        var user = new UserData(username, email, thumbnail, DateTime.UtcNow)
         {
             // Указываем, что почта подтверждена
             EmailConfirmed = true
@@ -53,7 +75,16 @@ public class CreateUserExternalCommandHandler(UserManager<UserData> userManager)
 
             // Если хоть одна ошибка InvalidEmail, то вызываем исключение 
             if (result.Errors.Any(e => e.Code == "InvalidEmail")) throw new EmailFormatException();
+
+            // Если хоть одна ошибка InvalidUserName, то вызываем исключение 
+            if (result.Errors.Any(e => e.Code == "InvalidUserName")) throw new UserNameFormatException();
+
+            // Если хоть одна ошибка InvalidUserNameLength, то вызываем исключение 
+            if (result.Errors.Any(e => e.Code == "InvalidUserNameLength")) throw new UserNameLengthException();
         }
+
+        // Добавляем аватар в утверждения
+        await userManager.AddClaimAsync(user, new Claim(JwtClaimTypes.Picture, user.AvatarUrl.ToString()));
 
         // Связываем пользователя с внешним провайдером
         await userManager.AddLoginAsync(user, request.LoginInfo);

@@ -1,10 +1,9 @@
-using AuthService.Application.Abstractions.Abstractions.AppEmailService;
-using AuthService.Application.Abstractions.Abstractions.AppEmailService.Structs;
-using AuthService.Infrastructure.Mailing.AppEmailService;
-using AuthService.Infrastructure.Mailing.AppEmailService.Structs;
 using Microsoft.Extensions.Localization;
+using PJMS.AuthService.Abstractions.Abstractions.AppEmailService;
+using PJMS.AuthService.Abstractions.Abstractions.AppEmailService.Structs;
+using PJMS.AuthService.Mail.AppEmailService.Structs;
 
-namespace PJMS.AuthService.Mail.AppEmailService;
+namespace AuthService.Infrastructure.Mailing.AppEmailService;
 
 /// <inheritdoc/>
 /// <summary>
@@ -43,8 +42,12 @@ public class EmailContentVisitor(EmailTemplateConfiguration configuration, IStri
         // Создаем переменную buttonName и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailButtonName"
         var buttonName = localizer["ConfirmRegistrationEmailButtonName"];
 
+        // Создаем переменную expiration и устанавливаем значение из локализатора "LinkExpires"
+        var expiration = localizer["LinkExpires"];
+
         // Вызываем метод EmailTemplate и присваиваем результат переменной HtmlContent
-        HtmlContent = EmailTemplate(Subject, explanation, text, buttonName, email.ConfirmLink, email.Recipient);
+        HtmlContent = EmailTemplate(Subject, explanation, text, ButtonTemplate(buttonName, email.ConfirmLink),
+            expiration, email.Recipient);
     }
 
     /// <inheritdoc/>
@@ -55,18 +58,23 @@ public class EmailContentVisitor(EmailTemplateConfiguration configuration, IStri
     {
         // Задаем значение переменной Subject из локализатора, используя ключ "ConfirmRegistrationEmailSubject"
         Subject = localizer["ConfirmRecoverPasswordEmailSubject"];
-        
+
         // Создаем переменную text и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailText"
         var text = localizer["ConfirmRecoverPasswordEmailText"];
-        
+
         // Создаем переменную explanation и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailExplanation"
         var explanation = localizer["ConfirmRecoverPasswordEmailExplanation"];
-        
+
         // Создаем переменную buttonName и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailButtonName"
         var buttonName = localizer["ConfirmRecoverPasswordEmailButtonName"];
-        
+
+        // Создаем переменную expiration и устанавливаем значение из локализатора "LinkExpires"
+        var expiration = localizer["LinkExpires"];
+
         // Вызываем метод EmailTemplate и присваиваем результат переменной HtmlContent
-        HtmlContent = EmailTemplate(Subject, explanation, text, buttonName, email.ConfirmLink, email.Recipient);
+        HtmlContent = EmailTemplate(Subject, explanation, text, ButtonTemplate(buttonName, email.ConfirmLink),
+            expiration,
+            email.Recipient);
     }
 
     /// <inheritdoc/>
@@ -77,31 +85,99 @@ public class EmailContentVisitor(EmailTemplateConfiguration configuration, IStri
     {
         // Задаем значение переменной Subject из локализатора, используя ключ "ConfirmRegistrationEmailSubject"
         Subject = localizer["ConfirmMailChangeEmailSubject"];
-        
+
         // Создаем переменную text и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailText"
         var text = localizer["ConfirmMailChangeEmailText"];
-        
+
         // Создаем переменную explanation и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailExplanation"
         var explanation = localizer["ConfirmMailChangeEmailExplanation"];
-        
+
         // Создаем переменную buttonName и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailButtonName"
         var buttonName = localizer["ConfirmMailChangeEmailButtonName"];
-        
+
+        // Создаем переменную expiration и устанавливаем значение из локализатора "LinkExpires"
+        var expiration = localizer["LinkExpires"];
+
         // Вызываем метод EmailTemplate и присваиваем результат переменной HtmlContent
-        HtmlContent = EmailTemplate(Subject, explanation, text, buttonName, email.ConfirmLink, email.Recipient);
+        HtmlContent = EmailTemplate(Subject, explanation, text, ButtonTemplate(buttonName, email.ConfirmLink),
+            expiration,
+            email.Recipient);
+    }
+
+    /// <summary>
+    /// Посещает TwoFactorCodeEmail
+    /// </summary>
+    public void Visit(TwoFactorCodeEmail email)
+    {
+        // Задаем значение переменной Subject из локализатора, используя ключ "TwoFactorCodeEmailSubject"
+        Subject = localizer["TwoFactorCodeEmailSubject"];
+
+        // Создаем переменную text и задаем ей значение из локализатора, используя ключ "TwoFactorCodeEmailText"
+        var text = localizer["TwoFactorCodeEmailText"];
+
+        //// Создаем переменную explanation и задаем ей значение из локализатора, используя ключ "TwoFactorCodeEmailExplanation"
+        var explanation = localizer["TwoFactorCodeEmailExplanation"];
+
+        // Создаем переменную expiration и устанавливаем значение из локализатора "LinkExpires"
+        var expiration = localizer["CodeExpires"];
+
+        // Вызываем метод EmailTemplate и присваиваем результат переменной HtmlContent
+        HtmlContent = EmailTemplate(Subject, explanation, text, CodeTemplate(email.Code), expiration, email.Recipient);
+    }
+
+    /// <summary>
+    /// Шаблон кнопки в письме
+    /// </summary>
+    /// <param name="buttonName">Название кнопки</param>
+    /// <param name="buttonLink">Ссылка, которая откроется по нажатию кнопки</param>
+    /// <returns>HTML разметка с кнопкой</returns>
+    private static string ButtonTemplate(string buttonName, string buttonLink)
+    {
+        // Отдаем контент письма
+        return $"""
+                <table cellpadding="0" cellspacing="0" width="100%"
+                       role="presentation"
+                       style="mso-table-lspace:0;mso-table-rspace:0;border-collapse:collapse;border-spacing:0">
+                    <tr>
+                        <td align="center" style="padding:0;Margin:0">
+                            <span
+                                    class="msohide es-button-border"
+                                    style="border-style:solid;border-color:#2CB543;background:#7630f3;border-width:0;display:block;border-radius:30px;width:auto;mso-hide:all"><a
+                                    href="{buttonLink}" class="es-button msohide"
+                                    target="_blank"
+                                    style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:22px;display:block;background:#7630f3;border-radius:30px;font-family:Arial, sans-serif;font-weight:bold;font-style:normal;line-height:26px;width:auto;text-align:center;mso-padding-alt:0;mso-border-alt:10px solid  #7630f3;mso-hide:all;padding: 15px 5px;">{buttonName}</a></span>
+                        </td>
+                    </tr>
+                </table>
+                """;
+    }
+
+    /// <summary>
+    /// Шаблон кода в письме
+    /// </summary>
+    /// <param name="code">Код</param>
+    /// <returns>HTML разметка с кодом</returns>
+    private static string CodeTemplate(string code)
+    {
+        // Отдаем контент письма
+        return $"""
+                <div style="background-color: rgb(51, 51, 51); color: rgb(241, 241, 241); border-radius: 5px; letter-spacing: 2px; padding: 1px;">
+                      <h4>{code}</h4>
+                </div>
+                """;
     }
 
     /// <summary>
     /// Шаблон  письма с кнопкой (без отписки)
     /// </summary>
+    /// <param name="title">Название письма</param>
     /// <param name="explanation">Пояснение, почему письмо было отправлено</param>
     /// <param name="text">Текст письма</param>
-    /// <param name="buttonName">Название кнопки</param>
-    /// <param name="title">Название письма</param>
-    /// <param name="buttonLink">Ссылка, которая откроется по нажатию кнопки</param>
+    /// <param name="content">Контент письма</param>
+    /// <param name="expiration">Текст блока о сроке действия</param>
     /// <param name="recipient">Получатель письма</param>
     /// <returns>HTML письма</returns>
-    private string EmailTemplate(string title, string explanation, string text, string buttonName, string buttonLink,
+    private string EmailTemplate(string title, string explanation, string text, string content, string expiration,
         string recipient)
     {
         // Отдаем контент письма
@@ -369,20 +445,7 @@ public class EmailContentVisitor(EmailTemplateConfiguration configuration, IStri
                                                              style="mso-table-lspace:0;mso-table-rspace:0;border-collapse:collapse;border-spacing:0">
                                                           <tr>
                                                               <td align="center" valign="top" style="padding:0;Margin:0;width:520px">
-                                                                  <table cellpadding="0" cellspacing="0" width="100%"
-                                                                         role="presentation"
-                                                                         style="mso-table-lspace:0;mso-table-rspace:0;border-collapse:collapse;border-spacing:0">
-                                                                      <tr>
-                                                                          <td align="center" style="padding:0;Margin:0">
-                                                                              <span
-                                                                                      class="msohide es-button-border"
-                                                                                      style="border-style:solid;border-color:#2CB543;background:#7630f3;border-width:0;display:block;border-radius:30px;width:auto;mso-hide:all"><a
-                                                                                      href="{{buttonLink}}" class="es-button msohide"
-                                                                                      target="_blank"
-                                                                                      style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:22px;display:block;background:#7630f3;border-radius:30px;font-family:Arial, sans-serif;font-weight:bold;font-style:normal;line-height:26px;width:auto;text-align:center;mso-padding-alt:0;mso-border-alt:10px solid  #7630f3;mso-hide:all;padding: 15px 5px;">{{buttonName}}</a></span>
-                                                                          </td>
-                                                                      </tr>
-                                                                  </table>
+                                                                  {{content}}
                                                               </td>
                                                           </tr>
                                                       </table>
@@ -479,7 +542,7 @@ public class EmailContentVisitor(EmailTemplateConfiguration configuration, IStri
                                                                                   <tr>
                                                                                       <td align="left" style="padding:0;Margin:0">
                                                                                           <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:Arial, sans-serif;line-height:24px;color:#2D3142;font-size:16px">
-                                                                                              {{localizer["LinkExpires"]}}
+                                                                                              {{expiration}}
                                                                                           </p>
                                                                                       </td>
                                                                                   </tr>

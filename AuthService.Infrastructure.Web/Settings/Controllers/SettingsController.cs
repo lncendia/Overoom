@@ -1,4 +1,7 @@
-﻿using AuthService.Application.Abstractions.Commands;
+﻿using AuthService.Application.Abstractions.Commands.Authentication;
+using AuthService.Application.Abstractions.Commands.Email;
+using AuthService.Application.Abstractions.Commands.External;
+using AuthService.Application.Abstractions.Commands.Password;
 using AuthService.Application.Abstractions.Commands.Profile;
 using AuthService.Application.Abstractions.Entities;
 using AuthService.Application.Abstractions.Exceptions;
@@ -61,20 +64,15 @@ public class SettingsController : Controller
     /// <summary>
     /// Страница контроллера по умолчанию
     /// </summary>
-    /// <param name="message">Сообщение для пользователя</param>
-    /// <param name="returnUrl">URL, на который будет перенаправлен пользователь после завершения аутентификации</param>
-    /// <param name="expandElem">Номер вкладки, которая должна быть раскрыта.</param>
+    /// <param name="model">Модель данных, необходимых для отображения страницы</param>
     [HttpGet]
-    public async Task<IActionResult> Index(string? message, string returnUrl = "/", int expandElem = 1)
+    public async Task<IActionResult> Index([FromQuery] SettingsInputModel model)
     {
         // Получаем аутентифицированного пользователя
         var user = await _mediator.Send(new UserByIdQuery { UserId = User.Id() });
 
         // Создаем модель представления
-        var settingsModel = await BuildViewModelAsync(user, returnUrl, expandElem);
-
-        // Устанавливаем сообщение, если оно есть
-        if (!string.IsNullOrEmpty(message)) ViewData["message"] = message;
+        var settingsModel = await BuildViewModelAsync(user, model.ReturnUrl, model.ExpandElem, model.Message);
 
         // Возвращаем представление с моделью настроек
         return View(settingsModel);
@@ -117,7 +115,7 @@ public class SettingsController : Controller
         if (info == null) throw new ExternalLoginException();
 
         // Отправляем команду на добавление внешнего входа и получаем пользователя с обновленными данными
-        var user = await _mediator.Send(new AddUserExternalLoginCommand { Id = User.Id(), LoginInfo = info });
+        var user = await _mediator.Send(new AddUserExternalLoginCommand { UserId = User.Id(), LoginInfo = info });
 
         // Отчищаем куки данных от внешнего провайдера
         await HttpContext.SignOutAsync(info.AuthenticationProperties);
@@ -127,8 +125,11 @@ public class SettingsController : Controller
         await _signInManager.RefreshSignInAsync(user);
 
         // Перенаправляем пользователя на указанный URL
-        return RedirectToAction("Index",
-            new { returnUrl, message = InsertWordAfterFirstWord(_localizer["ProviderLinked"], info.LoginProvider) });
+        return RedirectToAction("Index", new SettingsInputModel
+        {
+            ReturnUrl = returnUrl, ExpandElem = 1,
+            Message = InsertWordAfterFirstWord(_localizer["ProviderLinked"], info.LoginProvider)
+        });
     }
 
     /// <summary>
@@ -144,15 +145,40 @@ public class SettingsController : Controller
 
         // Отправляем команду на удаление внешнего логина и получаем пользователя с обновленными данными
         var user = await _mediator.Send(
-            new RemoveUserExternalLoginCommand { Id = User.Id(), Provider = provider });
+            new RemoveUserExternalLoginCommand { UserId = User.Id(), Provider = provider });
 
         /*Так как Security Stamp у пользователя обновился,
          то переавторизуем его, чтобы обновить куки с новыми данными*/
         await _signInManager.RefreshSignInAsync(user);
 
         // Перенаправляем пользователя на указанный URL
-        return RedirectToAction("Index",
-            new { returnUrl, message = InsertWordAfterFirstWord(_localizer["ProviderUnlinked"], provider) });
+        return RedirectToAction("Index", new SettingsInputModel
+        {
+            ReturnUrl = returnUrl, ExpandElem = 1,
+            Message = InsertWordAfterFirstWord(_localizer["ProviderUnlinked"], provider)
+        });
+    }
+
+    /// <summary>
+    /// Метод, который заканчивает другие сессии у пользователя
+    /// </summary>
+    /// <returns>Результат закрытия сессий</returns>
+    public async Task<IActionResult> CloseOtherSessions(int expandElem = 1, string returnUrl = "/")
+    {
+        // Отправляем команду на закрытие всех других сессий, возвращаем данного пользователя
+        var user = await _mediator.Send(new UpdateSecurityStampCommand { UserId = User.Id() });
+
+        /*Так как Security Stamp у пользователя обновился,
+        то переавторизуем его, чтобы обновить куки с новыми данными*/
+        await _signInManager.RefreshSignInAsync(user);
+
+        // Перенаправляем на действие "Index" с указанными параметрами returnUrl, expandElem и message
+        return RedirectToAction("Index", new SettingsInputModel
+        {
+            ExpandElem = expandElem,
+            Message = _localizer["SessionsClosed"],
+            ReturnUrl = returnUrl
+        });
     }
 
     /// <summary>
@@ -226,7 +252,10 @@ public class SettingsController : Controller
         }
 
         // Перенаправляем на действие "Index" с указанными параметрами returnUrl, expandElem и message
-        return RedirectToAction("Index", new { returnUrl = model.ReturnUrl, expandElem = 2, message });
+        return RedirectToAction("Index", new SettingsInputModel
+        {
+            ReturnUrl = model.ReturnUrl, ExpandElem = 2, Message = message
+        });
     }
 
     /// <summary>
@@ -252,7 +281,7 @@ public class SettingsController : Controller
                 await _mediator.Send(new RequestChangeEmailCommand
                 {
                     // Идентификатор пользователя
-                    Id = User.Id(),
+                    UserId = User.Id(),
 
                     // Новая почта
                     NewEmail = model.Email!,
@@ -272,7 +301,10 @@ public class SettingsController : Controller
         }
 
         // Перенаправление на действие "Index" с указанными параметрами returnUrl, expandElem и message
-        return RedirectToAction("Index", new { returnUrl = model.ReturnUrl, expandElem = 3, message });
+        return RedirectToAction("Index", new SettingsInputModel
+        {
+            ReturnUrl = model.ReturnUrl, ExpandElem = 3, Message = message
+        });
     }
 
     /// <summary>
@@ -305,7 +337,7 @@ public class SettingsController : Controller
                 NewEmail = email,
 
                 // Идентификатор пользователя
-                Id = User.Id()
+                UserId = User.Id()
             });
 
             // Устанавливаем сообщение о том, что почта изменена
@@ -335,9 +367,13 @@ public class SettingsController : Controller
         }
 
         // Перенаправление на действие "Index" с указанными параметрами returnUrl, expandElem и message
-        return RedirectToAction("Index", new { returnUrl, expandElem = 3, message });
+        return RedirectToAction("Index", new SettingsInputModel
+        {
+            ReturnUrl = returnUrl, ExpandElem = 3, Message = message
+        });
     }
 
+    
     /// <summary>
     /// Метод для изменения имени пользователя.
     /// </summary>
@@ -359,7 +395,7 @@ public class SettingsController : Controller
                 var user = await _mediator.Send(new ChangeNameCommand
                 {
                     // Идентификатор пользователя
-                    Id = User.Id(),
+                    UserId = User.Id(),
 
                     // Имя пользователя
                     Name = model.Username!
@@ -389,8 +425,12 @@ public class SettingsController : Controller
                 }
             }
         }
-
-        return RedirectToAction("Index", new { model.ReturnUrl, expandElem = 4, message });
+        
+        // Перенаправление на действие "Index" с указанными параметрами returnUrl, expandElem и message
+        return RedirectToAction("Index", new SettingsInputModel
+        {
+            ReturnUrl = model.ReturnUrl, ExpandElem = 4, Message = message
+        });
     }
 
     [HttpPost]
@@ -416,7 +456,7 @@ public class SettingsController : Controller
             var user = await _mediator.Send(new ChangeAvatarCommand
             {
                 // Идентификатор пользователя
-                Id = User.Id(),
+                UserId = User.Id(),
 
                 // Поток с аватаром
                 Avatar = stream
@@ -430,27 +470,11 @@ public class SettingsController : Controller
             await _signInManager.RefreshSignInAsync(user);
         }
 
-        return RedirectToAction("Index", new { model.ReturnUrl, expandElem = 5, message });
-    }
-    
-    /// <summary>
-    /// Метод, который заканчивает другие сессии у пользователя
-    /// </summary>
-    /// <returns>Результат закрытия сессий</returns>
-    public async Task<IActionResult> CloseOtherSessions(int expandElem = 1, string returnUrl = "/")
-    {
-        // Отправляем команду на закрытие всех других сессий, возвращаем данного пользователя
-        var user = await _mediator.Send(new CloseOtherUserSessionsCommand { Id = User.Id() });
-
-        // Устанавливаем сообщение "PasswordChanged"
-        var message = _localizer["SessionsClosed"];
-
-        /*Так как Security Stamp у пользователя обновился,
-        то переавторизуем его, чтобы обновить куки с новыми данными*/
-        await _signInManager.RefreshSignInAsync(user);
-        
-        // Перенаправляем на действие "Index" с указанными параметрами returnUrl, expandElem и message
-        return RedirectToAction("Index", new { returnUrl, expandElem = 1, message });
+        // Перенаправление на действие "Index" с указанными параметрами returnUrl, expandElem и message
+        return RedirectToAction("Index", new SettingsInputModel
+        {
+            ReturnUrl = model.ReturnUrl, ExpandElem = 5, Message = message
+        });
     }
 
     /// <summary>
@@ -459,8 +483,10 @@ public class SettingsController : Controller
     /// <param name="user">Объект пользователя</param>
     /// <param name="returnUrl">URL возврата</param>
     /// <param name="expandElem">Индекс элемента, который нужно раскрыть</param>
+    /// <param name="message">Сообщение для пользователя</param>
     /// <returns>Модель представления настроек</returns>
-    private async Task<SettingsViewModel> BuildViewModelAsync(UserData user, string returnUrl, int expandElem)
+    private async Task<SettingsViewModel> BuildViewModelAsync(UserData user, string returnUrl, int expandElem,
+        string? message)
     {
         // Получаем список входов пользователя
         var logins = await _mediator.Send(new UserLoginsQuery { UserId = user.Id });
@@ -494,6 +520,8 @@ public class SettingsController : Controller
             ExpandElement = expandElem,
             Email = user.Email!,
             ReturnUrl = returnUrl,
+            Message = message,
+            TwoFactorEnabled = user.TwoFactorEnabled,
             Name = user.UserName!,
             AvatarUrl = user.AvatarUrl
         };

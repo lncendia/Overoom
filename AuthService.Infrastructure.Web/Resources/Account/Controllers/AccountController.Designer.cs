@@ -8,9 +8,6 @@
 //------------------------------------------------------------------------------
 
 namespace AuthService.Infrastructure.Web.Resources.Account.Controllers {
-    using System;
-    
-    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -38,7 +35,7 @@ namespace AuthService.Infrastructure.Web.Resources.Account.Controllers {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Infrastructure.Web.Resources.Account.Controllers.AccountController", typeof(AccountController).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Web.Resources.Account.Controllers.AccountController", typeof(AccountController).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,11 +57,20 @@ namespace AuthService.Infrastructure.Web.Resources.Account.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mail format is not valid.
+        ///   Looks up a localized string similar to The mail format is not correct.
         /// </summary>
         internal static string EmailFormatInvalid {
             get {
                 return ResourceManager.GetString("EmailFormatInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To perform this action, confirm your email.
+        /// </summary>
+        internal static string EmailNotConfirmed {
+            get {
+                return ResourceManager.GetString("EmailNotConfirmed", resourceCulture);
             }
         }
         
@@ -78,11 +84,11 @@ namespace AuthService.Infrastructure.Web.Resources.Account.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password length is invalid.
+        ///   Looks up a localized string similar to Incorrect password length.
         /// </summary>
-        internal static string InvalidPasswordLength {
+        internal static string PasswordLengthInvalid {
             get {
-                return ResourceManager.GetString("InvalidPasswordLength", resourceCulture);
+                return ResourceManager.GetString("PasswordLengthInvalid", resourceCulture);
             }
         }
         
@@ -132,7 +138,7 @@ namespace AuthService.Infrastructure.Web.Resources.Account.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User not found.
+        ///   Looks up a localized string similar to The user was not found.
         /// </summary>
         internal static string UserNotFound {
             get {

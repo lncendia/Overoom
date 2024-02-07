@@ -35,7 +35,7 @@ namespace AuthService.Infrastructure.Web.Resources.Consent.InputModels {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Infrastructure.Web.Resources.Consent.InputModels.ConsentInputModel", typeof(ConsentInputModel).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Web.Resources.Consent.InputModels.ConsentInputModel", typeof(ConsentInputModel).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

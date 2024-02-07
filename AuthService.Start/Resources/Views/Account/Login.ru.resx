@@ -17,9 +17,6 @@
     <data name="ForgotPassword" xml:space="preserve">
         <value>Забыли пароль?</value>
     </data>
-    <data name="InvalidRequest" xml:space="preserve">
-        <value>Неверный запрос на вход</value>
-    </data>
     <data name="NoAccount" xml:space="preserve">
         <value>Нет аккаунта?</value>
     </data>
@@ -33,6 +30,6 @@
         <value>Войти</value>
     </data>
     <data name="UserLockout" xml:space="preserve">
-        <value>Ваша учетная запись временно заблокирована из-за превышенияколичества неудачных попыток входа. </value>
+        <value>Ваша учетная запись временно заблокирована из-за превышенияколичества неудачных попыток входа.</value>
     </data>
 </root>

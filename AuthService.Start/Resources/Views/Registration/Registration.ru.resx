@@ -17,9 +17,6 @@
     <data name="ForgotPassword" xml:space="preserve">
         <value>Забыли пароль?</value>
     </data>
-    <data name="InvalidRequest" xml:space="preserve">
-        <value>Неверный запрос на вход</value>
-    </data>
     <data name="HaveAccount" xml:space="preserve">
         <value>Есть аккаунт?</value>
     </data>

@@ -33,16 +33,19 @@
     <data name="PasswordRequiresUpper" xml:space="preserve">
         <value>The password must contain uppercase letters</value>
     </data>
-    <data name="InvalidPasswordLength" xml:space="preserve">
-        <value>Password length is invalid</value>
+    <data name="PasswordLengthInvalid" xml:space="preserve">
+        <value>Incorrect password length</value>
     </data>
     <data name="UserNotFound" xml:space="preserve">
-        <value>User not found</value>
+        <value>The user was not found</value>
     </data>
     <data name="EmailFormatInvalid" xml:space="preserve">
-        <value>Mail format is not valid</value>
+        <value>The mail format is not correct</value>
     </data>
     <data name="UserLockout" xml:space="preserve">
         <value>You have been blocked due to a large number of failed login attempts. Try logging in later</value>
+    </data>
+    <data name="EmailNotConfirmed" xml:space="preserve">
+        <value>To perform this action, confirm your email</value>
     </data>
 </root>

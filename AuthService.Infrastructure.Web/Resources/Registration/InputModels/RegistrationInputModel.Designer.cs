@@ -8,9 +8,6 @@
 //------------------------------------------------------------------------------
 
 namespace AuthService.Infrastructure.Web.Resources.Registration.InputModels {
-    using System;
-    
-    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -38,8 +35,7 @@ namespace AuthService.Infrastructure.Web.Resources.Registration.InputModels {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Infrastructure.Web.Resources.Registration.InputModels.RegistrationInp" +
-                            "utModel", typeof(RegistrationInputModel).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Web.Resources.Registration.InputModels.RegistrationInputModel", typeof(RegistrationInputModel).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -66,24 +62,6 @@ namespace AuthService.Infrastructure.Web.Resources.Registration.InputModels {
         public static string Email {
             get {
                 return ResourceManager.GetString("Email", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The user name must not exceed 20 characters.
-        /// </summary>
-        public static string MaxLength {
-            get {
-                return ResourceManager.GetString("MaxLength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The user&apos;s name must consist of at least 3 characters.
-        /// </summary>
-        public static string MinLength {
-            get {
-                return ResourceManager.GetString("MinLength", resourceCulture);
             }
         }
         
@@ -133,29 +111,11 @@ namespace AuthService.Infrastructure.Web.Resources.Registration.InputModels {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Username.
-        /// </summary>
-        public static string Username {
-            get {
-                return ResourceManager.GetString("Username", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Enter the correct email.
         /// </summary>
         public static string ValidEmail {
             get {
                 return ResourceManager.GetString("ValidEmail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enter the correct username.
-        /// </summary>
-        public static string ValidUsername {
-            get {
-                return ResourceManager.GetString("ValidUsername", resourceCulture);
             }
         }
     }

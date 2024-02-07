@@ -19,7 +19,7 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="UserAlreadyExist" xml:space="preserve">
-        <value>User already registered</value>
+        <value>The user is already registered</value>
     </data>
     <data name="PasswordRequiresNonAlphanumeric" xml:space="preserve">
         <value>The password must contain special characters</value>
@@ -33,16 +33,10 @@
     <data name="PasswordRequiresDigit" xml:space="preserve">
         <value>The password must contain numbers</value>
     </data>
-    <data name="InvalidPasswordLength" xml:space="preserve">
-        <value>Password length is invalid</value>
+    <data name="PasswordLengthInvalid" xml:space="preserve">
+        <value>The password length is incorrect</value>
     </data>
     <data name="EmailFormatInvalid" xml:space="preserve">
-        <value>Mail format is not valid</value>
-    </data>
-    <data name="UserNameFormatInvalid" xml:space="preserve">
-        <value>The username has an incorrect format</value>
-    </data>
-    <data name="UserNameLengthInvalid" xml:space="preserve">
-        <value>The length of the user name should not be from 3 to 20 characters</value>
+        <value>The mail format is not correct</value>
     </data>
 </root>

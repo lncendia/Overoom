@@ -22,6 +22,6 @@
         <value>An error has occurred</value>
     </data>
     <data name="RequestId" xml:space="preserve">
-        <value>Request ID: </value>
+        <value>Request ID:</value>
     </data>
 </root>

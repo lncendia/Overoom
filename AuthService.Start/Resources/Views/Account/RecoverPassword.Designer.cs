@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Account {
+namespace PJMS.AuthService.Resources.Views.Account {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace AuthService.Start.Resources.Views.Account {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Start.Resources.Views.Account.RecoverPassword", typeof(RecoverPassword).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Resources.Views.Account.RecoverPassword", typeof(RecoverPassword).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,7 +60,7 @@ namespace AuthService.Start.Resources.Views.Account {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Log in.
+        ///   Looks up a localized string similar to Enter.
         /// </summary>
         internal static string Login {
             get {

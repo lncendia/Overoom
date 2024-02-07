@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Home {
+namespace PJMS.AuthService.Resources.Views.Home {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace AuthService.Start.Resources.Views.Home {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Start.Resources.Views.Home.Error", typeof(Error).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Resources.Views.Home.Error", typeof(Error).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -69,7 +69,7 @@ namespace AuthService.Start.Resources.Views.Home {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Request ID: .
+        ///   Looks up a localized string similar to Request ID:.
         /// </summary>
         internal static string RequestId {
             get {

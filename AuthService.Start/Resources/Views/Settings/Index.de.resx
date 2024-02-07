@@ -26,16 +26,19 @@
     <data name="EmailChange" xml:space="preserve">
         <value>Mail ändern</value>
     </data>
-    <data name="NicknameChange" xml:space="preserve">
-        <value>Ändern des Benutzernamens</value>
-    </data>
-    <data name="AvatarChange" xml:space="preserve">
-        <value>Avatar ändern</value>
-    </data>
-    <data name="WarningInfo" xml:space="preserve">
-        <value>Durch Datenänderungen enden die verbleibenden Sitzungen!</value>
-    </data>
     <data name="TerminateSessions" xml:space="preserve">
         <value>Sitzungen beenden</value>
+    </data>
+    <data name="WarningInfo" xml:space="preserve">
+        <value>Die Änderung der Daten wird die restlichen Sitzungen beenden!</value>
+    </data>
+    <data name="Connect" xml:space="preserve">
+        <value>Anschalten</value>
+    </data>
+    <data name="Disconnect" xml:space="preserve">
+        <value>Ausschalten</value>
+    </data>
+    <data name="TwoFactor" xml:space="preserve">
+        <value>Zwei-Faktor-Authentifizierung</value>
     </data>
 </root>

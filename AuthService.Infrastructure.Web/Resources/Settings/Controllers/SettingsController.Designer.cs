@@ -8,9 +8,6 @@
 //------------------------------------------------------------------------------
 
 namespace AuthService.Infrastructure.Web.Resources.Settings.Controllers {
-    using System;
-    
-    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -38,7 +35,7 @@ namespace AuthService.Infrastructure.Web.Resources.Settings.Controllers {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Infrastructure.Web.Resources.Settings.Controllers.SettingsController", typeof(SettingsController).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Web.Resources.Settings.Controllers.SettingsController", typeof(SettingsController).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -56,15 +53,6 @@ namespace AuthService.Infrastructure.Web.Resources.Settings.Controllers {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Profile photo has been changed.
-        /// </summary>
-        internal static string AvatarChanged {
-            get {
-                return ResourceManager.GetString("AvatarChanged", resourceCulture);
             }
         }
         
@@ -87,7 +75,7 @@ namespace AuthService.Infrastructure.Web.Resources.Settings.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mail changed.
+        ///   Looks up a localized string similar to The mail has been changed.
         /// </summary>
         internal static string EmailChanged {
             get {
@@ -105,7 +93,7 @@ namespace AuthService.Infrastructure.Web.Resources.Settings.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mail format is not valid.
+        ///   Looks up a localized string similar to The mail format is not correct.
         /// </summary>
         internal static string EmailFormatInvalid {
             get {
@@ -141,7 +129,7 @@ namespace AuthService.Infrastructure.Web.Resources.Settings.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password changed successfully.
+        ///   Looks up a localized string similar to The password has been successfully changed.
         /// </summary>
         internal static string PasswordChanged {
             get {
@@ -150,7 +138,7 @@ namespace AuthService.Infrastructure.Web.Resources.Settings.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password length is invalid.
+        ///   Looks up a localized string similar to Incorrect password length.
         /// </summary>
         internal static string PasswordLengthInvalid {
             get {
@@ -204,7 +192,7 @@ namespace AuthService.Infrastructure.Web.Resources.Settings.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Provider is linked.
+        ///   Looks up a localized string similar to The provider is linked.
         /// </summary>
         internal static string ProviderLinked {
             get {
@@ -213,7 +201,7 @@ namespace AuthService.Infrastructure.Web.Resources.Settings.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Provider is unlinked.
+        ///   Looks up a localized string similar to The provider is disconnected.
         /// </summary>
         internal static string ProviderUnlinked {
             get {
@@ -222,38 +210,11 @@ namespace AuthService.Infrastructure.Web.Resources.Settings.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Other sessions completed successfully.
+        ///   Looks up a localized string similar to Other sessions have been completed successfully.
         /// </summary>
         internal static string SessionsClosed {
             get {
                 return ResourceManager.GetString("SessionsClosed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The user&apos;s name has been changed.
-        /// </summary>
-        internal static string UserNameChanged {
-            get {
-                return ResourceManager.GetString("UserNameChanged", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The username has an incorrect format.
-        /// </summary>
-        internal static string UserNameFormatInvalid {
-            get {
-                return ResourceManager.GetString("UserNameFormatInvalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The length of the user name should not be from 3 to 20 characters.
-        /// </summary>
-        internal static string UserNameLengthInvalid {
-            get {
-                return ResourceManager.GetString("UserNameLengthInvalid", resourceCulture);
             }
         }
     }

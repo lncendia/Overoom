@@ -1,9 +1,10 @@
-using AuthService.Application.Abstractions.Abstractions.AppEmailService;
 using AuthService.Application.Abstractions.Commands.TwoFactor;
 using AuthService.Application.Abstractions.Entities;
 using AuthService.Application.Abstractions.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using PJMS.AuthService.Abstractions.Abstractions.AppEmailService;
+using PJMS.AuthService.Abstractions.Abstractions.AppEmailService.Structs;
 
 namespace AuthService.Application.Services.Commands.TwoFactor;
 

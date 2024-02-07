@@ -25,25 +25,33 @@
         <value>Linked Accounts</value>
     </data>
     <data name="Return" xml:space="preserve">
-        <value>Return</value>
+        <value>To return</value>
     </data>
     <data name="PasswordChange" xml:space="preserve">
-        <value>Password change</value>
+        <value>Changing the password</value>
     </data>
     <data name="EmailChange" xml:space="preserve">
-        <value>Email change</value>
-    </data>
-    <data name="NicknameChange" xml:space="preserve">
-        <value>Username change</value>
-    </data>
-    <data name="AvatarChange" xml:space="preserve">
-        <value>Avatar change</value>
-    </data>
-    <data name="WarningInfo" xml:space="preserve">
-        <value>Changing the data will terminate the remaining sessions!
-</value>
+        <value>Changing the mail</value>
     </data>
     <data name="TerminateSessions" xml:space="preserve">
-        <value>Terminate sessions</value>
+        <value>End sessions</value>
+    </data>
+    <data name="WarningInfo" xml:space="preserve">
+        <value>Changing the data will end the remaining sessions!</value>
+    </data>
+    <data name="TwoFactor" xml:space="preserve">
+        <value>Two-factor authentication</value>
+    </data>
+    <data name="Connect" xml:space="preserve">
+        <value>Plug</value>
+    </data>
+    <data name="Disconnect" xml:space="preserve">
+        <value>Unplug</value>
+    </data>
+    <data name="NicknameChange" xml:space="preserve">
+        <value />
+    </data>
+    <data name="AvatarChange" xml:space="preserve">
+        <value />
     </data>
 </root>

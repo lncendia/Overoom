@@ -8,9 +8,6 @@
 //------------------------------------------------------------------------------
 
 namespace AuthService.Infrastructure.Web.Resources.Registration.Controllers {
-    using System;
-    
-    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -38,8 +35,7 @@ namespace AuthService.Infrastructure.Web.Resources.Registration.Controllers {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Infrastructure.Web.Resources.Registration.Controllers.RegistrationCon" +
-                            "troller", typeof(RegistrationController).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Web.Resources.Registration.Controllers.RegistrationController", typeof(RegistrationController).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,7 +57,7 @@ namespace AuthService.Infrastructure.Web.Resources.Registration.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mail format is not valid.
+        ///   Looks up a localized string similar to The mail format is not correct.
         /// </summary>
         internal static string EmailFormatInvalid {
             get {
@@ -70,11 +66,11 @@ namespace AuthService.Infrastructure.Web.Resources.Registration.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password length is invalid.
+        ///   Looks up a localized string similar to The password length is incorrect.
         /// </summary>
-        internal static string InvalidPasswordLength {
+        internal static string PasswordLengthInvalid {
             get {
-                return ResourceManager.GetString("InvalidPasswordLength", resourceCulture);
+                return ResourceManager.GetString("PasswordLengthInvalid", resourceCulture);
             }
         }
         
@@ -115,29 +111,11 @@ namespace AuthService.Infrastructure.Web.Resources.Registration.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User already registered.
+        ///   Looks up a localized string similar to The user is already registered.
         /// </summary>
         internal static string UserAlreadyExist {
             get {
                 return ResourceManager.GetString("UserAlreadyExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The username has an incorrect format.
-        /// </summary>
-        internal static string UserNameFormatInvalid {
-            get {
-                return ResourceManager.GetString("UserNameFormatInvalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The length of the user name should not be from 3 to 20 characters.
-        /// </summary>
-        internal static string UserNameLengthInvalid {
-            get {
-                return ResourceManager.GetString("UserNameLengthInvalid", resourceCulture);
             }
         }
     }

@@ -39,4 +39,14 @@ public class SettingsViewModel
     /// URL возврата
     /// </summary>
     public required string ReturnUrl { get; init; }
+    
+    /// <summary>
+    /// Флаг, определяющий, включена ли 2fa аутентификация
+    /// </summary>
+    public required bool TwoFactorEnabled { get; init; }
+    
+    /// <summary>
+    /// Сообщение для пользователя
+    /// </summary>
+    public required string? Message { get; init; }
 }

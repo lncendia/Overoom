@@ -26,16 +26,19 @@
     <data name="EmailChange" xml:space="preserve">
         <value>Смена почты</value>
     </data>
-    <data name="NicknameChange" xml:space="preserve">
-        <value>Смена имени</value>
-    </data>
-    <data name="AvatarChange" xml:space="preserve">
-        <value>Смена аватара</value>
+    <data name="TerminateSessions" xml:space="preserve">
+        <value>Завершить сессии</value>
     </data>
     <data name="WarningInfo" xml:space="preserve">
         <value>Изменение данных завершит остальные сессии!</value>
     </data>
-    <data name="TerminateSessions" xml:space="preserve">
-        <value>Завершить сессии</value>
+    <data name="TwoFactor" xml:space="preserve">
+        <value>Двухфакторная аутентификация</value>
+    </data>
+    <data name="Connect" xml:space="preserve">
+        <value>Подключить</value>
+    </data>
+    <data name="Disconnect" xml:space="preserve">
+        <value>Отключить</value>
     </data>
 </root>

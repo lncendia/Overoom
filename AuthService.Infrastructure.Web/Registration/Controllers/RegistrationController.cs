@@ -1,5 +1,6 @@
 ﻿using System.Web;
-using AuthService.Application.Abstractions.Commands;
+using AuthService.Application.Abstractions.Commands.Create;
+using AuthService.Application.Abstractions.Commands.Email;
 using AuthService.Application.Abstractions.Entities;
 using AuthService.Application.Abstractions.Exceptions;
 using AuthService.Infrastructure.Web.Exceptions;
@@ -61,10 +62,10 @@ public class RegistrationController : Controller
     /// <param name="returnUrl">Url для возврата</param>
     /// <returns></returns>
     [HttpGet]
-    public async Task<IActionResult> Registration(string? returnUrl)
+    public async Task<IActionResult> Registration(string returnUrl = "/")
     {
         // создаем вью-модель регистрации
-        var vm = await BuildRegisterViewModelAsync(returnUrl!);
+        var vm = await BuildRegisterViewModelAsync(returnUrl);
 
         // возвращаем view
         return View(vm);
@@ -109,9 +110,7 @@ public class RegistrationController : Controller
                 Password = model.Password!,
 
                 // Url подтверждения почты
-                ConfirmUrl = callbackUrl,
-
-                Username = model.Username!
+                ConfirmUrl = callbackUrl
             });
 
             //Устанавливаем пользователю аутентификационные куки
@@ -122,6 +121,7 @@ public class RegistrationController : Controller
         }
         catch (Exception ex)
         {
+            // Проверяем какое исключение мы словили и добавляем в ModelState соответсвующее значение.
             switch (ex)
             {
                 //В случае если исключение ex является EmailAlreadyTakenException добавляем код ошибки в модель
@@ -132,16 +132,6 @@ public class RegistrationController : Controller
                 //В случае если исключение ex является EmailFormatException добавляем код ошибки в модель
                 case EmailFormatException:
                     ModelState.AddModelError("", _localizer["EmailFormatInvalid"]);
-                    break;
-
-                //В случае если исключение ex является UserNameFormatException добавляем код ошибки в модель
-                case UserNameFormatException:
-                    ModelState.AddModelError("", _localizer["UserNameFormatInvalid"]);
-                    break;
-                
-                //В случае если исключение ex является UserNameLengthException добавляем код ошибки в модель
-                case UserNameLengthException:
-                    ModelState.AddModelError("", _localizer["UserNameLengthInvalid"]);
                     break;
 
                 //В случае если исключение ex является PasswordValidationException
@@ -173,7 +163,7 @@ public class RegistrationController : Controller
     /// <param name="code">Токен для подтверждения email пользователя</param>
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> ConfirmEmail(long? userId, string? code)
+    public async Task<IActionResult> ConfirmEmail(Guid? userId, string? code)
     {
         // проверяем входящие данные
         if (!userId.HasValue) throw new QueryParameterMissingException(nameof(userId));
@@ -182,10 +172,10 @@ public class RegistrationController : Controller
         if (code == null) throw new QueryParameterMissingException(nameof(code));
 
         // Верифицируем email
-        await _mediator.Send(new VerifyUserEmailCommand
+        await _mediator.Send(new VerifyEmailCommand
         {
             // Идентификатор пользователя
-            Id = userId.Value,
+            UserId = userId.Value,
 
             // Код подтверждения
             Code = code
@@ -194,7 +184,7 @@ public class RegistrationController : Controller
         // Делаем редирект
         return RedirectToAction("EmailConfirmed");
     }
-    
+
     /// <summary>
     /// Возвращает представление для страницы "EmailConfirmed".
     /// </summary>
@@ -248,9 +238,6 @@ public class RegistrationController : Controller
 
         //устанавливаем прилетевший в контроллер пароль
         vm.Password = model.Password;
-
-        //устанавливаем прилетевшее в контроллер имя
-        vm.Username = model.Username;
 
         //устанавливаем прилетевший в контроллер пароль
         vm.PasswordConfirm = model.PasswordConfirm;

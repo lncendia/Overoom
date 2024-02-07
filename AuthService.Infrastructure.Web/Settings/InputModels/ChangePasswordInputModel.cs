@@ -13,7 +13,6 @@ public class ChangePasswordInputModel
     [DataType(DataType.Password)]
     [Display(Name = "OldPassword",
         ResourceType = typeof(Resources.Settings.InputModels.ChangePasswordInputModel))]
-    [MinLength(4)]
     public string? OldPassword { get; init; }
 
     /// <summary>

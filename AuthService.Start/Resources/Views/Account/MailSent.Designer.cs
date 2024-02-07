@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Account {
+namespace PJMS.AuthService.Resources.Views.Account {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace AuthService.Start.Resources.Views.Account {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Start.Resources.Views.Account.MailSent", typeof(MailSent).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Resources.Views.Account.MailSent", typeof(MailSent).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,7 +60,7 @@ namespace AuthService.Start.Resources.Views.Account {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To restore your password, follow the link sent to your email.
+        ///   Looks up a localized string similar to To restore your password, follow the link sent to your email..
         /// </summary>
         internal static string MailSentBody {
             get {

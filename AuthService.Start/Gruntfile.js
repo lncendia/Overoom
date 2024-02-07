@@ -4,7 +4,11 @@
  * билдом (выбирается в меню Task Runner)
  * @param grunt
  */
+
 module.exports = function (grunt) {
+
+    const sass = require('node-sass');
+    
     grunt.initConfig({
         
         /** очистка файлов какие папки/файлы очищать */
@@ -19,12 +23,23 @@ module.exports = function (grunt) {
                 //расположение объединенного файла
                 dest: "ScriptsAndCss/Combined/combined.js" 
             },
-            //объединение CSS
-            css: {
+            //объединение SCSS
+            scss: {
                 //сюда можно писать файлы для объединения через запятую
-                src: ["ScriptsAndCss/CssFiles/*.css"],
+                src: ["ScriptsAndCss/CssFiles/*.scss"],
                 //расположение объединенного файла
-                dest: "ScriptsAndCss/Combined/combined.css" 
+                dest: "ScriptsAndCss/Combined/combined.scss" 
+            }
+        },
+        sass: {
+            options: {
+                implementation: sass,
+                sourceMap: true
+            },
+            dist: {
+                files: {
+                    'ScriptsAndCss/Combined/combined.css':'ScriptsAndCss/Combined/combined.scss'
+                }
             }
         },
         //сжатие JS
@@ -48,7 +63,7 @@ module.exports = function (grunt) {
         //наблюдение за изменениями
         watch: {
             //за изменением каких файлов наблюдаем
-            files: ["ScriptsAndCss/JsScripts/**/*.js", "ScriptsAndCss/CssFiles/*.css"],
+            files: ["ScriptsAndCss/JsScripts/**/*.js", "ScriptsAndCss/CssFiles/*.scss"],
             //какую задачу запускаем
             tasks: ["all"] 
         }
@@ -62,8 +77,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-uglify");
     //для сжатия CSS
     grunt.loadNpmTasks("grunt-contrib-cssmin");
+    //для компиляции scss
+    grunt.loadNpmTasks("grunt-sass");
     //общая задача
-    grunt.registerTask("all", ["clean", "concat", "uglify", "cssmin"]);
+    grunt.registerTask("all", ["clean", "concat", "sass", "uglify", "cssmin"]);
     //для наблюдения за изменениями в файлах
     grunt.loadNpmTasks("grunt-contrib-watch"); 
 };

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Settings {
+namespace PJMS.AuthService.Resources.Views.Settings {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Start.Resources.Views.Settings._ChangePassword", typeof(_ChangePassword).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Resources.Views.Settings._ChangePassword", typeof(_ChangePassword).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,7 +60,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change password.
+        ///   Looks up a localized string similar to To change.
         /// </summary>
         internal static string Change {
             get {
@@ -69,7 +69,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Medium password.
+        ///   Looks up a localized string similar to The average password.
         /// </summary>
         internal static string MediumPass {
             get {
@@ -78,7 +78,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The password is not strong.
+        ///   Looks up a localized string similar to The password is not secure.
         /// </summary>
         internal static string PassWarning {
             get {
@@ -87,7 +87,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Strong password.
+        ///   Looks up a localized string similar to A strong password.
         /// </summary>
         internal static string StrongPass {
             get {

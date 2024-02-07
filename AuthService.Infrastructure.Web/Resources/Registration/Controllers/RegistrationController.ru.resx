@@ -27,15 +27,9 @@
         <value>Пароль должен содержать буквы в верхнем регистре</value>
     </data>
     <data name="EmailFormatInvalid" xml:space="preserve">
-        <value>Формат почты не валиден</value>
+        <value>Формат почты не корректен</value>
     </data>
-    <data name="InvalidPasswordLength" xml:space="preserve">
+    <data name="PasswordLengthInvalid" xml:space="preserve">
         <value>Неверная длина пароля</value>
-    </data>
-    <data name="UserNameLengthInvalid" xml:space="preserve">
-        <value>Длина имени пользователя не должна быть от 3 до 20 символов</value>
-    </data>
-    <data name="UserNameFormatInvalid" xml:space="preserve">
-        <value>Имя пользователя имеет некорректный формат</value>
     </data>
 </root>

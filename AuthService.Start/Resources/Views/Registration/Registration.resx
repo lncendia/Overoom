@@ -25,30 +25,27 @@
         <value>Cancel</value>
     </data>
     <data name="HaveAccount" xml:space="preserve">
-        <value>Have account?</value>
+        <value>Do you have an account?</value>
     </data>
     <data name="RegistrationButton" xml:space="preserve">
         <value>Registration</value>
-    </data>
-    <data name="InvalidRequest" xml:space="preserve">
-        <value>Invalid login request</value>
     </data>
     <data name="RegistrationTitle" xml:space="preserve">
         <value>Registration</value>
     </data>
     <data name="Login" xml:space="preserve">
-        <value>Log in</value>
+        <value>Enter</value>
     </data>
     <data name="WeakPass" xml:space="preserve">
         <value>Weak password</value>
     </data>
     <data name="StrongPass" xml:space="preserve">
-        <value>Strong password</value>
+        <value>A strong password</value>
     </data>
     <data name="PassWarning" xml:space="preserve">
         <value>The password is not secure</value>
     </data>
     <data name="MediumPass" xml:space="preserve">
-        <value>Medium password</value>
+        <value>The average password</value>
     </data>
 </root>

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Registration {
+namespace PJMS.AuthService.Resources.Views.Registration {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace AuthService.Start.Resources.Views.Registration {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Start.Resources.Views.Registration.EmailConfirmed", typeof(EmailConfirmed).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Resources.Views.Registration.EmailConfirmed", typeof(EmailConfirmed).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -69,7 +69,7 @@ namespace AuthService.Start.Resources.Views.Registration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mail confirmed.
+        ///   Looks up a localized string similar to The mail has been confirmed.
         /// </summary>
         internal static string EmailConfirmedTitle {
             get {

@@ -19,16 +19,16 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Email" xml:space="preserve">
-        <value>Email</value>
+        <value>Mail</value>
     </data>
     <data name="Password" xml:space="preserve">
         <value>Password</value>
     </data>
     <data name="Remember" xml:space="preserve">
-        <value>Remember me</value>
+        <value>Remember</value>
     </data>
     <data name="Required" xml:space="preserve">
-        <value>This field is required</value>
+        <value>The field cannot be empty</value>
     </data>
     <data name="ValidEmail" xml:space="preserve">
         <value>Enter the correct email</value>

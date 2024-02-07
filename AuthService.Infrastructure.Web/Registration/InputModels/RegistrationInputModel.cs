@@ -8,7 +8,7 @@ namespace AuthService.Infrastructure.Web.Registration.InputModels;
 public class RegistrationInputModel
 {
     /// <summary>
-    /// Почта пользователя
+    /// Логин (имя) пользователя
     /// </summary>
     [Required(ErrorMessageResourceName = "Required",
         ErrorMessageResourceType = typeof(Resources.Registration.InputModels.RegistrationInputModel))]
@@ -17,21 +17,6 @@ public class RegistrationInputModel
     [Display(Name = "Email",
         ResourceType = typeof(Resources.Registration.InputModels.RegistrationInputModel))]
     public string? Email { get; set; }
-    
-    /// <summary>
-    /// Логин (имя) пользователя
-    /// </summary>
-    [Required(ErrorMessageResourceName = "Required",
-        ErrorMessageResourceType = typeof(Resources.Registration.InputModels.RegistrationInputModel))]
-    [RegularExpression("^[A-Za-zА-Яа-яЁё0-9.@\\-_+ ]+$", ErrorMessageResourceName = "ValidUsername",
-        ErrorMessageResourceType = typeof(Resources.Registration.InputModels.RegistrationInputModel))]
-    [Display(Name = "Username",
-        ResourceType = typeof(Resources.Registration.InputModels.RegistrationInputModel))]
-    [MaxLength(20, ErrorMessageResourceName = "MaxLength",
-        ErrorMessageResourceType = typeof(Resources.Registration.InputModels.RegistrationInputModel))]
-    [MinLength(3, ErrorMessageResourceName = "MinLength",
-        ErrorMessageResourceType = typeof(Resources.Registration.InputModels.RegistrationInputModel))]
-    public string? Username { get; set; }
 
     /// <summary>
     /// Пароль

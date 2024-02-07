@@ -35,7 +35,7 @@ namespace AuthService.Infrastructure.Web.Resources.Account.InputModels {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Infrastructure.Web.Resources.Account.InputModels.NewPasswordInputModel", typeof(NewPasswordInputModel).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Web.Resources.Account.InputModels.NewPasswordInputModel", typeof(NewPasswordInputModel).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -84,7 +84,7 @@ namespace AuthService.Infrastructure.Web.Resources.Account.InputModels {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This field is required.
+        ///   Looks up a localized string similar to The field cannot be empty.
         /// </summary>
         public static string Required {
             get {

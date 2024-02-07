@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Settings {
+namespace PJMS.AuthService.Resources.Views.Settings {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Start.Resources.Views.Settings._ExternalProviders", typeof(_ExternalProviders).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Resources.Views.Settings._ExternalProviders", typeof(_ExternalProviders).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,7 +60,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close.
+        ///   Looks up a localized string similar to To close.
         /// </summary>
         internal static string Cancel {
             get {
@@ -78,7 +78,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unlink.
+        ///   Looks up a localized string similar to Untie it.
         /// </summary>
         internal static string Unlink {
             get {
@@ -87,7 +87,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unlink account.
+        ///   Looks up a localized string similar to Unlink the account.
         /// </summary>
         internal static string UnlinkTitle {
             get {

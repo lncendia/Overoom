@@ -20,9 +20,6 @@
     <data name="UserNotFoundException" xml:space="preserve">
         <value>Пользователь не найден</value>
     </data>
-    <data name="ExternalLoginException" xml:space="preserve">
-        <value>Ошибка аутентификации с использованием внешнего провайдера</value>
-    </data>
     <data name="QueryParameterMissingException" xml:space="preserve">
         <value>Отсутствует параметр строки запроса</value>
     </data>
@@ -39,7 +36,7 @@
         <value>Срок действия ссылки истек</value>
     </data>
     <data name="EmailFormatException" xml:space="preserve">
-        <value>Формат почты не валиден</value>
+        <value>Формат почты не корректен</value>
     </data>
     <data name="EmailAlreadyTakenException" xml:space="preserve">
         <value>Почта уже используется</value>
@@ -47,10 +44,7 @@
     <data name="UserLockoutException" xml:space="preserve">
         <value>Вы были заблокированы из-за большого количества неудачных попыток входа. Попробуйте войти позже</value>
     </data>
-    <data name="UserNameFormatException" xml:space="preserve">
-        <value>Имя пользователя имеет некорректный формат</value>
-    </data>
-    <data name="UserNameLengthException" xml:space="preserve">
-        <value>Длина имени пользователя не должна быть от 3 до 20 символов</value>
+    <data name="TwoFactorAlreadyEnabledException" xml:space="preserve">
+        <value>Двухфакторная аутентификация уже подключена</value>
     </data>
 </root>

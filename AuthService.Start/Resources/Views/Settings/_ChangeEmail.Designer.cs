@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Settings {
+namespace PJMS.AuthService.Resources.Views.Settings {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AuthService.Start.Resources.Views.Settings._ChangeEmail", typeof(_ChangeEmail).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PJMS.AuthService.Resources.Views.Settings._ChangeEmail", typeof(_ChangeEmail).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,7 +60,7 @@ namespace AuthService.Start.Resources.Views.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change Email.
+        ///   Looks up a localized string similar to To change.
         /// </summary>
         internal static string Change {
             get {

@@ -17,9 +17,6 @@
     <data name="NoAccount" xml:space="preserve">
         <value>Kein Konto?</value>
     </data>
-    <data name="InvalidRequest" xml:space="preserve">
-        <value>Die Anmeldeanforderung ist ungültig</value>
-    </data>
     <data name="ForgotPassword" xml:space="preserve">
         <value>Passwort vergessen?</value>
     </data>
@@ -27,12 +24,12 @@
         <value>Annullierung</value>
     </data>
     <data name="LoginTitle" xml:space="preserve">
-        <value>Authentifizierung</value>
+        <value>Eingang</value>
     </data>
     <data name="LogIn" xml:space="preserve">
-        <value>Autorisierter</value>
+        <value>Hereinkommen</value>
     </data>
     <data name="UserLockout" xml:space="preserve">
-        <value>Ihr Konto wurde vorübergehend gesperrt, da die Anzahl der fehlgeschlagenen Anmeldeversuche überschritten wurde.</value>
+        <value>Ihr Konto ist vorübergehend gesperrt, da die Anzahl der fehlgeschlagenen Anmeldeversuche überschritten wurde.</value>
     </data>
 </root>

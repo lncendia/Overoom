@@ -78,7 +78,7 @@ namespace AuthService.Infrastructure.Web.Resources.Home.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mail format is not valid.
+        ///   Looks up a localized string similar to The mail format is not correct.
         /// </summary>
         internal static string EmailFormatException {
             get {
@@ -87,20 +87,11 @@ namespace AuthService.Infrastructure.Web.Resources.Home.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Couldn&apos;t send a message to your email..
+        ///   Looks up a localized string similar to The message could not be sent to your email..
         /// </summary>
         internal static string EmailSendException {
             get {
                 return ResourceManager.GetString("EmailSendException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Authentication error using an external provider.
-        /// </summary>
-        internal static string ExternalLoginException {
-            get {
-                return ResourceManager.GetString("ExternalLoginException", resourceCulture);
             }
         }
         
@@ -114,7 +105,7 @@ namespace AuthService.Infrastructure.Web.Resources.Home.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The login is already linked to another user.
+        ///   Looks up a localized string similar to The username is already linked to another user.
         /// </summary>
         internal static string LoginAlreadyAssociatedException {
             get {
@@ -141,11 +132,20 @@ namespace AuthService.Infrastructure.Web.Resources.Home.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing query string parameter.
+        ///   Looks up a localized string similar to The query string parameter is missing.
         /// </summary>
         internal static string QueryParameterMissingException {
             get {
                 return ResourceManager.GetString("QueryParameterMissingException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Two-factor authentication is already enabled.
+        /// </summary>
+        internal static string TwoFactorAlreadyEnabledException {
+            get {
+                return ResourceManager.GetString("TwoFactorAlreadyEnabledException", resourceCulture);
             }
         }
         
@@ -159,25 +159,7 @@ namespace AuthService.Infrastructure.Web.Resources.Home.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The username has an incorrect format.
-        /// </summary>
-        internal static string UserNameFormatException {
-            get {
-                return ResourceManager.GetString("UserNameFormatException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The length of the user name should not be from 3 to 20 characters.
-        /// </summary>
-        internal static string UserNameLengthException {
-            get {
-                return ResourceManager.GetString("UserNameLengthException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User not found.
+        ///   Looks up a localized string similar to The user was not found.
         /// </summary>
         internal static string UserNotFoundException {
             get {

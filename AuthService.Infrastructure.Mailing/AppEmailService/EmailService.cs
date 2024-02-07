@@ -1,11 +1,10 @@
 ﻿using System.Net;
 using System.Net.Mail;
-using AuthService.Application.Abstractions.Abstractions.AppEmailService;
-using AuthService.Application.Abstractions.Abstractions.AppEmailService.Structs;
 using AuthService.Application.Abstractions.Exceptions;
-using AuthService.Infrastructure.Mailing.AppEmailService.Structs;
 using Microsoft.Extensions.Localization;
-using PJMS.AuthService.Mail.AppEmailService;
+using PJMS.AuthService.Abstractions.Abstractions.AppEmailService;
+using PJMS.AuthService.Abstractions.Abstractions.AppEmailService.Structs;
+using PJMS.AuthService.Mail.AppEmailService.Structs;
 
 namespace AuthService.Infrastructure.Mailing.AppEmailService;
 

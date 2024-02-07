@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AuthService.Start.Resources.Views.Account {
+namespace PJMS.AuthService.Resources.Views.Account {
     using System;
     
     
@@ -78,16 +78,7 @@ namespace AuthService.Start.Resources.Views.Account {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid login request.
-        /// </summary>
-        internal static string InvalidRequest {
-            get {
-                return ResourceManager.GetString("InvalidRequest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Log in.
+        ///   Looks up a localized string similar to Enter.
         /// </summary>
         internal static string LogIn {
             get {
@@ -96,7 +87,7 @@ namespace AuthService.Start.Resources.Views.Account {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Authentication.
+        ///   Looks up a localized string similar to Entrance.
         /// </summary>
         internal static string LoginTitle {
             get {
@@ -123,7 +114,7 @@ namespace AuthService.Start.Resources.Views.Account {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your account has been temporarily locked due to exceeding the number of failed login attempts..
+        ///   Looks up a localized string similar to Your account has been temporarily blocked due to exceeding the number of failed login attempts..
         /// </summary>
         internal static string UserLockout {
             get {

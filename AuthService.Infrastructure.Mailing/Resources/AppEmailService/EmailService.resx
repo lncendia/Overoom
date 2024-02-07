@@ -25,7 +25,7 @@
         <value>Confirm registration</value>
     </data>
     <data name="ConfirmRegistrationEmailExplanation" xml:space="preserve">
-        <value>You have received this message because you have recently registered an account.</value>
+        <value>You have received this email because you have recently registered an account.</value>
     </data>
     <data name="ConfirmRegistrationEmailText" xml:space="preserve">
         <value>Confirm your email address by clicking on the button below. This step increases the security of your business by confirming that you are the owner of this email address.</value>
@@ -58,12 +58,24 @@
         <value>Welcome</value>
     </data>
     <data name="Thanks" xml:space="preserve">
-        <value>Thanks</value>
+        <value>Thank you</value>
     </data>
     <data name="LinkExpires" xml:space="preserve">
         <value>The link expires 24 hours after receiving the email.</value>
     </data>
     <data name="PrivacyPolicy" xml:space="preserve">
         <value>Privacy policy</value>
+    </data>
+    <data name="TwoFactorCodeEmailSubject" xml:space="preserve">
+        <value>Requesting a two-factor authentication code</value>
+    </data>
+    <data name="TwoFactorCodeEmailText" xml:space="preserve">
+        <value>Enter the code below into the application to complete two-factor authentication.</value>
+    </data>
+    <data name="TwoFactorCodeEmailExplanation" xml:space="preserve">
+        <value>You received this email because you requested a two-factor authentication code.</value>
+    </data>
+    <data name="CodeExpires" xml:space="preserve">
+        <value>The code expires 1 minute after generation.</value>
     </data>
 </root>

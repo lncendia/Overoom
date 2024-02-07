@@ -52,7 +52,7 @@
         <value>Почта изменена</value>
     </data>
     <data name="EmailFormatInvalid" xml:space="preserve">
-        <value>Формат почты не валиден</value>
+        <value>Формат почты не корректен</value>
     </data>
     <data name="EmailAlreadyTaken" xml:space="preserve">
         <value>Почта уже используется</value>
@@ -65,18 +65,6 @@
     </data>
     <data name="OldPasswordMatchNew" xml:space="preserve">
         <value>Новый пароль не может совпадать со старым</value>
-    </data>
-    <data name="UserNameLengthInvalid" xml:space="preserve">
-        <value>Длина имени пользователя не должна быть от 3 до 20 символов</value>
-    </data>
-    <data name="UserNameFormatInvalid" xml:space="preserve">
-        <value>Имя пользователя имеет некорректный формат</value>
-    </data>
-    <data name="UserNameChanged" xml:space="preserve">
-        <value>Имя пользователя изменено</value>
-    </data>
-    <data name="AvatarChanged" xml:space="preserve">
-        <value>Фото профиля изменено</value>
     </data>
     <data name="SessionsClosed" xml:space="preserve">
         <value>Другие сессии успешно завершены</value>
