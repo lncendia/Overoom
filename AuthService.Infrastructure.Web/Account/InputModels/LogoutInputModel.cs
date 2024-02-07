@@ -1,0 +1,12 @@
+﻿namespace AuthService.Infrastructure.Web.Account.InputModels;
+
+/// <summary>
+/// Модель ввода выхода из системы
+/// </summary>
+public class LogoutInputModel
+{
+    /// <summary>
+    /// Logout Id
+    /// </summary>
+    public string ReturnUrl { get; init; } = "/";
+}
