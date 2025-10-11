@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Common.Domain\Common.Domain.csproj"/>
+        <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Rooms.Infrastructure.Storage</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Messages\Message.Snapshots.cs">
+        <DependentUpon>Message.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Rooms\Room.Snapshots.cs">
+        <DependentUpon>Room.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Rooms\Entities\Viewer.Snapshots.cs">
+        <DependentUpon>Viewer.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Rooms\ValueObjects\" />
+    </ItemGroup>
+
+</Project>

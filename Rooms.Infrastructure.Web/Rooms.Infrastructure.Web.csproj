@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Common.Application\Common.Application.csproj" />
+      <ProjectReference Include="..\Rooms.Application.Abstractions\Rooms.Application.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>

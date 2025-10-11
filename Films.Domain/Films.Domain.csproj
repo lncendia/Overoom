@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>13</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Common.Domain\Common.Domain.csproj" />
+      <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Films.Infrastructure.Storage</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Users\User.Snapshots.cs">
+        <DependentUpon>User.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Rooms\Room.Snapshots.cs">
+        <DependentUpon>Room.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Ratings\Rating.Snapshots.cs">
+        <DependentUpon>Rating.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Playlists\Playlist.Snapshots.cs">
+        <DependentUpon>Playlist.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Films\Film.Snapshots.cs">
+        <DependentUpon>Film.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Comments\Comment.Snapshots.cs">
+        <DependentUpon>Comment.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>

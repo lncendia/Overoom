@@ -1,0 +1,254 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.9" />
+        <PackageReference Include="OpenIddict.AspNetCore" Version="7.1.0" />
+        <PackageReference Include="OpenIddict.Client.WebIntegration" Version="7.1.0" />
+        <PackageReference Include="OpenIddict.Quartz" Version="7.1.0" />
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.15.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Common.DI\Common.DI.csproj" />
+        <ProjectReference Include="..\Identix.Infrastructure.Common\Identix.Infrastructure.Common.csproj" />
+        <ProjectReference Include="..\Identix.Application.Services\Identix.Application.Services.csproj" />
+        <ProjectReference Include="..\Identix.Infrastructure.Web\Identix.Infrastructure.Web.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\Views\Account\Login.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Login.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Shared\_ValidationSummary.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>_ValidationSummary.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Home\Error.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Error.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Account\Logout.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Logout.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Registration\Registration.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Registration.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Settings\Index.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>Index.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Settings\_ExternalProviders.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>_ExternalProviders.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Settings\_ChangePassword.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>_ChangePassword.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Settings\_ChangeEmail.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>_ChangeEmail.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Account\MailSent.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>MailSent.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Account\RecoverPassword.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>RecoverPassword.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Account\NewPassword.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>NewPassword.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Consent\Index.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>Index.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Consent\_ScopeListItem.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>_ScopeListItem.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Grants\Index.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>Index.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Registration\EmailConfirmed.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>EmailConfirmed.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\TwoFactor\Setup.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>TwoFactor.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\TwoFactor\LoginTwoStep.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>LoginTwoStep.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\TwoFactor\_Email.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>_Email.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\TwoFactor\_Authenticator.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>_Authenticator.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\TwoFactor\_RecoveryCode.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>_RecoveryCode.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\TwoFactor\VerifySetupTwoFactor.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>VerifySetupTwoFactor.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\TwoFactor\Reset.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>ResetTwoFactor.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Home\Index.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>Index.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Settings\_ChangeAvatar.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>_ChangeAvatar.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Settings\_ChangeName.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>_ChangeName.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Resources\Views\Login\Login.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Login.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Home\Error.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Error.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Account\Logout.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Logout.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Account\Registration.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Registration.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Settings\Index.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Index.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Settings\_ExternalProviders.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>_ExternalProviders.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Settings\_ChangePassword.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>_ChangePassword.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Settings\_ChangeEmail.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>_ChangeEmail.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Account\MailSent.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>MailSent.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Account\RecoverPassword.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>RecoverPassword.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Account\NewPassword.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>NewPassword.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Consent\Index.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Index.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Consent\_ScopeListItem.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>_ScopeListItem.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Grants\Index.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Index.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Registration\EmailConfirmed.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>EmailConfirmed.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Home\Index.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Index.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\TwoFactor\Setup.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Setup.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\TwoFactor\LoginTwoStep.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>LoginTwoStep.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\TwoFactor\_Email.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>_Email.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\TwoFactor\_Authenticator.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>_Authenticator.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\TwoFactor\_RecoveryCode.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>_RecoveryCode.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Settings\_ChangeAvatar.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>_ChangeAvatar.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Settings\_ChangeName.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>_ChangeName.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+</Project>

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />
+      <ProjectReference Include="..\Rooms.Application.Abstractions\Rooms.Application.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="MongoTracker">
+        <HintPath>..\..\MongoTracker\MongoTracker\bin\Release\netstandard2.1\MongoTracker.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

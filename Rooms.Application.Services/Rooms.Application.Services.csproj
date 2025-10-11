@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Rooms.Application.Abstractions\Rooms.Application.Abstractions.csproj"/>
+        <ProjectReference Include="..\Rooms.Infrastructure.Storage\Rooms.Infrastructure.Storage.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Hangfire.Core" Version="1.8.20" />
+    </ItemGroup>
+
+</Project>

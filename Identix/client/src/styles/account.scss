@@ -1,0 +1,72 @@
+.account {
+  .oauth-block {
+    display: flex;
+    height: 47px;
+    margin: auto;
+    justify-content: space-around;
+    align-items: center;
+    --logo-width: 44px;
+    --logo-height: 44px;
+
+    a.vkid {
+      width: calc(var(--logo-width) * 2 + 3px);
+
+      .oauth {
+        border-radius: 20%;
+        width: calc(var(--logo-width) * 2);
+      }
+
+      .oauth:hover {
+        width: calc(var(--logo-width) * 2 + 3px);
+      }
+    }
+
+    a.microsoft {
+      .oauth {
+        border-radius: 0;
+      }
+    }
+    
+    a {
+      width: calc(var(--logo-width) + 3px);
+      height: calc(var(--logo-height) + 3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .oauth {
+        width: var(--logo-width);
+        height: var(--logo-height);
+        border-radius: 50%;
+        text-decoration: none;
+        transition: all 0.1s;
+      }
+
+      .oauth:hover {
+        width: calc(var(--logo-width) + 3px);
+        height: calc(var(--logo-height) + 3px);
+      }
+    }
+  }
+
+  @media (max-width: 900px) {
+    .oauth-block {
+      --logo-width: 32px;
+      --logo-height: 32px;
+    }
+  }
+
+  @media (max-width: 670px) {
+    .oauth-block {
+      --logo-width: 28px;
+      --logo-height: 28px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .oauth-block {
+      --logo-width: 25px;
+      --logo-height: 25px;
+    }
+  }
+}

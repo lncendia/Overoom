@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="OpenIddict.MongoDb" Version="7.1.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Identix.Application.Abstractions\Identix.Application.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\EmailContentVisitor\EmailContentVisitor.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>EmailContentVisitor.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+</Project>
