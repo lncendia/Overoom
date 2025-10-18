@@ -145,6 +145,26 @@
       timeout: 20s  # Максимальное время ожидания
       retries: 3  # Количество попыток
   
+  prometheus:
+    image: prom/prometheus # Образ Prometheus
+    container_name: prometheus # Имя контейнера
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml' # Указываем файл конфигурации
+      - '--web.config.file=/etc/prometheus/web.yml' # Указываем файл конфигурации
+    restart: unless-stopped  # Перезапуск контейнера, если он остановится
+    environment:
+      - PROMETHEUS_USER=${PROMETHEUS_USER}
+      - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD}
+    volumes:
+      - "./configurations/prometheus/:/etc/prometheus" # Монтирование конфигурационных файлов
+    ports:
+      - "9090:9090"
+    healthcheck:
+      test: [ "CMD-SHELL", "/etc/prometheus/healthcheck.sh" ]  # Проверяем статус Prometheus через встроенную команду
+      interval: 5s  # Интервал между проверками
+      timeout: 5s  # Максимальное время ожидания ответа
+      retries: 5  # Количество повторных попыток
+
   films.postgres:
     image: postgres:16-alpine
     environment:

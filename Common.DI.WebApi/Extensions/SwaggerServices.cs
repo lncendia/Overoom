@@ -94,12 +94,10 @@ public static class SwaggerServices
     /// <param name="setupAction">Делегат конфигурации</param>
     /// <returns>IApplicationBuilder для цепочки вызовов</returns>
     // ReSharper disable once InconsistentNaming
-    public static void UseAuthorizedSwaggerUI(this IApplicationBuilder app,
-        Action<SwaggerUIOptions>? setupAction = null)
+    public static void UseAuthorizedSwaggerUI(this WebApplication app, Action<SwaggerUIOptions>? setupAction = null)
     {
-        var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
-        var clientId = configuration.GetRequiredValue<string>("Swagger:ClientId");
-        var clientName = configuration.GetRequiredValue<string>("Swagger:ClientName");
+        var clientId = app.Configuration.GetRequiredValue<string>("Swagger:ClientId");
+        var clientName = app.Configuration.GetRequiredValue<string>("Swagger:ClientName");
 
         app.UseSwaggerUI(c =>
         {

@@ -1,4 +1,5 @@
 using Common.Application.FileStorage;
+using Films.Application.Abstractions;
 using Films.Application.Abstractions.Commands.Playlists;
 using Films.Application.Abstractions.Exceptions;
 using Films.Domain.Repositories;
@@ -33,13 +34,13 @@ public class ChangePlaylistPosterCommandHandler(
         if (playlist == null) throw new PlaylistNotFoundException(request.Id);
 
         // Генерируем новый ключ для хранения постера
-        var newPosterKey = string.Format(Constants.FilmPosterKeyFormat, Guid.NewGuid());
+        var newPosterKey = string.Format(Constants.Poster.PlaylistKeyFormat, Guid.NewGuid());
 
         // Загружаем новый постер в хранилище
-        await posterStore.UploadAsync(newPosterKey, request.Poster.File, Constants.PhotoMimeType,
+        await posterStore.UploadAsync(newPosterKey, request.Poster.File, Constants.Mime.Photo,
             token: cancellationToken);
 
-        if (playlist.PosterKey != Constants.PlaylistPosterKeyDefault)
+        if (playlist.PosterKey != Constants.Poster.PlaylistDefault)
         {
             try
             {

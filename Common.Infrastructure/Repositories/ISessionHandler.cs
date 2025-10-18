@@ -9,6 +9,14 @@ namespace Common.Infrastructure.Repositories;
 public interface ISessionHandler
 {
     /// <summary>
+    /// Выполняет действие перед сохранением данных.
+    /// </summary>
+    /// <param name="action">Действие для выполнения, принимающее токен отмены.</param>
+    /// <param name="token">Токен отмены для асинхронной операции.</param>
+    /// <returns>Задача, представляющая асинхронную операцию.</returns>
+    Task BeforeSaveExecuteAsync(Func<CancellationToken, Task> action, CancellationToken token = default);
+    
+    /// <summary>
     /// Выполняет указанное действие в рамках сессии MongoDB.
     /// </summary>
     /// <param name="action">Действие для выполнения, принимающее сессию и токен отмены.</param>

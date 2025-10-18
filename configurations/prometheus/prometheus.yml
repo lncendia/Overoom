@@ -1,0 +1,49 @@
+﻿global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'identix'
+    static_configs:
+      - targets: [ 'identix' ]
+    scheme: https
+    metrics_path: /metrics
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: 'prometheus'
+      password: 'password'
+
+  - job_name: 'films'
+    static_configs:
+      - targets: [ 'films' ]
+    scheme: https
+    metrics_path: /metrics
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: 'prometheus'
+      password: 'prometheus'
+
+  - job_name: 'rooms'
+    static_configs:
+      - targets: [ 'rooms' ]
+    scheme: https
+    metrics_path: /metrics
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: 'prometheus'
+      password: 'prometheus'
+
+  - job_name: 'uploader'
+    static_configs:
+      - targets: [ 'uploader' ]
+    scheme: https
+    metrics_path: /metrics
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: 'prometheus'
+      password: 'prometheus'

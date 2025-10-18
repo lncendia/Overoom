@@ -17,13 +17,13 @@ public class RoomEventConsumer(IInstanceName currentInstanceName, IRoomEventSend
     /// <param name="context">Контекст сообщения</param>
     public Task Consume(ConsumeContext<RoomBaseEvent> context)
     {
-        var instanceName = context.Headers.Get<string>(Constants.InstanceNameHeader);
+        var instanceName = context.Headers.Get<string>(Constants.Headers.InstanceName);
         if (instanceName == null || currentInstanceName.Name == instanceName) return Task.CompletedTask;
         
-        var roomId = context.Headers.Get<Guid>(Constants.RoomIdHeader);
+        var roomId = context.Headers.Get<Guid>(Constants.Headers.RoomId);
         if (roomId == null) return Task.CompletedTask;
         
-        var connectionId = context.Headers.Get<string>(Constants.ExcludedConnectionIdHeader);
+        var connectionId = context.Headers.Get<string>(Constants.Headers.ExcludedConnectionId);
         
         return sender.SendAsync(context.Message, roomId.Value, connectionId);
     }

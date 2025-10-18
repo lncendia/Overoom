@@ -18,7 +18,7 @@ internal static class Extensions
     public static void SetRoomHeaders(this IScopedDictionary dictionary, IRoomEvent @event, string connectionId)
     {
         // Установка заголовка с идентификатором подключения
-        dictionary[Constants.ExcludedConnectionIdHeader] = connectionId;
+        dictionary[Constants.Headers.ExcludedConnectionId] = connectionId;
 
         // Установка остальных заголовков комнаты
         dictionary.SetRoomHeaders(@event);
@@ -32,7 +32,7 @@ internal static class Extensions
     public static void SetRoomHeaders(this IScopedDictionary dictionary, IRoomEvent @event)
     {
         // Установка заголовка с идентификатором комнаты
-        dictionary[Constants.RoomIdHeader] = @event.Room.Id;
+        dictionary[Constants.Headers.RoomId] = @event.Room.Id;
     }
 
     /// <summary>
@@ -45,9 +45,9 @@ internal static class Extensions
     {
         // Установка заголовка с идентификатором подключения
         if (connectionId != null)
-            dictionary[Constants.ExcludedConnectionIdHeader] = connectionId;
+            dictionary[Constants.Headers.ExcludedConnectionId] = connectionId;
 
         // Установка заголовка с идентификатором комнаты
-        dictionary[Constants.RoomIdHeader] = roomId;
+        dictionary[Constants.Headers.RoomId] = roomId;
     }
 }

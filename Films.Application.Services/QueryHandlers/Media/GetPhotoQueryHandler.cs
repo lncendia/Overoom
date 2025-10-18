@@ -1,4 +1,5 @@
 using Common.Application.FileStorage;
+using Films.Application.Abstractions;
 using Films.Application.Abstractions.Queries.Media;
 using MediatR;
 
@@ -22,7 +23,7 @@ public class GetPhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<GetP
     {
         // Валидируем запрашиваемый ключ
         if (!IsValidUserPhotoKey(request.Key))
-            throw new ArgumentException($"Invalid user photo key format. Expected: {Constants.FilmPosterKeyFormat} or {Constants.PlaylistPosterKeyFormat}");
+            throw new ArgumentException($"Invalid user photo key format. Expected: {Constants.Poster.FilmKeyFormat} or {Constants.Poster.PlaylistKeyFormat}");
 
         // Получаем объект из S3
         var (stream, contentType) =  await fileStore.GetAsync(request.Key, token: cancellationToken);

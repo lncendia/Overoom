@@ -24,19 +24,19 @@ public class RoomEventPublishFilter(IInstanceName instanceName, IRoomEventSender
     {
         // В заголовки события добавляем InstanceName,
         // чтобы на стороне consumer можно было понять, кто его опубликовал.
-        context.Headers.Set(Constants.InstanceNameHeader, instanceName.Name);
+        context.Headers.Set(Constants.Headers.InstanceName, instanceName.Name);
         
         // Пробуем достать roomId из заголовков.
         // Если его нет — значит событие не привязано к конкретной комнате,
         // и мы не выполняем локальную рассылку.
-        var roomId = scopedContext.Current.Get<Guid>(Constants.RoomIdHeader);
-        context.Headers.Set(Constants.RoomIdHeader, roomId);
+        var roomId = scopedContext.Current.Get<Guid>(Constants.Headers.RoomId);
+        context.Headers.Set(Constants.Headers.RoomId, roomId);
 
         // Достаём connectionId инициатора (опционально).
         // Может использоваться, чтобы не отсылать событие обратно инициатору.
-        if (scopedContext.Current.TryGetValue(Constants.ExcludedConnectionIdHeader, out string? connectionId))
+        if (scopedContext.Current.TryGetValue(Constants.Headers.ExcludedConnectionId, out string? connectionId))
         {
-            context.Headers.Set(Constants.ExcludedConnectionIdHeader, connectionId);
+            context.Headers.Set(Constants.Headers.ExcludedConnectionId, connectionId);
         }
 
         // Передаём событие дальше по конвейеру.

@@ -6,24 +6,47 @@ namespace Rooms.Application.Abstractions;
 public static class Constants
 {
     /// <summary>
-    /// Ключ для хранения идентификатора подключения в словаре
+    /// Константы для работы с ScopedDictionary
     /// </summary>
-    public const string CurrentConnectionIdKey = "ConnectionId";
+    public static class ScopedDictionary
+    {
+        /// <summary>
+        /// Ключ для хранения идентификатора подключения в словаре
+        /// </summary>
+        public const string CurrentConnectionIdKey = "ConnectionId";
+    }
 
     /// <summary>
-    /// Заголовок для указания имени экземпляра сервиса
+    /// Константы для работы с заголовками сообщений
     /// </summary>
-    public const string InstanceNameHeader = "InstanceName";
+    public static class Headers
+    {
+        /// <summary>
+        /// Заголовок для указания имени экземпляра сервиса
+        /// </summary>
+        public const string InstanceName = "InstanceName";
+
+        /// <summary>
+        /// Заголовок для передачи идентификатора комнаты
+        /// </summary>
+        public const string RoomId = "RoomId";
+
+        /// <summary>
+        /// Заголовок для передачи идентификатора подключения
+        /// </summary>
+        public const string ExcludedConnectionId = "ConnectionId";
+    }
 
     /// <summary>
-    /// Заголовок для передачи идентификатора комнаты
+    /// Константы для OpenTelemetry
     /// </summary>
-    public const string RoomIdHeader = "RoomId";
-
-    /// <summary>
-    /// Заголовок для передачи идентификатора подключения
-    /// </summary>
-    public const string ExcludedConnectionIdHeader = "ConnectionId";
+    public static class OpenTelemetry
+    {
+        /// <summary>
+        /// Имя сервиса для трассировки
+        /// </summary>
+        public const string ServiceName = "rooms";
+    }
 
     /// <summary>
     /// Константы для настройки Hangfire - системы фоновых заданий
@@ -67,12 +90,6 @@ public static class Constants
 
         /// <summary>Количество отключений от комнаты</summary>
         public const string DisconnectCount = "DisconnectCount";
-
-        /// <summary>Количество добавленных тегов</summary>
-        public const string TagsAddedCount = "TagsAddedCount";
-
-        /// <summary>Количество исключенных пользователей из комнаты</summary>
-        public const string KickedCount = "KickedCount";
     }
 
     /// <summary>
@@ -162,7 +179,7 @@ public static class Constants
             [NoAvatar] = "Нет аватарки. Кто ты, воин?",
             [Muted] = "Громкость видео на нуле. Он, наверное, читает по губам.",
             [Seeker] = "Мотает так, будто ищет сцену после титров. Но титры ещё не начинались.",
-            [PauseMaster] = "Ставил видео на паузу более 5 раз. У него свои ритмы.",
+            [PauseMaster] = "Ставил видео на паузу более 30 раз. У него свои ритмы.",
             [EpisodeHopper] = "Меняет серии чаще, чем кто-либо. Что он ищет?",
             [FirstIn] = "Всегда первый в комнате. Легенда.",
             [SlowWatcher] = "Смотрит в замедленном. Наслаждается каждым пикселем.",

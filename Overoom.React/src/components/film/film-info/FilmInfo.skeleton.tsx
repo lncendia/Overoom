@@ -8,7 +8,7 @@ const PosterContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   overflow: 'hidden',
-  height: 'clamp(400px, 35vw, 450px)',
+  maxHeight: '400px',
 }));
 
 /**

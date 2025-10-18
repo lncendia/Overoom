@@ -28,7 +28,7 @@ public class ViewerPlayerUpdatedEventHandler(IPublishEndpoint publish, IScopedCo
         // Если мы не в контексте (событие пришло не через хаб) - не продолжаем
         if (!context.InScope) return;
 
-        var connectionId = context.Current.Get<string>(Constants.CurrentConnectionIdKey);
+        var connectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
 
         using var _ = context.CreateScope();
 

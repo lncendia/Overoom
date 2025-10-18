@@ -11,6 +11,22 @@ namespace Common.Infrastructure.Repositories.SessionHandlers;
 public class InboxSessionHandler(MongoDbContext dbContext) : ISessionHandler
 {
     /// <summary>
+    /// Выполняет действие перед сохранением данных.
+    /// В этой реализации просто напрямую вызывает переданное действие, так как транзакция уже начата.
+    /// </summary>
+    /// <param name="action">Асинхронное действие, которое нужно выполнить перед сохранением.</param>
+    /// <param name="token">Токен отмены операции.</param>
+    /// <exception cref="InvalidOperationException">Если сессия не инициализирована</exception>
+    public Task BeforeSaveExecuteAsync(Func<CancellationToken, Task> action, CancellationToken token = default)
+    {
+        // Проверяем наличие активной сессии
+        if (dbContext.Session == null) throw new InvalidOperationException("Session is null");
+        
+        // Выполняем действие
+        return action(token);
+    }
+    
+    /// <summary>
     /// Выполняет операцию в рамках существующей сессии inbox
     /// </summary>
     /// <param name="action">Действие для выполнения</param>

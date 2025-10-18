@@ -5,10 +5,10 @@ FROM node:23-alpine AS overoom
 WORKDIR /app
 
 # Копируем настройки сборки приложения
-COPY package.json .
+COPY package.json ./
 
 # Устанавливаем зависимости
-RUN npm install
+RUN npm i
 
 # Копируем исходный код
 COPY . .
@@ -30,3 +30,6 @@ EXPOSE 80
 
 # Expose порт 443
 EXPOSE 443
+
+# Запуск Nginx в foreground
+CMD ["nginx", "-g", "daemon off;"]

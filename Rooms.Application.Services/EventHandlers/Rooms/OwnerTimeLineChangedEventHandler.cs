@@ -25,7 +25,7 @@ public class OwnerTimeLineChangedEventHandler(IPublishEndpoint publish, IScopedC
     {
         if (@event.Viewer != @event.Room.Owner) return;
         
-        var connectionId = context.Current.Get<string>(Constants.CurrentConnectionIdKey);
+        var connectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
         
         using var _ = context.CreateScope();
         

@@ -24,7 +24,7 @@ public class PauseMasterEventHandler(IUnitOfWork unitOfWork) : BeforeSaveNotific
         if (!notification.Viewer.OnPause) return;
         var pauses =
             notification.Room.IncrementStatisticParameter(notification.Viewer.Id, Constants.ViewerStatisticParameters.PauseCount);
-        if (pauses > 5)
+        if (pauses > 30)
             notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.PauseMaster);
 
         await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);

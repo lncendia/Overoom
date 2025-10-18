@@ -8,6 +8,7 @@ using Rooms.Application.Abstractions.Events.Room;
 using Rooms.Application.Abstractions.Exceptions;
 using Rooms.Application.Abstractions.Queries;
 using Rooms.Domain.Rooms.Exceptions;
+using Rooms.Infrastructure.Web.Metrics;
 using Rooms.Infrastructure.Web.Rooms.Exceptions;
 
 namespace Rooms.Infrastructure.Web.Rooms.Hubs;
@@ -44,6 +45,8 @@ public class RoomHub(ISender mediator) : Hub
 
         // Отправляем информацию о подключении вызывающему клиенту
         await Clients.Caller.SendAsync("Event", new ConnectEvent());
+        
+        RoomsConnectionMetrics.Increment();
     }
 
     /// <summary>
@@ -356,6 +359,8 @@ public class RoomHub(ISender mediator) : Hub
 
         // Вызываем базовую реализацию метода
         await base.OnDisconnectedAsync(exception);
+        
+        RoomsConnectionMetrics.Decrement();
     }
 
     /// <summary>

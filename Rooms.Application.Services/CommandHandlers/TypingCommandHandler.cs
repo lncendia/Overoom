@@ -26,7 +26,7 @@ public class TypingCommandHandler(IPublishEndpoint publish, IScopedContext conte
     public async Task Handle(TypingCommand request, CancellationToken cancellationToken)
     {
         // Получаем идентификатор текущего соединения из контекста области
-        var connectionId = context.Current.Get<string>(Constants.CurrentConnectionIdKey);
+        var connectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
         
         // Создаем новую область контекста для изоляции данных
         using var _ = context.CreateScope();

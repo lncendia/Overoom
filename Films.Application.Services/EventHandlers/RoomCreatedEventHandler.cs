@@ -1,5 +1,6 @@
 using Common.Application.Events;
 using Common.IntegrationEvents.Rooms;
+using Films.Application.Abstractions;
 using Films.Application.Abstractions.Exceptions;
 using Films.Domain.Repositories;
 using Films.Domain.Rooms.Events;
@@ -33,7 +34,7 @@ public class RoomCreatedEventHandler(IUnitOfWork unitOfWork, IPublishEndpoint pu
         var roomsCount = await unitOfWork.RoomRepository.Value.CountAsync(roomsSpecification, cancellationToken);
 
         // Проверяем, не превысил ли пользователь лимит созданных комнат (5 комнаты)
-        if (roomsCount >= Constants.MaxRoomsCount) throw new MaxNumberRoomsReachedException(user.Id);
+        if (roomsCount >= Constants.Limits.MaxRoomsPerUser) throw new MaxNumberRoomsReachedException(user.Id);
         
         // Создаем событие интеграции с полной информацией о созданной комнате
         var integrationEvent = new RoomCreatedIntegrationEvent

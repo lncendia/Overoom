@@ -51,7 +51,7 @@ export class PlayerJsHandler implements IPlayerHandler {
     // Игнорируем события от других плееров
     if (id != this.playerId) return;
 
-    // console.log(`Received Player.js event:`, event, info);
+    console.log(`Received Player.js event:`, event, info);
 
     // Создаем контейнер для события
     const ev: PlayerEventContainer = {};

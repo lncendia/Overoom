@@ -8,11 +8,15 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Films.Start/Films.Start.csproj", "Films.Start/"]
+COPY ["Common.DI.WebApi/Common.DI.WebApi.csproj", "Common.DI.WebApi/"]
+COPY ["Common.DI/Common.DI.csproj", "Common.DI/"]
+COPY ["Common.Application/Common.Application.csproj", "Common.Application/"]
+COPY ["Common.Domain/Common.Domain.csproj", "Common.Domain/"]
+COPY ["Common.Infrastructure/Common.Infrastructure.csproj", "Common.Infrastructure/"]
 COPY ["Films.Application.Services/Films.Application.Services.csproj", "Films.Application.Services/"]
 COPY ["Films.Application.Abstractions/Films.Application.Abstractions.csproj", "Films.Application.Abstractions/"]
-COPY ["Films.Domain.Abstractions/Films.Domain.Abstractions.csproj", "Films.Domain.Abstractions/"]
+COPY ["Common.IntegrationEvents/Common.IntegrationEvents.csproj", "Common.IntegrationEvents/"]
 COPY ["Films.Domain/Films.Domain.csproj", "Films.Domain/"]
-COPY ["Overoom.IntegrationEvents/Overoom.IntegrationEvents.csproj", "Overoom.IntegrationEvents/"]
 COPY ["Films.Infrastructure.Storage/Films.Infrastructure.Storage.csproj", "Films.Infrastructure.Storage/"]
 COPY ["Films.Infrastructure.Bus/Films.Infrastructure.Bus.csproj", "Films.Infrastructure.Bus/"]
 COPY ["Films.Infrastructure.Web/Films.Infrastructure.Web.csproj", "Films.Infrastructure.Web/"]

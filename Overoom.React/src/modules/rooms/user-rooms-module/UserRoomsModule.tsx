@@ -7,12 +7,13 @@ import FilmsSlider from '../../../components/films/films-slider/FilmsSlider.tsx'
 import { usePaginatedFetch } from '../../../hooks/paginated-fetch-hook/usePaginatedFetch.ts';
 import { RoomShortResponse } from '../../../services/rooms/responses/room-short.response.ts';
 import { RoomsApi } from '../../../services/rooms/rooms.api.ts';
+import NoData from '../../../ui/no-data/NoData.tsx';
 
 /**
  * Компонент для отображения пользовательских комнат в виде слайдера
- * @returns {ReactElement | null} JSX элемент слайдера комнат пользователя
+ * @returns {ReactElement} JSX элемент слайдера комнат пользователя
  */
-const UserRoomsModule = (): ReactElement | null => {
+const UserRoomsModule = (): ReactElement => {
   /** Сервис для работы с API комнат */
   const roomsApi = useInjection<RoomsApi>('RoomsApi');
 
@@ -48,8 +49,8 @@ const UserRoomsModule = (): ReactElement | null => {
   // Показ скелетона, если данные ещё загружаются
   if (isLoading) return <FilmsSliderSkeleton />;
 
-  // Возвращаем null, если комнаты не найдены
-  if (rooms.length === 0) return null;
+  // Показ сообщения "Нет данных", если комнаты не найдены
+  if (rooms.length === 0) return <NoData text="Комнаты не найдены" />;
 
   return <FilmsSlider films={rooms} onSelect={onSelect} />;
 };

@@ -5,6 +5,7 @@ using Uploader.Infrastructure.Web.Queue.Validators;
 using Uploader.Start.Exceptions;
 using Uploader.Start.Extensions;
 using Common.DI.Extensions;
+using Common.DI.Middlewares;
 using Common.DI.WebApi.Extensions;
 using Hangfire;
 using Uploader.Application.Abstractions;
@@ -62,6 +63,9 @@ builder.Services.AddExceptionHandler<ExceptionHandler>();
 // Регистрация контроллеров с поддержкой сериализации JSON
 builder.Services.AddControllers();
 
+// Настраиваем OpenTelemetry
+builder.Services.AddOpenTelemetryServices(Constants.OpenTelemetry.ServiceName);
+
 // Создаем экземпляр приложения ASP.NET Core
 var app = builder.Build();
 
@@ -88,6 +92,9 @@ app.UseAuthorizedSwaggerUI();
 
 // Добавляем в приложение маршрутизацию запросов на контроллеры MVC
 app.MapControllers();
+
+// Эндпоинт для Prometheus
+app.MapPrometheusScrapingEndpointWithBasicAuth();
 
 // Запускаем приложение ASP.NET Core
 await app.RunAsync();

@@ -132,7 +132,7 @@ public static class OpenId
             options.Cookie.SameSite = SameSiteMode.None;
         });
 
-        // Настройка внешних куки (используются при логине через внешние провайдеры)
+        // Настройка внешних куки (используются при логине через внешних провайдеров)
         builder.Services.ConfigureExternalCookie(options => options.Cookie.IsEssential = true);
 
         // Куки для запоминания устройства при двухфакторной аутентификации (Remember this machine)

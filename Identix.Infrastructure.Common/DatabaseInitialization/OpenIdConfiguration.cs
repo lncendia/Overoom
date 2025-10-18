@@ -55,11 +55,14 @@ internal static class OpenIdConfiguration
             RedirectUris =
             {
                 new Uri("https://localhost:5173/signin-oidc"),
-                new Uri("https://localhost:5173/signin-silent-oidc")
+                new Uri("https://localhost:5173/signin-silent-oidc"),
+                new Uri("https://overoom.ru/signin-oidc"),
+                new Uri("https://overoom.ru/signin-silent-oidc")
             },
             PostLogoutRedirectUris =
             {
                 new Uri("https://localhost:5173/signout-oidc"),
+                new Uri("https://overoom.ru/signout-oidc")
             },
             Permissions =
             {
@@ -101,7 +104,7 @@ internal static class OpenIdConfiguration
             RedirectUris =
             {
                 new Uri("https://localhost:7131/swagger/oauth2-redirect.html"),
-                new Uri("https://localhost:7159/swagger/oauth2-redirect.html")
+                new Uri("https://films.overoom.ru/swagger/oauth2-redirect.html"),
             },
             Permissions =
             {

@@ -52,11 +52,16 @@ export interface RawSeason {
  * @returns {ReactElement} JSX элемент контейнера плеера
  */
 export default function Player({ id, file }: PlayerConfig): ReactElement {
-  /**
-   * Хук useEffect для инициализации плеера при изменении файлов или id
-   */
+  /** Хук useEffect для инициализации плеера при изменении файлов или id */
   useEffect(() => {
     CreatePlayer({ id, file });
+    // Очистка при размонтировании
+    return () => {
+      if (window.pljssglobal && window.pljssglobal.length > 0) {
+        // Удаление плеера из глобального массива
+        window.pljssglobal = window.pljssglobal.filter((player: any) => player.api('id') !== id);
+      }
+    };
   }, [file, id]);
 
   return <PlayerDiv id={id} />;

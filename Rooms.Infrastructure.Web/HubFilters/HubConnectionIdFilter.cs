@@ -28,7 +28,7 @@ public class HubConnectionIdFilter : IHubFilter
         using (context.CreateScope())
         {
             // Сохраняем идентификатор подключения SignalR в контексте области
-            context.Current.Add(Constants.CurrentConnectionIdKey, invocationContext.Context.ConnectionId);
+            context.Current.Add(Constants.ScopedDictionary.CurrentConnectionIdKey, invocationContext.Context.ConnectionId);
 
             // Выполняем следующий фильтр или метод хаба
             return await next(invocationContext);

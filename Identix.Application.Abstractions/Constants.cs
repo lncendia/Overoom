@@ -6,6 +6,17 @@ namespace Identix.Application.Abstractions;
 public static class Constants
 {
     /// <summary>
+    /// Константы для OpenTelemetry
+    /// </summary>
+    public static class OpenTelemetry
+    {
+        /// <summary>
+        /// Имя сервиса для трассировки
+        /// </summary>
+        public const string ServiceName = "identix";
+    }
+    
+    /// <summary>
     /// Константы для настройки Hangfire - системы фоновых заданий
     /// </summary>
     public static class Hangfire
