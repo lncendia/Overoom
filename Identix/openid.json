@@ -1,0 +1,162 @@
+{
+  "Applications": [
+    {
+      "ClientId": "overoom",
+      "ConsentType": "explicit",
+      "DisplayName": "Overoom",
+      "Permissions": [
+        "ept:authorization",
+        "ept:token",
+        "ept:end_session",
+        "ept:revocation",
+        "gt:authorization_code",
+        "gt:refresh_token",
+        "rst:code",
+        "scp:email",
+        "scp:profile",
+        "scp:roles",
+        "scp:films",
+        "scp:rooms",
+        "scp:uploader"
+      ],
+      "PostLogoutRedirectUris": [
+        "https://localhost:5173/signout-oidc"
+      ],
+      "RedirectUris": [
+        "https://localhost:5173/signin-oidc",
+        "https://localhost:5173/signin-silent-oidc"
+      ],
+      "Requirements": [
+        "ft:pkce"
+      ]
+    },
+    {
+      "ClientId": "swagger",
+      "ConsentType": "explicit",
+      "DisplayName": "SwaggerUI",
+      "Permissions": [
+        "ept:authorization",
+        "ept:token",
+        "ept:end_session",
+        "ept:revocation",
+        "gt:authorization_code",
+        "rst:code",
+        "scp:films",
+        "scp:uploader"
+      ],
+      "LogoKey": "client/thumbnail/swagger",
+      "RedirectUris": [
+        "https://localhost:7131/swagger/oauth2-redirect.html",
+        "https://localhost:7159/swagger/oauth2-redirect.html"
+      ],
+      "Requirements": [
+        "ft:pkce"
+      ]
+    }
+  ],
+  "Scopes": [
+    {
+      "Descriptions": {
+        "ru": "Доступ к идентификатору",
+        "en": "Access to the ID"
+      },
+      "DisplayNames": {
+        "ru": "Ваш идентификатор",
+        "en": "Your ID"
+      },
+      "Name": "openid",
+      "Emphasize": true,
+      "Required": true
+    },
+    {
+      "Descriptions": {
+        "ru": "Доступ к данным профиля",
+        "en": "Access to profile data"
+      },
+      "DisplayNames": {
+        "ru": "Профиль",
+        "en": "Profile"
+      },
+      "Name": "profile",
+      "Emphasize": true
+    },
+    {
+      "Descriptions": {
+        "ru": "Доступ к электронной почте",
+        "en": "Access to email"
+      },
+      "DisplayNames": {
+        "ru": "Электронная почта",
+        "en": "Email"
+      },
+      "Name": "email",
+      "Emphasize": true
+    },
+    {
+      "Descriptions": {
+        "ru": "Доступ к ролям",
+        "en": "Access to roles"
+      },
+      "DisplayNames": {
+        "ru": "Роли",
+        "en": "Roles"
+      },
+      "Name": "roles",
+      "Emphasize": true
+    },
+    {
+      "Descriptions": {
+        "ru": "Доступ к API фильмов",
+        "en": "Access to films API"
+      },
+      "DisplayNames": {
+        "ru": "Фильмы",
+        "en": "Films"
+      },
+      "Name": "films",
+      "Resources": [
+        "films"
+      ]
+    },
+    {
+      "Descriptions": {
+        "ru": "Доступ к API комнат",
+        "en": "Access to rooms API"
+      },
+      "DisplayNames": {
+        "ru": "Комнаты",
+        "en": "Rooms"
+      },
+      "Name": "rooms",
+      "Resources": [
+        "rooms"
+      ]
+    },
+    {
+      "Descriptions": {
+        "ru": "Доступ к API сервиса загрузки",
+        "en": "Access to uploader service API"
+      },
+      "DisplayNames": {
+        "ru": "Загрузчик",
+        "en": "Uploader"
+      },
+      "Name": "uploader",
+      "Resources": [
+        "uploader"
+      ]
+    },
+    {
+      "Descriptions": {
+        "ru": "Доступ к приложениям и ресурсам в оффлайн-режиме",
+        "en": "Access to your applications and resources when you are offline"
+      },
+      "DisplayNames": {
+        "ru": "Оффлайн доступ",
+        "en": "Offline Access"
+      },
+      "Name": "offline_access",
+      "Emphasize": true
+    }
+  ]
+}

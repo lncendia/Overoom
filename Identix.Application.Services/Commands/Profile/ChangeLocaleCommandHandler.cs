@@ -8,6 +8,7 @@ using Identix.Application.Abstractions.Commands.Profile;
 using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Exceptions;
 using Identix.Application.Abstractions.Extensions;
+using MassTransit.MongoDbIntegration;
 
 namespace Identix.Application.Services.Commands.Profile;
 
@@ -15,7 +16,12 @@ namespace Identix.Application.Services.Commands.Profile;
 /// Обработчик для смены локали у пользователя
 /// </summary>
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
-public class ChangeLocaleCommandHandler(UserManager<AppUser> userManager, IPublishEndpoint publishEndpoint)
+/// <param name="publishEndpoint">Сервис для публикации интеграционных событий.</param>
+/// <param name="dbContext">Контекст базы данных MongoDB</param>
+public class ChangeLocaleCommandHandler(
+    UserManager<AppUser> userManager,
+    IPublishEndpoint publishEndpoint,
+    MongoDbContext dbContext)
     : IRequestHandler<ChangeLocaleCommand>
 {
     /// <summary>
@@ -40,6 +46,9 @@ public class ChangeLocaleCommandHandler(UserManager<AppUser> userManager, IPubli
         // Создаем новый клайм
         var newClaim = new Claim(OpenIddictConstants.Claims.Locale, user.Locale.GetLocalizationString());
 
+        // Начинаем транзакцию в контексте базы данных MongoDB.
+        await dbContext.BeginTransaction(cancellationToken);
+
         // Если старый клайм существует
         if (oldClaim != null)
         {
@@ -61,5 +70,9 @@ public class ChangeLocaleCommandHandler(UserManager<AppUser> userManager, IPubli
             Email = user.Email!,
             Locale = user.Locale.ToString()
         }, cancellationToken);
+
+
+        // Фиксируем транзакцию в контексте базы данных MongoDB.
+        await dbContext.CommitTransaction(cancellationToken);
     }
 }

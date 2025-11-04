@@ -45,7 +45,7 @@ public class GetUserRoomsQueryHandler(MongoDbContext context)
                 FilmId = x.Film.Id,
                 Id = x.Room.Id,
                 ViewersCount = x.Room.Viewers.Count,
-                IsPrivate = !string.IsNullOrEmpty(x.Room.Code),
+                IsPrivate = !string.IsNullOrEmpty(x.Room.Code)
             })
             .ToListAsync(cancellationToken: cancellationToken);
     }

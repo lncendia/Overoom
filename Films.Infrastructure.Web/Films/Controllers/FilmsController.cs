@@ -104,7 +104,7 @@ public class FilmsController(ISender mediator, IMapper mapper) : ControllerBase
         {
             FilmId = filmId,
             UserId = User.GetId(),
-            Score = model.Score,
+            Score = model.Score
         };
         
         // Отправляем запрос через медиатор и возвращаем результат

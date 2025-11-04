@@ -33,7 +33,7 @@ public class GetUserHistoryQueryHandler(MongoDbContext context)
                 (note, films) => new
                 {
                     note.Date,
-                    Film = films.First(),
+                    Film = films.First()
                 }
             )
             .OrderByDescending(x => x.Date)

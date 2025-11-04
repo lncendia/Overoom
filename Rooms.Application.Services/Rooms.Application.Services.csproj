@@ -11,8 +11,4 @@
         <ProjectReference Include="..\Rooms.Infrastructure.Storage\Rooms.Infrastructure.Storage.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Hangfire.Core" Version="1.8.20" />
-    </ItemGroup>
-
 </Project>

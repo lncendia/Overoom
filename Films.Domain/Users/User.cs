@@ -113,7 +113,7 @@ public partial class User(Guid id) : AggregateRoot(id)
         // Добавляем новый фильм
         _watchlist.Add(new FilmNote
         {
-            FilmId = film.Id,
+            FilmId = film.Id
         });
     }
 
@@ -136,7 +136,7 @@ public partial class User(Guid id) : AggregateRoot(id)
         // Добавляем новый просмотр
         _history.Add(new FilmNote
         {
-            FilmId = film.Id,
+            FilmId = film.Id
         });
     }
 

@@ -13,7 +13,7 @@ scrape_configs:
       insecure_skip_verify: true
     basic_auth:
       username: 'prometheus'
-      password: 'password'
+      password: 'prometheus'
 
   - job_name: 'films'
     static_configs:

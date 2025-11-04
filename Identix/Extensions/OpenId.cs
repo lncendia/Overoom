@@ -10,6 +10,7 @@ using OpenIddict.Abstractions;
 using Identix.Application.Abstractions.Services;
 using Identix.Application.Services.Services;
 using Identix.Infrastructure.Web.Account.Services;
+using Microsoft.Extensions.Configuration;
 using Quartz;
 
 namespace Identix.Extensions;
@@ -31,6 +32,9 @@ public static class OpenId
 
         // Извлекаем имя базы данных из конфигурации
         var openIdDatabaseName = builder.Configuration.GetRequiredValue<string>("MongoDB:OpenIdDB");
+        
+        // Извлекаем флаг, разрешающий небезопасные соединения из конфигурации
+        var allowInsecureConnection = builder.Configuration.GetValue<bool>("Identity:InsecureConnection");
 
         // Загружаем сертификат для подписи и шифрования токенов
         var certificate = X509CertificateLoader.LoadPkcs12FromFile(
@@ -80,7 +84,7 @@ public static class OpenId
             .AddClient(options =>
             {
                 // Регистрируем внешние OAuth-провайдеры
-                options.AddExternalProviders(builder);
+                options.AddExternalProviders(builder, certificate);
             })
 
             // Настраиваем серверную часть
@@ -108,12 +112,17 @@ public static class OpenId
                     .DisableAccessTokenEncryption();
 
                 // Интеграция с ASP.NET Core
-                options.UseAspNetCore()
+                var aspBuilder = options.UseAspNetCore()
+                    .DisableTransportSecurityRequirement()
                     .EnableAuthorizationEndpointPassthrough()
                     .EnableTokenEndpointPassthrough()
                     .EnableEndSessionEndpointPassthrough()
                     .EnableUserInfoEndpointPassthrough()
-                    .EnableStatusCodePagesIntegration();
+                    .EnableStatusCodePagesIntegration()
+                    .DisableTransportSecurityRequirement();
+
+                if (allowInsecureConnection)
+                    aspBuilder.DisableTransportSecurityRequirement();
             })
             // Добавляем валидацию токенов для API защиты
             .AddValidation(options =>

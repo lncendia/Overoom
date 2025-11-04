@@ -29,8 +29,17 @@ public static class MassTransitServices
         // Получаем имя базы данных MongoDB для MassTransit Outbox из конфигурации
         var massTransitDatabaseName = builder.Configuration.GetRequiredValue<string>("MongoDB:MassTransitDB");
 
-        // Регистрируем сервис для получения имени текущего экземпляра приложения
-        builder.Services.AddSingleton<IInstanceName, EnvironmentInstanceName>();
+        // Если сервис в продакшене
+        if (builder.Environment.IsProduction())
+        {
+            // Регистрируем сервис для получения имени текущего экземпляра приложения
+            builder.Services.AddSingleton<IInstanceName, KubernetesInstanceName>();
+        }
+        else
+        {
+            // Регистрируем сервис для получения имени текущего экземпляра приложения
+            builder.Services.AddSingleton<IInstanceName, MachineInstanceName>();
+        }
 
         // Регистрируем сервис для отправки событий комнат через SignalR Hub
         builder.Services.AddScoped<IRoomEventSender, HubRoomEventSender>();

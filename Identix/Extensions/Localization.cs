@@ -29,7 +29,7 @@ public static class Localization
                 // английский
                 new CultureInfo(LocalizationExtensions.En),
                 // русский
-                new CultureInfo(LocalizationExtensions.Ru),
+                new CultureInfo(LocalizationExtensions.Ru)
             };
 
             // Задает культуру по умолчанию

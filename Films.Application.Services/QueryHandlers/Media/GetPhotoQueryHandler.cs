@@ -44,10 +44,6 @@ public class GetPhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<GetP
 
         // Разбиваем путь на части
         var parts = key.Split('/');
-        if (parts.Length != 3)
-            return false;
-
-        // Проверяем префикс пути
-        return (parts[0] == "film" || parts[0] == "playlist") && parts[1] == "poster";
+        return parts.Length == 3;
     }
 }

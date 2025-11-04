@@ -70,8 +70,8 @@ public class RequestTwoFactorCodeEmailCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
 
         // Настройка mock объекта UserManager для возвращения true при вызове IsEmailConfirmedAsync.
@@ -142,8 +142,8 @@ public class RequestTwoFactorCodeEmailCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
 
         // Настройка mock объекта UserManager для возврата false(почта не подтверждена) при вызове IsEmailConfirmedAsync.

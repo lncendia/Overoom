@@ -12,11 +12,4 @@
         <ProjectReference Include="..\Films.Infrastructure.Storage\Films.Infrastructure.Storage.csproj"/>
     </ItemGroup>
 
-    <!--  TODO: убрать потом  -->
-    <ItemGroup>
-        <Reference Include="MongoTracker">
-            <HintPath>..\..\MongoTracker\MongoTracker\bin\Release\netstandard2.1\MongoTracker.dll</HintPath>
-        </Reference>
-    </ItemGroup>
-
 </Project>

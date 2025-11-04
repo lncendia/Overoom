@@ -142,7 +142,7 @@ internal static class OpenIdMongoIndexCreator
                 new CreateIndexOptions<OpenIddictMongoDbToken>()
                 {
                     PartialFilterExpression =
-                        Builders<OpenIddictMongoDbToken>.Filter.Exists(token => token.AuthorizationId),
+                        Builders<OpenIddictMongoDbToken>.Filter.Exists(token => token.AuthorizationId)
                 }),
 
             // Составной индекс для оптимизации запросов по основным полям токенов

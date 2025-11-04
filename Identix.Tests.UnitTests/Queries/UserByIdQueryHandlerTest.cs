@@ -64,8 +64,8 @@ public class UserByIdQueryHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
-                
+                LastAuthTimeUtc = DateTime.UtcNow
+
             });
 
 

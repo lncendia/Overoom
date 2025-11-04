@@ -21,7 +21,19 @@ COPY ["Films.Infrastructure.Storage/Films.Infrastructure.Storage.csproj", "Films
 COPY ["Films.Infrastructure.Bus/Films.Infrastructure.Bus.csproj", "Films.Infrastructure.Bus/"]
 COPY ["Films.Infrastructure.Web/Films.Infrastructure.Web.csproj", "Films.Infrastructure.Web/"]
 RUN dotnet restore "Films.Start/Films.Start.csproj"
-COPY . .
+COPY ["Films.Start/.", "Films.Start/"]
+COPY ["Common.DI.WebApi/.", "Common.DI.WebApi/"]
+COPY ["Common.DI/.", "Common.DI/"]
+COPY ["Common.Application/.", "Common.Application/"]
+COPY ["Common.Domain/.", "Common.Domain/"]
+COPY ["Common.Infrastructure/.", "Common.Infrastructure/"]
+COPY ["Films.Application.Services/.", "Films.Application.Services/"]
+COPY ["Films.Application.Abstractions/.", "Films.Application.Abstractions/"]
+COPY ["Common.IntegrationEvents/.", "Common.IntegrationEvents/"]
+COPY ["Films.Domain/.", "Films.Domain/"]
+COPY ["Films.Infrastructure.Storage/.", "Films.Infrastructure.Storage/"]
+COPY ["Films.Infrastructure.Bus/.", "Films.Infrastructure.Bus/"]
+COPY ["Films.Infrastructure.Web/.", "Films.Infrastructure.Web/"]
 WORKDIR "/src/Films.Start"
 RUN dotnet build "./Films.Start.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

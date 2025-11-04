@@ -64,8 +64,8 @@ public class RecoverPasswordCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
 
         // Настройка mock объекта UserManager для возвращения успеха при вызове ResetPasswordAsync.
@@ -146,8 +146,8 @@ public class RecoverPasswordCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
         
         // Настройка mock объекта UserManager для возврата ошибки с кодом DuplicateEmail при вызове ResetPasswordAsync.
@@ -197,8 +197,8 @@ public class RecoverPasswordCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
         
         // Настройка mock объекта UserManager для неудачного результата при вызове ResetPasswordAsync.

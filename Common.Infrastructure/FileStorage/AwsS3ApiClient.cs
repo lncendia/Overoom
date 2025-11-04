@@ -56,7 +56,7 @@ public sealed class AwsS3ApiClient : IFileStorage
             InputStream = stream,
             ContentType = contentType,
             Key = key,
-            BucketName = bucket ?? _defaultBucket,
+            BucketName = bucket ?? _defaultBucket
         };
         await fileTransferUtility.UploadAsync(request, token);
     }
@@ -101,7 +101,7 @@ public sealed class AwsS3ApiClient : IFileStorage
         var request = new GetObjectRequest
         {
             BucketName = bucket ?? _defaultBucket,
-            Key = key,
+            Key = key
         };
 
         try

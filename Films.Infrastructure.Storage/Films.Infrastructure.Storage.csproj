@@ -12,14 +12,4 @@
       <ProjectReference Include="..\Films.Application.Abstractions\Films.Application.Abstractions.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="AWSSDK.S3" Version="4.0.1.7" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="MongoTracker">
-        <HintPath>..\..\MongoTracker\MongoTracker\bin\Release\netstandard2.1\MongoTracker.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
 </Project>

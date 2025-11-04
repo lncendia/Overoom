@@ -1,5 +1,4 @@
 using System;
-using AspNetCore.Identity.Mongo;
 using Common.DI.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,8 +20,8 @@ public static class AspIdentity
     /// <param name="builder">Построитель веб-приложения.</param>
     public static void AddAspIdentity(this IHostApplicationBuilder builder)
     {
-        // Извлекаем значение строки подключения из конфигурации.
-        var connectionString = builder.Configuration.GetRequiredValue<string>("MongoDB:IdentityDB");
+        // Извлекаем имя базы данных из конфигурации.
+        var database = builder.Configuration.GetRequiredValue<string>("MongoDB:IdentityDB");
 
         // Добавляет валидатор для пользователя.
         builder.Services.AddTransient<IUserValidator<AppUser>, CustomUserValidator>();
@@ -34,7 +33,7 @@ public static class AspIdentity
         builder.Services.AddScoped<SignInManager<AppUser>, OpenIdSignInManager<AppUser>>();
 
         // Добавляет и настраивает идентификационную систему для указанных пользователей и типов ролей.
-        builder.Services.AddIdentityMongoDbProvider<AppUser, AppRole, Guid>
+        builder.Services.AddIdentityMongoDbProviderWithOutbox<AppUser, AppRole, Guid>
             (
                 identityOptions =>
                 {
@@ -52,9 +51,8 @@ public static class AspIdentity
                 },
                 mongoOptions =>
                 {
-                    // Устанавливает строку подключения к MongoDB.
-                    // В данном случае используется локальная база данных с аутентификацией.
-                    mongoOptions.ConnectionString = connectionString;
+                    // Устанавливает имя базы в MongoDB.
+                    mongoOptions.DatabaseName = database;
                 }
             )
 

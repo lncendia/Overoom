@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Identix.Application.Abstractions.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using OpenIddict.Abstractions;
-using Identix.Application.Abstractions.Extensions;
-using static OpenIddict.Abstractions.OpenIddictConstants;
+using Identix.Infrastructure.Common.DatabaseInitialization.Converters;
+using Identix.Infrastructure.Common.DatabaseInitialization.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Identix.Infrastructure.Common.DatabaseInitialization;
 
@@ -15,314 +17,161 @@ namespace Identix.Infrastructure.Common.DatabaseInitialization;
 internal static class OpenIdConfiguration
 {
     /// <summary>
-    /// Настраивает начальные данные OpenIddict в базе данных.
-    /// Создает клиентские приложения и области видимости, если они отсутствуют.
+    /// Настройки десериализации JSON.
     /// </summary>
-    /// <param name="provider">Провайдер служб для получения менеджеров OpenIddict.</param>
+    private static readonly JsonSerializerOptions Options = new()
+    {
+        Converters = { new CultureInfoDictionaryConverter() }
+    };
+
+    /// <summary>
+    /// Настраивает начальные данные OpenIddict в базе данных.
+    /// </summary>
+    /// <param name="provider">Провайдер служб для получения менеджеров OpenIddict и сервиса логирования.</param>
     /// <returns>Задача, представляющая асинхронную операцию настройки.</returns>
     public static async Task ConfigureAsync(IServiceProvider provider)
     {
+        var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+        var logger = loggerFactory.CreateLogger("OpenIdConfiguration");
+
+        // Проверка существования конфигурационного файла
+        if (!File.Exists("openid.json"))
+        {
+            logger.LogWarning(
+                "OpenID configuration file 'openid.json' was not found. Falling back to default configuration");
+            return;
+        }
+
+        // Десериализация конфигурации из JSON файла
+        var json = await File.ReadAllTextAsync("openid.json");
+        var config = JsonSerializer.Deserialize<Models.OpenIdConfiguration>(json, Options);
+
+        if (config is null)
+        {
+            logger.LogWarning(
+                "Failed to deserialize OpenID configuration from 'openid.json'. File is empty or contains malformed JSON. Using default configuration");
+            return;
+        }
+
+        // Получение менеджеров приложений и областей видимости
         var applicationManager = provider.GetRequiredService<IOpenIddictApplicationManager>();
         var scopeManager = provider.GetRequiredService<IOpenIddictScopeManager>();
 
-        await SeedApplicationsAsync(applicationManager);
-        await SeedScopesAsync(scopeManager);
+        // Инициализация приложений и областей видимости
+        await SeedApplicationsAsync(applicationManager, config.Applications, logger);
+        await SeedScopesAsync(scopeManager, config.Scopes, logger);
     }
 
     /// <summary>
     /// Создает клиентские приложения, если они отсутствуют в базе данных.
     /// </summary>
     /// <param name="manager">Менеджер приложений OpenIddict.</param>
-    private static async Task SeedApplicationsAsync(IOpenIddictApplicationManager manager)
+    /// <param name="applications">Массив дескрипторов приложений для создания.</param>
+    /// <param name="logger">Логгер для записи информации о процессе создания.</param>
+    private static async Task SeedApplicationsAsync(IOpenIddictApplicationManager manager,
+        OpenIdApplication[] applications, ILogger logger)
     {
-        await CreateOveroomApplicationAsync(manager);
-        await CreateSwaggerApplicationAsync(manager);
+        foreach (var application in applications)
+            await CreateApplicationAsync(manager, application, logger);
     }
 
     /// <summary>
-    /// Создает SPA клиент Overoom с настройками для авторизации.
+    /// Создает клиентское приложение на основе дескриптора.
     /// </summary>
     /// <param name="manager">Менеджер приложений OpenIddict.</param>
-    private static async Task CreateOveroomApplicationAsync(IOpenIddictApplicationManager manager)
+    /// <param name="application">Дескриптор приложения для создания.</param>
+    /// <param name="logger">Логгер для записи информации о процессе создания.</param>
+    private static async Task CreateApplicationAsync(IOpenIddictApplicationManager manager,
+        OpenIdApplication application, ILogger logger)
     {
-        if (await manager.FindByClientIdAsync("overoom") is not null) return;
-
-        var overoom = new OpenIddictApplicationDescriptor
+        // Проверка существования приложения с таким ClientId
+        if (await manager.FindByClientIdAsync(application.ClientId) is not null)
         {
-            ClientId = "overoom",
-            DisplayName = "Overoom",
-            ConsentType = ConsentTypes.Explicit,
-            RedirectUris =
-            {
-                new Uri("https://localhost:5173/signin-oidc"),
-                new Uri("https://localhost:5173/signin-silent-oidc"),
-                new Uri("https://overoom.ru/signin-oidc"),
-                new Uri("https://overoom.ru/signin-silent-oidc")
-            },
-            PostLogoutRedirectUris =
-            {
-                new Uri("https://localhost:5173/signout-oidc"),
-                new Uri("https://overoom.ru/signout-oidc")
-            },
-            Permissions =
-            {
-                Permissions.Endpoints.Authorization,
-                Permissions.Endpoints.Token,
-                Permissions.Endpoints.EndSession,
-                Permissions.Endpoints.Revocation,
-                Permissions.GrantTypes.AuthorizationCode,
-                Permissions.GrantTypes.RefreshToken,
-                Permissions.ResponseTypes.Code,
-                Permissions.Scopes.Email,
-                Permissions.Scopes.Profile,
-                Permissions.Scopes.Roles,
-                Permissions.Prefixes.Scope + "films",
-                Permissions.Prefixes.Scope + "rooms",
-                Permissions.Prefixes.Scope + "uploader"
-            },
-            Requirements =
-            {
-                Requirements.Features.ProofKeyForCodeExchange
-            }
+            logger.LogInformation("OpenID client application '{ClientId}' already exists", application.ClientId);
+            return;
+        }
+
+        var descriptor = new OpenIddictApplicationDescriptor
+        {
+            ApplicationType = application.ApplicationType,
+            ClientId = application.ClientId,
+            ClientSecret = application.ClientSecret,
+            ClientType = application.ClientType,
+            ConsentType = application.ConsentType,
+            DisplayName = application.DisplayName,
         };
 
-        await manager.CreateAsync(overoom);
-    }
+        foreach (var displayName in application.DisplayNames)
+            descriptor.DisplayNames.Add(displayName.Key, displayName.Value);
 
-    /// <summary>
-    /// Создает клиент Swagger UI для тестирования API.
-    /// </summary>
-    /// <param name="manager">Менеджер приложений OpenIddict.</param>
-    private static async Task CreateSwaggerApplicationAsync(IOpenIddictApplicationManager manager)
-    {
-        if (await manager.FindByClientIdAsync("swagger") is not null) return;
+        foreach (var permission in application.Permissions)
+            descriptor.Permissions.Add(permission);
 
-        var swagger = new OpenIddictApplicationDescriptor
-        {
-            ClientId = "swagger",
-            DisplayName = "SwaggerUI",
-            RedirectUris =
-            {
-                new Uri("https://localhost:7131/swagger/oauth2-redirect.html"),
-                new Uri("https://films.overoom.ru/swagger/oauth2-redirect.html"),
-            },
-            Permissions =
-            {
-                Permissions.Endpoints.Authorization,
-                Permissions.Endpoints.Token,
-                Permissions.Endpoints.EndSession,
-                Permissions.Endpoints.Revocation,
-                Permissions.GrantTypes.AuthorizationCode,
-                Permissions.ResponseTypes.Code,
-                Permissions.Prefixes.Scope + "films",
-                Permissions.Prefixes.Scope + "uploader"
-            },
-            Requirements = { Requirements.Features.ProofKeyForCodeExchange }
-        };
+        foreach (var redirectUri in application.PostLogoutRedirectUris)
+            descriptor.PostLogoutRedirectUris.Add(redirectUri);
 
-        swagger.SetLogoUri("/img/swagger.png");
+        foreach (var redirectUri in application.RedirectUris)
+            descriptor.RedirectUris.Add(redirectUri);
 
-        await manager.CreateAsync(swagger);
+        foreach (var requirement in application.Requirements)
+            descriptor.Requirements.Add(requirement);
+
+        foreach (var setting in application.Settings)
+            descriptor.Settings.Add(setting.Key, setting.Value);
+
+        if (application.LogoKey != null)
+            descriptor.SetLogoKey(application.LogoKey);
+
+        // Создание нового приложения
+        await manager.CreateAsync(descriptor);
+        logger.LogInformation("OpenID client application '{ClientId}' created successfully", application.ClientId);
     }
 
     /// <summary>
     /// Создает области видимости (scopes) для приложения.
     /// </summary>
-    /// <param name="scopeManager">Менеджер областей видимости OpenIddict.</param>
-    private static async Task SeedScopesAsync(IOpenIddictScopeManager scopeManager)
+    /// <param name="manager">Менеджер областей видимости OpenIddict.</param>
+    /// <param name="scopes">Массив дескрипторов областей видимости для создания.</param>
+    /// <param name="logger">Логгер для записи информации о процессе создания.</param>
+    private static async Task SeedScopesAsync(IOpenIddictScopeManager manager, OpenIdScope[] scopes, ILogger logger)
     {
-        var scopes = GetScopeDefinitions();
-
         foreach (var scope in scopes)
-        {
-            if (await scopeManager.FindByNameAsync(scope.Name) is not null) continue;
-
-            await CreateScopeAsync(scopeManager, scope);
-        }
-    }
-
-    /// <summary>
-    /// Определяет набор областей видимости для приложения.
-    /// </summary>
-    /// <returns>Коллекция определений областей видимости.</returns>
-    private static IEnumerable<dynamic> GetScopeDefinitions()
-    {
-        return
-        [
-            // Кастомные области видимости для API
-            new
-            {
-                Name = "films",
-                DisplayNames = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Фильмы",
-                    [new CultureInfo("en")] = "Films"
-                },
-                Descriptions = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Доступ к API фильмов",
-                    [new CultureInfo("en")] = "Access to films API"
-                },
-                Emphasize = false,
-                Required = false,
-                Resources = new List<string> { "films" }
-            },
-            new
-            {
-                Name = "rooms",
-                DisplayNames = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Комнаты",
-                    [new CultureInfo("en")] = "Rooms"
-                },
-                Descriptions = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Доступ к API комнат",
-                    [new CultureInfo("en")] = "Access to rooms API"
-                },
-                Emphasize = false,
-                Required = false,
-                Resources = new List<string> { "rooms" }
-            },
-            new
-            {
-                Name = "uploader",
-                DisplayNames = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Загрузчик",
-                    [new CultureInfo("en")] = "Uploader"
-                },
-                Descriptions = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Доступ к API сервиса загрузки",
-                    [new CultureInfo("en")] = "Access to uploader service API"
-                },
-                Emphasize = false,
-                Required = false,
-                Resources = new List<string> { "uploader" }
-            },
-
-            // Стандартные области видимости OpenIddict
-            new
-            {
-                Name = Scopes.OpenId,
-                DisplayNames = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Ваш идентификатор",
-                    [new CultureInfo("en")] = "Your ID"
-                },
-                Descriptions = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Доступ к идентификатору",
-                    [new CultureInfo("en")] = "Access to the ID"
-                },
-                Emphasize = true,
-                Required = true,
-                Resources = new List<string>()
-            },
-            new
-            {
-                Name = Scopes.Profile,
-                DisplayNames = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Профиль",
-                    [new CultureInfo("en")] = "Profile"
-                },
-                Descriptions = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Доступ к данным профиля",
-                    [new CultureInfo("en")] = "Access to profile data"
-                },
-                Emphasize = true,
-                Required = false,
-                Resources = new List<string>()
-            },
-            new
-            {
-                Name = Scopes.Email,
-                DisplayNames = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Email",
-                    [new CultureInfo("en")] = "Email"
-                },
-                Descriptions = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Доступ к email",
-                    [new CultureInfo("en")] = "Access to email"
-                },
-                Emphasize = true,
-                Required = false,
-                Resources = new List<string>()
-            },
-            new
-            {
-                Name = Scopes.Roles,
-                DisplayNames = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Роли",
-                    [new CultureInfo("en")] = "Roles"
-                },
-                Descriptions = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Доступ к ролям",
-                    [new CultureInfo("en")] = "Access to roles"
-                },
-                Emphasize = true,
-                Required = false,
-                Resources = new List<string>()
-            },
-            new
-            {
-                Name = Scopes.OfflineAccess,
-                DisplayNames = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Оффлайн доступ",
-                    [new CultureInfo("en")] = "Offline Access"
-                },
-                Descriptions = new Dictionary<CultureInfo, string>
-                {
-                    [new CultureInfo("ru")] = "Доступ к приложениям и ресурсам в оффлайн-режиме",
-                    [new CultureInfo("en")] = "Access to your applications and resources when you are offline"
-                },
-                Emphasize = true,
-                Required = false,
-                Resources = new List<string>()
-            }
-        ];
+            await CreateScopeAsync(manager, scope, logger);
     }
 
     /// <summary>
     /// Создает область видимости на основе определения.
     /// </summary>
-    /// <param name="scopeManager">Менеджер областей видимости.</param>
-    /// <param name="scope">Определение области видимости.</param>
-    private static async Task CreateScopeAsync(IOpenIddictScopeManager scopeManager, dynamic scope)
+    /// <param name="manager">Менеджер областей видимости OpenIddict.</param>
+    /// <param name="scope">Определение области видимости для создания.</param>
+    /// <param name="logger">Логгер для записи информации о процессе создания.</param>
+    private static async Task CreateScopeAsync(IOpenIddictScopeManager manager, OpenIdScope scope, ILogger logger)
     {
-        var descriptor = new OpenIddictScopeDescriptor
+        // Проверка существования области видимости с таким именем
+        if (await manager.FindByNameAsync(scope.Name) is not null)
         {
-            Name = scope.Name
-        };
-
-        foreach (var resource in scope.Resources)
-        {
-            descriptor.Resources.Add(resource);
+            logger.LogInformation("OpenID scope '{Scope}' already exists", scope.Name);
+            return;
         }
 
-        // Добавление локализованных отображаемых имен
-        foreach (var dn in scope.DisplayNames)
-            descriptor.DisplayNames.Add(dn.Key, dn.Value);
+        var descriptor = new OpenIddictScopeDescriptor
+        {
+            Description = scope.Description,
+            DisplayName = scope.DisplayName,
+            Name = scope.Name,
+        };
 
-        // Добавление локализованных описаний
-        foreach (var desc in scope.Descriptions)
-            descriptor.Descriptions.Add(desc.Key, desc.Value);
+        foreach (var description in scope.Descriptions)
+            descriptor.Descriptions.Add(description.Key, description.Value);
 
-        // Настройка дополнительных свойств
-        if (scope.Emphasize)
-            descriptor.SetEmphasize(true);
+        foreach (var displayName in scope.DisplayNames)
+            descriptor.DisplayNames.Add(displayName.Key, displayName.Value);
 
-        if (scope.Required)
-            descriptor.SetRequired(true);
+        foreach (var resource in scope.Resources)
+            descriptor.Resources.Add(resource);
 
-        await scopeManager.CreateAsync(descriptor);
+        // Создание новой области видимости
+        await manager.CreateAsync(descriptor);
+        logger.LogInformation("OpenID scope '{Scope}' created successfully", scope.Name);
     }
 }

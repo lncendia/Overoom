@@ -9,7 +9,7 @@ namespace Identix.Application.Services.Queries;
 /// Обработчик запроса на получение фотографии пользователя из файлового хранилища
 /// </summary>
 /// <param name="fileStore">Сервис для работы с файловым хранилищем (например, S3)</param>
-public class UserPhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<UserPhotoQuery, FileResult>
+public class PhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<PhotoQuery, FileResult>
 {
     /// <summary>
     /// Обрабатывает запрос на получение фотографии пользователя
@@ -17,11 +17,11 @@ public class UserPhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<Use
     /// <param name="request">Запрос, содержащий ключ фотографии пользователя</param>
     /// <param name="cancellationToken">Токен отмены операции</param>
     /// <returns>Результат в виде файла (FileResult) с потоком данных фотографии</returns>
-    public async Task<FileResult> Handle(UserPhotoQuery request, CancellationToken cancellationToken)
+    public async Task<FileResult> Handle(PhotoQuery request, CancellationToken cancellationToken)
     {
         // Валидируем запрашиваемый ключ
         if (!IsValidUserPhotoKey(request.Key))
-            throw new ArgumentException($"Invalid user photo key format. Expected: {Constants.Storage.UserPhotoKeyFormat}");
+            throw new ArgumentException($"Invalid photo key format. Expected: {Constants.Storage.UserPhotoKeyFormat} or {Constants.Storage.ClientPhotoKeyFormat}");
 
         // Получаем объект из S3
         var (stream, contentType) = await fileStore.GetAsync(request.Key, token: cancellationToken);
@@ -41,9 +41,6 @@ public class UserPhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<Use
 
         // Разбиваем путь на части
         var parts = key.Split('/');
-        if (parts.Length != 3) return false;
-
-        // Проверяем префикс пути
-        return parts[0] == "user" && parts[1] == "thumbnail";
+        return parts.Length == 3;
     }
 }

@@ -29,7 +29,7 @@ public class PhotosController(ISender mediator) : ControllerBase
         try
         {
             // Отправляем запрос на получение фото через медиатор
-            var result = await mediator.Send(new UserPhotoQuery(key), cancellationToken);
+            var result = await mediator.Send(new PhotoQuery(key), cancellationToken);
 
             // Возвращаем файл как результат
             return File(result.Stream, result.ContentType, result.FileName);

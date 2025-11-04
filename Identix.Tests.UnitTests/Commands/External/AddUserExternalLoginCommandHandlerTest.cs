@@ -76,8 +76,8 @@ public class AddUserExternalLoginCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
-                
+                LastAuthTimeUtc = DateTime.UtcNow
+
             });
 
         // Настройка mock объекта UserManager для возвращения пустого списка внешних логинов при вызове GetLoginsAsync.
@@ -105,7 +105,7 @@ public class AddUserExternalLoginCommandHandlerTest
             UserId = Guid.NewGuid(),
 
             // Задаем информацию о внешней аутентификации.
-            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName"),
+            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName")
         };
 
         // Act
@@ -143,7 +143,7 @@ public class AddUserExternalLoginCommandHandlerTest
             UserId = Guid.NewGuid(),
 
             // Задаем информацию о внешней аутентификации.
-            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName"),
+            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName")
         };
 
         // Act & Assert
@@ -171,8 +171,8 @@ public class AddUserExternalLoginCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
-                
+                LastAuthTimeUtc = DateTime.UtcNow
+
             });
 
         // Настройка mock объекта UserManager для возврата списка уже существующих провайдеров.
@@ -194,7 +194,7 @@ public class AddUserExternalLoginCommandHandlerTest
             UserId = Guid.NewGuid(),
 
             // Задаем информацию о внешней аутентификации.
-            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName"),
+            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName")
         };
 
         // Act & Assert
@@ -220,8 +220,8 @@ public class AddUserExternalLoginCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
-                
+                LastAuthTimeUtc = DateTime.UtcNow
+
             });
 
         // Настройка mock объекта UserManager 
@@ -244,7 +244,7 @@ public class AddUserExternalLoginCommandHandlerTest
             UserId = Guid.NewGuid(),
 
             // Задаем информацию о внешней аутентификации.
-            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName"),
+            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName")
         };
 
         // Act & Assert

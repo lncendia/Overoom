@@ -80,7 +80,7 @@ public class ViewerUpdatedEventHandler(IPublishEndpoint publish, IScopedContext 
                         return new ViewerTagDto
                         {
                             Name = t,
-                            Description = description,
+                            Description = description
                         };
                     }).ToArray();
                     updatedFields.Add(propertyToLower);

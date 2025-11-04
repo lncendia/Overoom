@@ -11,10 +11,4 @@
       <ProjectReference Include="..\Rooms.Application.Abstractions\Rooms.Application.Abstractions.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="MongoTracker">
-        <HintPath>..\..\MongoTracker\MongoTracker\bin\Release\netstandard2.1\MongoTracker.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
 </Project>

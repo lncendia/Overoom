@@ -65,7 +65,7 @@ public class AuthenticateTwoFactorCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Настройка mock объекта UserManager для возвращения true при вызове VerifyTwoFactorTokenAsync.
@@ -122,7 +122,7 @@ public class AuthenticateTwoFactorCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Настройка mock объекта UserManager для успешного результата выполнения RedeemTwoFactorRecoveryCodeAsync.
@@ -214,7 +214,7 @@ public class AuthenticateTwoFactorCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Создаем команду для прохождения пользователем 2FA.
@@ -255,7 +255,7 @@ public class AuthenticateTwoFactorCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Настройка mock объекта UserManager для возвращения false пользователя при вызове VerifyTwoFactorTokenAsync.
@@ -306,7 +306,7 @@ public class AuthenticateTwoFactorCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Настройка mock объекта UserManager для возвращения неудачного результата выполнения RedeemTwoFactorRecoveryCodeAsync.

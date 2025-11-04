@@ -6,7 +6,7 @@ namespace Identix.Application.Abstractions.Queries;
 /// Команда для получения фото пользователя
 /// </summary>
 /// <param name="Key">Ключ фото</param>
-public record UserPhotoQuery(string Key) : IRequest<FileResult>;
+public record PhotoQuery(string Key) : IRequest<FileResult>;
 
 /// <summary>
 /// Результат получения файла из S3

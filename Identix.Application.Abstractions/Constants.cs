@@ -39,6 +39,12 @@ public static class Constants
         public const string UserPhotoKeyFormat = "user/thumbnail/{0}";
         
         /// <summary>
+        /// Формат ключа для хранения фото клиента OpenID
+        /// {0} заменяется на ID клиента
+        /// </summary>
+        public const string ClientPhotoKeyFormat = "client/thumbnail/{0}";
+        
+        /// <summary>
         /// MIME-тип для JPEG фото
         /// </summary>
         public const string JpegMimeType = "image/jpeg";

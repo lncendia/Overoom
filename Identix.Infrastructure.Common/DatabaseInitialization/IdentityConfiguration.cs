@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Identix.Application.Abstractions.Entities;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using MongoDB.Driver.Linq;
 
 namespace Identix.Infrastructure.Common.DatabaseInitialization;
 
@@ -15,16 +18,26 @@ internal static class IdentityConfiguration
     /// Инициализация начальных данных в базу данных.
     /// </summary>
     /// <param name="scopeServiceProvider">Провайдер служб для извлечения необходимых сервисов.</param>
-    public static async Task ConfigureAsync(IServiceProvider scopeServiceProvider)
+    /// <param name="configuration">Конфигурация приложения</param>
+    public static async Task ConfigureAsync(IServiceProvider scopeServiceProvider, IConfiguration configuration)
     {
-        // Получаем сервис UserManager<AppUser> для управления пользователями
+        // Получение необходимых сервисов из контейнера зависимостей
         var userManager = scopeServiceProvider.GetRequiredService<UserManager<AppUser>>();
-
-        // Получаем сервис RoleManager<AppRole> для управления ролями
         var roleManager = scopeServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+        var loggerFactory = scopeServiceProvider.GetRequiredService<ILoggerFactory>();
+        var logger = loggerFactory.CreateLogger("IdentityConfiguration");
 
-        // Определение константной переменной для email администратора
-        const string adminEmail = "admin@gmail.com";
+        // Получение учетных данных администратора из конфигурации
+        var email = configuration.GetValue<string>("Identity:InitAdministratorEmail");
+        var password = configuration.GetValue<string>("Identity:InitAdministratorPassword");
+
+        // Проверка конфигурации email администратора
+        if (email == null)
+            logger.LogWarning("Initial administrator email is not configured");
+
+        // Проверка конфигурации пароля администратора
+        if (password == null)
+            logger.LogWarning("Initial administrator password is not configured");
 
         // Получаем текущую дату и время в UTC
         var now = DateTime.UtcNow;
@@ -32,49 +45,53 @@ internal static class IdentityConfiguration
         // Проверяем, существует ли роль "admin". Если нет, создаем новую роль.
         if (await roleManager.FindByNameAsync("admin") == null)
         {
-            // Создаем новую роль "admin"
             await roleManager.CreateAsync(new AppRole
             {
-                Id = Guid.NewGuid(), // Генерация уникального идентификатора
-                Name = "admin", // Название роли
-                Description = "Administrator" // Описание роли
-            });
-        }
-        
-        // Проверяем, существует ли роль "superadmin". Если нет, создаем новую роль.
-        if (await roleManager.FindByNameAsync("superadmin") == null)
-        {
-            // Создаем новую роль "superadmin"
-            await roleManager.CreateAsync(new AppRole
-            {
-                Id = Guid.NewGuid(), // Генерация уникального идентификатора
-                Name = "superadmin", // Название роли
-                Description = "Super administrator" // Описание роли
+                Id = Guid.NewGuid(),
+                Name = "admin",
+                Description = "Administrator"
             });
         }
 
-        // Проверяем, существует ли пользователь с email администратора
-        if (await userManager.FindByEmailAsync(adminEmail) == null)
+        // Проверка наличия пользователей в системе
+        if (await userManager.Users.AnyAsync())
         {
-            // Создаем нового пользователя с ролью администратора
-            var admin = new AppUser
-            {
-                Id = Guid.NewGuid(), // Генерация уникального идентификатора
-                RegistrationTimeUtc = now, // Время регистрации
-                LastAuthTimeUtc = now, // Время последней авторизации
-                Email = adminEmail, // Email администратора
-                UserName = adminEmail.Split('@')[0], // Имя пользователя (часть email до @)
-                EmailConfirmed = true // Подтверждение email
-            };
+            logger.LogInformation("Users already exist in the system. Administrator initialization will be skipped");
+            return;
+        }
 
-            // Создаем пользователя с паролем
-            var result = await userManager.CreateAsync(admin, "LuX995_WFB");
+        // Если учетные данные администратора не настроены, прерываем выполнение
+        if (email == null || password == null)
+        {
+            logger.LogWarning("Administrator credentials are not fully configured. Administrator initialization will be skipped");
+            return;
+        }
 
-            // Если пользователь успешно создан
-            if (result.Succeeded)
+        // Создаем нового пользователя с ролью администратора
+        var admin = new AppUser
+        {
+            Id = Guid.NewGuid(),
+            RegistrationTimeUtc = now,
+            LastAuthTimeUtc = now,
+            Email = email,
+            UserName = email.Split('@')[0],
+            EmailConfirmed = true
+        };
+
+        // Создаем пользователя с паролем
+        var result = await userManager.CreateAsync(admin, password);
+
+        // Если пользователь успешно создан, добавляем его в роль "admin"
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(admin, "admin");
+            logger.LogInformation("Administrator user created successfully and assigned to admin role");
+        }
+        else
+        {
+            foreach (var error in result.Errors)
             {
-                // Добавляем пользователя в роль "superadmin"
-                await userManager.AddToRoleAsync(admin, "superadmin");
+                logger.LogWarning("Failed to create administrator user. {Description}", error.Description);
             }
         }
     }

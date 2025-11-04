@@ -12,6 +12,7 @@ using Identix.Application.Abstractions.Emails;
 using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Exceptions;
 using Identix.Application.Abstractions.Extensions;
+using MassTransit.MongoDbIntegration;
 
 namespace Identix.Application.Services.Commands.Create;
 
@@ -20,10 +21,13 @@ namespace Identix.Application.Services.Commands.Create;
 /// </summary>
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
 /// <param name="backgroundJobClient">Клиент для постановки фоновых задач.</param>
+/// <param name="publishEndpoint">Сервис для публикации интеграционных событий.</param>
+/// <param name="dbContext">Контекст базы данных MongoDB</param>
 public class CreateUserCommandHandler(
     UserManager<AppUser> userManager,
     IBackgroundJobClientV2 backgroundJobClient,
-    IPublishEndpoint publishEndpoint)
+    IPublishEndpoint publishEndpoint,
+    MongoDbContext dbContext)
     : IRequestHandler<CreateUserCommand, AppUser>
 {
     /// <summary>
@@ -53,12 +57,18 @@ public class CreateUserCommandHandler(
             LastAuthTimeUtc = DateTime.UtcNow
         };
 
+        // Начинаем транзакцию в контексте базы данных MongoDB.
+        await dbContext.BeginTransaction(cancellationToken);
+
         // Попытка создания пользователя с использованием UserManager.
         var result = await userManager.CreateAsync(user, request.Password);
 
         // Проверка успешности создания пользователя
         if (!result.Succeeded)
         {
+            // Отмена транзакции
+            await dbContext.AbortTransaction(cancellationToken);
+            
             // Если хоть одна ошибка DuplicateEmail, то вызываем исключение 
             if (result.Errors.Any(e => e.Code == "DuplicateEmail")) throw new EmailAlreadyTakenException();
 
@@ -75,19 +85,9 @@ public class CreateUserCommandHandler(
             throw new PasswordValidationException { ValidationErrors = passwordValidationErrors };
         }
 
-        // Генерация кода подтверждения и формирование URL для подтверждения электронной почты.
-        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-
         // Так же добавляем локализацию в утверждения пользователя
         await userManager.AddClaimAsync(user,
             new Claim(OpenIddictConstants.Claims.Locale, user.Locale.GetLocalizationString()));
-
-        // Генерация URL подтверждения почты
-        var url = GenerateMailUrl(request.ConfirmUrl, user.Id, code);
-
-        // Отправка электронного письма со ссылкой для подтверждения регистрации.
-        backgroundJobClient.Enqueue<IEmailService>(Constants.Hangfire.Queue,
-            service => service.SendAsync(new ConfirmRegistrationEmail { Recipient = request.Email, ConfirmLink = url }, CancellationToken.None));
 
         // Публикуем событие
         await publishEndpoint.Publish(new UserRegisteredIntegrationEvent
@@ -99,6 +99,20 @@ public class CreateUserCommandHandler(
             RegistrationTimeUtc = user.RegistrationTimeUtc,
             Locale = user.Locale.ToString()
         }, cancellationToken);
+
+        // Фиксируем транзакцию в контексте базы данных MongoDB.
+        await dbContext.CommitTransaction(cancellationToken);
+        
+        // Генерация кода подтверждения и формирование URL для подтверждения электронной почты.
+        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+        
+        // Генерация URL подтверждения почты
+        var url = GenerateMailUrl(request.ConfirmUrl, user.Id, code);
+
+        // Отправка электронного письма со ссылкой для подтверждения регистрации.
+        backgroundJobClient.Enqueue<IEmailService>(Constants.Hangfire.Queue,
+            service => service.SendAsync(new ConfirmRegistrationEmail { Recipient = request.Email, ConfirmLink = url },
+                CancellationToken.None));
 
         // Возвращение созданного пользователя.
         return user;

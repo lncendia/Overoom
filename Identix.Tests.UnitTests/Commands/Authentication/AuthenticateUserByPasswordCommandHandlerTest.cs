@@ -64,7 +64,7 @@ public class AuthenticateUserByPasswordCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Настройка mock объекта UserManager для возвращения false при вызове IsLockedOutAsync.
@@ -159,7 +159,7 @@ public class AuthenticateUserByPasswordCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Настройка mock объекта UserManager для возвращения true при вызове IsLockedOutAsync.
@@ -206,7 +206,7 @@ public class AuthenticateUserByPasswordCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Настройка mock объекта UserManager для возвращения false при вызове IsLockedOutAsync.

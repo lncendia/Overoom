@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Configuration;
 using Identix.Application.Abstractions.Entities;
 
 namespace Identix.Infrastructure.Common.DatabaseInitialization;
@@ -19,37 +17,25 @@ internal static class IdentityMongoIndexCreator
     /// <param name="provider">Провайдер служб для извлечения необходимых сервисов.</param>
     public static async Task ConfigureAsync(IServiceProvider provider)
     {
-        // Получаем конфигурацию приложения
-        var configuration = provider.GetRequiredService<IConfiguration>();
+        // Получаем коллекцию пользователей.
+        var usersCollection = provider.GetRequiredService<IMongoCollection<AppUser>>();
 
-        // Получаем строку подключения к MongoDB
-        var connectionString = configuration.GetValue<string>("MongoDB:IdentityDB");
+        // Получаем коллекцию ролей.
+        var rolesCollection = provider.GetRequiredService<IMongoCollection<AppRole>>();
         
-        // Создаем объект для парсинга строки подключения
-        var cs = new ConnectionString(connectionString);
-
-        // Создаем клиент MongoDB
-        using var mongoClient = new MongoClient(connectionString);
-
-        // Получаем базу данных
-        var database = mongoClient.GetDatabase(cs.DatabaseName);
-
         // Создание индексов для коллекции Users
-        await CreateUserIndexesAsync(database);
+        await CreateUserIndexesAsync(usersCollection);
 
         // Создание индексов для коллекции Roles
-        await CreateRoleIndexesAsync(database);
+        await CreateRoleIndexesAsync(rolesCollection);
     }
 
     /// <summary>
     /// Создает индексы для коллекции Users.
     /// </summary>
-    /// <param name="database">База данных MongoDB.</param>
-    private static Task CreateUserIndexesAsync(IMongoDatabase database)
+    /// <param name="usersCollection">Коллекция пользователей.</param>
+    private static Task CreateUserIndexesAsync(IMongoCollection<AppUser> usersCollection)
     {
-        // Получаем коллекцию Users
-        var usersCollection = database.GetCollection<AppUser>("Users");
-
         // Определяем ключи индекса для поля NormalizedEmail
         var normalizedEmailIndexKeys = Builders<AppUser>.IndexKeys.Ascending(u => u.NormalizedEmail);
 
@@ -66,12 +52,9 @@ internal static class IdentityMongoIndexCreator
     /// <summary>
     /// Создает индексы для коллекции Roles.
     /// </summary>
-    /// <param name="database">База данных MongoDB.</param>
-    private static Task CreateRoleIndexesAsync(IMongoDatabase database)
+    /// <param name="rolesCollection">Коллекция ролей.</param>
+    private static Task CreateRoleIndexesAsync(IMongoCollection<AppRole> rolesCollection)
     {
-        // Получаем коллекцию Roles
-        var rolesCollection = database.GetCollection<AppRole>("Roles");
-
         // Определяем ключи индекса для поля NormalizedName
         var normalizedNameIndexKeys = Builders<AppRole>.IndexKeys.Ascending(r => r.NormalizedName);
 

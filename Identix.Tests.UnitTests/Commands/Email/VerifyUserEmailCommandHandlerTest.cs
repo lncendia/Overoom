@@ -64,8 +64,8 @@ public class VerifyUserEmailCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
 
         // Настройка mock объекта UserManager для успешного подтверждения почты при вызове ConfirmEmailAsync.
@@ -150,8 +150,8 @@ public class VerifyUserEmailCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
 
         // Настройка mock объекта UserManager для неудачного результата при вызове ConfirmEmailAsync.

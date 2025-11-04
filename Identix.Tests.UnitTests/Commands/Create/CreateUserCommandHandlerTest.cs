@@ -9,6 +9,7 @@ using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Enums;
 using Identix.Application.Abstractions.Exceptions;
 using Identix.Application.Services.Commands.Create;
+using MassTransit.MongoDbIntegration;
 
 namespace Identix.Tests.UnitTests.Commands.Create;
 
@@ -50,9 +51,10 @@ public class CreateUserCommandHandlerTests
             new Mock<ILogger<UserManager<AppUser>>>().Object);
 
         var publishEndpointMock = new Mock<IPublishEndpoint>();
+        var mongoDbContextMock = new Mock<MongoDbContext>();
         
         // Инициализация обработчика.
-        _handler = new CreateUserCommandHandler(_userManagerMock.Object, _backgroundJobServiceMock.Object, publishEndpointMock.Object);
+        _handler = new CreateUserCommandHandler(_userManagerMock.Object, _backgroundJobServiceMock.Object, publishEndpointMock.Object, mongoDbContextMock.Object);
     }
     
     /// <summary>

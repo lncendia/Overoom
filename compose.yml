@@ -16,7 +16,8 @@
     ports:
       - "443:443"  # Порты для проброса
     volumes:
-      - "./ssl:/https:ro"  # Монтирование тома для HTTPS
+      - "./configurations/identix/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
+      - "./configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
       - "~/.nuget/packages:/home/app/.nuget/packages"  # Монтирование тома для NuGet пакетов
       - "./Identix:/app:rw"  # Монтирование тома для приложения
       - "./:/src:rw"  # Монтирование тома для исходного кода
@@ -44,7 +45,8 @@
     ports:
       - "7131:443"  # Порты для проброса
     volumes:
-      - "./ssl:/https:ro"  # Монтирование тома для HTTPS
+      - "./configurations/films/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
+      - "./configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
       - "~/.nuget/packages:/home/app/.nuget/packages"  # Монтирование тома для NuGet пакетов
       - "./Films.Start:/app:rw"  # Монтирование тома для приложения
       - "./:/src:rw"  # Монтирование тома для исходного кода
@@ -72,7 +74,8 @@
     ports:
       - "7291:443"  # Порты для проброса
     volumes:
-      - "./ssl:/https:ro"  # Монтирование тома для HTTPS
+      - "./configurations/rooms/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
+      - "./configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
       - "~/.nuget/packages:/home/app/.nuget/packages"  # Монтирование тома для NuGet пакетов
       - "./Rooms.Start:/app:rw"  # Монтирование тома для приложения
       - "./:/src:rw"  # Монтирование тома для исходного кода
@@ -84,7 +87,7 @@
         condition: service_healthy  # Зависимость от MongoDB
   
   mongo:
-    image: mongo:latest # Образ Mongo
+    image: mongo:8.0.15 # Образ Mongo
     container_name: overoom.mongo # Название контейнера
     ports:
       - '27017:27017' # Выделяем порт
@@ -93,14 +96,14 @@
       - './containers/mongo/:/data/db' # Монтирование тома для хранения данных MongoDB
     command: [ "--replSet", "rs0", "--bind_ip_all" ] # Команда для запуска MongoDB с настройками репликации
     healthcheck:
-      test: [ "CMD-SHELL", "/mongo/config/healthcheck.sh" ]  # Проверяем состояние контейнера
+      test: [ "CMD-SHELL", "/mongo/config/healthcheck.sh" ]  # Проверка состояния
       interval: 5s # Интервал между проверками
       timeout: 30s # Максимальное время ожидания ответа от проверки
       start_period: 0s # Задержка перед началом первой проверки
       retries: 30 # Количество попыток проверки перед тем, как контейнер будет объявлен нездоровым
 
   mongo-express:
-    image: mongo-express:latest  # Используем последний образ Mongo Express
+    image: mongo-express:1.0.2-20-alpine3.19  # Используем последний образ Mongo Express
     container_name: overoom.mongo-express  # Имя контейнера
     ports:
       - "8081:8081"  # Пробрасываем порт 8081 Mongo Express
@@ -112,7 +115,7 @@
         condition: service_healthy  # Запускать Mongo Express только после успешной проверки здоровья MongoDB
   
   rabbitmq:
-    image: rabbitmq:3.12.10-management  # Образ RabbitMQ
+    image: rabbitmq:4.1.4-management  # Образ RabbitMQ
     container_name: overoom.rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=rmuser  # Пользователь RabbitMQ
@@ -127,7 +130,7 @@
       retries: 5  # Количество попыток
   
   minio:
-    image: quay.io/minio/minio:RELEASE.2025-05-24T17-08-30Z  # Официальный образ MinIO
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z  # Официальный образ MinIO
     container_name: overoom.minio
     command: server /data --console-address ":9001"  # Запуск сервера с веб-консолью
     environment:
@@ -140,37 +143,23 @@
       - "9000:9000"  # API порт (для клиентов)
       - "9001:9001"  # Консоль управления (Web UI)
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]  # Проверка живучести
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]  # Проверка состояния
       interval: 30s  # Проверка каждые 30 секунд
       timeout: 20s  # Максимальное время ожидания
       retries: 3  # Количество попыток
   
   prometheus:
-    image: prom/prometheus # Образ Prometheus
+    image: prom/prometheus:v3.7.1 # Образ Prometheus
     container_name: prometheus # Имя контейнера
     command:
       - '--config.file=/etc/prometheus/prometheus.yml' # Указываем файл конфигурации
       - '--web.config.file=/etc/prometheus/web.yml' # Указываем файл конфигурации
-    restart: unless-stopped  # Перезапуск контейнера, если он остановится
-    environment:
-      - PROMETHEUS_USER=${PROMETHEUS_USER}
-      - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD}
     volumes:
       - "./configurations/prometheus/:/etc/prometheus" # Монтирование конфигурационных файлов
     ports:
       - "9090:9090"
     healthcheck:
-      test: [ "CMD-SHELL", "/etc/prometheus/healthcheck.sh" ]  # Проверяем статус Prometheus через встроенную команду
+      test: [ "CMD-SHELL", "/etc/prometheus/healthcheck.sh" ]  # Проверка состояния
       interval: 5s  # Интервал между проверками
       timeout: 5s  # Максимальное время ожидания ответа
       retries: 5  # Количество повторных попыток
-
-  films.postgres:
-    image: postgres:16-alpine
-    environment:
-      - POSTGRES_USER=pguser
-      - POSTGRES_PASSWORD=pgpassword
-    ports:
-      - 5433:5432
-    volumes:
-      - ./containers/films:/var/lib/postgresql/data

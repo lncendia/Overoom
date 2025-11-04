@@ -66,7 +66,7 @@ public class SearchRoomsQueryHandler(MongoDbContext context)
                 // Информация о комнате
                 Id = x.Room.Id,
                 ViewersCount = x.Room.Viewers.Count,
-                IsPrivate = !string.IsNullOrEmpty(x.Room.Code),
+                IsPrivate = !string.IsNullOrEmpty(x.Room.Code)
             })
             .ToListAsync(cancellationToken: cancellationToken);
         

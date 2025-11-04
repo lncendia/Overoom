@@ -34,7 +34,7 @@ public class RoomHub(ISender mediator) : Hub
         {
             RoomId = roomId,
             Online = true,
-            ViewerId = userId,
+            ViewerId = userId
         });
 
         // Сохраняем идентификатор комнаты в контексте подключения
@@ -50,7 +50,7 @@ public class RoomHub(ISender mediator) : Hub
     }
 
     /// <summary>
-    /// 
+    /// Получить данные комнаты
     /// </summary>
     public async Task GetRoom()
     {
@@ -144,7 +144,7 @@ public class RoomHub(ISender mediator) : Hub
             Season = season,
             Episode = episode,
             ViewerId = userId,
-            RoomId = roomId,
+            RoomId = roomId
         });
     }
 
@@ -161,7 +161,7 @@ public class RoomHub(ISender mediator) : Hub
         await mediator.Send(new TypingCommand
         {
             ViewerId = userId,
-            RoomId = roomId,
+            RoomId = roomId
         });
     }
 
@@ -200,7 +200,7 @@ public class RoomHub(ISender mediator) : Hub
         {
             TimeLine = TimeSpan.FromTicks(ticks),
             ViewerId = userId,
-            RoomId = roomId,
+            RoomId = roomId
         });
     }
 
@@ -280,7 +280,7 @@ public class RoomHub(ISender mediator) : Hub
         {
             Fullscreen = fullScreen,
             ViewerId = userId,
-            RoomId = roomId,
+            RoomId = roomId
         });
     }
 
@@ -302,7 +302,7 @@ public class RoomHub(ISender mediator) : Hub
         {
             ViewerId = userId,
             RoomId = roomId,
-            TargetId = target,
+            TargetId = target
         });
     }
 
@@ -324,7 +324,7 @@ public class RoomHub(ISender mediator) : Hub
         {
             ViewerId = userId,
             RoomId = roomId,
-            TargetId = target,
+            TargetId = target
         });
     }
 
@@ -345,7 +345,7 @@ public class RoomHub(ISender mediator) : Hub
             {
                 Online = false,
                 RoomId = roomId,
-                ViewerId = userId,
+                ViewerId = userId
             });
         }
         catch (RoomNotFoundException)

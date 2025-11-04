@@ -1,5 +1,5 @@
 # Указываем node image для сборки
-FROM node:23-alpine AS overoom
+FROM node:25-alpine AS overoom
 
 # Указываем рабочую область
 WORKDIR /app
@@ -17,13 +17,16 @@ COPY . .
 RUN npm run build
 
 # Используем nginx для отдачи собранного приложения
-FROM nginx:alpine
+FROM nginx:1.29-alpine
 
 # Копируем собранный лендинг в папку для размещения в nginx
 COPY --from=overoom /app/dist /usr/share/nginx/html
 
 # Копируем файл robots.txt в контейнер
 COPY robots.txt /usr/share/nginx/html/.
+
+# Копируем кастомный nginx.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose порт 80
 EXPOSE 80

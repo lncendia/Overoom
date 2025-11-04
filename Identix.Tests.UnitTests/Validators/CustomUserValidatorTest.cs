@@ -48,8 +48,8 @@ public class CustomUserValidatorTest
             UserName = email.Split('@')[0],
             Email = email,
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         };
 
         // Настройка mock объекта UserManager для возвращения null при вызове FindByEmailAsync.
@@ -84,8 +84,8 @@ public class CustomUserValidatorTest
             UserName = email.Split('@')[0],
             Email = email,
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         };
 
         // Act
@@ -114,8 +114,8 @@ public class CustomUserValidatorTest
             UserName = "test_user",
             Email = email,
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         };
         
         // Act

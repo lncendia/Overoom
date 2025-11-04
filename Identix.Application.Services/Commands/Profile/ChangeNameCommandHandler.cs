@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Identix.Application.Abstractions.Commands.Profile;
 using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Exceptions;
+using MassTransit.MongoDbIntegration;
 
 namespace Identix.Application.Services.Commands.Profile;
 
@@ -12,7 +13,12 @@ namespace Identix.Application.Services.Commands.Profile;
 /// Обработчик для смены имени у пользователя
 /// </summary>
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
-public class ChangeNameCommandHandler(UserManager<AppUser> userManager, IPublishEndpoint publishEndpoint) : IRequestHandler<ChangeNameCommand, AppUser>
+/// <param name="publishEndpoint">Сервис для публикации интеграционных событий.</param>
+/// <param name="dbContext">Контекст базы данных MongoDB</param>
+public class ChangeNameCommandHandler(
+    UserManager<AppUser> userManager,
+    IPublishEndpoint publishEndpoint,
+    MongoDbContext dbContext) : IRequestHandler<ChangeNameCommand, AppUser>
 {
     /// <summary>
     /// Метод обработки команды изменения имени пользователя.
@@ -30,6 +36,9 @@ public class ChangeNameCommandHandler(UserManager<AppUser> userManager, IPublish
         // Вызываем исключение UserNotFoundException если не найден пользователь
         if (user == null) throw new UserNotFoundException();
 
+        // Начинаем транзакцию в контексте базы данных MongoDB.
+        await dbContext.BeginTransaction(cancellationToken);
+        
         // Попытка изменения электронной имени пользователя.
         var result = await userManager.SetUserNameAsync(user, request.Name);
 
@@ -37,9 +46,13 @@ public class ChangeNameCommandHandler(UserManager<AppUser> userManager, IPublish
         if (!result.Succeeded)
         {
             // Если хоть одна ошибка InvalidUserNameLength, то вызываем исключение 
-            if (result.Errors.Any(error => error.Code == "InvalidUserNameLength")) throw new UserNameLengthException();
+            if (result.Errors.Any(error => error.Code == "InvalidUserNameLength"))
+            {
+                await dbContext.AbortTransaction(cancellationToken);
+                throw new UserNameLengthException();
+            }
         }
-        
+
         // Публикуем событие
         await publishEndpoint.Publish(new UserInfoChangedIntegrationEvent
         {
@@ -49,6 +62,9 @@ public class ChangeNameCommandHandler(UserManager<AppUser> userManager, IPublish
             Email = user.Email!,
             Locale = user.Locale.ToString()
         }, cancellationToken);
+        
+        // Фиксируем транзакцию в контексте базы данных MongoDB.
+        await dbContext.CommitTransaction(cancellationToken);
 
         // Возвращаем пользователя 
         return user;

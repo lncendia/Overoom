@@ -90,7 +90,7 @@ await using var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     // Инициализация начальных данных в базу данных
-    await DatabaseInitializer.InitAsync(scope.ServiceProvider);
+    await DatabaseInitializer.InitAsync(scope.ServiceProvider, builder.Configuration);
 }
 
 // Добавляет RequestLocalizationMiddleware для автоматической установки сведений о культуре
