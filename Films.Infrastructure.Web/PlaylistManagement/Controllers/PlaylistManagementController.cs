@@ -2,6 +2,7 @@ using AutoMapper;
 using Films.Application.Abstractions.Commands.Playlists;
 using Films.Infrastructure.Web.PlaylistManagement.InputModels;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Films.Infrastructure.Web.PlaylistManagement.Controllers;
@@ -12,7 +13,7 @@ namespace Films.Infrastructure.Web.PlaylistManagement.Controllers;
 /// <param name="mediator">Mediator для обработки CQRS команд</param>
 /// <param name="mapper">AutoMapper для преобразования объектов</param>
 [ApiController]
-// [Authorize(Policy = "admin")]
+[Authorize(Policy = "admin")]
 [Route("api/admin/playlists")]
 public class PlaylistManagementController(ISender mediator, IMapper mapper) : ControllerBase
 {

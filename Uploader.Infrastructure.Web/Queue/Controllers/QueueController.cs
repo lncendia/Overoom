@@ -13,6 +13,7 @@ namespace Uploader.Infrastructure.Web.Queue.Controllers;
 /// <param name="mediator">Mediator для обработки CQRS запросов</param>
 /// <param name="mapper">AutoMapper для преобразования объектов</param>
 [ApiController]
+[Authorize(Policy = "admin")]
 [Route("api/queue")]
 public class QueueController(ISender mediator, IMapper mapper) : ControllerBase
 {
