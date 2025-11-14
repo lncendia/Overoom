@@ -1,5 +1,4 @@
-﻿using Hangfire;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -7,6 +6,7 @@ using Identix.Application.Abstractions.Commands.Password;
 using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Exceptions;
 using Identix.Application.Services.Commands.Password;
+using MassTransit;
 
 namespace Identix.Tests.UnitTests.Commands.Password;
 
@@ -19,11 +19,6 @@ public class RequestRecoverPasswordCommandHandlerTest
     /// Поле Mock объекта UserManager.
     /// </summary>
     private readonly Mock<UserManager<AppUser>> _userManagerMock;
-
-    /// <summary>
-    /// Поле Mock объекта BackgroundJobClientV2.
-    /// </summary>
-    private readonly Mock<IBackgroundJobClientV2> _backgroundJobServiceMock = new();
 
     /// <summary>
     /// Поле обработчика.
@@ -48,7 +43,7 @@ public class RequestRecoverPasswordCommandHandlerTest
             new Mock<ILogger<UserManager<AppUser>>>().Object);
 
         // Инициализация обработчика.
-        _handler = new  RequestRecoverPasswordCommandHandler(_userManagerMock.Object, _backgroundJobServiceMock.Object);
+        _handler = new RequestRecoverPasswordCommandHandler(_userManagerMock.Object, new Mock<IPublishEndpoint>().Object);
     }
     
     /// <summary>
@@ -134,54 +129,6 @@ public class RequestRecoverPasswordCommandHandlerTest
         // Act & Assert
         // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
         await Assert.ThrowsAsync<UserNotFoundException>(
-            () => _handler.Handle(command, CancellationToken.None));
-    }
-    
-    /// <summary>
-    /// Проверка случая, когда почта не подтверждена у пользователя.
-    /// </summary>
-    [Fact]
-    public async Task Handle_WhenEmailNotConfirmed_ThrowsEmailNotConfirmedException()
-    {
-        // Arrange
-        // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
-        _userManagerMock
-                
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
-            
-            // Возвращаем тестового пользователя.  
-            .ReturnsAsync(() => new AppUser
-        {
-            UserName = "test",
-            Email = "test@example.com",
-            RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow
-
-        });
-
-        // Настройка mock объекта UserManager для возврата false(почта не подтверждена) при вызове IsEmailConfirmedAsync.
-        _userManagerMock
-                
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.IsEmailConfirmedAsync(It.IsAny<AppUser>()))
-            
-            // Возвращаем false -> почта не подтверждена.
-            .ReturnsAsync(() => false);
-        
-        // Создаем команду для запроса восстановления пароля.
-        var command = new RequestRecoverPasswordCommand
-        {
-            // Задаем электронную почту пользователя.
-            Email = "test@example.com",
-            
-            // Задаем url для сброса пароля.
-            ResetUrl = "test_url"
-        };
-        
-        // Act & Assert
-        // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailNotConfirmedException.
-        await Assert.ThrowsAsync<EmailNotConfirmedException>(
             () => _handler.Handle(command, CancellationToken.None));
     }
 }

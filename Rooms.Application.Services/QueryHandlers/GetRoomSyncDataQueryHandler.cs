@@ -1,8 +1,8 @@
 using MediatR;
 using Rooms.Application.Abstractions.DTOs;
-using Rooms.Application.Abstractions.Events.Player;
 using Rooms.Application.Abstractions.Exceptions;
 using Rooms.Application.Abstractions.Queries;
+using Rooms.Application.Abstractions.RoomEvents.Player;
 using Rooms.Domain.Repositories;
 
 namespace Rooms.Application.Services.QueryHandlers;

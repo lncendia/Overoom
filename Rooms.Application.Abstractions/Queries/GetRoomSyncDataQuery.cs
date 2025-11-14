@@ -1,6 +1,5 @@
 using MediatR;
 using Rooms.Application.Abstractions.DTOs;
-using Rooms.Application.Abstractions.Events.Player;
 
 namespace Rooms.Application.Abstractions.Queries;
 

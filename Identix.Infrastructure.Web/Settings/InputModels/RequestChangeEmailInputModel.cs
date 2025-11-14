@@ -17,4 +17,16 @@ public class RequestChangeEmailInputModel
     [Display(Name = "Email",
         ResourceType = typeof(Resources.Settings.InputModels.RequestChangeEmailInputModel))]
     public string? Email { get; init; }
+    
+    /// <summary>
+    /// Пароль
+    /// </summary>
+    [DataType(DataType.Password)]
+    [Display(Name = "Password", ResourceType = typeof(Resources.Settings.InputModels.RequestChangeEmailInputModel))]
+    public string? Password { get; init; }
+    
+    /// <summary>
+    /// URL для возврата.
+    /// </summary>
+    public string ReturnUrl { get; init; } = "/";
 }

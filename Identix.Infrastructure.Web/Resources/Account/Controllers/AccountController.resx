@@ -45,7 +45,10 @@
     <data name="UserLockout" xml:space="preserve">
         <value>You have been blocked due to a large number of failed login attempts. Try logging in later</value>
     </data>
-    <data name="EmailNotConfirmed" xml:space="preserve">
-        <value>To perform this action, confirm your email</value>
+    <data name="MailSent_ConfirmEmail" xml:space="preserve">
+        <value>We have sent an email to confirm your email address. Please check your mailbox and follow the instructions in the email.</value>
+    </data>
+    <data name="MailSent_ResetPassword" xml:space="preserve">
+        <value>We have sent an email to reset the password. Please check your mailbox and follow the instructions in the email to create a new password.</value>
     </data>
 </root>

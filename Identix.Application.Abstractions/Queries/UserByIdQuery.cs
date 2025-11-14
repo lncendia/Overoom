@@ -9,7 +9,7 @@ namespace Identix.Application.Abstractions.Queries;
 public class UserByIdQuery : IRequest<AppUser>
 {
     /// <summary>
-    /// Получает или задает идентификатор пользователя.
+    /// Идентификатор пользователя.
     /// </summary>
     public required Guid Id { get; init; }
 }

@@ -70,8 +70,7 @@ public class ChangeLocaleCommandHandler(
             Email = user.Email!,
             Locale = user.Locale.ToString()
         }, cancellationToken);
-
-
+        
         // Фиксируем транзакцию в контексте базы данных MongoDB.
         await dbContext.CommitTransaction(cancellationToken);
     }

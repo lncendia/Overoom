@@ -87,7 +87,7 @@ namespace Identix.Infrastructure.Web.Resources.Settings.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The request has been sent to your old email address.
+        ///   Looks up a localized string similar to The request has been sent to your email.
         /// </summary>
         internal static string EmailChangeRequested {
             get {
@@ -105,11 +105,11 @@ namespace Identix.Infrastructure.Web.Resources.Settings.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To perform this action, confirm your email.
+        ///   Looks up a localized string similar to The password is incorrect.
         /// </summary>
-        internal static string EmailNotConfirmed {
+        internal static string InvalidPassword {
             get {
-                return ResourceManager.GetString("EmailNotConfirmed", resourceCulture);
+                return ResourceManager.GetString("InvalidPassword", resourceCulture);
             }
         }
         
@@ -155,6 +155,15 @@ namespace Identix.Infrastructure.Web.Resources.Settings.Controllers {
         internal static string PasswordMismatch {
             get {
                 return ResourceManager.GetString("PasswordMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must specify the password to change email.
+        /// </summary>
+        internal static string PasswordNeeded {
+            get {
+                return ResourceManager.GetString("PasswordNeeded", resourceCulture);
             }
         }
         

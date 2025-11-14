@@ -5,7 +5,7 @@ namespace Identix.Application.Abstractions.Emails;
 /// <summary>
 /// Класс, представляющий данные для электронного письма с подтверждением сброса 2фа.
 /// </summary>
-public class TwoFactorCodeEmail : EmailData
+public class TwoFactorCodeEmail : EmailMessage
 {
     /// <summary>
     /// Код подтверждения 2фа.

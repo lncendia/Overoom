@@ -24,9 +24,6 @@
     <data name="Password" xml:space="preserve">
         <value>Password</value>
     </data>
-    <data name="Remember" xml:space="preserve">
-        <value>Remember</value>
-    </data>
     <data name="Required" xml:space="preserve">
         <value>The field cannot be empty</value>
     </data>

@@ -1,9 +1,19 @@
 @using Microsoft.AspNetCore.Mvc.Localization
+@model Identix.Infrastructure.Web.Account.ViewModels.MailSentViewModel
 @inject IViewLocalizer Localizer
 @{
     ViewData["Title"] = Localizer["MailSentTitle"];
 }
 
 <h5 class="card-title">@Localizer["MailSentTitle"]</h5>
+<img class="page-gif" src="~/gif/mail-sent.gif" alt="error"/>
+<p class="mt-4">@Model.Message</p>
 
-<div class="mt-5">@Localizer["MailSentBody"]</div>
+<div class="container-btn mt-4 mb-4">
+    <div class="wrap-btn on-hover">
+        <div class="bg-btn"></div>
+        <a class="m-btn" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
+            @Localizer["SignIn"]
+        </a>
+    </div>
+</div>

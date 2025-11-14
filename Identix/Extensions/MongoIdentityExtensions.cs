@@ -8,8 +8,6 @@ using MassTransit.MongoDbIntegration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
 namespace Identix.Extensions;

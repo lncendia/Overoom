@@ -38,16 +38,16 @@ public static class AspIdentity
                 identityOptions =>
                 {
                     // Разрешает применение механизма блокировки для новых пользователей.
-                    // Если true, новые пользователи могут быть заблокированы после превышения лимита неудачных попыток входа.
                     identityOptions.Lockout.AllowedForNewUsers = true;
 
                     // Задает временной интервал блокировки по умолчанию в 15 минут.
-                    // Пользователь будет заблокирован на этот период после превышения лимита неудачных попыток входа.
                     identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 
                     // Устанавливает максимальное количество неудачных попыток входа перед блокировкой.
-                    // После 10 неудачных попыток учетная запись пользователя будет заблокирована.
                     identityOptions.Lockout.MaxFailedAccessAttempts = 10;
+                    
+                    // Устанавливает необходимость подтвержденной электронной почты для входа.
+                    identityOptions.SignIn.RequireConfirmedEmail = true;
                 },
                 mongoOptions =>
                 {

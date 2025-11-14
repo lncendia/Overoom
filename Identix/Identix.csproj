@@ -16,6 +16,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Common.DI\Common.DI.csproj" />
+        <ProjectReference Include="..\Identix.Infrastructure.Bus\Identix.Infrastructure.Bus.csproj" />
         <ProjectReference Include="..\Identix.Infrastructure.Common\Identix.Infrastructure.Common.csproj" />
         <ProjectReference Include="..\Identix.Application.Services\Identix.Application.Services.csproj" />
         <ProjectReference Include="..\Identix.Infrastructure.Web\Identix.Infrastructure.Web.csproj" />
@@ -58,10 +59,6 @@
           <Generator>ResXFileCodeGenerator</Generator>
           <LastGenOutput>_ChangeEmail.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\Views\Account\MailSent.resx">
-          <Generator>ResXFileCodeGenerator</Generator>
-          <LastGenOutput>MailSent.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
         <EmbeddedResource Update="Resources\Views\Account\RecoverPassword.resx">
           <Generator>ResXFileCodeGenerator</Generator>
           <LastGenOutput>RecoverPassword.Designer.cs</LastGenOutput>
@@ -82,9 +79,9 @@
           <Generator>ResXFileCodeGenerator</Generator>
           <LastGenOutput>Index.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="Resources\Views\Registration\EmailConfirmed.resx">
+        <EmbeddedResource Update="Resources\Views\Registration\ConfirmEmail.resx">
           <Generator>ResXFileCodeGenerator</Generator>
-          <LastGenOutput>EmailConfirmed.Designer.cs</LastGenOutput>
+          <LastGenOutput>ConfirmEmail.Designer.cs</LastGenOutput>
         </EmbeddedResource>
         <EmbeddedResource Update="Resources\Views\TwoFactor\Setup.resx">
           <Generator>ResXFileCodeGenerator</Generator>
@@ -125,6 +122,10 @@
         <EmbeddedResource Update="Resources\Views\Settings\_ChangeName.resx">
           <Generator>ResXFileCodeGenerator</Generator>
           <LastGenOutput>_ChangeName.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Views\Account\MailSent.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>MailSent.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
 
@@ -169,11 +170,6 @@
           <AutoGen>True</AutoGen>
           <DependentUpon>_ChangeEmail.resx</DependentUpon>
         </Compile>
-        <Compile Update="Resources\Views\Account\MailSent.Designer.cs">
-          <DesignTime>True</DesignTime>
-          <AutoGen>True</AutoGen>
-          <DependentUpon>MailSent.resx</DependentUpon>
-        </Compile>
         <Compile Update="Resources\Views\Account\RecoverPassword.Designer.cs">
           <DesignTime>True</DesignTime>
           <AutoGen>True</AutoGen>
@@ -199,10 +195,10 @@
           <AutoGen>True</AutoGen>
           <DependentUpon>Index.resx</DependentUpon>
         </Compile>
-        <Compile Update="Resources\Views\Registration\EmailConfirmed.Designer.cs">
+        <Compile Update="Resources\Views\Registration\ConfirmEmail.Designer.cs">
           <DesignTime>True</DesignTime>
           <AutoGen>True</AutoGen>
-          <DependentUpon>EmailConfirmed.resx</DependentUpon>
+          <DependentUpon>ConfirmEmail.resx</DependentUpon>
         </Compile>
         <Compile Update="Resources\Views\Home\Index.Designer.cs">
           <DesignTime>True</DesignTime>
@@ -243,6 +239,11 @@
           <DesignTime>True</DesignTime>
           <AutoGen>True</AutoGen>
           <DependentUpon>_ChangeName.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Views\Account\MailSent.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>MailSent.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 

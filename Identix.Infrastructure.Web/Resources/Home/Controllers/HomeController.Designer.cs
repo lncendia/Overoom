@@ -141,15 +141,6 @@ namespace Identix.Infrastructure.Web.Resources.Home.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The old password is not specified.
-        /// </summary>
-        internal static string OldPasswordNeededException {
-            get {
-                return ResourceManager.GetString("OldPasswordNeededException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The action is not available out of context. Go back to the main app and try again..
         /// </summary>
         internal static string OpenIdContextException {

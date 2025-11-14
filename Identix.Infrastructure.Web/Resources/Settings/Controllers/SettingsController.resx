@@ -51,7 +51,7 @@
         <value>The old password is incorrect</value>
     </data>
     <data name="EmailChangeRequested" xml:space="preserve">
-        <value>The request has been sent to your old email address</value>
+        <value>The request has been sent to your email</value>
     </data>
     <data name="EmailChanged" xml:space="preserve">
         <value>The mail has been changed</value>
@@ -64,9 +64,6 @@
     </data>
     <data name="OldPasswordNeeded" xml:space="preserve">
         <value>You must specify the old password to change it</value>
-    </data>
-    <data name="EmailNotConfirmed" xml:space="preserve">
-        <value>To perform this action, confirm your email</value>
     </data>
     <data name="OldPasswordMatchNew" xml:space="preserve">
         <value>The new password cannot match the old one</value>
@@ -85,5 +82,11 @@
     </data>
     <data name="WrongFileSize" xml:space="preserve">
         <value>The file size cannot exceed 15 MB</value>
+    </data>
+    <data name="PasswordNeeded" xml:space="preserve">
+        <value>You must specify the password to change email</value>
+    </data>
+    <data name="InvalidPassword" xml:space="preserve">
+        <value>The password is incorrect</value>
     </data>
 </root>

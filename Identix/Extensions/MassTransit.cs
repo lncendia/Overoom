@@ -1,5 +1,10 @@
 using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Common.Application.EmailService;
 using Common.DI.Extensions;
+using Common.Infrastructure.JsonConverters;
+using Identix.Infrastructure.Bus;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +32,12 @@ public static class MassTransit
         // конфигурируем MassTransit
         builder.Services.AddMassTransit(busConfigurator =>
         {
+            // Обработчик события изменения настроек пользователя
+            busConfigurator.AddConsumer<SendEmailConsumer, SendEmailConsumerDefinition>();
+            
+            // Добавляем планировщик отложенных сообщений
+            busConfigurator.AddDelayedMessageScheduler();
+            
             // Настройка использования RabbitMQ в качестве транспорта для MassTransit.
             busConfigurator.UsingRabbitMq((context, cfg) =>
             {
@@ -35,6 +46,23 @@ public static class MassTransit
 
                 // Конфигурируем точки входа для обработки сообщений.
                 cfg.ConfigureEndpoints(context);
+                
+                // Использовать планировщик отложенных сообщений
+                cfg.UseDelayedMessageScheduler();
+                
+                // Настраиваем параметры сериализации JSON для MassTransit
+                cfg.ConfigureJsonSerializerOptions(opt =>
+                {
+                    // Используем camelCase для имен свойств
+                    opt.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
+                    // Всегда сериализуем все свойства
+                    opt.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+
+                    // Добавляем кастомный конвертер для полиморфной сериализации событий комнаты
+                    opt.Converters.Add(new TypeNameJsonConverter<EmailMessage>());
+                    return opt;
+                });
             });
             
             // Настройка MongoDB Outbox для обеспечения отказоустойчивости и согласованности при отправке событий.

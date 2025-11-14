@@ -2,22 +2,16 @@ import {InputWrapper} from "../helpers/input-wrapper";
 import {PasswordHide} from "../helpers/password-hide";
 import {PasswordStrengthValidator} from "../helpers/password-strength-validator";
 
-/**
- * Класс функционала страницы установки нового пароля
- */
+/** Класс функционала страницы установки пароля */
 export class NewPassword {
 
-    /**
-     * Валидатор надежности пароля на странице
-     */
+    /** Валидатор надежности пароля на странице */
     validator: PasswordStrengthValidator = new PasswordStrengthValidator(
         document.querySelector('#strength-valid') as HTMLDivElement,
         document.querySelector('#new-pass') as HTMLFormElement
     )
 
-    /**
-     * Метод запускает функционал страницы установки нового пароля
-     */
+    /** Метод запускает функционал страницы установки нового пароля */
     startNewPassword() {
 
         // получаем все поля ввода с классом .wrap-input input

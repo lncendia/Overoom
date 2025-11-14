@@ -78,11 +78,11 @@ namespace Identix.Resources.Views.Home {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Return.
+        ///   Looks up a localized string similar to Back to Home.
         /// </summary>
-        internal static string Return {
+        internal static string ToHome {
             get {
-                return ResourceManager.GetString("Return", resourceCulture);
+                return ResourceManager.GetString("ToHome", resourceCulture);
             }
         }
     }

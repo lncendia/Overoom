@@ -1,5 +1,3 @@
-
-
 using Identix.Infrastructure.Web.Settings.InputModels;
 
 namespace Identix.Infrastructure.Web.Settings.ViewModels;

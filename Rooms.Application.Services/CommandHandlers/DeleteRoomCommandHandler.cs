@@ -25,6 +25,8 @@ public class DeleteRoomCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
         // Проверяем существование комнаты
         if (room == null) throw new RoomNotFoundException(request.RoomId);
 
+        // todo: поиграться с аутбоксом
+        
         // Удаляем комнату из репозитория
         await unitOfWork.RoomRepository.Value.DeleteAsync(room.Id, cancellationToken);
 

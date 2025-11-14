@@ -60,20 +60,20 @@ namespace Identix.Resources.Views.Account {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log Out.
+        /// </summary>
+        internal static string LogoutButton {
+            get {
+                return ResourceManager.GetString("LogoutButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log out of the system.
         /// </summary>
         internal static string LogoutTitle {
             get {
                 return ResourceManager.GetString("LogoutTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exit.
-        /// </summary>
-        internal static string YesButton {
-            get {
-                return ResourceManager.GetString("YesButton", resourceCulture);
             }
         }
     }

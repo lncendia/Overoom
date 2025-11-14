@@ -4,14 +4,14 @@ using Common.Application.ScopedDictionary;
 using Common.DI.Extensions;
 using Common.DI.Middlewares;
 using Common.DI.WebApi.Extensions;
+using Common.Infrastructure.JsonConverters;
 using Common.Infrastructure.ScopedDictionary;
 using Microsoft.AspNetCore.SignalR;
 using Rooms.Application.Abstractions;
-using Rooms.Application.Abstractions.Events;
+using Rooms.Application.Abstractions.RoomEvents;
 using Rooms.Application.Services.CommandHandlers;
 using Rooms.Infrastructure.Storage.DatabaseInitialization;
 using Rooms.Infrastructure.Web.HubFilters;
-using Rooms.Infrastructure.Web.JsonConverters;
 using Rooms.Infrastructure.Web.Metrics;
 using Rooms.Infrastructure.Web.Rooms.Hubs;
 using Rooms.Start.Extensions;
@@ -38,9 +38,6 @@ builder.AddStorageServices();
 
 // Добавляем в приложение сервисы для работы с сообщениями MassTransit
 builder.AddMassTransitServices();
-
-// Добавляем сервисы Hangfire
-builder.AddHangfireServices(Constants.Hangfire.Queue);
 
 // Добавляем в приложение сервисы для работы с медиатором
 builder.Services.AddMediatorServices(typeof(CreateRoomCommandHandler));

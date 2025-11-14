@@ -1,14 +1,16 @@
-using Uploader.Application.Services.Commands;
 using Uploader.Infrastructure.Web.Queue.Controllers;
-using Uploader.Infrastructure.Web.Queue.Mappers;
 using Uploader.Infrastructure.Web.Queue.Validators;
 using Uploader.Start.Exceptions;
 using Uploader.Start.Extensions;
 using Common.DI.Extensions;
 using Common.DI.Middlewares;
 using Common.DI.WebApi.Extensions;
-using Hangfire;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using Uploader.Application.Abstractions;
+
+BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,9 +35,6 @@ builder.AddMassTransitServices();
 // Добавляем сервисы CORS
 builder.AddCorsServices();
 
-// Добавляем сервисы Hangfire
-builder.AddHangfireServices(Constants.Hangfire.Queue);
-
 // Добавляет сервисы загрузки фильмов
 builder.AddFilmDownloadServices();
 
@@ -47,12 +46,6 @@ builder.Services.AddAuthorizationPolicies();
 
 // Добавляем в приложение сервисы для валидации моделей
 builder.Services.AddValidationServices(typeof(QueueValidator));
-
-// Добавляем в приложение сервисы для работы с медиатором
-builder.Services.AddMediatorServices(typeof(DownloadFilmCommandHandler));
-
-// Добавляем в приложение сервисы для работы с AutoMapper
-builder.Services.AddMappingServices(typeof(QueueMapperProfile));
 
 // Добавляет сервисы для использования формата сведений о проблеме
 builder.Services.AddProblemDetails();
@@ -80,9 +73,6 @@ app.UseAuthentication();
 
 // Добавляем в приложение middleware для авторизации
 app.UseAuthorization();
-
-// Добавляем dashboard Hangfire
-app.UseHangfireDashboard();
 
 // Использование Swagger для обслуживания документации по API
 app.UseSwagger();

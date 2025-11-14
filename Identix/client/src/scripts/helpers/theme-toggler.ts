@@ -1,21 +1,13 @@
-/**
- * Класс добавляет функциональность для смены темы
- */
+/** Класс добавляет функциональность для смены темы */
 export class ThemeToggler {
 
-    /**
-     * Переключатель на светлую тему
-     */
+    /** Переключатель на светлую тему */
     private light: HTMLElement
 
-    /**
-     * Переключатель на темную тему
-     */
+    /** Переключатель на темную тему */
     private dark: HTMLElement
 
-    /**
-     * Метод запускает функционал переключения темы
-     */
+    /** Метод запускает функционал переключения темы */
     startThemeToggler() {
         
         // Находим элемент с классом "theme-toggler" и сохраняем его в переменной toggler
@@ -31,23 +23,19 @@ export class ThemeToggler {
         toggler.addEventListener("click", () => this.toggleTheme());
     }
 
-    /**
-     * Метод переключает тему
-     */
+    /** Метод переключает тему */
     toggleTheme() {
         // Получаем текущую тему из локального хранилища и сохраняем в переменной theme
         let theme = window.localStorage.getItem("theme");
 
         // Проверяем, если текущая тема "light", вызываем метод setTheme с аргументом "dark"
-        if (theme === "light") this.setTheme("dark");
+        if (!theme || theme === "light") this.setTheme("dark");
 
         // Иначе, если текущая тема "dark", вызываем метод setTheme с аргументом "light"
         else this.setTheme("light");
     }
 
-    /**
-     * Метод устанавливает тему
-     */
+    /** Метод устанавливает тему */
     setTheme(theme: string) {
 
         // Устанавливаем атрибут "data-bs-theme" со значением темы на теге

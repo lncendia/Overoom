@@ -17,27 +17,6 @@ public static class Constants
     }
 
     /// <summary>
-    /// Константы для работы с заголовками сообщений
-    /// </summary>
-    public static class Headers
-    {
-        /// <summary>
-        /// Заголовок для указания имени экземпляра сервиса
-        /// </summary>
-        public const string InstanceName = "InstanceName";
-
-        /// <summary>
-        /// Заголовок для передачи идентификатора комнаты
-        /// </summary>
-        public const string RoomId = "RoomId";
-
-        /// <summary>
-        /// Заголовок для передачи идентификатора подключения
-        /// </summary>
-        public const string ExcludedConnectionId = "ConnectionId";
-    }
-
-    /// <summary>
     /// Константы для OpenTelemetry
     /// </summary>
     public static class OpenTelemetry
@@ -48,17 +27,6 @@ public static class Constants
         public const string ServiceName = "rooms";
     }
 
-    /// <summary>
-    /// Константы для настройки Hangfire - системы фоновых заданий
-    /// </summary>
-    public static class Hangfire
-    {
-        /// <summary>
-        /// Название очереди для обработки заданий загрузки
-        /// </summary>
-        public const string Queue = "rooms";
-    }
-    
     /// <summary>
     /// Параметры статистики зрителя для сбора и анализа данных о поведении
     /// </summary>

@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Uploader.Application.Services\Uploader.Application.Services.csproj" />
       <ProjectReference Include="..\Uploader.Infrastructure.Binaries\Uploader.Infrastructure.Binaries.csproj" />
+      <ProjectReference Include="..\Uploader.Infrastructure.Bus\Uploader.Infrastructure.Bus.csproj" />
       <ProjectReference Include="..\Uploader.Infrastructure.Films\Uploader.Infrastructure.Films.csproj" />
       <ProjectReference Include="..\Uploader.Infrastructure.Web\Uploader.Infrastructure.Web.csproj" />
       <ProjectReference Include="..\Common.DI.WebApi\Common.DI.WebApi.csproj" />

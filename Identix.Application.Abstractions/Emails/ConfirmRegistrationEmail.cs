@@ -5,7 +5,7 @@ namespace Identix.Application.Abstractions.Emails;
 /// <summary>
 /// Класс, представляющий данные для электронного письма с подтверждением регистрации.
 /// </summary>
-public class ConfirmRegistrationEmail : EmailData
+public class ConfirmRegistrationEmail : EmailMessage
 {
     /// <summary>
     /// Ссылка для подтверждения регистрации.

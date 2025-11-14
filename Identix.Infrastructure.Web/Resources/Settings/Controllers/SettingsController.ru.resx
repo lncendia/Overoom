@@ -43,7 +43,7 @@
         <value>Старый пароль указан неверно</value>
     </data>
     <data name="EmailChangeRequested" xml:space="preserve">
-        <value>Запрос отправлен Вам на старую почту</value>
+        <value>Запрос отправлен Вам на почту</value>
     </data>
     <data name="EmailChanged" xml:space="preserve">
         <value>Почта изменена</value>
@@ -56,9 +56,6 @@
     </data>
     <data name="OldPasswordNeeded" xml:space="preserve">
         <value>Необходимо указать старый пароль для его смены</value>
-    </data>
-    <data name="EmailNotConfirmed" xml:space="preserve">
-        <value>Для выполнения этого действия подтвердите свою почту</value>
     </data>
     <data name="OldPasswordMatchNew" xml:space="preserve">
         <value>Новый пароль не может совпадать со старым</value>
@@ -77,5 +74,11 @@
     </data>
     <data name="WrongFileSize" xml:space="preserve">
         <value>Размер файла не может превышать 15 Мб</value>
+    </data>
+    <data name="PasswordNeeded" xml:space="preserve">
+        <value>Необходимо указать пароль для смены почты</value>
+    </data>
+    <data name="InvalidPassword" xml:space="preserve">
+        <value>Пароль указан неверно</value>
     </data>
 </root>

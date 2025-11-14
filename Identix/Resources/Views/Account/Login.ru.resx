@@ -32,7 +32,7 @@
     <data name="LoginTitle" xml:space="preserve">
         <value>Вход</value>
     </data>
-    <data name="LogIn" xml:space="preserve">
+    <data name="SignIn" xml:space="preserve">
         <value>Войти</value>
     </data>
     <data name="UserLockout" xml:space="preserve">

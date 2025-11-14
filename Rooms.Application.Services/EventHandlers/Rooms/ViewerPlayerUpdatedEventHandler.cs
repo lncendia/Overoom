@@ -1,21 +1,20 @@
 using Common.Application.Events;
 using Common.Application.ScopedDictionary;
 using Common.Domain.Events;
-using MassTransit;
 using Rooms.Application.Abstractions;
-using Rooms.Application.Abstractions.Events;
-using Rooms.Application.Abstractions.Events.Player;
+using Rooms.Application.Abstractions.RoomEvents.Player;
+using Rooms.Application.Abstractions.Services;
 using Rooms.Domain.Rooms;
 using Rooms.Domain.Rooms.Entities;
 
 namespace Rooms.Application.Services.EventHandlers.Rooms;
 
 /// <summary>
-/// Обработчик событий обновления данных воспроизведения зрителя
+/// Обработчик обновления данных воспроизведения зрителя
 /// </summary>
-/// <param name="publish">Интерфейс для публикации сообщений</param>
+/// <param name="eventSender">Отправитель событий комнаты</param>
 /// <param name="context">Контекст выполняемой области</param>
-public class ViewerPlayerUpdatedEventHandler(IPublishEndpoint publish, IScopedContext context)
+public class ViewerPlayerUpdatedEventHandler(IRoomEventSender eventSender, IScopedContext context)
     : AfterSaveNotificationHandler<SaveEvent<Room>>
 {
     /// <summary>
@@ -28,24 +27,22 @@ public class ViewerPlayerUpdatedEventHandler(IPublishEndpoint publish, IScopedCo
         // Если мы не в контексте (событие пришло не через хаб) - не продолжаем
         if (!context.InScope) return;
 
-        var connectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
-
-        using var _ = context.CreateScope();
-
-        context.Current.SetRoomHeaders(@event.Aggregate.Id, connectionId);
+        var excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
 
         foreach (var viewer in @event.Aggregate.Viewers.Values)
         {
-            await Execute(viewer, cancellationToken);
+            await Execute(@event.Aggregate.Id, excludedConnectionId, viewer, cancellationToken);
         }
     }
 
     /// <summary>
     /// Создает и публикует событие обновления для конкретного зрителя
     /// </summary>
+    /// <param name="roomId">Идентификатор комнаты</param>
+    /// <param name="excludedConnectionId">Идентификатор подключения, которое следует исключить из получателей</param>
     /// <param name="viewer">Данные зрителя</param>
     /// <param name="cancellationToken">Токен отмены операции</param>
-    private async Task Execute(Viewer viewer, CancellationToken cancellationToken)
+    private async Task Execute(Guid roomId, string excludedConnectionId, Viewer viewer, CancellationToken cancellationToken)
     {
         var updatedFields = new List<string>();
 
@@ -90,7 +87,7 @@ public class ViewerPlayerUpdatedEventHandler(IPublishEndpoint publish, IScopedCo
 
         // Публикация события только если были изменения
         if (updatedFields.Count == 0) return;
-        await publish.Publish<RoomBaseEvent>(publishEvent, cancellationToken);
+        await eventSender.SendAsync(publishEvent, roomId, excludedConnectionId, cancellationToken);
     }
 
     /// <summary>

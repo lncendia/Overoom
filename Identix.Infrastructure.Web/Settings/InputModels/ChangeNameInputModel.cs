@@ -8,7 +8,7 @@ namespace Identix.Infrastructure.Web.Settings.InputModels;
 public class ChangeNameInputModel
 {
     /// <summary>
-    /// Получает или задает имя пользователя.
+    /// Имя пользователя.
     /// </summary>
     [Required(ErrorMessageResourceName = "Required",
         ErrorMessageResourceType = typeof(Resources.Settings.InputModels.ChangeNameInputModel))]
@@ -17,4 +17,9 @@ public class ChangeNameInputModel
     [MaxLength(40, ErrorMessageResourceName = "MaxLength",
         ErrorMessageResourceType = typeof(Resources.Settings.InputModels.ChangeNameInputModel))]
     public string? Username { get; init; }
+    
+    /// <summary>
+    /// URL для возврата.
+    /// </summary>
+    public string ReturnUrl { get; init; } = "/";
 }

@@ -32,9 +32,6 @@ builder.AddSecureDataProtection(builder.Environment.ApplicationName);
 // Регистрируем сервисы логгирования
 builder.AddLoggingServices();
 
-// Добавляем сервисы Hangfire
-builder.AddHangfireServices(Constants.Hangfire.Queue);
-
 // Добавление сервисов хранения файлов
 builder.AddFileStorage();
 

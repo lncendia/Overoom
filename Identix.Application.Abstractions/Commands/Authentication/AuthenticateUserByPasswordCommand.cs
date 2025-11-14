@@ -9,12 +9,22 @@ namespace Identix.Application.Abstractions.Commands.Authentication;
 public class AuthenticateUserByPasswordCommand : IRequest<AppUser>
 {
     /// <summary>
-    /// Получает или задает электронную почту пользователя.
+    /// Электронная почту пользователя.
     /// </summary>
     public required string Email { get; init; }
 
     /// <summary>
-    /// Получает или задает пароль пользователя.
+    /// Пароль пользователя.
     /// </summary>
     public required string Password { get; init; }
+    
+    /// <summary>
+    /// URL для подтверждения пользователя.
+    /// </summary>
+    public required string ConfirmUrl { get; init; }
+    
+    /// <summary>
+    /// URL адрес возврата
+    /// </summary>
+    public string? ReturnUrl { get; init; }
 }

@@ -1,24 +1,21 @@
-/**
- * Класс делает input функциональными
- */
+/** Класс делает input функциональными */
 export class InputWrapper {
 
-    /**
-     * Конструктор
-     */
+    /** Конструктор */
     constructor(selector: string) {
 
         // получаем все поля ввода по селектору
         document.querySelectorAll(selector).forEach(element => {
 
+            // вызываем blur если элемент уже заполнен
+            this.blur(element as HTMLInputElement);
+            
             // добавляем обработчик события потери фокуса
             element.addEventListener('blur', ev => this.blur((ev.currentTarget as HTMLInputElement)));
         });
     }
 
-    /**
-     * Метод реагирует на потерю фокуса
-     */
+    /** Метод реагирует на потерю фокуса */
     blur(element: HTMLInputElement){
 
         // если значение не пустое

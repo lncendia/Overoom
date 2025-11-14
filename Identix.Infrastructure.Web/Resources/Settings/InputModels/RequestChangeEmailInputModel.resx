@@ -27,4 +27,7 @@
     <data name="ValidEmail" xml:space="preserve">
         <value>Enter the correct email</value>
     </data>
+    <data name="Password" xml:space="preserve">
+        <value>Password</value>
+    </data>
 </root>

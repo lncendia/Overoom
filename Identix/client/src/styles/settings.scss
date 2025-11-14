@@ -169,4 +169,20 @@
       }
     }
   }
+
+  #terminate-sessions-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+    cursor: pointer;
+    text-decoration: underline;
+    
+    &:hover {
+      --bs-link-color-rgb: var(--bs-link-hover-color-rgb);
+      text-decoration: underline;
+    }
+  }
 }

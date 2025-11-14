@@ -52,11 +52,11 @@ public class RecoverPasswordCommandHandlerTest
     public async Task Handle_ValidCommand_RecoverPassword()
     {
         // Arrange
-        // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
+        // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
         _userManagerMock
                 
             // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
+            .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
             
             // Возвращаем тестового пользователя.  
             .ReturnsAsync(() => new AppUser
@@ -80,7 +80,7 @@ public class RecoverPasswordCommandHandlerTest
         // Создаем команду для восстановления пароля у пользователя.
         var command = new RecoverPasswordCommand
         {
-            Email = "test@example.com",
+            UserId = Guid.NewGuid(),
             Code = "test_code",
             NewPassword = "new_password"
         };
@@ -108,7 +108,7 @@ public class RecoverPasswordCommandHandlerTest
         _userManagerMock
                 
             // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
+            .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
             
             // Возвращаем null
             .ReturnsAsync(() => null);
@@ -116,7 +116,7 @@ public class RecoverPasswordCommandHandlerTest
         // Создаем команду для восстановления пароля у пользователя.
         var command = new RecoverPasswordCommand
         {
-            Email = "test@example.com",
+            UserId = Guid.NewGuid(),
             Code = "test_code",
             NewPassword = "new_password"
         };
@@ -138,7 +138,7 @@ public class RecoverPasswordCommandHandlerTest
         _userManagerMock
                 
             // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
+            .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
             
             // Возвращаем тестового пользователя.  
             .ReturnsAsync(() => new AppUser
@@ -162,13 +162,8 @@ public class RecoverPasswordCommandHandlerTest
         // Создаем команду для восстановления пароля у пользователя.
         var command = new RecoverPasswordCommand
         {
-            // Задаем "тестовую" почту.
-            Email = "test@example.com",
-            
-            // Задаем "тестовый" код для восстановления пароля.
+            UserId = Guid.NewGuid(),
             Code = "test_code",
-            
-            // Задаем новый пароль пользователя.
             NewPassword = "new_password"
         };
         
@@ -189,7 +184,7 @@ public class RecoverPasswordCommandHandlerTest
         _userManagerMock
                 
             // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
+            .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
             
             // Возвращаем тестового пользователя.  
             .ReturnsAsync(() => new AppUser
@@ -198,7 +193,6 @@ public class RecoverPasswordCommandHandlerTest
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
             LastAuthTimeUtc = DateTime.UtcNow
-
         });
         
         // Настройка mock объекта UserManager для неудачного результата при вызове ResetPasswordAsync.
@@ -213,7 +207,7 @@ public class RecoverPasswordCommandHandlerTest
         // Создаем команду для восстановления пароля у пользователя.
         var command = new RecoverPasswordCommand
         {
-            Email = "test@example.com",
+            UserId = Guid.NewGuid(),
             Code = "test_code",
             NewPassword = "new_password"
         };

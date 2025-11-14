@@ -23,7 +23,7 @@
     <data name="LogOut" xml:space="preserve">
         <value>Выход</value>
     </data>
-    <data name="LogIn" xml:space="preserve">
+    <data name="SignIn" xml:space="preserve">
         <value>Вход</value>
     </data>
     <data name="Welcome" xml:space="preserve">

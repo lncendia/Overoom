@@ -115,7 +115,7 @@
         condition: service_healthy  # Запускать Mongo Express только после успешной проверки здоровья MongoDB
   
   rabbitmq:
-    image: rabbitmq:4.1.4-management  # Образ RabbitMQ
+    image: rabbitmq:4.2.0-management-de  # Образ RabbitMQ
     container_name: overoom.rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=rmuser  # Пользователь RabbitMQ

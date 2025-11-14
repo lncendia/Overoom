@@ -8,7 +8,7 @@ namespace Identix.Application.Abstractions.Queries;
 public class UserLoginsQuery : IRequest<IReadOnlyCollection<string>>
 {
     /// <summary>
-    /// Получает или задает идентификатор пользователя.
+    /// Идентификатор пользователя.
     /// </summary>
     public required Guid Id { get; init; }
 }

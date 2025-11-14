@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
-using Rooms.Application.Abstractions.Events.Notifications;
 using Rooms.Application.Abstractions.Exceptions;
+using Rooms.Application.Abstractions.RoomEvents.Notifications;
 using Rooms.Domain.Rooms.Exceptions;
 using Rooms.Infrastructure.Web.Rooms.Exceptions;
 

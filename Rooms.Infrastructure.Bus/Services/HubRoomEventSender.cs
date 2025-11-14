@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
-using Rooms.Application.Abstractions.Events;
+using Rooms.Application.Abstractions.RoomEvents;
+using Rooms.Application.Abstractions.Services;
 using Rooms.Infrastructure.Web.Rooms.Hubs;
 
 namespace Rooms.Infrastructure.Bus.Services;
@@ -14,11 +15,11 @@ public class HubRoomEventSender(IHubContext<RoomHub> hubContext) : IRoomEventSen
     /// <summary>
     /// Отправляет событие комнаты всем клиентам в группе, кроме указанного подключения
     /// </summary>
-    public Task SendAsync(RoomBaseEvent @event, Guid roomId, string? connectionId)
+    public Task SendAsync(RoomBaseEvent @event, Guid roomId, string? excludedConnectionId, CancellationToken cancellationToken = default)
     {
         // Отправка события всем клиентам в группе комнаты, кроме указанного подключения
         return hubContext.Clients
-            .GroupExcept(roomId.ToString(), connectionId ?? string.Empty)
-            .SendAsync("Event", @event);
+            .GroupExcept(roomId.ToString(), excludedConnectionId ?? string.Empty)
+            .SendAsync("Event", @event, cancellationToken);
     }
 }

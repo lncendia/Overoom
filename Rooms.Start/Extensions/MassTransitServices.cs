@@ -1,14 +1,16 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Common.DI.Extensions;
+using Common.Infrastructure.JsonConverters;
 using MassTransit;
+using MassTransit.SignalR;
 using MongoDB.Driver;
-using Rooms.Application.Abstractions.Events;
-using Rooms.Infrastructure.Bus.Filters;
+using Rooms.Application.Abstractions.RoomEvents;
+using Rooms.Application.Abstractions.Services;
 using Rooms.Infrastructure.Bus.Rooms;
 using Rooms.Infrastructure.Bus.Services;
 using Rooms.Infrastructure.Bus.Users;
-using Rooms.Infrastructure.Web.JsonConverters;
+using Rooms.Infrastructure.Web.Rooms.Hubs;
 
 namespace Rooms.Start.Extensions;
 
@@ -29,17 +31,8 @@ public static class MassTransitServices
         // Получаем имя базы данных MongoDB для MassTransit Outbox из конфигурации
         var massTransitDatabaseName = builder.Configuration.GetRequiredValue<string>("MongoDB:MassTransitDB");
 
-        // Если сервис в продакшене
-        if (builder.Environment.IsProduction())
-        {
-            // Регистрируем сервис для получения имени текущего экземпляра приложения
-            builder.Services.AddSingleton<IInstanceName, KubernetesInstanceName>();
-        }
-        else
-        {
-            // Регистрируем сервис для получения имени текущего экземпляра приложения
-            builder.Services.AddSingleton<IInstanceName, MachineInstanceName>();
-        }
+        // Получаем имя экземпляра сервиса из конфигурации
+        var instanceName = builder.Configuration.GetValue<string>("Instance:Name");
 
         // Регистрируем сервис для отправки событий комнат через SignalR Hub
         builder.Services.AddScoped<IRoomEventSender, HubRoomEventSender>();
@@ -47,31 +40,38 @@ public static class MassTransitServices
         // Конфигурируем MassTransit с настройкой шины событий
         builder.Services.AddMassTransit(busConfigurator =>
         {
-            // Регистрируем потребителей (consumers) для обработки событий комнат
-
             // Обработчик события создания комнаты
-            busConfigurator.AddConsumer<RoomCreatedConsumer>();
+            busConfigurator.AddConsumer<CleanMessagesConsumer, CleanMessagesConsumerDefinition>();
+            
+            // Обработчик события создания комнаты
+            busConfigurator.AddConsumer<RoomCreatedConsumer, RoomCreatedConsumerDefinition>();
 
             // Обработчик события удаления комнаты
-            busConfigurator.AddConsumer<RoomDeletedConsumer>();
+            busConfigurator.AddConsumer<RoomDeletedConsumer, RoomDeletedConsumerDefinition>();
 
             // Обработчик события подключения зрителя к комнате
-            busConfigurator.AddConsumer<RoomViewerJoinedConsumer>();
+            busConfigurator.AddConsumer<RoomViewerJoinedConsumer, RoomViewerJoinedConsumerDefinition>();
 
             // Обработчик события выхода зрителя из комнаты
-            busConfigurator.AddConsumer<RoomViewerLeavedConsumer>();
+            busConfigurator.AddConsumer<RoomViewerLeavedConsumer, RoomViewerLeavedConsumerDefinition>();
 
             // Обработчик события исключения зрителя из комнаты
-            busConfigurator.AddConsumer<RoomViewerKickedConsumer>();
-
-            // Обработчик общих событий комнаты
-            busConfigurator.AddConsumer<RoomEventConsumer>();
+            busConfigurator.AddConsumer<RoomViewerKickedConsumer, RoomViewerKickedConsumerDefinition>();
 
             // Обработчик события изменения информации о пользователе
-            busConfigurator.AddConsumer<UserInfoChangedConsumer>();
-            
+            busConfigurator.AddConsumer<UserInfoChangedConsumer, UserInfoChangedConsumerDefinition>();
+
             // Обработчик события изменения настроек пользователя
-            busConfigurator.AddConsumer<UserSettingsChangedConsumer>();
+            busConfigurator.AddConsumer<UserSettingsChangedConsumer, UserSettingsChangedConsumerDefinition>();
+
+            // Add this for each Hub you have
+            busConfigurator.AddSignalRHub<RoomHub>(cfg =>
+            {
+                if (instanceName != null) cfg.ServerName = instanceName;
+            });
+            
+            // Добавляем планировщик отложенных сообщений
+            busConfigurator.AddDelayedMessageScheduler();
 
             // Настройка использования RabbitMQ в качестве транспорта для MassTransit
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
@@ -81,26 +81,9 @@ public static class MassTransitServices
 
                 // Автоматически настраиваем конечные точки (endpoints) для всех зарегистрированных потребителей
                 cfg.ConfigureEndpoints(ctx);
-
-                // Получаем имя текущего экземпляра приложения для создания уникальных очередей
-                var instanceName = ctx.GetRequiredService<IInstanceName>().Name;
-
-                // Настраиваем временную очередь для событий комнаты
-                cfg.ReceiveEndpoint($"RoomEvent:{instanceName}", e =>
-                {
-                    // Очередь не сохраняется при перезапуске RabbitMQ
-                    e.Durable = false;
-
-                    // Очередь автоматически удаляется при отключении потребителя
-                    e.AutoDelete = true;
-
-                    // Привязываем обработчик событий комнаты
-                    e.ConfigureConsumer<RoomEventConsumer>(ctx);
-                });
-
-                // Настраиваем постоянную очередь для событий изменения информации пользователя
-                cfg.ReceiveEndpoint("Rooms:UserInfoChanged",
-                    e => e.ConfigureConsumer<UserInfoChangedConsumer>(ctx));
+                
+                // Использовать планировщик отложенных сообщений
+                cfg.UseDelayedMessageScheduler();
 
                 // Настраиваем параметры сериализации JSON для MassTransit
                 cfg.ConfigureJsonSerializerOptions(opt =>
@@ -115,9 +98,6 @@ public static class MassTransitServices
                     opt.Converters.Add(new TypeNameJsonConverter<RoomBaseEvent>());
                     return opt;
                 });
-
-                // Регистрируем фильтр для публикации событий комнаты
-                cfg.UsePublishFilter<RoomEventPublishFilter>(ctx);
             });
 
             // Настройка MongoDB Outbox для обеспечения отказоустойчивости и согласованности при отправке событий

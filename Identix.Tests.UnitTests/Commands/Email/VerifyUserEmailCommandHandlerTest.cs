@@ -6,6 +6,8 @@ using Identix.Application.Abstractions.Commands.Email;
 using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Exceptions;
 using Identix.Application.Services.Commands.Email;
+using MassTransit;
+using MassTransit.MongoDbIntegration;
 
 namespace Identix.Tests.UnitTests.Commands.Email;
 
@@ -42,7 +44,7 @@ public class VerifyUserEmailCommandHandlerTest
             new Mock<ILogger<UserManager<AppUser>>>().Object);
 
         // Инициализация обработчика.
-        _handler = new VerifyEmailCommandHandler(_userManagerMock.Object);
+        _handler = new VerifyEmailCommandHandler(_userManagerMock.Object, new Mock<IPublishEndpoint>().Object, new Mock<MongoDbContext>().Object);
     }
     
     /// <summary>

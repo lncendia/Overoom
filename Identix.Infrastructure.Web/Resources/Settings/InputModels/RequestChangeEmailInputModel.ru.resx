@@ -20,4 +20,7 @@
     <data name="ValidEmail" xml:space="preserve">
         <value>Введите корректную почту</value>
     </data>
+    <data name="Password" xml:space="preserve">
+        <value>Пароль</value>
+    </data>
 </root>

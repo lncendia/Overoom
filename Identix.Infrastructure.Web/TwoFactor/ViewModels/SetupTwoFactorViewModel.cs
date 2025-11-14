@@ -18,7 +18,7 @@ public class SetupTwoFactorViewModel : SetupTwoFactorInputModel
     /// URL QR-кода.
     /// </summary>
     public string QrCodeUrl { get; }
-
+    
     /// <summary>
     /// Конструктор класса SetupTwoFactorViewModel.
     /// </summary>

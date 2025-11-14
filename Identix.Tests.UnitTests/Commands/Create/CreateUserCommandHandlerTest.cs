@@ -1,5 +1,4 @@
-﻿using Hangfire;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,11 +21,6 @@ public class CreateUserCommandHandlerTests
     /// Поле Mock объекта UserManager.
     /// </summary>
     private readonly Mock<UserManager<AppUser>> _userManagerMock;
-
-    /// <summary>
-    /// Поле Mock объекта BackgroundJobClientV2.
-    /// </summary>
-    private readonly Mock<IBackgroundJobClientV2> _backgroundJobServiceMock = new();
 
     /// <summary>
     /// Поле обработчика.
@@ -54,7 +48,7 @@ public class CreateUserCommandHandlerTests
         var mongoDbContextMock = new Mock<MongoDbContext>();
         
         // Инициализация обработчика.
-        _handler = new CreateUserCommandHandler(_userManagerMock.Object, _backgroundJobServiceMock.Object, publishEndpointMock.Object, mongoDbContextMock.Object);
+        _handler = new CreateUserCommandHandler(_userManagerMock.Object, publishEndpointMock.Object, mongoDbContextMock.Object);
     }
     
     /// <summary>

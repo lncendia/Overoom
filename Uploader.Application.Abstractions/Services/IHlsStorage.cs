@@ -1,4 +1,4 @@
-﻿using Uploader.Application.Abstractions.DTOs;
+﻿using Uploader.Application.Abstractions.Events;
 
 namespace Uploader.Application.Abstractions.Services;
 

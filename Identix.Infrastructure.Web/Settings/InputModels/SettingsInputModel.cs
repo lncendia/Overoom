@@ -19,4 +19,9 @@ public class SettingsInputModel
     /// Номер вкладки, которая должна быть раскрыта.
     /// </summary>
     public int ExpandElement { get; init; } = 1;
+
+    /// <summary>
+    /// URL для возврата.
+    /// </summary>
+    public string ReturnUrl { get; init; } = "/";
 }

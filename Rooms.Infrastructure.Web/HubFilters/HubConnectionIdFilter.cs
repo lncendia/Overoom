@@ -21,9 +21,6 @@ public class HubConnectionIdFilter : IHubFilter
         // Получаем сервис контекста области из DI контейнера
         var context = invocationContext.ServiceProvider.GetRequiredService<IScopedContext>();
 
-        // имитация задержки запроса
-        // await Task.Delay(TimeSpan.FromSeconds(40));
-
         // Создаем новую область видимости для изоляции данных вызова
         using (context.CreateScope())
         {

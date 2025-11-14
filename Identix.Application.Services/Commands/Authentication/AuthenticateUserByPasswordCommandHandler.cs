@@ -1,8 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Identix.Application.Abstractions.Commands.Authentication;
+using Identix.Application.Abstractions.Emails;
 using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Exceptions;
+using MassTransit;
 
 namespace Identix.Application.Services.Commands.Authentication;
 
@@ -10,7 +12,8 @@ namespace Identix.Application.Services.Commands.Authentication;
 /// Класс обработчика команды аутентификации пользователя по паролю.
 /// </summary>
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
-public class AuthenticateUserByPasswordCommandHandler(UserManager<AppUser> userManager) : IRequestHandler<AuthenticateUserByPasswordCommand, AppUser>
+/// <param name="publishEndpoint">Сервис для публикации интеграционных событий.</param>
+public class AuthenticateUserByPasswordCommandHandler(UserManager<AppUser> userManager, IPublishEndpoint publishEndpoint) : IRequestHandler<AuthenticateUserByPasswordCommand, AppUser>
 {
     /// <summary>
     /// Обработка команды аутентификации пользователя по паролю.
@@ -43,8 +46,25 @@ public class AuthenticateUserByPasswordCommandHandler(UserManager<AppUser> userM
         // Если пароль верный
         if (success)
         {
-            // Cбрасываем счетчик неудачных попыток входа
+            // Сбрасываем счетчик неудачных попыток входа
             await userManager.ResetAccessFailedCountAsync(user);
+            
+            // Проверяем, подтверждена ли почта у пользователя
+            if (!await userManager.IsEmailConfirmedAsync(user))
+            {
+                // Генерация кода подтверждения и формирование URL для подтверждения электронной почты.
+                var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                // Генерация URL подтверждения почты
+                var url = user.GenerateMailConfirmUrl(request.ConfirmUrl, code, request.ReturnUrl);
+
+                // Отправка электронного письма со ссылкой для подтверждения регистрации.
+                var message = new ConfirmRegistrationEmail { Recipient = user.Email!, ConfirmLink = url };
+                await publishEndpoint.SkipOutbox().Publish(new SendEmail { Message = message }, cancellationToken);
+                
+                // Вызываем исключение
+                throw new EmailNotConfirmedException();
+            }
             
             // Проверяем, включена ли 2фа у пользователя
             var is2FaEnabled = await userManager.GetTwoFactorEnabledAsync(user);

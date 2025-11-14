@@ -164,7 +164,7 @@ public class ChangePasswordCommandHandlerTest
 
         // Act & Assert
         // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
-        await Assert.ThrowsAsync<OldPasswordNeededException>(
+        await Assert.ThrowsAsync<PasswordNeededException>(
             () => _handler.Handle(command, CancellationToken.None));
     }
 

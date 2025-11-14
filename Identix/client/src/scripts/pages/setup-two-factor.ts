@@ -1,14 +1,10 @@
 import QRCode from "qrcode";
 import {InputWrapper} from "../helpers/input-wrapper";
 
-/**
-* Класс функционала страницы установки 2фа
-*/
+/** Класс функционала страницы установки 2FA */
 export class SetupTwoFactor {
     
-    /**
-     * Метод запускает функционал страницы установки 2фа
-     */
+    /** Метод запускает функционал страницы установки 2FA */
     startSetupTwoFactor() {
 
         // получаем все поля ввода с классом .wrap-input input

@@ -41,13 +41,6 @@ public class RegistrationInputModel
     public string? PasswordConfirm { get; set; }
 
     /// <summary>
-    /// Флаг необходимости запомнить логин
-    /// </summary>
-    [Display(Name = "Remember",
-        ResourceType = typeof(Resources.Registration.InputModels.RegistrationInputModel))]
-    public bool RememberLogin { get; init; }
-
-    /// <summary>
     /// Url адрес для возврата после прохождения аутентификации
     /// </summary>
     public string ReturnUrl { get; init; } = "/";

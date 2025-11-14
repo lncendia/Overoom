@@ -3,10 +3,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Rooms.Application.Abstractions.Commands;
-using Rooms.Application.Abstractions.Events.Messages;
-using Rooms.Application.Abstractions.Events.Room;
 using Rooms.Application.Abstractions.Exceptions;
 using Rooms.Application.Abstractions.Queries;
+using Rooms.Application.Abstractions.RoomEvents.Messages;
+using Rooms.Application.Abstractions.RoomEvents.Room;
 using Rooms.Domain.Rooms.Exceptions;
 using Rooms.Infrastructure.Web.Metrics;
 using Rooms.Infrastructure.Web.Rooms.Exceptions;
@@ -46,6 +46,7 @@ public class RoomHub(ISender mediator) : Hub
         // Отправляем информацию о подключении вызывающему клиенту
         await Clients.Caller.SendAsync("Event", new ConnectEvent());
         
+        // Увеличение метрики
         RoomsConnectionMetrics.Increment();
     }
 
@@ -360,6 +361,7 @@ public class RoomHub(ISender mediator) : Hub
         // Вызываем базовую реализацию метода
         await base.OnDisconnectedAsync(exception);
         
+        // Уменьшение метрики
         RoomsConnectionMetrics.Decrement();
     }
 

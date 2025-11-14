@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Копируем настройки сборки приложения
 COPY package.json ./
+COPY package-lock.json ./
 
 # Устанавливаем зависимости
 RUN npm i

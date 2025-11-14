@@ -37,10 +37,10 @@
         <value>No login schemes are configured for this request.</value>
     </data>
     <data name="LoginTitle" xml:space="preserve">
-        <value>Entrance</value>
+        <value>Sign In</value>
     </data>
-    <data name="LogIn" xml:space="preserve">
-        <value>Enter</value>
+    <data name="SignIn" xml:space="preserve">
+        <value>Sign In</value>
     </data>
     <data name="UserLockout" xml:space="preserve">
         <value>Your account has been temporarily blocked due to exceeding the number of failed login attempts.</value>

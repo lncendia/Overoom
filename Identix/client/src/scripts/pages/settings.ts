@@ -2,22 +2,16 @@ import {PasswordStrengthValidator} from "../helpers/password-strength-validator"
 import {InputWrapper} from "../helpers/input-wrapper";
 import {PasswordHide} from "../helpers/password-hide";
 
-/**
- * Класс функционала страницы настроек
- */
+/** Класс функционала страницы настроек */
 export class Settings {
 
-    /**
-     * Валидатор надежности пароля на странице
-     */
+    /** Валидатор надежности пароля на странице */
     validator: PasswordStrengthValidator = new PasswordStrengthValidator(
         document.querySelector('#strength-valid') as HTMLDivElement,
         document.querySelector('form#change-pass') as HTMLFormElement
     );
-    
-    /**
-     * Метод запускает функционал страницы настроек
-     */
+
+    /** Метод запускает функционал страницы настроек */
     startSettings() {
 
         // Получаем все элементы с классом "disabled"
@@ -26,11 +20,11 @@ export class Settings {
         // Добавляем обработчик события "click" для каждого элемента, чтоб ссылки были неактивны
         links.forEach(l => l.addEventListener("click", ev => ev.preventDefault()));
 
-        // Получаем элемент с идентификатором "exampleModal"
-        const exampleModal = document.getElementById('exampleModal');
+        // Получаем элемент с идентификатором "unlinkModal"
+        const unlinkModal = document.getElementById('unlink-modal');
 
         // Добавляем обработчик события "show.bs.modal"
-        exampleModal.addEventListener('show.bs.modal', event => {
+        unlinkModal.addEventListener('show.bs.modal', event => {
 
             // Получаем кнопку, которая вызвала модальное окно
             const button = (event as MouseEvent).relatedTarget as HTMLElement;
@@ -42,31 +36,33 @@ export class Settings {
             const providerName = button.getAttribute('data-bs-provider-name');
 
             // Получаем элемент с классом "modal-body" внутри модального окна
-            const modalBody = exampleModal.querySelector('.modal-body');
+            const modalBody = unlinkModal.querySelector('.modal-body');
 
             // Удаляем последнее слово из текста внутри "modal-body", если есть знак вопроса
             modalBody.textContent = `${this.deleteLastWord(modalBody.textContent)} ${providerName}?`;
 
-            // Получаем ссылку с классом "modal-footer a" внутри модального окна
-            const linkElement = exampleModal.querySelector('.modal-footer a') as HTMLLinkElement;
+            // Получаем инпут со значением провайдера внутри модального окна
+            const providerInput = unlinkModal.querySelector('input[name="Provider"]') as HTMLInputElement
 
             // Устанавливаем значение href для ссылки
-            linkElement.href = `/Settings/RemoveLogin?provider=${provider}`;
+            providerInput.value = provider;
         });
 
         // получаем все поля ввода с классом .wrap-input input
         new InputWrapper('.wrap-input input');
 
+        // получаем переключатель видимости пароля
+        const showPass = document.querySelector("#show-pass")
+
+        // если переключатель есть
+        if (showPass) new PasswordHide('#show-pass');
+        
         // получаем переключатель видимости старого пароля
         const showOldPass = document.querySelector("#show-old-pass")
-        
+
         // если переключатель есть
-        if(showOldPass) {
-            
-            // получаем тег span иконки переключателя видимости старого пароля и добавляем ей обработчик клика
-            new PasswordHide('#show-old-pass');
-        }
-        
+        if (showOldPass) new PasswordHide('#show-old-pass');
+
         // получаем тег span иконки переключателя видимости нрвого пароля и добавляем ей обработчик клика
         new PasswordHide('#show-new-pass');
 
@@ -74,7 +70,7 @@ export class Settings {
         new PasswordHide('#show-new-pass-confirm');
 
         // получаем поле для ввода пароля и добавляем обработчик изменения текста
-        document.querySelector('#NewPassword').addEventListener('input', ev => 
+        document.querySelector('#NewPassword').addEventListener('input', ev =>
             this.validator.checkPasswordStrength((ev.currentTarget as HTMLInputElement).value)
         );
 

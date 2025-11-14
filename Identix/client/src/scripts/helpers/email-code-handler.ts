@@ -1,21 +1,40 @@
-/**
- * Класс добавляет функциональность запроса кода 2fa на почту
- */
+/** Класс добавляет функциональность запроса кода 2FA на почту */
 export class EmailCodeHandler {
 
-    /**
-     * Оработчик запроса
-     */
-    async processRequest(requestLink: string) {
+    /** Конструктор */
+    constructor(selector: string) {
+
+        // получаем ссылку по полю
+        const link = document.querySelector(selector) as HTMLLinkElement;
+
+        // получаем ссылку на метод отправки email
+        const requestLink = link.href;
+
+        // удаляем путь из атрибута href, чтобы не срабатывал переход по нажатию
+        link.href = '#';
+
+        // удаляем путь из атрибута href, чтобы не срабатывал переход по нажатию
+        (document.querySelector('#request-email-link') as HTMLLinkElement).href = '#';
+
+        // отлавливаем нажатие на ссылку
+        link.addEventListener('click', () => {
+            this.processRequest(link, requestLink);
+        });
+    }
+    
+    /** Оработчик запроса */
+    async processRequest(link: HTMLLinkElement, requestLink: string) {
+
+        // Если кнопка выключена - не продолжаем
+        if (link.classList.contains('disabled')) {
+            return;
+        }
 
         // Отправляем запрос
         let response = await fetch(requestLink);
 
         // Получаем элемент сообщения об ошибке
         let error = document.querySelector('#request-email-error') as HTMLDivElement;
-
-        // Получаем элемент кнопки отправки сообщения
-        let link = document.querySelector('#request-email-link') as HTMLLinkElement;
 
         // Меняем сообщение на кнопке
         link.innerHTML = document.querySelector('#resending-msg').innerHTML
@@ -34,9 +53,6 @@ export class EmailCodeHandler {
 
             // Отключаем кнопку отправки запроса
             link.classList.add('disabled');
-
-            // Делаем кнопку серой
-            link.setAttribute('style', 'background: gray');
 
             // Скрываем сообщение об ошибке
             error.setAttribute('hidden', 'hidden')
@@ -70,9 +86,7 @@ export class EmailCodeHandler {
         }
     }
 
-    /**
-     * Метод отображающий таймер на странице
-     */
+    /** Метод отображающий таймер на странице */
     startTimer(duration: number, displayElement: HTMLElement) {
 
         // Ставим интервал для таймера
