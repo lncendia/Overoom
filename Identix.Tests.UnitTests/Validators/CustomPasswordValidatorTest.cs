@@ -39,8 +39,8 @@ public class CustomPasswordValidatorTest
         UserName = "test",
         Email = "test@example.com",
         RegistrationTimeUtc = DateTime.UtcNow,
-        LastAuthTimeUtc = DateTime.UtcNow,
-        
+        LastAuthTimeUtc = DateTime.UtcNow
+
     };
 
     /// <summary>

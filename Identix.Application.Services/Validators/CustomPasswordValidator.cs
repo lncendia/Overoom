@@ -19,7 +19,7 @@ public partial class CustomPasswordValidator : IPasswordValidator<AppUser>
     public Task<IdentityResult> ValidateAsync(UserManager<AppUser> manager, AppUser user, string? password)
     {
         // Замена множественных пробелов на одиночный
-        password = MyRegex().Replace(password!, " ");
+        password = PasswordRegex().Replace(password!, " ");
 
         // Проверка на длину пароля
         if (password.Length is < 8 or > 128)
@@ -81,5 +81,5 @@ public partial class CustomPasswordValidator : IPasswordValidator<AppUser>
     }
 
     [GeneratedRegex(@"\s+")]
-    private static partial Regex MyRegex();
+    private static partial Regex PasswordRegex();
 }

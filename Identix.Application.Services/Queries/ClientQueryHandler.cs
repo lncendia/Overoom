@@ -37,10 +37,10 @@ public class ClientQueryHandler(IOpenIddictApplicationManager applicationManager
             ClientName = descriptor.DisplayName ?? descriptor.ClientId ?? string.Empty,
             
             // Получаем URL веб-сайта приложения
-            ClientUrl = descriptor.GetClientUri(),
+            ClientUrl = descriptor.GetClientUrl(),
             
             // Получаем URL логотипа приложения
-            ClientLogoUrl = descriptor.GetLogoUri()
+            ClientLogoKey = descriptor.GetLogoKey()
         };
     }
 }

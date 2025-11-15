@@ -1,4 +1,5 @@
 using Common.Application.FileStorage;
+using Films.Application.Abstractions;
 using Films.Application.Abstractions.Queries.Media;
 using MediatR;
 
@@ -17,12 +18,12 @@ public class GetPhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<GetP
     /// <param name="cancellationToken">Токен отмены операции</param>
     /// <returns>Результат с потоком файла фотографии и информацией о content type</returns>
     /// <exception cref="ArgumentException">Выбрасывается при некорректном формате ключа фотографии</exception>
-    /// <exception cref="FileNotFoundException">Выбрасывается если файл фотографии не найден в хранилище</exception>
+    /// <exception cref="FileNotFoundException">Выбрасывается, если файл фотографии не найден в хранилище</exception>
     public async Task<FileResult> Handle(GetPhotoQuery request, CancellationToken cancellationToken)
     {
         // Валидируем запрашиваемый ключ
         if (!IsValidUserPhotoKey(request.Key))
-            throw new ArgumentException($"Invalid user photo key format. Expected: {Constants.FilmPosterKeyFormat} or {Constants.PlaylistPosterKeyFormat}");
+            throw new ArgumentException($"Invalid user photo key format. Expected: {Constants.Poster.FilmKeyFormat} or {Constants.Poster.PlaylistKeyFormat}");
 
         // Получаем объект из S3
         var (stream, contentType) =  await fileStore.GetAsync(request.Key, token: cancellationToken);
@@ -43,10 +44,6 @@ public class GetPhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<GetP
 
         // Разбиваем путь на части
         var parts = key.Split('/');
-        if (parts.Length != 3)
-            return false;
-
-        // Проверяем префикс пути
-        return (parts[0] == "film" || parts[0] == "playlist") && parts[1] == "poster";
+        return parts.Length == 3;
     }
 }

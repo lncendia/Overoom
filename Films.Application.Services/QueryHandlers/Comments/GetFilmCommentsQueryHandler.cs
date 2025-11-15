@@ -52,7 +52,7 @@ public class GetFilmCommentsQueryHandler(MongoDbContext context)
                     // ReSharper disable once PossibleMultipleEnumeration
                     UserName = users.First().Username,
                     // ReSharper disable once PossibleMultipleEnumeration
-                    PhotoKey = users.First().PhotoKey,
+                    PhotoKey = users.First().PhotoKey
                 }
             )
             .ToListAsync(cancellationToken);

@@ -10,6 +10,18 @@ namespace Common.Infrastructure.Repositories.SessionHandlers;
 public class TransactionSessionHandler(IMongoClient client) : ISessionHandler
 {
     /// <summary>
+    /// Выполняет действие перед сохранением данных.
+    /// В этой реализации просто напрямую вызывает переданное действие.
+    /// </summary>
+    /// <param name="action">Асинхронное действие, которое нужно выполнить перед сохранением.</param>
+    /// <param name="token">Токен отмены операции.</param>
+    public Task BeforeSaveExecuteAsync(Func<CancellationToken, Task> action, CancellationToken token = default)
+    {
+        // Выполняем действие
+        return action(token);
+    }
+
+    /// <summary>
     /// Выполняет операцию в рамках транзакции
     /// </summary>
     /// <param name="action">Действие для выполнения</param>
@@ -21,10 +33,17 @@ public class TransactionSessionHandler(IMongoClient client) : ISessionHandler
         using var sessionHandle = await client.StartSessionAsync(cancellationToken: token);
 
         // Выполняем действие в рамках транзакции
-        await sessionHandle.WithTransactionAsync(async (handle, ct) =>
+        sessionHandle.StartTransaction();
+
+        try
         {
-            await action(handle, ct);
-            return true;
-        }, cancellationToken: token);
+            await action(sessionHandle, token);
+            await sessionHandle.CommitTransactionAsync(token);
+        }
+        catch
+        {
+            await sessionHandle.AbortTransactionAsync(token);
+            throw;
+        }
     }
 }

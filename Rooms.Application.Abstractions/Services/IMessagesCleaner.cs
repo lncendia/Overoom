@@ -13,3 +13,9 @@ public interface IMessagesCleaner
     /// <returns>Задача, представляющая асинхронную операцию очистки</returns>
     Task CleanAsync(Guid roomId, CancellationToken cancellationToken = default);
 }
+
+/// <summary>
+/// Сообщение об отчистке сообщений комнаты
+/// </summary>
+/// <param name="RoomId">Идентификатор комнаты, сообщения которой необходимо удалить</param>
+public record CleanMessages(Guid RoomId);

@@ -50,6 +50,12 @@ public class SearchRoomsQueryHandler(MongoDbContext context)
                 film => film.Id,
                 (room, films) => new { Room = room, Film = films.First() }
             )
+            .GroupJoin(
+                context.Users.AsQueryable(),
+                room => room.Room.OwnerId,
+                user => user.Id,
+                (room, users) => new { room.Room, room.Film, User = users.First() }
+            )
             .Select(x => new RoomShortDto
             {
                 // Информация о фильме
@@ -67,6 +73,10 @@ public class SearchRoomsQueryHandler(MongoDbContext context)
                 Id = x.Room.Id,
                 ViewersCount = x.Room.Viewers.Count,
                 IsPrivate = !string.IsNullOrEmpty(x.Room.Code),
+                
+                // Информация о создателе
+                UserName = x.User.Username,
+                PhotoKey = x.User.PhotoKey
             })
             .ToListAsync(cancellationToken: cancellationToken);
         

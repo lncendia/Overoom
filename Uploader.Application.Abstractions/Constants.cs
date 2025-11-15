@@ -6,13 +6,13 @@ namespace Uploader.Application.Abstractions;
 public static class Constants
 {
     /// <summary>
-    /// Константы для настройки Hangfire - системы фоновых заданий
+    /// Константы для OpenTelemetry
     /// </summary>
-    public static class Hangfire
+    public static class OpenTelemetry
     {
         /// <summary>
-        /// Название очереди для обработки заданий загрузки
+        /// Имя сервиса для трассировки
         /// </summary>
-        public const string Queue = "uploader";
+        public const string ServiceName = "uploader";
     }
 }

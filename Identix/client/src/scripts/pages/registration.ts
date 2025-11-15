@@ -2,27 +2,21 @@ import {PasswordStrengthValidator} from "../helpers/password-strength-validator"
 import {InputWrapper} from "../helpers/input-wrapper";
 import {PasswordHide} from "../helpers/password-hide";
 
-/**
- * Класс функционала страницы регистрации
- */
+/** Класс функционала страницы регистрации */
 export class Registration {
 
-    /**
-     * Валидатор надежности пароля на странице
-     */
+    /** Валидатор надежности пароля на странице */
     validator: PasswordStrengthValidator = new PasswordStrengthValidator(
         document.querySelector('#strength-valid'),
         document.querySelector('form#register'),
     )
-    
-    /**
-     * Метод запускает функционал страницы авторизации
-     */
+
+    /** Метод запускает функционал страницы авторизации */
     startRegistration() {
 
         // получаем все поля ввода с классом .wrap-input input
         new InputWrapper('.wrap-input input');
-        
+
         // получаем тег span иконки переключателя видимости пароля и добавляем ей обработчик клика
         new PasswordHide('#show-pass');
 
@@ -33,7 +27,7 @@ export class Registration {
         document.querySelector('#Password').addEventListener('input', ev =>
             this.validator.checkPasswordStrength((ev.currentTarget as HTMLInputElement).value)
         );
-        
+
         // получаем форму при отправке для проверки надежности пароля
         document.querySelector('form#register').addEventListener('submit', ev => {
             ev.preventDefault();

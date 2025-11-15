@@ -3,11 +3,12 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Rooms.Application.Abstractions.Commands;
-using Rooms.Application.Abstractions.Events.Messages;
-using Rooms.Application.Abstractions.Events.Room;
 using Rooms.Application.Abstractions.Exceptions;
 using Rooms.Application.Abstractions.Queries;
+using Rooms.Application.Abstractions.RoomEvents.Messages;
+using Rooms.Application.Abstractions.RoomEvents.Room;
 using Rooms.Domain.Rooms.Exceptions;
+using Rooms.Infrastructure.Web.Metrics;
 using Rooms.Infrastructure.Web.Rooms.Exceptions;
 
 namespace Rooms.Infrastructure.Web.Rooms.Hubs;
@@ -33,7 +34,7 @@ public class RoomHub(ISender mediator) : Hub
         {
             RoomId = roomId,
             Online = true,
-            ViewerId = userId,
+            ViewerId = userId
         });
 
         // Сохраняем идентификатор комнаты в контексте подключения
@@ -44,10 +45,13 @@ public class RoomHub(ISender mediator) : Hub
 
         // Отправляем информацию о подключении вызывающему клиенту
         await Clients.Caller.SendAsync("Event", new ConnectEvent());
+        
+        // Увеличение метрики
+        RoomsConnectionMetrics.Increment();
     }
 
     /// <summary>
-    /// 
+    /// Получить данные комнаты
     /// </summary>
     public async Task GetRoom()
     {
@@ -141,7 +145,7 @@ public class RoomHub(ISender mediator) : Hub
             Season = season,
             Episode = episode,
             ViewerId = userId,
-            RoomId = roomId,
+            RoomId = roomId
         });
     }
 
@@ -158,7 +162,7 @@ public class RoomHub(ISender mediator) : Hub
         await mediator.Send(new TypingCommand
         {
             ViewerId = userId,
-            RoomId = roomId,
+            RoomId = roomId
         });
     }
 
@@ -197,7 +201,7 @@ public class RoomHub(ISender mediator) : Hub
         {
             TimeLine = TimeSpan.FromTicks(ticks),
             ViewerId = userId,
-            RoomId = roomId,
+            RoomId = roomId
         });
     }
 
@@ -277,7 +281,7 @@ public class RoomHub(ISender mediator) : Hub
         {
             Fullscreen = fullScreen,
             ViewerId = userId,
-            RoomId = roomId,
+            RoomId = roomId
         });
     }
 
@@ -299,7 +303,7 @@ public class RoomHub(ISender mediator) : Hub
         {
             ViewerId = userId,
             RoomId = roomId,
-            TargetId = target,
+            TargetId = target
         });
     }
 
@@ -321,7 +325,7 @@ public class RoomHub(ISender mediator) : Hub
         {
             ViewerId = userId,
             RoomId = roomId,
-            TargetId = target,
+            TargetId = target
         });
     }
 
@@ -342,7 +346,7 @@ public class RoomHub(ISender mediator) : Hub
             {
                 Online = false,
                 RoomId = roomId,
-                ViewerId = userId,
+                ViewerId = userId
             });
         }
         catch (RoomNotFoundException)
@@ -356,6 +360,9 @@ public class RoomHub(ISender mediator) : Hub
 
         // Вызываем базовую реализацию метода
         await base.OnDisconnectedAsync(exception);
+        
+        // Уменьшение метрики
+        RoomsConnectionMetrics.Decrement();
     }
 
     /// <summary>

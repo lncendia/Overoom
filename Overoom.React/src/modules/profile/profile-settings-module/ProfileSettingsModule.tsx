@@ -29,7 +29,7 @@ const ProfileSettingsModule = (): ReactElement => {
     <Paper>
       {/** Кнопка для перехода к настройкам аккаунта */}
       <Button
-        href={`${config.oidc.authority}/settings`}
+        href={`${config.oidc.authority}/settings?returnUrl=${encodeURIComponent(window.location.href)}`}
         target="_blank"
         variant="contained"
         color="primary"

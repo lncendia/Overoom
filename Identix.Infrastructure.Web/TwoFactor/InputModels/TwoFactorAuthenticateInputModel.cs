@@ -15,10 +15,15 @@ public class TwoFactorAuthenticateInputModel
     [Required(ErrorMessageResourceName = "Required",
         ErrorMessageResourceType = typeof(Resources.TwoFactor.InputModels.TwoFactorAuthenticateInputModel))]
     public string? Code { get; init; }
-    
+
     /// <summary>
     /// Откуда код
     /// </summary>
     [Required]
     public CodeType CodeType { get; init; } = CodeType.Authenticator;
+
+    /// <summary>
+    /// URL для возврата.
+    /// </summary>
+    public string ReturnUrl { get; init; } = "/";
 }

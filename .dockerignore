@@ -13,6 +13,7 @@
 **/*.jfm
 **/azds.yaml
 **/bin
+**/logs
 **/charts
 **/docker-compose*
 **/Dockerfile*
@@ -24,4 +25,6 @@
 LICENSE
 README.md
 **/bundles
-**/avatars
+appsettings.Development.json
+appsettings.DevContainer.json
+openid.json

@@ -30,11 +30,10 @@ public class NewPasswordInputModel
     public string? PasswordConfirm { get; init; }
 
     /// <summary>
-    /// Адрес электронной почты.
+    /// Идентификатор пользователя.
     /// </summary>
     [Required]
-    [EmailAddress]
-    public string? Email { get; init; }
+    public Guid UserId { get; init; }
 
     /// <summary>
     /// Код.

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Common.Infrastructure.Repositories.Metrics;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -8,7 +9,6 @@ namespace Common.Infrastructure.Repositories;
 /// <summary>
 /// Базовый абстрактный класс для реализации Unit of Work паттерна.
 /// Координирует работу репозиториев и обеспечивает атомарность операций.
-/// с поддержкой различных стратегий работы с сессиями MongoDB.
 /// </summary>
 /// <param name="handlerFactory">Фабрика для создания обработчиков сессий MongoDB.</param>
 /// <param name="publisher">Сервис публикации доменных событий (MediatR).</param>
@@ -24,25 +24,27 @@ public abstract class UnitOfWorkBase(ISessionHandlerFactory handlerFactory, IPub
         // Если обработчик не передан, создаем обработчик по умолчанию через фабрику.
         handler ??= handlerFactory.CreateDefaultHandler();
         
+        // Выполняем действия перед началом транзакции
+        await handler.BeforeSaveExecuteAsync(BeforeCommitSessionAsync, token);
+        
         // Создаем таймер для замера времени.
         var stopwatch = Stopwatch.StartNew();
 
         // Применяем изменения к базе данных, используя сессию.
-        await handler.ExecuteAsync(async (session, ct) =>
-        {
-            // Выполняем действия перед началом транзакции
-            await BeforeCommitSessionAsync(ct);
-            
-            // Применяем изменения к базе данных
-            await ApplyChanges(session, ct);
-        }, token);
+        await handler.ExecuteAsync(ApplyChanges, token);
 
         // Останавливаем общий таймер.
         stopwatch.Stop();
 
         // Логируем о запуске всех инстансов
         logger.LogInformation("Transaction commited in {elapsed} ms.", stopwatch.ElapsedMilliseconds);
+        
+        // Записываем метрику
+        RepositoryMetrics.TransactionDuration.Record(stopwatch.Elapsed.TotalMilliseconds);
 
+        // Записываем метрику
+        RepositoryMetrics.TransactionsCommitted.Add(1);
+        
         // Выполняем действия после завершения транзакции
         await AfterCommitSessionAsync(token);
     }
@@ -98,6 +100,9 @@ public abstract class UnitOfWorkBase(ISessionHandlerFactory handlerFactory, IPub
 
         // Логируем время выполнения операций
         logger.LogInformation("Before save events executed in {elapsed} ms.", stopwatch.ElapsedMilliseconds);
+        
+        // Записываем метрику
+        RepositoryMetrics.BeforeCommitDuration.Record(stopwatch.Elapsed.TotalMilliseconds);
     }
 
     /// <summary>
@@ -139,6 +144,9 @@ public abstract class UnitOfWorkBase(ISessionHandlerFactory handlerFactory, IPub
 
         // Логируем время выполнения операций
         logger.LogInformation("After save events executed in {elapsed} ms.", stopwatch.ElapsedMilliseconds);
+        
+        // Записываем метрику
+        RepositoryMetrics.AfterCommitDuration.Record(stopwatch.Elapsed.TotalMilliseconds);
     }
 
     /// <summary>

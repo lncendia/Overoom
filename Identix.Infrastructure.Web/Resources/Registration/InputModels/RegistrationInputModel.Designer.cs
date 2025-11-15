@@ -96,15 +96,6 @@ namespace Identix.Infrastructure.Web.Resources.Registration.InputModels {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remember me.
-        /// </summary>
-        public static string Remember {
-            get {
-                return ResourceManager.GetString("Remember", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This field is required.
         /// </summary>
         public static string Required {

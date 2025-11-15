@@ -60,20 +60,20 @@ namespace Identix.Resources.Views.Account {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To restore your password, follow the link sent to your email..
-        /// </summary>
-        internal static string MailSentBody {
-            get {
-                return ResourceManager.GetString("MailSentBody", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The email has been sent.
         /// </summary>
         internal static string MailSentTitle {
             get {
                 return ResourceManager.GetString("MailSentTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign In.
+        /// </summary>
+        internal static string SignIn {
+            get {
+                return ResourceManager.GetString("SignIn", resourceCulture);
             }
         }
     }

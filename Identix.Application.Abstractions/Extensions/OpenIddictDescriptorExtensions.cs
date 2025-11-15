@@ -15,8 +15,8 @@ public static class OpenIddictDescriptorExtensions
     /// </summary>
     /// <param name="descriptor">Дескриптор приложения OpenIddict</param>
     /// <returns>URI клиента или null если не задан</returns>
-    public static string? GetClientUri(this OpenIddictApplicationDescriptor descriptor) =>
-        descriptor.Properties.TryGetValue("client_uri", out var json) && json.ValueKind == JsonValueKind.String
+    public static string? GetClientUrl(this OpenIddictApplicationDescriptor descriptor) =>
+        descriptor.Properties.TryGetValue("client_url", out var json) && json.ValueKind == JsonValueKind.String
             ? json.GetString()
             : null;
 
@@ -25,8 +25,8 @@ public static class OpenIddictDescriptorExtensions
     /// </summary>
     /// <param name="descriptor">Дескриптор приложения OpenIddict</param>
     /// <returns>URI логотипа или null если не задан</returns>
-    public static string? GetLogoUri(this OpenIddictApplicationDescriptor descriptor) =>
-        descriptor.Properties.TryGetValue("logo_uri", out var json) && json.ValueKind == JsonValueKind.String
+    public static string? GetLogoKey(this OpenIddictApplicationDescriptor descriptor) =>
+        descriptor.Properties.TryGetValue("logo_key", out var json) && json.ValueKind == JsonValueKind.String
             ? json.GetString()
             : null;
 
@@ -34,17 +34,17 @@ public static class OpenIddictDescriptorExtensions
     /// Устанавливает URI клиентского приложения
     /// </summary>
     /// <param name="descriptor">Дескриптор приложения OpenIddict</param>
-    /// <param name="uri">URI клиента (должен быть валидным URL)</param>
-    public static void SetClientUri(this OpenIddictApplicationDescriptor descriptor, string uri) =>
-        descriptor.Properties["client_uri"] = JsonDocument.Parse($"\"{uri}\"").RootElement;
+    /// <param name="url">Ключ клиента</param>
+    public static void SetClientUrl(this OpenIddictApplicationDescriptor descriptor, string url) =>
+        descriptor.Properties["client_url"] = JsonDocument.Parse($"\"{url}\"").RootElement;
 
     /// <summary>
     /// Устанавливает URI логотипа клиентского приложения
     /// </summary>
     /// <param name="descriptor">Дескриптор приложения OpenIddict</param>
-    /// <param name="uri">URI логотипа (должен быть валидным URL)</param>
-    public static void SetLogoUri(this OpenIddictApplicationDescriptor descriptor, string uri) =>
-        descriptor.Properties["logo_uri"] = JsonDocument.Parse($"\"{uri}\"").RootElement;
+    /// <param name="key">Ключ логотипа</param>
+    public static void SetLogoKey(this OpenIddictApplicationDescriptor descriptor, string key) =>
+        descriptor.Properties["logo_key"] = JsonDocument.Parse($"\"{key}\"").RootElement;
 
     /// <summary>
     /// Проверяет, должен ли scope быть выделен визуально на форме согласия

@@ -7,7 +7,7 @@ namespace Identix.Application.Abstractions.Commands.TwoFactor;
 public class RequestTwoFactorCodeEmailCommand : IRequest
 {
     /// <summary>
-    /// Получает или задает идентификатор пользователя
+    /// Идентификатор пользователя
     /// </summary>
     public required Guid UserId { get; init; }
 }

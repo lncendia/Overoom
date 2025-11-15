@@ -39,9 +39,6 @@
     <data name="LoginNotFoundException" xml:space="preserve">
         <value>Login not found</value>
     </data>
-    <data name="OldPasswordNeededException" xml:space="preserve">
-        <value>The old password is not specified</value>
-    </data>
     <data name="InvalidCodeException" xml:space="preserve">
         <value>The link has expired</value>
     </data>

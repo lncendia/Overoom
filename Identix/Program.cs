@@ -6,6 +6,7 @@ using MongoDB.Bson.Serialization.Serializers;
 using Identix.Infrastructure.Common.DatabaseInitialization;
 using Identix.Extensions;
 using Common.DI.Extensions;
+using Common.DI.Middlewares;
 using Identix.Application.Abstractions;
 using Identix.Application.Services.Commands.Create;
 
@@ -15,7 +16,7 @@ using Identix.Application.Services.Commands.Create;
 //  ║║  ║║║║║╔══╝║║╚╗║║  ║║   ║║  ╔╝╚╗ 
 // ╔╣╠╗╔╝╚╝║║╚══╗║║ ║║║ ╔╝╚╗ ╔╣╠╗╔╝╔╗╚╗
 // ╚══╝╚═══╝╚═══╝╚╝ ╚═╝ ╚══╝ ╚══╝╚═╝╚═╝
-    
+
 // Регистрирует сериализатор для типа Guid с использованием стандартного представления
 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
@@ -30,9 +31,6 @@ builder.AddSecureDataProtection(builder.Environment.ApplicationName);
 
 // Регистрируем сервисы логгирования
 builder.AddLoggingServices();
-
-// Добавляем сервисы Hangfire
-builder.AddHangfireServices(Constants.Hangfire.Queue);
 
 // Добавление сервисов хранения файлов
 builder.AddFileStorage();
@@ -64,7 +62,7 @@ builder.Services.AddFileStorageHttpClient();
 // Добавляет службы ASP.NET Identity.
 builder.AddAspIdentity();
 
-// 
+// Добавляет службы OpenIdDict.
 builder.AddOpenId();
 
 // Добавляет службы локализации для поддержки многоязычности в приложении
@@ -79,6 +77,9 @@ builder.AddMassTransitServices();
 // Добавляет службы электронной почты с использованием конфигурации
 builder.AddEmailTemplates();
 
+// Настраиваем OpenTelemetry
+builder.Services.AddOpenTelemetryServices(Constants.OpenTelemetry.ServiceName);
+
 // Создаем объект приложения
 await using var app = builder.Build();
 
@@ -86,7 +87,7 @@ await using var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     // Инициализация начальных данных в базу данных
-    await DatabaseInitializer.InitAsync(scope.ServiceProvider);
+    await DatabaseInitializer.InitAsync(scope.ServiceProvider, builder.Configuration);
 }
 
 // Добавляет RequestLocalizationMiddleware для автоматической установки сведений о культуре
@@ -118,6 +119,9 @@ app.UseSession();
 
 // Мапим маршруты к контроллерам с использованием маршрута по умолчанию
 app.MapDefaultControllerRoute();
+
+// Эндпоинт для Prometheus
+app.MapPrometheusScrapingEndpointWithBasicAuth();
 
 // Запускаем приложение
 await app.RunAsync();

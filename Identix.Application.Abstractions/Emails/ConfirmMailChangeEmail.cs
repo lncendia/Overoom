@@ -5,7 +5,7 @@ namespace Identix.Application.Abstractions.Emails;
 /// <summary>
 /// Класс, представляющий данные для электронного письма с подтверждением изменения электронной почты.
 /// </summary>
-public class ConfirmMailChangeEmail : EmailData
+public class ConfirmMailChangeEmail : EmailMessage
 {
     /// <summary>
     /// Ссылка для подтверждения изменения электронной почты.

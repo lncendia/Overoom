@@ -9,12 +9,12 @@ namespace Identix.Application.Abstractions.Commands.Authentication;
 public class AuthenticateUserByExternalProviderCommand : IRequest<AppUser>
 {
     /// <summary>
-    /// Получает или задает провайдер аутентификации.
+    /// Провайдер аутентификации.
     /// </summary>
     public required string LoginProvider { get; init; }
 
     /// <summary>
-    /// Получает или задает ключ провайдера аутентификации.
+    /// Ключ провайдера аутентификации.
     /// </summary>
     public required string ProviderKey { get; init; }
 }

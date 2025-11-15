@@ -83,7 +83,7 @@ public class MediaController(ISender mediator) : ControllerBase
                 Version = version,
                 Season = season,
                 Episode = episode,
-                FileName = fileName,
+                FileName = fileName
             };
 
             if (Enum.TryParse<FilmResolution>(resolution, out var resolutionEnum))

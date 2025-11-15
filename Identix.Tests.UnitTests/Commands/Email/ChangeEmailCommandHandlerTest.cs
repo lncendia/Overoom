@@ -64,8 +64,8 @@ public class ChangeEmailCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
             
         // Настройка mock объекта UserManager для успешной смены почты при вызове ChangeEmailAsync.
@@ -156,8 +156,8 @@ public class ChangeEmailCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
             
         // Настройка mock объекта UserManager для возврата ошибки с кодом при вызове ChangeEmailAsync.
@@ -207,8 +207,8 @@ public class ChangeEmailCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
             
         // Настройка mock объекта UserManager для возврата ошибки с кодом при вызове ChangeEmailAsync.
@@ -258,8 +258,8 @@ public class ChangeEmailCommandHandlerTest
             UserName = "test",
             Email = "test@example.com",
             RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            
+            LastAuthTimeUtc = DateTime.UtcNow
+
         });
             
         // Настройка mock объекта UserManager для возврата ошибки с кодом при вызове ChangeEmailAsync.

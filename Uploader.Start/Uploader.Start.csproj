@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Uploader.Application.Services\Uploader.Application.Services.csproj" />
       <ProjectReference Include="..\Uploader.Infrastructure.Binaries\Uploader.Infrastructure.Binaries.csproj" />
+      <ProjectReference Include="..\Uploader.Infrastructure.Bus\Uploader.Infrastructure.Bus.csproj" />
       <ProjectReference Include="..\Uploader.Infrastructure.Films\Uploader.Infrastructure.Films.csproj" />
       <ProjectReference Include="..\Uploader.Infrastructure.Web\Uploader.Infrastructure.Web.csproj" />
       <ProjectReference Include="..\Common.DI.WebApi\Common.DI.WebApi.csproj" />

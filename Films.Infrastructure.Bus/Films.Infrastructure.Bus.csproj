@@ -1,17 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MassTransit" Version="8.4.1" />
+      <PackageReference Include="MassTransit" Version="8.5.5" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Films.Application.Abstractions\Films.Application.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Users\UserRegisteredConsumerDefinition.cs">
+        <DependentUpon>UserRegisteredConsumer.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Uploader\VersionDownloadedConsumerDefinition.cs">
+        <DependentUpon>VersionDownloadedConsumer.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Users\UserInfoChangedConsumerDefinition.cs">
+        <DependentUpon>UserInfoChangedConsumer.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

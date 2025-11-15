@@ -10,11 +10,6 @@ namespace Films.Infrastructure.Storage.Models.Ratings;
 /// </summary>
 public class RatingModel : VersionedUpdatedEntity<RatingModel>
 {
-    private Guid _filmId;
-    private Guid _userId;
-    private double _score;
-    private DateTime _createdAt;
-
     /// <summary>
     /// Уникальный идентификатор рейтинга
     /// </summary>
@@ -25,8 +20,8 @@ public class RatingModel : VersionedUpdatedEntity<RatingModel>
     /// </summary>
     public Guid FilmId
     {
-        get => _filmId;
-        set => _filmId = TrackStructChange(nameof(FilmId), _filmId, value);
+        get;
+        set => field = TrackStructChange(nameof(FilmId), field, value);
     }
 
     /// <summary>
@@ -34,8 +29,8 @@ public class RatingModel : VersionedUpdatedEntity<RatingModel>
     /// </summary>
     public Guid UserId
     {
-        get => _userId;
-        set => _userId = TrackStructChange(nameof(UserId), _userId, value);
+        get;
+        set => field = TrackStructChange(nameof(UserId), field, value);
     }
 
     /// <summary>
@@ -43,8 +38,8 @@ public class RatingModel : VersionedUpdatedEntity<RatingModel>
     /// </summary>
     public double Score
     {
-        get => _score;
-        set => _score = TrackStructChange(nameof(Score), _score, value);
+        get;
+        set => field = TrackStructChange(nameof(Score), field, value);
     }
 
     /// <summary>
@@ -52,10 +47,10 @@ public class RatingModel : VersionedUpdatedEntity<RatingModel>
     /// </summary>
     public DateTime CreatedAt
     {
-        get => _createdAt;
-        set => _createdAt = TrackStructChange(nameof(CreatedAt), _createdAt, value);
+        get;
+        set => field = TrackStructChange(nameof(CreatedAt), field, value);
     }
-    
+
     public void UpdateFromSnapshot(RatingSnapshot snapshot)
     {
         FilmId = snapshot.FilmId;

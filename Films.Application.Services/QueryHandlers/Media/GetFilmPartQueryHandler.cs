@@ -11,11 +11,6 @@ namespace Films.Application.Services.QueryHandlers.Media;
 public class GetFilmPartQueryHandler(IFileStorage fileStore) : IRequestHandler<GetFilmPartQuery, FileResult>
 {
     /// <summary>
-    /// Имя бакета в файловом хранилище, где хранятся файлы фильмов
-    /// </summary>
-    private const string FilmsBucket = "films";
-    
-    /// <summary>
     /// Обрабатывает запрос на получение части файла фильма
     /// </summary>
     /// <param name="request">Запрос на получение части файла</param>
@@ -29,7 +24,7 @@ public class GetFilmPartQueryHandler(IFileStorage fileStore) : IRequestHandler<G
         var key = BuildKey(request);
 
         // Получаем объект из S3 хранилища
-        var (stream, contentType) = await fileStore.GetAsync(key, bucket: FilmsBucket, token: cancellationToken);
+        var (stream, contentType) = await fileStore.GetAsync(key, token: cancellationToken);
 
         // Возвращаем файл в виде результата
         return new FileResult(stream, contentType, request.FileName);

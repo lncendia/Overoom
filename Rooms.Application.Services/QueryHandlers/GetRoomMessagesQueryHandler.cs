@@ -74,7 +74,7 @@ public class GetRoomMessagesQueryHandler(MongoDbContext context)
                 Id = m.Id,
                 UserId = m.UserId,
                 Text = m.Text,
-                SentAt = m.SentAt,
+                SentAt = m.SentAt
             })
             .ToListAsync(cancellationToken);
 

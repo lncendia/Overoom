@@ -8,17 +8,17 @@ namespace Identix.Application.Abstractions.Commands.Password;
 public class RecoverPasswordCommand : IRequest
 {
     /// <summary>
-    /// Получает или задает электронную почту пользователя.
+    /// Идентификатор пользователя.
     /// </summary>
-    public required string Email { get; init; }
+    public required Guid UserId { get; init; }
 
     /// <summary>
-    /// Получает или задает код для восстановления пароля.
+    /// Код для восстановления пароля.
     /// </summary>
     public required string Code { get; init; }
 
     /// <summary>
-    /// Получает или задает новый пароль пользователя.
+    /// Новый пароль пользователя.
     /// </summary>
     public required string NewPassword { get; init; }
 }

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MassTransit" Version="8.5.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Identix.Application.Abstractions\Identix.Application.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="SendEmailConsumerDefinition.cs">
+        <DependentUpon>SendEmailConsumer.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>

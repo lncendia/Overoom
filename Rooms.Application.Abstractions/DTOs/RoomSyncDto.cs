@@ -1,4 +1,4 @@
-using Rooms.Application.Abstractions.Events.Player;
+using Rooms.Application.Abstractions.RoomEvents.Player;
 
 namespace Rooms.Application.Abstractions.DTOs;
 

@@ -14,12 +14,12 @@ public class EmailContentVisitor(EmailTemplateConfiguration configuration, IStri
     : IExtendedEmailVisitor
 {
     /// <summary>
-    /// Получает или задает тему электронной почты.
+    /// Тема электронной почты.
     /// </summary>
     public string? Subject { get; private set; }
 
     /// <summary>
-    /// Получает или задает HTML-контент электронной почты.
+    /// HTML-контент электронной почты.
     /// </summary>
     public string? Body { get; private set; }
 

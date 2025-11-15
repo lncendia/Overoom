@@ -18,7 +18,7 @@ public class EmailService(SmtpConfiguration smtpConfiguration, IEmailVisitor vis
     /// </summary>
     /// <param name="emailData">Объект данных об отправляемом Email</param>
     /// <param name="token">Токен отмены для отслеживания отмены операции.</param>
-    public Task SendAsync(EmailData emailData, CancellationToken token = default)
+    public Task SendAsync(EmailMessage emailData, CancellationToken token = default)
     {
         // Посещаем письмо
         emailData.Accept(visitor);

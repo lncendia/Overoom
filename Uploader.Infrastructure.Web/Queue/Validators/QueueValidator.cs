@@ -22,7 +22,7 @@ public partial class QueueValidator : AbstractValidator<QueueInputModel>
             .Must(ContainInfoHash).WithMessage("Magnet URI должен содержать info hash (xt параметр)");
 
         // Правило для Filename - не более 1000 символов
-        RuleFor(x => x.Filename)
+        RuleFor(x => x.FileName)
             .MaximumLength(1000).WithMessage("Имя файла не может быть длиннее 1000 символов");
         
         // Правило для FilmId - обязательное поле

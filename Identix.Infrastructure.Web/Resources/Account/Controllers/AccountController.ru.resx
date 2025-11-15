@@ -38,7 +38,10 @@
     <data name="UserLockout" xml:space="preserve">
         <value>Вы были заблокированы из-за большого количества неудачных попыток входа. Попробуйте войти позже</value>
     </data>
-    <data name="EmailNotConfirmed" xml:space="preserve">
-        <value>Для выполнения этого действия подтвердите свою почту</value>
+    <data name="MailSent_ConfirmEmail" xml:space="preserve">
+        <value>Мы отправили письмо для подтверждения вашей электронной почты. Пожалуйста, проверьте ваш почтовый ящик и следуйте инструкциям в письме.</value>
+    </data>
+    <data name="MailSent_ResetPassword" xml:space="preserve">
+        <value>Мы отправили письмо для сброса пароля. Пожалуйста, проверьте ваш почтовый ящик и следуйте инструкциям в письме, чтобы создать новый пароль.</value>
     </data>
 </root>

@@ -10,7 +10,8 @@ public class SetupTwoFactorInputModel
     /// <summary>
     /// Ключ аутентификатора
     /// </summary>
-    [Required] public string? AuthenticatorKey { get; init; }
+    [Required]
+    public string? AuthenticatorKey { get; init; }
 
     /// <summary>
     /// Код подтверждения аутентификации
@@ -19,4 +20,9 @@ public class SetupTwoFactorInputModel
     [Required(ErrorMessageResourceName = "Required",
         ErrorMessageResourceType = typeof(Resources.TwoFactor.InputModels.SetupTwoFactorInputModel))]
     public string? Code { get; set; }
+
+    /// <summary>
+    /// URL для возврата.
+    /// </summary>
+    public string ReturnUrl { get; init; } = "/";
 }

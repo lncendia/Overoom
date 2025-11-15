@@ -1,32 +1,16 @@
 import {InputWrapper} from "../helpers/input-wrapper";
 import {EmailCodeHandler} from "../helpers/email-code-handler";
 
-/**
- * Класс функционала страницы входа 2фа
- */
+/** Класс функционала страницы входа 2FA */
 export class LoginTwoStep {
     
-    emailHandler: EmailCodeHandler = new EmailCodeHandler();
-
-    /**
-     * Метод запускает функционал страницы входа 2фа
-     */
+    /** Метод запускает функционал страницы входа 2FA */
     startLoginTwoStep() {
 
         // получаем все поля ввода с классом .wrap-input input
         new InputWrapper('.wrap-input input');
 
-        // получаем ссылку на метод отправки email
-        const requestLink = (document.querySelector('#request-email-link') as HTMLLinkElement).href;
-
-        // удаляем путь из атрибута href, чтобы не срабатывал переход по нажатию
-        (document.querySelector('#request-email-link') as HTMLLinkElement).href = '#';
-
-        // отлавливаем нажатие на ссылку
-        document.querySelector('#request-email-link').addEventListener('click', () => {
-
-            // обрабатываем запрос
-            this.emailHandler.processRequest(requestLink);
-        });
+        // создаем обработчик отправки кода по email
+        new EmailCodeHandler('#request-email-link')
     }
 }

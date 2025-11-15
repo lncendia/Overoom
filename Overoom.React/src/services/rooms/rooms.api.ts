@@ -15,14 +15,19 @@ export class RoomsApi {
   /** Формат URL для генерации полных путей к постерам фильмов */
   private readonly posterUrlFormat: string;
 
+  /** Формат URL для миниатюр пользовательских аватарок */
+  private readonly thumbnailUrlFormat: string;
+
   /**
    * Создает экземпляр RoomsApi
    * @param axiosInstance - экземпляр Axios для HTTP-запросов
    * @param posterUrlFormat - формат URL для постеров фильмов
+   * @param thumbnailUrlFormat - формат URL для миниатюр изображений профиля
    */
-  public constructor(axiosInstance: AxiosInstance, posterUrlFormat: string) {
+  constructor(axiosInstance: AxiosInstance, posterUrlFormat: string, thumbnailUrlFormat: string) {
     this.axiosInstance = axiosInstance;
     this.posterUrlFormat = posterUrlFormat;
+    this.thumbnailUrlFormat = thumbnailUrlFormat;
   }
 
   /**
@@ -60,6 +65,11 @@ export class RoomsApi {
       room.posterUrl = this.posterUrlFormat + room.posterKey;
     }
 
+    // Добавляем URL аватарок к комнатам
+    for (const room of response.data.list) {
+      room.photoUrl = this.thumbnailUrlFormat + room.photoKey;
+    }
+
     return response.data;
   }
 
@@ -73,6 +83,11 @@ export class RoomsApi {
     // Добавляем URL постеров к комнатам
     for (const room of response.data) {
       room.posterUrl = this.posterUrlFormat + room.posterKey;
+    }
+
+    // Добавляем URL аватарок к комнатам
+    for (const room of response.data) {
+      room.photoUrl = this.thumbnailUrlFormat + room.photoKey;
     }
 
     return response.data;

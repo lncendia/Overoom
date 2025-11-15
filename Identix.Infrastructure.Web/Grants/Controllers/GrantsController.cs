@@ -111,7 +111,9 @@ public class GrantsController : Controller
                 ClientUrl = grant.ClientUrl,
 
                 // Установка URL логотипа клиента в свойство ClientLogoUrl 
-                ClientLogoUrl = grant.ClientLogoUrl,
+                ClientLogoUrl = grant.ClientLogoKey != null
+                    ? Url.Action("GetFile", "Photos", new { key = grant.ClientLogoKey })
+                    : null,
 
                 // Установка описания в свойство Description 
                 Description = grant.Description,

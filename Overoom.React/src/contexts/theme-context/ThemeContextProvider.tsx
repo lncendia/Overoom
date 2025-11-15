@@ -26,20 +26,20 @@ export const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({
     // Определяем базовые цвета для light и dark
     const palette = {
       dark: {
-        primary: '#6A35FF',
-        secondary: '#c395d8',
-        paperBg: 'rgba(30,30,46,0.7)',
-        textPrimary: '#f1eafd',
-        textSecondary: '#cec7dc',
-        textDisabled: '#706d78',
+        primary: 'rgb(118,70,255)',
+        secondary: 'rgb(195,149,216)',
+        paperBg: 'rgba(30,30,46,0.5)',
+        textPrimary: 'rgb(241,234,253)',
+        textSecondary: 'rgb(206,199,220)',
+        textDisabled: 'rgb(112,109,120)',
       },
       light: {
-        primary: 'rgb(33, 99, 255)',
-        secondary: 'rgb(108, 117, 125)',
+        primary: 'rgb(53,112,255)',
+        secondary: 'rgb(128,97,128)',
         paperBg: 'rgba(32,32,48,0.5)',
-        textPrimary: '#f1eafd',
-        textSecondary: '#cec7dc',
-        textDisabled: '#9d98a8',
+        textPrimary: 'rgb(241,234,253)',
+        textSecondary: 'rgb(206,199,220)',
+        textDisabled: 'rgb(157,152,168)',
       },
     }[mode];
 
@@ -99,8 +99,8 @@ export const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({
                 backgroundSize: 'cover',
                 background:
                   mode === 'dark'
-                    ? 'linear-gradient(#3a0d50, transparent), linear-gradient(90deg, #0a3c43, transparent), linear-gradient(-90deg, #4a1d0a, transparent);'
-                    : 'linear-gradient(#143d44, transparent),linear-gradient(90deg, #4b2064, transparent),linear-gradient(-90deg, #54301c, transparent);',
+                    ? 'linear-gradient(#1c0f2a, transparent), linear-gradient(90deg, #081f26, transparent), linear-gradient(-90deg, #261107, transparent);'
+                    : 'linear-gradient(#2f676f, transparent), linear-gradient(90deg, #86439a, transparent), linear-gradient(-90deg, #875534, transparent);',
               },
             },
           },
@@ -113,8 +113,8 @@ export const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({
               color: palette.textPrimary,
               background:
                 mode === 'dark'
-                  ? 'linear-gradient(0.4turn, #300c42, #3b1b0a);'
-                  : 'linear-gradient(0.4turn, #4b2064, #54301c);',
+                  ? 'linear-gradient(0.4turn, #101f40, #321a36)'
+                  : 'linear-gradient(0.4turn, #5b2f7d, #3e7a83)',
             },
           },
         },

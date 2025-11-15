@@ -8,7 +8,7 @@ namespace Identix.Infrastructure.Web.Settings.ViewModels;
 public class ChangeAvatarViewModel : ChangeAvatarInputModel
 {
     /// <summary>
-    /// Получает или задает ссылку на миниатюру.
+    /// Ссылка на миниатюру.
     /// </summary>
     public string? Thumbnail { get; init; }
 }

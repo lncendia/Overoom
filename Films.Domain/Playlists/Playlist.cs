@@ -8,8 +8,6 @@ namespace Films.Domain.Playlists;
 /// </summary>
 public partial class Playlist(Guid id) : AggregateRoot(id)
 {
-    private readonly string _name = null!;
-    
     private HashSet<Guid> _films = [];
     private HashSet<string> _genres = [];
 
@@ -18,26 +16,24 @@ public partial class Playlist(Guid id) : AggregateRoot(id)
     /// </summary>
     public required string Name
     {
-        get => _name;
+        get;
         init
         {
             value.ValidateLength(nameof(Name), 200);
-            _name = value;
+            field = value;
         }
-    }
-
-    private string _description = null!;
+    } = null!;
 
     /// <summary>
     /// Описание плейлиста.
     /// </summary>
     public required string Description
     {
-        get => _description;
+        get;
         set
         {
             value.ValidateLength(nameof(Description), 500);
-            _description = value;
+            field = value;
         }
     }
 

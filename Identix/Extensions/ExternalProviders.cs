@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using Common.DI.Extensions;
 using Identix.Infrastructure.Web.External.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,8 @@ public static class ExternalProviders
     /// </summary>
     /// <param name="options">Builder для настройки OpenIddict клиента</param>
     /// <param name="builder">Builder приложения для доступа к конфигурации и сервисам</param>
-    public static void AddExternalProviders(this OpenIddictClientBuilder options, IHostApplicationBuilder builder)
+    /// <param name="certificate">Сертификат шифрования и подписи токенов</param>
+    public static void AddExternalProviders(this OpenIddictClientBuilder options, IHostApplicationBuilder builder, X509Certificate2 certificate)
     {
         // Получение clientId и секретов для всех провайдеров из конфигурации
         var githubClientId = builder.Configuration.GetRequiredValue<string>("OAuth:GitHub:Client");
@@ -43,8 +45,8 @@ public static class ExternalProviders
         options.AllowAuthorizationCodeFlow();
 
         // Регистрируем сертификаты для шифрования и подписи токенов (для development)
-        options.AddDevelopmentEncryptionCertificate()
-            .AddDevelopmentSigningCertificate();
+        options.AddEncryptionCertificate(certificate)
+            .AddSigningCertificate(certificate);
 
         // Настраиваем интеграцию с ASP.NET Core
         options.UseAspNetCore()

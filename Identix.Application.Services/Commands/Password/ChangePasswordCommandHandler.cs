@@ -19,7 +19,7 @@ public class ChangePasswordCommandHandler(UserManager<AppUser> userManager) : IR
     /// <param name="cancellationToken">Токен отмены для асинхронной операции.</param>
     /// <returns>Возвращает обновленного пользователя.</returns>
     /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден.</exception>
-    /// <exception cref="OldPasswordNeededException">Вызывается, если не введен старый пароль.</exception>
+    /// <exception cref="PasswordNeededException">Вызывается, если не введен старый пароль.</exception>
     /// <exception cref="PasswordValidationException">Вызывается, если валидация пароля не прошла.</exception>
     public async Task<AppUser> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
@@ -41,12 +41,11 @@ public class ChangePasswordCommandHandler(UserManager<AppUser> userManager) : IR
         else
         {
             // Если нет старого пароля, то выкидваем исключение
-            if (request.OldPassword == null) throw new OldPasswordNeededException();
+            if (request.OldPassword == null) throw new PasswordNeededException();
 
             // Меняем пароль
             result = await userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
         }
-
 
         // Проверка успешности операции смены пароля у пользователя
         if (!result.Succeeded)

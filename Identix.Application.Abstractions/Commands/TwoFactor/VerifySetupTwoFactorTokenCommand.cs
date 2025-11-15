@@ -8,12 +8,12 @@ namespace Identix.Application.Abstractions.Commands.TwoFactor;
 public class VerifySetupTwoFactorTokenCommand : IRequest<IReadOnlyCollection<string>>
 {
     /// <summary>
-    /// Получает или задает идентификатор пользователя
+    /// Идентификатор пользователя
     /// </summary>
     public required Guid UserId { get; init; }
 
     /// <summary>
-    /// Получает или задает код верификации 2FA
+    /// Код верификации 2FA
     /// </summary>
     public required string Code { get; init; }
 }

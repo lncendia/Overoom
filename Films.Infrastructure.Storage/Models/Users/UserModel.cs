@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Common.Domain.Rooms;
+﻿using Common.Domain.Rooms;
 using Films.Domain.Users.Snapshots;
 using Films.Domain.Users.ValueObjects;
 using MongoDB.Driver;
@@ -14,12 +13,9 @@ namespace Films.Infrastructure.Storage.Models.Users;
 /// </summary>
 public class UserModel : VersionedUpdatedEntity<UserModel>
 {
-    private string _username = null!;
-    private string? _photoKey;
     private TrackedCollection<FilmNote, UserModel> _watchlist = new();
     private TrackedCollection<FilmNote, UserModel> _history = new();
     private TrackedCollection<string, UserModel> _genres = new();
-    private RoomSettings _roomSettings = null!;
 
     /// <summary>
     /// Уникальный идентификатор пользователя
@@ -29,20 +25,19 @@ public class UserModel : VersionedUpdatedEntity<UserModel>
     /// <summary>
     /// Имя пользователя (максимальная длина - 40 символов)
     /// </summary>
-    [MaxLength(40)]
     public string Username
     {
-        get => _username;
-        set => _username = TrackChange(nameof(Username), _username, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(Username), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Ссылка на фото пользователя (может быть null)
     /// </summary>
     public string? PhotoKey
     {
-        get => _photoKey;
-        set => _photoKey = TrackChange(nameof(PhotoKey), _photoKey, value);
+        get;
+        set => field = TrackChange(nameof(PhotoKey), field, value);
     }
 
     /// <summary>
@@ -77,9 +72,9 @@ public class UserModel : VersionedUpdatedEntity<UserModel>
     /// </summary>
     public RoomSettings RoomSettings
     {
-        get => _roomSettings;
-        set => _roomSettings = TrackChange(nameof(RoomSettings), _roomSettings, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(RoomSettings), field, value)!;
+    } = null!;
 
     /// <inheritdoc/>
     public override UpdateDefinition<UserModel> UpdateDefinition
@@ -116,7 +111,7 @@ public class UserModel : VersionedUpdatedEntity<UserModel>
         _history.ClearChanges();
         _genres.ClearChanges();
     }
-    
+
     public void UpdateFromSnapshot(UserSnapshot snapshot)
     {
         Username = snapshot.Username;

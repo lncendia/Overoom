@@ -8,9 +8,14 @@ namespace Identix.Infrastructure.Web.Settings.InputModels;
 public class ChangeAvatarInputModel
 {
     /// <summary>
-    /// Получает или задает файл изображения.
+    /// Файл изображения.
     /// </summary>
     [Required(ErrorMessageResourceName = "Required",
         ErrorMessageResourceType = typeof(Resources.Settings.InputModels.ChangeAvatarInputModel))]
     public IFormFile? File { get; init; }
+    
+    /// <summary>
+    /// URL для возврата.
+    /// </summary>
+    public string ReturnUrl { get; init; } = "/";
 }

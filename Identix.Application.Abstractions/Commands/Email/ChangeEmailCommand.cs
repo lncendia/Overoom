@@ -9,17 +9,17 @@ namespace Identix.Application.Abstractions.Commands.Email;
 public class ChangeEmailCommand : IRequest<AppUser>
 {
     /// <summary>
-    /// Получает или задает идентификатор пользователя.
+    /// Идентификатор пользователя.
     /// </summary>
     public required Guid UserId { get; init; }
 
     /// <summary>
-    /// Получает или задает код подтверждения.
+    /// Код подтверждения.
     /// </summary>
     public required string Code { get; init; }
 
     /// <summary>
-    /// Получает или задает новую электронную почту пользователя.
+    /// Новая электронная почта пользователя.
     /// </summary>
     public required string NewEmail { get; init; }
 }

@@ -1,14 +1,10 @@
 import {InputWrapper} from "../helpers/input-wrapper";
 import {PasswordHide} from "../helpers/password-hide";
 
-/**
- * Класс функционала страницы авторизации
- */
+/** Класс функционала страницы авторизации */
 export class Login {
 
-    /**
-     * Метод запускает функционал страницы авторизации
-     */
+    /** Метод запускает функционал страницы авторизации */
     startAccount() {
 
         // получаем все поля ввода с классом .wrap-input input

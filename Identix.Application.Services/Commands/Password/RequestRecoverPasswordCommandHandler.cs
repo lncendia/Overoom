@@ -1,12 +1,10 @@
-using Common.Application.EmailService;
-using Hangfire;
-using Identix.Application.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Identix.Application.Abstractions.Commands.Password;
 using Identix.Application.Abstractions.Emails;
 using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Exceptions;
+using MassTransit;
 
 namespace Identix.Application.Services.Commands.Password;
 
@@ -14,9 +12,8 @@ namespace Identix.Application.Services.Commands.Password;
 /// Обработчик команды запроса восстановления пароля пользователя.
 /// </summary>
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
-/// <param name="backgroundJobClient">Клиент для постановки фоновых задач.</param>
-public class RequestRecoverPasswordCommandHandler(UserManager<AppUser> userManager,
-    IBackgroundJobClientV2 backgroundJobClient)
+/// <param name="publishEndpoint">Сервис для публикации событий.</param>
+public class RequestRecoverPasswordCommandHandler(UserManager<AppUser> userManager, IPublishEndpoint publishEndpoint)
     : IRequestHandler<RequestRecoverPasswordCommand>
 {
     /// <summary>
@@ -25,7 +22,6 @@ public class RequestRecoverPasswordCommandHandler(UserManager<AppUser> userManag
     /// <param name="request">Запрос на восстановление пароля.</param>
     /// <param name="cancellationToken">Токен отмены для асинхронной операции.</param>
     /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден.</exception>
-    /// <exception cref="EmailNotConfirmedException">Вызывается, если почта пользователя не подтверждена.</exception>
     public async Task Handle(RequestRecoverPasswordCommand request, CancellationToken cancellationToken)
     {
         // Поиск пользователя по адресу электронной почты.
@@ -34,45 +30,14 @@ public class RequestRecoverPasswordCommandHandler(UserManager<AppUser> userManag
         // Вызываем исключение если пользователь не найден
         if (user == null) throw new UserNotFoundException();
         
-        // Проверка, что почта подтверждена
-        if (!await userManager.IsEmailConfirmedAsync(user)) throw new EmailNotConfirmedException();
-
         // Генерация кода сброса пароля.
         var code = await userManager.GeneratePasswordResetTokenAsync(user);
 
         // Формирование URL для подтверждения сброса пароля.
-        var url = GenerateMailUrl(request.ResetUrl, user.Email!, code);
+        var url = user.GenerateMailConfirmUrl(request.ResetUrl, code, request.ReturnUrl);
 
         // Отправка электронного письма со ссылкой для подтверждения сброса пароля.
-        backgroundJobClient.Enqueue<IEmailService>(Constants.Hangfire.Queue,
-            service => service.SendAsync(new ConfirmRecoverPasswordEmail { Recipient = request.Email, ConfirmLink = url }, CancellationToken.None));
-    }
-
-    /// <summary>
-    /// Генерирует URL для подтверждения регистрации по электронной почте.
-    /// </summary>
-    /// <param name="url">Базовый URL.</param>
-    /// <param name="email">Почта пользователя.</param>
-    /// <param name="code">Код подтверждения.</param>
-    /// <returns>Сгенерированный URL.</returns>
-    private static string GenerateMailUrl(string url, string email, string code)
-    {
-        // Создаем объект UriBuilder с базовым URL
-        var uriBuilder = new UriBuilder(url);
-
-        // Получаем коллекцию параметров запроса
-        var queryParameters = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
-
-        // Добавляем параметр "email" со значением
-        queryParameters["email"] = email;
-
-        // Добавляем параметр "code" со значением
-        queryParameters["code"] = code;
-
-        // Устанавливаем обновленную строку запроса
-        uriBuilder.Query = queryParameters.ToString();
-
-        // Получаем обновленный URL
-        return uriBuilder.ToString();
+        var message = new ConfirmRecoverPasswordEmail { Recipient = request.Email, ConfirmLink = url };
+        await publishEndpoint.SkipOutbox().Publish(new SendEmail { Message = message }, cancellationToken);
     }
 }

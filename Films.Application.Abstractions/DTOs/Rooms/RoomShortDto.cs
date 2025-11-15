@@ -61,6 +61,16 @@ public class RoomShortDto
     public required bool IsSerial { get; init; }
     
     /// <summary>
+    /// Имя создателя комнаты
+    /// </summary>
+    public required string UserName { get; init; }
+    
+    /// <summary>
+    /// Ссылка на фото пользователя
+    /// </summary>
+    public string? PhotoKey { get; init; }
+    
+    /// <summary>
     /// Список жанров фильма
     /// </summary>
     public required IReadOnlyList<string> Genres { get; init; }

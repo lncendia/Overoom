@@ -8,12 +8,12 @@ namespace Identix.Application.Abstractions.Commands.Email;
 public class VerifyEmailCommand : IRequest
 {
     /// <summary>
-    /// Получает или задает идентификатор пользователя.
+    /// Идентификатор пользователя.
     /// </summary>
     public required Guid UserId { get; init; }
 
     /// <summary>
-    /// Получает или задает код проверки.
+    /// Код проверки.
     /// </summary>
     public required string Code { get; init; }
 }

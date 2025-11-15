@@ -7,7 +7,7 @@ public record FilmSnapshot
     public Guid Id { get; init; }
     public string Title { get; init; } = null!;
     public string Description { get; init; } = null!;
-    public string? ShortDescription { get; init; }
+    public string ShortDescription { get; init; } = null!;
     public DateOnly Date { get; init; }
     public string PosterKey { get; init; } = null!;
     public Rating? RatingKp { get; init; }

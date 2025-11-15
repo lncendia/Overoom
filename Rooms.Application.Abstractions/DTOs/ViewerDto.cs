@@ -98,7 +98,7 @@ public class ViewerDto
             return new ViewerTagDto
             {
                 Name = t,
-                Description = description,
+                Description = description
             };
         }).ToArray()
     };

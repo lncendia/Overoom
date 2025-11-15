@@ -1,8 +1,6 @@
 using Common.Application.Events;
-using Common.Application.ScopedDictionary;
-using MassTransit;
-using Rooms.Application.Abstractions.Events;
-using Rooms.Application.Abstractions.Events.Notifications;
+using Rooms.Application.Abstractions.RoomEvents.Notifications;
+using Rooms.Application.Abstractions.Services;
 using Rooms.Domain.Rooms.Events;
 
 namespace Rooms.Application.Services.EventHandlers.Rooms;
@@ -10,9 +8,8 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <summary>
 /// Обработчик события отправки бипа (звукового сигнала) зрителем
 /// </summary>
-/// <param name="publish">Интерфейс для публикации сообщений</param>
-/// <param name="context">Контекст выполняемой области</param>
-public class ViewerBeepedEventHandler(IPublishEndpoint publish, IScopedContext context) : AfterSaveNotificationHandler<ViewerBeepedEvent>
+/// <param name="eventSender">Отправитель событий комнаты</param>
+public class ViewerBeepedEventHandler(IRoomEventSender eventSender) : AfterSaveNotificationHandler<ViewerBeepedEvent>
 {
     /// <summary>
     /// Обрабатывает событие отправки бипа зрителем
@@ -21,14 +18,10 @@ public class ViewerBeepedEventHandler(IPublishEndpoint publish, IScopedContext c
     /// <param name="cancellationToken">Токен отмены операции</param>
     protected override async Task Execute(ViewerBeepedEvent @event, CancellationToken cancellationToken)
     {
-        using var _ = context.CreateScope();
-        
-        context.Current.SetRoomHeaders(@event);
-        
-        await publish.Publish<RoomBaseEvent>(new BeepNotificationEvent
+        await eventSender.SendAsync(new BeepNotificationEvent
         {
             Initiator = @event.Initiator.Id,
             Target = @event.Target.Id
-        }, cancellationToken);
+        }, @event.Room.Id, null, cancellationToken);
     }
 }

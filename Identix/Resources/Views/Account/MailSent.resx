@@ -18,10 +18,10 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="MailSentBody" xml:space="preserve">
-        <value>To restore your password, follow the link sent to your email.</value>
-    </data>
     <data name="MailSentTitle" xml:space="preserve">
         <value>The email has been sent</value>
+    </data>
+    <data name="SignIn" xml:space="preserve">
+        <value>Sign In</value>
     </data>
 </root>

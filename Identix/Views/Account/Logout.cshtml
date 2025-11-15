@@ -7,13 +7,14 @@
 }
 
 <h5 class="card-title">@Localizer["LogoutTitle"]</h5>
+<img class="page-gif" src="~/gif/log-out.gif" alt="error"/>
 
 <form class="mt-5 mb-4" asp-action="Logout">
     <input type="hidden" asp-for="ReturnUrl">
     <div class="container-btn">
         <div class="wrap-btn on-load">
             <div class="bg-btn"></div>
-            <input class="m-btn" type="submit" value="@Localizer["YesButton"]">
+            <input class="m-btn" type="submit" value="@Localizer["LogoutButton"]">
         </div>
     </div>
 </form>

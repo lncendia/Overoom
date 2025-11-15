@@ -33,7 +33,7 @@ public class GetUserHistoryQueryHandler(MongoDbContext context)
                 (note, films) => new
                 {
                     note.Date,
-                    Film = films.First(),
+                    Film = films.First()
                 }
             )
             .OrderByDescending(x => x.Date)
@@ -45,9 +45,7 @@ public class GetUserHistoryQueryHandler(MongoDbContext context)
                 Year = x.Film.Date.Year,
                 RatingKp = x.Film.RatingKp,
                 RatingImdb = x.Film.RatingImdb,
-                Description = x.Film.ShortDescription
-                              ?? x.Film.Description.Substring(0, 150) +
-                              (x.Film.Description.Length > 150 ? "..." : string.Empty),
+                Description = x.Film.ShortDescription,
                 IsSerial = x.Film.Seasons != null && x.Film.Content == null,
                 Genres = x.Film.Genres
             })

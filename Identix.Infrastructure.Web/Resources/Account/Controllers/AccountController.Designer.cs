@@ -69,20 +69,29 @@ namespace Identix.Infrastructure.Web.Resources.Account.Controllers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To perform this action, confirm your email.
-        /// </summary>
-        internal static string EmailNotConfirmed {
-            get {
-                return ResourceManager.GetString("EmailNotConfirmed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Invalid credentials.
         /// </summary>
         internal static string InvalidCredentials {
             get {
                 return ResourceManager.GetString("InvalidCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We have sent an email to confirm your email address. Please check your mailbox and follow the instructions in the email..
+        /// </summary>
+        internal static string MailSent_ConfirmEmail {
+            get {
+                return ResourceManager.GetString("MailSent_ConfirmEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We have sent an email to reset the password. Please check your mailbox and follow the instructions in the email to create a new password..
+        /// </summary>
+        internal static string MailSent_ResetPassword {
+            get {
+                return ResourceManager.GetString("MailSent_ResetPassword", resourceCulture);
             }
         }
         

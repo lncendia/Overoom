@@ -10,11 +10,6 @@ namespace Films.Infrastructure.Storage.Models.Comments;
 /// </summary>
 public class CommentModel : VersionedUpdatedEntity<CommentModel>
 {
-    private string _text = null!;
-    private DateTime _createdAt;
-    private Guid _userId;
-    private Guid _filmId;
-
     /// <summary>
     /// Уникальный идентификатор комментария
     /// </summary>
@@ -25,17 +20,17 @@ public class CommentModel : VersionedUpdatedEntity<CommentModel>
     /// </summary>
     public string Text
     {
-        get => _text;
-        set => _text = TrackChange(nameof(Text), _text, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(Text), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Дата и время создания комментария
     /// </summary>
     public DateTime CreatedAt
     {
-        get => _createdAt;
-        set => _createdAt = TrackStructChange(nameof(CreatedAt), _createdAt, value);
+        get;
+        set => field = TrackStructChange(nameof(CreatedAt), field, value);
     }
 
     /// <summary>
@@ -43,8 +38,8 @@ public class CommentModel : VersionedUpdatedEntity<CommentModel>
     /// </summary>
     public Guid UserId
     {
-        get => _userId;
-        set => _userId = TrackStructChange(nameof(UserId), _userId, value);
+        get;
+        set => field = TrackStructChange(nameof(UserId), field, value);
     }
 
     /// <summary>
@@ -52,10 +47,10 @@ public class CommentModel : VersionedUpdatedEntity<CommentModel>
     /// </summary>
     public Guid FilmId
     {
-        get => _filmId;
-        set => _filmId = TrackStructChange(nameof(FilmId), _filmId, value);
+        get;
+        set => field = TrackStructChange(nameof(FilmId), field, value);
     }
-    
+
     public CommentSnapshot GetSnapshot() => new()
     {
         Id = Id,

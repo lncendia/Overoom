@@ -11,9 +11,6 @@ namespace Rooms.Infrastructure.Storage.Models.Rooms;
 /// </summary>
 public class RoomModel : UpdatedEntity<RoomModel>
 {
-    private Guid _filmId;
-    private Guid _ownerId;
-    private bool _isSerial;
     private TrackedValueObjectCollection<ViewerModel, RoomModel> _viewers = new();
 
     /// <summary>
@@ -26,8 +23,8 @@ public class RoomModel : UpdatedEntity<RoomModel>
     /// </summary>
     public Guid FilmId
     {
-        get => _filmId;
-        set => _filmId = TrackStructChange(nameof(FilmId), _filmId, value);
+        get;
+        set => field = TrackStructChange(nameof(FilmId), field, value);
     }
 
     /// <summary>
@@ -35,8 +32,8 @@ public class RoomModel : UpdatedEntity<RoomModel>
     /// </summary>
     public Guid OwnerId
     {
-        get => _ownerId;
-        set => _ownerId = TrackStructChange(nameof(OwnerId), _ownerId, value);
+        get;
+        set => field = TrackStructChange(nameof(OwnerId), field, value);
     }
 
     /// <summary>
@@ -44,8 +41,8 @@ public class RoomModel : UpdatedEntity<RoomModel>
     /// </summary>
     public bool IsSerial
     {
-        get => _isSerial;
-        set => _isSerial = TrackStructChange(nameof(IsSerial), _isSerial, value);
+        get;
+        set => field = TrackStructChange(nameof(IsSerial), field, value);
     }
 
     /// <summary>

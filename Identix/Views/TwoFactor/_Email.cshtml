@@ -3,11 +3,11 @@
 @inject IViewLocalizer Localizer
 
 <input asp-for="CodeType" type="hidden"/>
+<input asp-for="ReturnUrl" type="hidden"/>
 
 <div class="wrap-input">
     <input asp-for="Code"/>
-    <span class="focus-input" asp-placeholder-for="Code">
-    </span>
+    <span class="focus-input" asp-placeholder-for="Code"></span>
 </div>
 
 <div class="two-factor-mail-info">
@@ -23,7 +23,7 @@
 </div>
 
 <div class="container-btn">
-    <div class="wrap-btn on-load">
+    <div class="wrap-btn on-hover">
         <div class="bg-btn"></div>
         <a class="m-btn" asp-action="RequestCodeEmail" id="request-email-link">@Localizer["RequestEmail"]</a>
         <div class="d-none" id="resending-msg">@Localizer["Resending"]</div>

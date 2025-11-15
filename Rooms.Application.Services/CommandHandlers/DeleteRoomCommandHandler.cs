@@ -1,3 +1,4 @@
+using Common.Infrastructure.Repositories;
 using MediatR;
 using Rooms.Application.Abstractions.Commands;
 using Rooms.Application.Abstractions.Exceptions;
@@ -9,7 +10,7 @@ namespace Rooms.Application.Services.CommandHandlers;
 /// Обработчик команды на удаление комнаты
 /// </summary>
 /// <param name="unitOfWork">Единица работы для взаимодействия с базой данных</param>
-public class DeleteRoomCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<DeleteRoomCommand>
+public class DeleteRoomCommandHandler(IUnitOfWork unitOfWork, ISessionHandlerFactory sessionHandlerFactory) : IRequestHandler<DeleteRoomCommand>
 {
     /// <summary>
     /// Обрабатывает команду удаления комнаты
@@ -29,6 +30,6 @@ public class DeleteRoomCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
         await unitOfWork.RoomRepository.Value.DeleteAsync(room.Id, cancellationToken);
 
         // Сохраняем изменения в базе данных
-        await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
+        await unitOfWork.SaveChangesAsync(sessionHandlerFactory.CreateInboxHandler(), cancellationToken: cancellationToken);
     }
 }

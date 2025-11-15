@@ -64,7 +64,7 @@ public class UpdateSecurityStampCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Создаем команду для завершения других активных сессий у пользователя.

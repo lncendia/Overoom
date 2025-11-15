@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 using Common.DI.Extensions;
+using Common.DI.Middlewares;
 using Common.DI.WebApi.Extensions;
+using Films.Application.Abstractions;
 using Films.Application.Abstractions.DTOs.Films;
 using Films.Application.Services.QueryHandlers.Films;
 using Films.Infrastructure.Storage.DatabaseInitialization;
@@ -63,6 +65,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
 });
 
+// Настраиваем OpenTelemetry
+builder.Services.AddOpenTelemetryServices(Constants.OpenTelemetry.ServiceName);
+
 // Создаем экземпляр приложения ASP.NET Core
 var app = builder.Build();
 
@@ -91,15 +96,11 @@ app.UseSwagger();
 // Добавляем в приложение middleware для отображения документации API в формате Swagger UI
 app.UseAuthorizedSwaggerUI();
 
-app.Use(async (context, next) =>
-{
-    // имитация задержки запроса
-    // await Task.Delay(TimeSpan.FromSeconds(40));
-    await next();
-});
-
 // Добавляем в приложение маршрутизацию запросов на контроллеры MVC
 app.MapControllers();
+
+// Эндпоинт для Prometheus
+app.MapPrometheusScrapingEndpointWithBasicAuth();
 
 // Запускаем приложение ASP.NET Core
 await app.RunAsync();

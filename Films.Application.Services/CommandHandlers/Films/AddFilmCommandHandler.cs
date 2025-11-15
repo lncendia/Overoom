@@ -1,3 +1,4 @@
+using Films.Application.Abstractions;
 using Films.Application.Abstractions.Commands.Films;
 using Films.Domain.Films;
 using Films.Domain.Films.ValueObjects;
@@ -36,7 +37,7 @@ public class AddFilmCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<Add
             Screenwriters = request.Screenwriters,
             RatingImdb = request.RatingImdb.HasValue ? new Rating(request.RatingImdb.Value) : null,
             RatingKp = request.RatingKp.HasValue ? new Rating(request.RatingKp.Value) : null,
-            PosterKey = Constants.FilmPosterKeyDefault,
+            PosterKey = Constants.Poster.FilmDefault
         };
 
         // Опциональное поле короткого описания

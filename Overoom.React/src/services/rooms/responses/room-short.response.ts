@@ -24,6 +24,12 @@ export interface RoomShortResponse {
   description: string;
   /** Флаг сериала */
   isSerial: boolean;
+  /** Имя владельца комнаты */
+  userName: string;
   /** Жанры фильма */
   genres: string[];
+  /** URL фотографии пользователя */
+  photoUrl: string | null;
+  /** Ключ фотографии пользователя*/
+  photoKey: string | null;
 }

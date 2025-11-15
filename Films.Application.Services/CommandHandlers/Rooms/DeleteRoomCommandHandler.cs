@@ -19,8 +19,7 @@ public class DeleteRoomCommandHandler(ISessionHandlerFactory sessionHandlerFacto
     /// <param name="request">Данные для удаления комнаты (ID комнаты, ID пользователя)</param>
     /// <param name="cancellationToken">Токен отмены операции</param>
     /// <returns>Информация о созданной комнате</returns>
-    /// <exception cref="FilmNotFoundException">Если указанный фильм не найден</exception>
-    /// <exception cref="UserNotFoundException">Если пользователь не найден</exception>
+    /// <exception cref="RoomNotFoundException">Если указанная комната не найдена</exception>
     public async Task Handle(DeleteRoomCommand request, CancellationToken cancellationToken)
     {
         // Получаем комнату по идентификатору из запроса

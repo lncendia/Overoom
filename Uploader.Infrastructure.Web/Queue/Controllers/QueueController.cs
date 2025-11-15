@@ -1,8 +1,7 @@
-﻿using AutoMapper;
-using Uploader.Application.Abstractions.Commands;
-using MediatR;
+﻿using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Uploader.Application.Abstractions.Events;
 using Uploader.Infrastructure.Web.Queue.InputModels;
 
 namespace Uploader.Infrastructure.Web.Queue.Controllers;
@@ -10,11 +9,11 @@ namespace Uploader.Infrastructure.Web.Queue.Controllers;
 /// <summary>
 /// Контроллер для работы с комментариями к фильмам
 /// </summary>
-/// <param name="mediator">Mediator для обработки CQRS запросов</param>
-/// <param name="mapper">AutoMapper для преобразования объектов</param>
+/// <param name="publishEndpoint">Сервис для публикации событий.</param>
 [ApiController]
+[Authorize(Policy = "admin")]
 [Route("api/queue")]
-public class QueueController(ISender mediator, IMapper mapper) : ControllerBase
+public class QueueController(IPublishEndpoint publishEndpoint) : ControllerBase
 {
     /// <summary>
     /// Добавить новый комментарий к фильму
@@ -29,11 +28,21 @@ public class QueueController(ISender mediator, IMapper mapper) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Queue([FromBody] QueueInputModel model, CancellationToken token = default)
     {
-        // Создаем команду, передавая ID пользователя и фильма
-        var command = mapper.Map<EnqueueDownloadCommand>(model);
+        var command = new DownloadFilm
+        {
+            FilmRecord = new FilmRecord
+            {
+                Id = model.FilmId,
+                Season = model.Season,
+                Episode = model.Episode,
+                Resolution = model.Resolution,
+                Version = model.Version!,
+            },
+            MagnetUri = model.MagnetUri!,
+            FileName = model.FileName,
+        };
 
-        // Отправляем команду через медиатор
-        await mediator.Send(command, token);
+        await publishEndpoint.Publish(command, token);
 
         // Возвращаем статус 201 Created
         return Created();

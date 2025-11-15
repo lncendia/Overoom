@@ -29,7 +29,7 @@ public class ClientDto
     public string? ClientUrl { get; init; }
 
     /// <summary>
-    /// URL логотипа клиентского приложения
+    /// Ключ логотипа клиентского приложения
     /// </summary>
-    public string? ClientLogoUrl { get; init; }
+    public string? ClientLogoKey { get; init; }
 }

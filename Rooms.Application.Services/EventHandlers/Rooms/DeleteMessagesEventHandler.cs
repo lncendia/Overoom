@@ -1,7 +1,6 @@
 using Common.Application.Events;
 using Common.Domain.Events;
-using Hangfire;
-using Rooms.Application.Abstractions;
+using MassTransit;
 using Rooms.Application.Abstractions.Services;
 using Rooms.Domain.Rooms;
 
@@ -10,8 +9,8 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <summary>
 /// Обработчик события удаления комнаты, выполняющий очистку связанных сообщений
 /// </summary>
-/// <param name="backgroundJobClient">Клиент для постановки фоновых задач.</param>
-public class DeleteMessagesEventHandler(IBackgroundJobClientV2 backgroundJobClient)
+/// <param name="publishEndpoint">Сервис для публикации событий.</param>
+public class DeleteMessagesEventHandler(IPublishEndpoint publishEndpoint)
     : BeforeSaveNotificationHandler<DeleteEvent<Room>>
 {
     /// <summary>
@@ -21,13 +20,8 @@ public class DeleteMessagesEventHandler(IBackgroundJobClientV2 backgroundJobClie
     /// <param name="cancellationToken">Токен отмены операции</param>
     protected override Task Execute(DeleteEvent<Room> @event, CancellationToken cancellationToken)
     {
-        // Помещаем задачу очистки сообщений в фоновую очередь Hangfire
+        // Помещаем задачу очистки сообщений в очередь.
         // Это предотвращает блокировку основного потока при удалении большого количества сообщений
-        backgroundJobClient.Enqueue<IMessagesCleaner>(Constants.Hangfire.Queue,
-            cleaner => cleaner.CleanAsync(@event.Id, CancellationToken.None)
-        );
-
-        // Возвращаем завершенную задачу, так как сама очистка выполняется асинхронно в фоне
-        return Task.CompletedTask;
+        return publishEndpoint.Publish(new CleanMessages(@event.Id), cancellationToken);
     }
 }

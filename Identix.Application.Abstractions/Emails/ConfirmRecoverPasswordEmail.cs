@@ -5,7 +5,7 @@ namespace Identix.Application.Abstractions.Emails;
 /// <summary>
 /// Класс, представляющий данные для электронного письма с подтверждением восстановления пароля.
 /// </summary>
-public class ConfirmRecoverPasswordEmail : EmailData
+public class ConfirmRecoverPasswordEmail : EmailMessage
 {
     /// <summary>
     /// Ссылка для подтверждения восстановления пароля.

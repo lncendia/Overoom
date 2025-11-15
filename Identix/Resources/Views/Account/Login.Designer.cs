@@ -87,16 +87,7 @@ namespace Identix.Resources.Views.Account {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter.
-        /// </summary>
-        internal static string LogIn {
-            get {
-                return ResourceManager.GetString("LogIn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Entrance.
+        ///   Looks up a localized string similar to Sign In.
         /// </summary>
         internal static string LoginTitle {
             get {
@@ -128,6 +119,15 @@ namespace Identix.Resources.Views.Account {
         internal static string SchemesNotConfigured {
             get {
                 return ResourceManager.GetString("SchemesNotConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign In.
+        /// </summary>
+        internal static string SignIn {
+            get {
+                return ResourceManager.GetString("SignIn", resourceCulture);
             }
         }
         

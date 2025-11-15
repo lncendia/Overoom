@@ -105,7 +105,7 @@ public partial class Room : AggregateRoot
     public void Join(User user, string? code)
     {
         // Проверка, что пользователь уже не находится в комнате
-        if (_viewers.Contains(user.Id)) throw new NotImplementedException();
+        if (_viewers.Contains(user.Id)) throw new UserAlreadyInRoomException(user.Id, Id);
 
         // Если комната закрытая, проверяем код доступа
         if (Code != null)
@@ -163,10 +163,9 @@ public partial class Room : AggregateRoot
     }
     
     /// <summary>
-    /// 
+    /// Проверка на возможность удаления комнаты пользователем.
     /// </summary>
-    /// <param name="userId"></param>
-    /// <exception cref="ActionNotAllowedException"></exception>
+    /// <param name="userId">Идентификатор пользователя.</param>
     public void CanDelete(Guid userId)
     {
         if (userId != OwnerId) throw new ActionNotAllowedException(Id, nameof(CanDelete));

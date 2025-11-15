@@ -15,7 +15,7 @@ public class QueueInputModel
     /// <summary>
     /// Имя файла для обработки (опционально)
     /// </summary>
-    public string? Filename { get; init; }
+    public string? FileName { get; init; }
     
     /// <summary>
     /// Уникальный идентификатор фильма в системе

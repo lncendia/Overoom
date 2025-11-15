@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
@@ -9,11 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\Common.DI.WebApi\Common.DI.WebApi.csproj" />
+        <ProjectReference Include="..\Common.DI.WebApi\Common.DI.WebApi.csproj"/>
         <ProjectReference Include="..\Rooms.Application.Services\Rooms.Application.Services.csproj"/>
         <ProjectReference Include="..\Rooms.Infrastructure.Bus\Rooms.Infrastructure.Bus.csproj"/>
         <ProjectReference Include="..\Rooms.Infrastructure.Storage\Rooms.Infrastructure.Storage.csproj"/>
@@ -21,9 +17,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+        <Content Include="..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
     </ItemGroup>
 
 </Project>

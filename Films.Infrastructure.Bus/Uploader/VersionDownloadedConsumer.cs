@@ -26,7 +26,7 @@ public class VersionDownloadedConsumer(ISender mediator) : IConsumer<VersionDown
             FilmId = integrationEvent.FilmId,
             Version = integrationEvent.Version,
             Season = integrationEvent.Season,
-            Episode = integrationEvent.Episode,
+            Episode = integrationEvent.Episode
         }, context.CancellationToken);
     }
 }

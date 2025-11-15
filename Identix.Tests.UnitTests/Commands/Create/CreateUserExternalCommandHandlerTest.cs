@@ -10,6 +10,7 @@ using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Enums;
 using Identix.Application.Abstractions.Exceptions;
 using Identix.Application.Services.Commands.Create;
+using MassTransit.MongoDbIntegration;
 
 namespace Identix.Tests.UnitTests.Commands.Create;
 
@@ -55,10 +56,11 @@ public class CreateUserExternalCommandHandlerTest
             new Mock<ILogger<UserManager<AppUser>>>().Object);
 
         var publishEndpointMock = new Mock<IPublishEndpoint>();
+        var mongoDbContextMock = new Mock<MongoDbContext>();
 
         // Инициализация обработчика.
         _handler = new CreateUserExternalCommandHandler(_userManagerMock.Object, _thumbnailStore.Object,
-            publishEndpointMock.Object, new Mock<ILogger<CreateUserExternalCommandHandler>>().Object);
+            publishEndpointMock.Object, mongoDbContextMock.Object, new Mock<ILogger<CreateUserExternalCommandHandler>>().Object);
 
         // Создание ClaimsPrincipal для представления пользователя с указанным email в виде утверждения (claim).
         _claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity([
@@ -134,7 +136,7 @@ public class CreateUserExternalCommandHandlerTest
                     UserName = "test",
                     Email = "test@example.com",
                     RegistrationTimeUtc = DateTime.UtcNow,
-                    LastAuthTimeUtc = DateTime.UtcNow,
+                    LastAuthTimeUtc = DateTime.UtcNow
                 });
 
         // Создаем команду для создания пользователя через внешний провайдер.

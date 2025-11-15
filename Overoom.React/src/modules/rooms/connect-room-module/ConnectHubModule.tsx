@@ -141,6 +141,7 @@ const useRoomConnection = (
     const hub = roomHubFactory.create();
     await hub.start();
     setHub(hub);
+    return hub;
   }, [roomHubFactory]);
 
   /** Эффект: когда у нас есть hub и joined === true — запускаем логику подключения. */
@@ -159,14 +160,16 @@ const useRoomConnection = (
 
   /** Эффект создания hub: создаём hub при монтировании и в cleanup — корректно отключаем и убираем hub. */
   useEffect(() => {
-    createHub().then();
+    let hubInstance: RoomHub | null = null;
+
+    createHub().then((hub) => {
+      hubInstance = hub;
+    });
 
     return () => {
       // Отключаем hub и удаляем ссылку, чтобы избежать утечек
-      setHub((prev) => {
-        prev?.disconnect();
-        return null;
-      });
+      setHub(null);
+      hubInstance?.disconnect();
     };
   }, [createHub]);
 

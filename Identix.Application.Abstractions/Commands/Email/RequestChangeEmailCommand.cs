@@ -8,17 +8,27 @@ namespace Identix.Application.Abstractions.Commands.Email;
 public class RequestChangeEmailCommand : IRequest
 {
     /// <summary>
-    /// Получает или задает идентификатор пользователя.
+    /// Идентификатор пользователя.
     /// </summary>
     public required Guid UserId { get; init; }
+    
+    /// <summary>
+    /// Пароль
+    /// </summary>
+    public string? Password { get; init; }
 
     /// <summary>
-    /// Получает или задает новую электронную почту пользователя.
+    /// Новая электронную почту пользователя.
     /// </summary>
     public required string NewEmail { get; init; }
 
     /// <summary>
-    /// Получает или задает URL для сброса изменения электронной почты.
+    /// URL для сброса изменения электронной почты.
     /// </summary>
     public required string ResetUrl { get; init; }
+    
+    /// <summary>
+    /// URL для возврата.
+    /// </summary>
+    public string ReturnUrl { get; init; } = "/";
 }

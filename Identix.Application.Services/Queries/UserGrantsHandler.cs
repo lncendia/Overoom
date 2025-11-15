@@ -95,10 +95,10 @@ public class UserGrantsHandler(
                 ClientName = appDescriptor.DisplayName ?? authDescriptor.ApplicationId!,
 
                 // URL веб-сайта приложения
-                ClientUrl = appDescriptor.GetClientUri(),
+                ClientUrl = appDescriptor.GetClientUrl(),
 
                 // URL логотипа приложения
-                ClientLogoUrl = appDescriptor.GetLogoUri(),
+                ClientLogoKey = appDescriptor.GetLogoKey(),
 
                 // Описание гранта
                 Description = authDescriptor.GetDescription(),

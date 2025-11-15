@@ -6,6 +6,7 @@ using Identix.Application.Abstractions.Commands.Authentication;
 using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Exceptions;
 using Identix.Application.Services.Commands.Authentication;
+using MassTransit;
 
 namespace Identix.Tests.UnitTests.Commands.Authentication;
 
@@ -41,8 +42,10 @@ public class AuthenticateUserByPasswordCommandHandlerTest
             new Mock<IServiceProvider>().Object,
             new Mock<ILogger<UserManager<AppUser>>>().Object);
 
+        var publishEndpointMock = new Mock<IPublishEndpoint>();
+
         // Инициализация обработчика.
-        _handler = new AuthenticateUserByPasswordCommandHandler(_userManagerMock.Object);
+        _handler = new AuthenticateUserByPasswordCommandHandler(_userManagerMock.Object, publishEndpointMock.Object);
     }
 
     /// <summary>
@@ -64,17 +67,17 @@ public class AuthenticateUserByPasswordCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Настройка mock объекта UserManager для возвращения false при вызове IsLockedOutAsync.
         _userManagerMock
-
-            // Выбираем метод, к которому делаем заглушку.  
             .Setup(m => m.IsLockedOutAsync(It.IsAny<AppUser>()))
-
-            // Возвращаем false.
             .ReturnsAsync(() => false);
+
+        _userManagerMock
+            .Setup(m => m.IsEmailConfirmedAsync(It.IsAny<AppUser>()))
+            .ReturnsAsync(() => true);
 
         // Настройка mock объекта UserManager для возвращения true при вызове CheckPasswordAsync.
         _userManagerMock
@@ -89,11 +92,9 @@ public class AuthenticateUserByPasswordCommandHandlerTest
         // Создаем команду для аутентификации пользователя по паролю.
         var command = new AuthenticateUserByPasswordCommand
         {
-            // Задаем "тестовую" почту.
             Email = "test@example.com",
-
-            // Задаем "тестовый" пароль.
-            Password = "password"
+            Password = "password",
+            ConfirmUrl = "https://google.com"
         };
 
         // Act
@@ -127,17 +128,14 @@ public class AuthenticateUserByPasswordCommandHandlerTest
         // Создаем команду для аутентификации пользователя по паролю.
         var command = new AuthenticateUserByPasswordCommand
         {
-            // Задаем "тестовую" почту.
             Email = "test@example.com",
-
-            // Задаем "тестовый" пароль.
-            Password = "password"
+            Password = "password",
+            ConfirmUrl = "https://google.com"
         };
 
         // Act & Assert
         // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
-        await Assert.ThrowsAsync<UserNotFoundException>(
-            () => _handler.Handle(command, CancellationToken.None));
+        await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
     }
 
     /// <summary>
@@ -159,7 +157,7 @@ public class AuthenticateUserByPasswordCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Настройка mock объекта UserManager для возвращения true при вызове IsLockedOutAsync.
@@ -174,17 +172,14 @@ public class AuthenticateUserByPasswordCommandHandlerTest
         // Создаем команду для аутентификации пользователя по паролю.
         var command = new AuthenticateUserByPasswordCommand
         {
-            // Задаем "тестовую" почту.
             Email = "test@example.com",
-
-            // Задаем "тестовый" пароль.
-            Password = "password"
+            Password = "password",
+            ConfirmUrl = "https://google.com"
         };
 
         // Act & Assert
         // Проверка, что выполнение метода Handle приводит к возникновению исключения UserLockoutException.
-        await Assert.ThrowsAsync<UserLockoutException>(
-            () => _handler.Handle(command, CancellationToken.None));
+        await Assert.ThrowsAsync<UserLockoutException>(() => _handler.Handle(command, CancellationToken.None));
     }
 
     /// <summary>
@@ -206,7 +201,7 @@ public class AuthenticateUserByPasswordCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
+                LastAuthTimeUtc = DateTime.UtcNow
             });
 
         // Настройка mock объекта UserManager для возвращения false при вызове IsLockedOutAsync.
@@ -230,16 +225,13 @@ public class AuthenticateUserByPasswordCommandHandlerTest
         // Создаем команду для аутентификации пользователя по паролю.
         var command = new AuthenticateUserByPasswordCommand
         {
-            // Задаем "тестовую" почту.
             Email = "test@example.com",
-
-            // Задаем "тестовый" пароль.
-            Password = "password"
+            Password = "password",
+            ConfirmUrl = "https://google.com"
         };
 
         // Act & Assert
         // Проверка, что выполнение метода Handle приводит к возникновению исключения InvalidPasswordException.
-        await Assert.ThrowsAsync<InvalidPasswordException>(
-            () => _handler.Handle(command, CancellationToken.None));
+        await Assert.ThrowsAsync<InvalidPasswordException>(() => _handler.Handle(command, CancellationToken.None));
     }
 }

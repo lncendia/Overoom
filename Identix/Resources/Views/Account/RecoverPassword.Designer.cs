@@ -60,15 +60,6 @@ namespace Identix.Resources.Views.Account {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter.
-        /// </summary>
-        internal static string Login {
-            get {
-                return ResourceManager.GetString("Login", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Did you remember the password?.
         /// </summary>
         internal static string RememberPassword {
@@ -92,6 +83,15 @@ namespace Identix.Resources.Views.Account {
         internal static string ResetPasswordTitle {
             get {
                 return ResourceManager.GetString("ResetPasswordTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign In.
+        /// </summary>
+        internal static string SignIn {
+            get {
+                return ResourceManager.GetString("SignIn", resourceCulture);
             }
         }
     }

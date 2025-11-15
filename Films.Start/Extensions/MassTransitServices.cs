@@ -27,13 +27,16 @@ public static class MassTransitServices
         builder.Services.AddMassTransit(busConfigurator =>
         {
             // Регистрируем обработчик
-            busConfigurator.AddConsumer<UserRegisteredConsumer>();
+            busConfigurator.AddConsumer<UserRegisteredConsumer, UserRegisteredConsumerDefinition>();
 
             // Регистрируем обработчик
-            busConfigurator.AddConsumer<UserInfoChangedConsumer>();
+            busConfigurator.AddConsumer<UserInfoChangedConsumer, UserInfoChangedConsumerDefinition>();
             
             // Регистрируем обработчик
-            busConfigurator.AddConsumer<VersionDownloadedConsumer>();
+            busConfigurator.AddConsumer<VersionDownloadedConsumer, VersionDownloadedConsumerDefinition>();
+            
+            // Добавляем планировщик отложенных сообщений
+            busConfigurator.AddDelayedMessageScheduler();
             
             // Настройка использования RabbitMQ в качестве транспорта для MassTransit.
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
@@ -44,10 +47,8 @@ public static class MassTransitServices
                 // Настраиваем очереди
                 cfg.ConfigureEndpoints(ctx);
                 
-                cfg.ReceiveEndpoint("Films:UserInfoChanged", e =>
-                {
-                    e.ConfigureConsumer<UserInfoChangedConsumer>(ctx);
-                });
+                // Использовать планировщик отложенных сообщений
+                cfg.UseDelayedMessageScheduler();
             });
 
             // Настройка MongoDB Outbox для обеспечения отказоустойчивости и согласованности при отправке событий.

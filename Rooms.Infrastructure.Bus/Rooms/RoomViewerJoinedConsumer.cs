@@ -18,8 +18,6 @@ public class RoomViewerJoinedConsumer(ISender mediator) : IConsumer<RoomViewerJo
     /// <param name="context">Контекст сообщения</param>
     public async Task Consume(ConsumeContext<RoomViewerJoinedIntegrationEvent> context)
     {
-        await Task.Delay(TimeSpan.FromSeconds(5));
-        
         // Получаем данные события
         var integrationEvent = context.Message;
 

@@ -66,7 +66,6 @@ public class RegistrationController : Controller
     /// Метод отдает View регистрации
     /// </summary>
     /// <param name="returnUrl">Url для возврата</param>
-    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> Registration(string returnUrl = "/")
     {
@@ -84,8 +83,6 @@ public class RegistrationController : Controller
     /// Обработка регистрации пользователя
     /// </summary>
     /// <param name="model">Модель входа в систему</param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [AllowAnonymous]
@@ -100,10 +97,7 @@ public class RegistrationController : Controller
         // Если данные не валидны
         if (!ModelState.IsValid)
         {
-            // что-то пошло не так, показать форму с ошибкой
             var vm = await BuildRegisterViewModelAsync(model, context);
-
-            // возвращаем модель во вью
             return View(vm);
         }
 
@@ -121,29 +115,19 @@ public class RegistrationController : Controller
             // Отправляем команду на создание пользователя
             var user = await _mediator.Send(new CreateUserCommand
             {
-                // Почта
                 Email = model.Email!,
-
-                // Пароль
                 Password = model.Password!,
-
-                // Url подтверждения почты
                 ConfirmUrl = callbackUrl,
-
-                // Локаль
-                Locale = locale
+                Locale = locale,
+                ReturnUrl = model.ReturnUrl
             });
 
-            // Устанавливаем пользователю аутентификационные куки
-            await _signInManager.SignInAsync(user, model.RememberLogin);
-
-            // Инициализируем событие об успешном входе пользователя
+            // Инициализируем событие об успешной регистрации пользователя
             _logger.LogInformation(
-                "User login successful. Email: {Email}, UserId: {UserId}, UserName: {UserName}, ClientId: {ClientId}",
+                "User registration successful. Email: {Email}, UserId: {UserId}, UserName: {UserName}, ClientId: {ClientId}",
                 user.Email, user.Id, user.UserName, context?.ClientId);
 
-            // Делаем редирект
-            return Redirect(model.ReturnUrl);
+            return RedirectToAction("ConfirmEmailMailSent", "Account", new { returnUrl = model.ReturnUrl });
         }
         catch (Exception ex)
         {
@@ -185,14 +169,15 @@ public class RegistrationController : Controller
     /// <summary>
     /// Метод подтверждения email
     /// </summary>
-    /// <param name="userId">Id пользователя</param>
+    /// <param name="id">Id пользователя</param>
     /// <param name="code">Токен для подтверждения email пользователя</param>
+    /// <param name="returnUrl">Url для возврата</param>
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> ConfirmEmail(Guid? userId, string? code)
+    public async Task<IActionResult> ConfirmEmail(Guid? id, string? code, string returnUrl = "/")
     {
         // проверяем входящие данные
-        if (!userId.HasValue) throw new QueryParameterMissingException(nameof(userId));
+        if (!id.HasValue) throw new QueryParameterMissingException(nameof(id));
 
         // проверяем входящие данные
         if (code == null) throw new QueryParameterMissingException(nameof(code));
@@ -200,22 +185,13 @@ public class RegistrationController : Controller
         // Верифицируем email
         await _mediator.Send(new VerifyEmailCommand
         {
-            // Идентификатор пользователя
-            UserId = userId.Value,
-
-            // Код подтверждения
+            UserId = id.Value,
             Code = code
         });
 
-        // Делаем редирект
-        return RedirectToAction("EmailConfirmed");
+        // Возвращаем представление
+        return View(new ConfirmEmailViewModel(returnUrl));
     }
-
-    /// <summary>
-    /// Возвращает представление для страницы "EmailConfirmed".
-    /// </summary>
-    /// <returns>Результат действия для страницы "EmailConfirmed".</returns>
-    public IActionResult EmailConfirmed() => View();
 
     /// <summary>
     /// Создает модель представления регистрации
@@ -237,13 +213,8 @@ public class RegistrationController : Controller
             // Формируем вью-модель входа в систему
             return new RegistrationViewModel
             {
-                // Url возврата
                 ReturnUrl = returnUrl,
-
-                // Флаг, включен ли локальный провайдер идентификации
                 EnableLocalLogin = enableLocalIdentityProvider,
-
-                // Массив доступных внешних провайдеров
                 ExternalProviders = schemes.ToArray()
             };
         }
@@ -270,16 +241,9 @@ public class RegistrationController : Controller
         // формируем вью-модель входа в систему
         return new RegistrationViewModel
         {
-            // Url возврата
             ReturnUrl = returnUrl,
-
-            // Флаг, включен ли локальный провайдер идентификации
             EnableLocalLogin = enableLocalIdentityProvider,
-
-            // Массив доступных внешних провайдеров
             ExternalProviders = schemes.ToArray(),
-
-            // Подсказка для логина
             Email = context.LoginHint
         };
     }

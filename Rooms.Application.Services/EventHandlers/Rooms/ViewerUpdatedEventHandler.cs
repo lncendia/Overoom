@@ -1,11 +1,9 @@
 using Common.Application.Events;
-using Common.Application.ScopedDictionary;
 using Common.Domain.Events;
-using MassTransit;
 using Rooms.Application.Abstractions;
 using Rooms.Application.Abstractions.DTOs;
-using Rooms.Application.Abstractions.Events;
-using Rooms.Application.Abstractions.Events.Room;
+using Rooms.Application.Abstractions.RoomEvents.Room;
+using Rooms.Application.Abstractions.Services;
 using Rooms.Domain.Rooms;
 using Rooms.Domain.Rooms.Entities;
 
@@ -14,10 +12,8 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <summary>
 /// Обработчик событий обновления данных зрителя
 /// </summary>
-/// <param name="publish">Интерфейс для публикации сообщений</param>
-/// <param name="context">Контекст выполняемой области</param>
-public class ViewerUpdatedEventHandler(IPublishEndpoint publish, IScopedContext context)
-    : AfterSaveNotificationHandler<SaveEvent<Room>>
+/// <param name="eventSender">Отправитель событий комнаты</param>
+public class ViewerUpdatedEventHandler(IRoomEventSender eventSender) : AfterSaveNotificationHandler<SaveEvent<Room>>
 {
     /// <summary>
     /// Обрабатывает событие сохранения комнаты и публикует события обновления для всех зрителей
@@ -26,22 +22,19 @@ public class ViewerUpdatedEventHandler(IPublishEndpoint publish, IScopedContext 
     /// <param name="cancellationToken">Токен отмены операции</param>
     protected override async Task Execute(SaveEvent<Room> @event, CancellationToken cancellationToken)
     {
-        using var _ = context.CreateScope();
-        
-        context.Current.SetRoomHeaders(@event.Aggregate.Id);
-
         foreach (var viewer in @event.Aggregate.Viewers.Values)
         {
-            await Execute(viewer, cancellationToken);
+            await Execute(@event.Aggregate.Id, viewer, cancellationToken);
         }
     }
 
     /// <summary>
     /// Создает и публикует событие обновления для конкретного зрителя
     /// </summary>
+    /// <param name="roomId">Идентификатор комнаты</param>
     /// <param name="viewer">Данные зрителя</param>
     /// <param name="cancellationToken">Токен отмены операции</param>
-    private async Task Execute(Viewer viewer, CancellationToken cancellationToken)
+    private async Task Execute(Guid roomId, Viewer viewer, CancellationToken cancellationToken)
     {
         var updatedFields = new List<string>();
 
@@ -80,7 +73,7 @@ public class ViewerUpdatedEventHandler(IPublishEndpoint publish, IScopedContext 
                         return new ViewerTagDto
                         {
                             Name = t,
-                            Description = description,
+                            Description = description
                         };
                     }).ToArray();
                     updatedFields.Add(propertyToLower);
@@ -90,9 +83,9 @@ public class ViewerUpdatedEventHandler(IPublishEndpoint publish, IScopedContext 
 
         // Публикация события только если были изменения
         if (updatedFields.Count == 0) return;
-        await publish.Publish<RoomBaseEvent>(publishEvent, cancellationToken);
+        await eventSender.SendAsync(publishEvent, roomId, null, cancellationToken);
     }
-    
+
     /// <summary>
     /// Преобразует первую букву строки в нижний регистр
     /// </summary>

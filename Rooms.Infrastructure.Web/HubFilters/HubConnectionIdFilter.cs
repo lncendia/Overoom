@@ -21,14 +21,11 @@ public class HubConnectionIdFilter : IHubFilter
         // Получаем сервис контекста области из DI контейнера
         var context = invocationContext.ServiceProvider.GetRequiredService<IScopedContext>();
 
-        // имитация задержки запроса
-        // await Task.Delay(TimeSpan.FromSeconds(40));
-
         // Создаем новую область видимости для изоляции данных вызова
         using (context.CreateScope())
         {
             // Сохраняем идентификатор подключения SignalR в контексте области
-            context.Current.Add(Constants.CurrentConnectionIdKey, invocationContext.Context.ConnectionId);
+            context.Current.Add(Constants.ScopedDictionary.CurrentConnectionIdKey, invocationContext.Context.ConnectionId);
 
             // Выполняем следующий фильтр или метод хаба
             return await next(invocationContext);

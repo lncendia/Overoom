@@ -45,12 +45,8 @@ public class HomeController : Controller
     /// Действие для отображения домашней страницы.
     /// </summary>
     /// <returns>Результат действия.</returns>
-    public IActionResult Index()
-    {
-        // Возвращаем представление
-        return View();
-    }
-
+    public IActionResult Index() => View();
+    
     /// <summary>
     /// Обрабатывает все ошибки приложения, предоставляя единую точку для отображения страницы ошибок
     /// </summary>
@@ -93,8 +89,7 @@ public class HomeController : Controller
             return View(new ErrorViewModel
             {
                 Message = _stringLocalizer[ex.GetType().Name],
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-                ReturnUrl = "/"
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             });
         }
 
@@ -117,8 +112,7 @@ public class HomeController : Controller
         return View(new ErrorViewModel
         {
             Message = response.ErrorDescription ?? response.Error!,
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            ReturnUrl = "/"
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
         });
     }
 
@@ -139,8 +133,7 @@ public class HomeController : Controller
         return View(new ErrorViewModel
         {
             Message = message,
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            ReturnUrl = "/"
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
         });
     }
 

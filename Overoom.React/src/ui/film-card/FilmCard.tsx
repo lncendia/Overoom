@@ -37,19 +37,22 @@ const PosterImage = styled('img')(({ theme }) => ({
     transform: 'scale(1.03)',
   },
   [theme.breakpoints.up('xs')]: {
-    maxHeight: '330px',
+    minWidth: '230px',
+    height: '330px',
   },
   [theme.breakpoints.up('sm')]: {
-    maxHeight: '320px',
+    height: '320px',
   },
   [theme.breakpoints.up('md')]: {
-    maxHeight: '360px',
+    minWidth: '250px',
+    height: '360px',
   },
   [theme.breakpoints.up('lg')]: {
-    maxHeight: '330px',
+    minWidth: '230px',
+    height: '330px',
   },
   [theme.breakpoints.up('xl')]: {
-    maxHeight: '330px',
+    height: '330px',
   },
 }));
 
@@ -88,6 +91,7 @@ const FilmCard = ({
   return (
     <Card
       sx={{
+        width: '100%',
         position: 'relative',
         display: 'flex',
         flexDirection: { xs: 'column', lg: 'row' },

@@ -32,7 +32,7 @@
     <data name="RegistrationTitle" xml:space="preserve">
         <value>Регистрация</value>
     </data>
-    <data name="Login" xml:space="preserve">
+    <data name="SignIn" xml:space="preserve">
         <value>Войти</value>
     </data>
     <data name="WeakPass" xml:space="preserve">

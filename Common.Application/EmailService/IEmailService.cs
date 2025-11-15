@@ -10,5 +10,5 @@ public interface IEmailService
     /// </summary>
     /// <param name="emailData">Объект данных об отправляемом Email</param>
     /// <param name="token">Токен отмены для отслеживания отмены операции.</param>
-    Task SendAsync(EmailData emailData, CancellationToken token = default);
+    Task SendAsync(EmailMessage emailData, CancellationToken token = default);
 }

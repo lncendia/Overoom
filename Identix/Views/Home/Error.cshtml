@@ -6,24 +6,22 @@
     ViewData["Title"] = Localizer["RequestError"];
 }
 
-<div class="card-body">
-    <h5 class="card-title">@Localizer["RequestError"]</h5>
-    <img class="error-gif" src="~/gif/error.gif" alt="error"/>
-    <div class="alert alert-danger mt-4">
-        <strong>@Model.Message</strong>
-    </div>
-    <div class="container-btn mb-4">
-        <div class="wrap-btn on-hover">
-            <div class="bg-btn"></div>
-            <a class="m-btn" href="@Model.ReturnUrl">
-                @Localizer["Return"]
-            </a>
-        </div>
-    </div>
-    @if (Model.ShowRequestId)
-    {
-        <div class="request-id">
-            @Localizer["RequestId"]<br>@Model.RequestId
-        </div>
-    }
+<h5 class="card-title">@Localizer["RequestError"]</h5>
+<img class="page-gif" src="~/gif/error.gif" alt="error"/>
+<div class="alert alert-danger mt-4">
+    <strong>@Model.Message</strong>
 </div>
+<div class="container-btn mb-4">
+    <div class="wrap-btn on-hover">
+        <div class="bg-btn"></div>
+        <a class="m-btn" asp-action="Index">
+            @Localizer["ToHome"]
+        </a>
+    </div>
+</div>
+@if (Model.ShowRequestId)
+{
+    <div class="request-id">
+        @Localizer["RequestId"]<br>@Model.RequestId
+    </div>
+}

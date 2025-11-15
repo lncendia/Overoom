@@ -47,7 +47,7 @@ public class GrantDto
     /// <summary>
     /// URL логотипа клиентского приложения
     /// </summary>
-    public string? ClientLogoUrl { get; init; }
+    public string? ClientLogoKey { get; init; }
 
     /// <summary>
     /// Описание гранта или приложения

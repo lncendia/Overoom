@@ -1,5 +1,4 @@
-﻿using Hangfire;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -9,6 +8,7 @@ using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Enums;
 using Identix.Application.Abstractions.Exceptions;
 using Identix.Application.Services.Commands.Create;
+using MassTransit.MongoDbIntegration;
 
 namespace Identix.Tests.UnitTests.Commands.Create;
 
@@ -21,11 +21,6 @@ public class CreateUserCommandHandlerTests
     /// Поле Mock объекта UserManager.
     /// </summary>
     private readonly Mock<UserManager<AppUser>> _userManagerMock;
-
-    /// <summary>
-    /// Поле Mock объекта BackgroundJobClientV2.
-    /// </summary>
-    private readonly Mock<IBackgroundJobClientV2> _backgroundJobServiceMock = new();
 
     /// <summary>
     /// Поле обработчика.
@@ -50,9 +45,10 @@ public class CreateUserCommandHandlerTests
             new Mock<ILogger<UserManager<AppUser>>>().Object);
 
         var publishEndpointMock = new Mock<IPublishEndpoint>();
+        var mongoDbContextMock = new Mock<MongoDbContext>();
         
         // Инициализация обработчика.
-        _handler = new CreateUserCommandHandler(_userManagerMock.Object, _backgroundJobServiceMock.Object, publishEndpointMock.Object);
+        _handler = new CreateUserCommandHandler(_userManagerMock.Object, publishEndpointMock.Object, mongoDbContextMock.Object);
     }
     
     /// <summary>

@@ -1,3 +1,4 @@
+using Films.Application.Abstractions;
 using Films.Application.Abstractions.Commands.Playlists;
 using Films.Application.Abstractions.Exceptions;
 using Films.Domain.Playlists;
@@ -31,7 +32,7 @@ public class CreatePlaylistCommandHandler(IUnitOfWork unitOfWork, MongoDbContext
         {
             Name = request.Name,
             Description = request.Description,
-            PosterKey = Constants.PlaylistPosterKeyDefault
+            PosterKey = Constants.Poster.PlaylistDefault
         };
 
         // Обработка обновления списка фильмов

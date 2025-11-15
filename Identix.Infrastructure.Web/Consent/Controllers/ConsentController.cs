@@ -30,7 +30,7 @@ public class ConsentController : Controller
     /// Медиатор
     /// </summary>
     private readonly ISender _mediator;
-    
+
     /// <summary>
     /// Логгер
     /// </summary>
@@ -42,7 +42,8 @@ public class ConsentController : Controller
     /// <param name="mediator">Медиатор</param>
     /// <param name="stringLocalizer">Локализатор</param>
     /// <param name="logger">Логгер</param>
-    public ConsentController(ISender mediator, IStringLocalizer<ConsentController> stringLocalizer, ILogger<ConsentController> logger)
+    public ConsentController(ISender mediator, IStringLocalizer<ConsentController> stringLocalizer,
+        ILogger<ConsentController> logger)
     {
         _mediator = mediator;
         _stringLocalizer = stringLocalizer;
@@ -132,7 +133,7 @@ public class ConsentController : Controller
         // Перенаправляем пользователя на исходный URL возврата
         return Redirect(returnUrl);
     }
-    
+
     /// <summary>
     /// Обработка согласия
     /// </summary>
@@ -212,7 +213,7 @@ public class ConsentController : Controller
 
         // Утилита локализации запроса
         var requestCultureFeature = HttpContext.Features.Get<IRequestCultureFeature>();
-        
+
         // Получаем список scope'ов (Identity и API) с учетом текущей UI-культуры
         var scopesQuery = new ScopesQuery
         {
@@ -234,7 +235,9 @@ public class ConsentController : Controller
             ClientUrl = client.ClientUrl,
 
             // Ссылка на логотип клиента (если указана)
-            ClientLogoUrl = client.ClientLogoUrl,
+            ClientLogoUrl = client.ClientLogoKey != null
+                ? Url.Action("GetFile", "Photos", new { key = client.ClientLogoKey })
+                : null,
 
             // Identity scopes
             IdentityScopes = scopes
@@ -244,7 +247,7 @@ public class ConsentController : Controller
             // API scopes
             ApiScopes = scopes
                 .Where(s => !s.IdentityScope)
-                .Select(CreateScopeViewModel),
+                .Select(CreateScopeViewModel)
         };
     }
 
@@ -271,6 +274,6 @@ public class ConsentController : Controller
         Required = scope.Required,
 
         // Отмечен ли scope пользователем (checked)
-        Checked = scope.Checked,
+        Checked = scope.Checked
     };
 }

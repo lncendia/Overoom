@@ -1,0 +1,21 @@
+@model Identix.Infrastructure.Web.Registration.ViewModels.ConfirmEmailViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["EmailConfirmedTitle"];
+}
+
+<h5 class="card-title">@Localizer["EmailConfirmedTitle"]</h5>
+<img class="page-gif" src="~/gif/email-confirmed.gif" alt="error"/>
+<div class="alert alert-success mt-4">
+    <strong>@Localizer["EmailConfirmedBody"]</strong>
+</div>
+
+<div class="container-btn mt-4 mb-4">
+    <div class="wrap-btn on-hover">
+        <div class="bg-btn"></div>
+        <a class="m-btn" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
+            @Localizer["SignIn"]
+        </a>
+    </div>
+</div>

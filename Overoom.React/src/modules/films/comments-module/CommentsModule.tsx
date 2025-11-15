@@ -45,7 +45,7 @@ const CommentsModule = (): ReactElement => {
    */
   const fetch = useCallback(
     async (skip: number, take: number) => {
-      if (!film) return null;
+      if (!film?.id) return null;
 
       const response = await commentsApi.get(film.id, { skip, take });
 
@@ -60,7 +60,7 @@ const CommentsModule = (): ReactElement => {
         totalCount: response.totalCount,
       };
     },
-    [commentsApi, film, authorizedUser?.id]
+    [commentsApi, film?.id, authorizedUser?.id]
   );
 
   /** Хук для порционной загрузки комментариев */
@@ -79,11 +79,11 @@ const CommentsModule = (): ReactElement => {
    */
   const removeComment = useSafeCallback(
     async (comment: CommentItemDto) => {
-      if (!film) return;
+      if (!film?.id) return;
       removeWhere((c) => c.id !== comment.id);
       await commentsApi.delete(film.id, comment.id);
     },
-    [commentsApi, film, removeWhere]
+    [commentsApi, film?.id, removeWhere]
   );
 
   /**
@@ -118,7 +118,7 @@ const CommentsModule = (): ReactElement => {
         return;
       }
 
-      if (!film) return;
+      if (!film?.id) return;
 
       const id = await commentsApi.add(film.id, text);
 
@@ -132,7 +132,7 @@ const CommentsModule = (): ReactElement => {
       };
       add(comment);
     },
-    [authorizedUser, commentsApi, film, add, renderAuthWarning]
+    [authorizedUser, film?.id, commentsApi, add, renderAuthWarning]
   );
 
   // Отображаем скелетоны при загрузке

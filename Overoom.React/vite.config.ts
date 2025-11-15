@@ -4,14 +4,26 @@ import * as path from 'path';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
-// Папка с сертификатами
+// Определение базовой папки для хранения HTTPS-сертификатов в зависимости от операционной системы
 const baseFolder =
   process.env.APPDATA !== undefined && process.env.APPDATA !== ''
     ? `${process.env.APPDATA}/ASP.NET/https`
     : `${process.env.HOME}/.aspnet/https`;
 
-// Имя сертификата
+// Получение имени сертификата из переменной окружения npm (имя пакета)
 const certName = process.env.npm_package_name;
+
+// Формирование пути к файлу приватного ключа сертификата
+const certKeyPath = path.join(baseFolder, `${certName}.key`);
+
+// Формирование пути к файлу сертификата
+const certCertPath = path.join(baseFolder, `${certName}.pem`);
+
+// Проверка существования файлов сертификата и ключа, и формирование конфигурации HTTPS
+const httpsConfig =
+  fs.existsSync(certKeyPath) && fs.existsSync(certCertPath)
+    ? { key: fs.readFileSync(certKeyPath), cert: fs.readFileSync(certCertPath) }
+    : undefined;
 
 // Конфигурация сборщика Vite
 export default defineConfig({
@@ -30,10 +42,7 @@ export default defineConfig({
     strictPort: true,
 
     // Конфигурация сертификатов https соединения
-    https: {
-      key: fs.readFileSync(path.join(baseFolder, `${certName}.key`)),
-      cert: fs.readFileSync(path.join(baseFolder, `${certName}.pem`)),
-    },
+    https: httpsConfig,
   },
 
   // Конфигурация develop версии приложения
@@ -48,10 +57,7 @@ export default defineConfig({
     port: 5173,
 
     // Конфигурация сертификатов https соединения
-    https: {
-      key: fs.readFileSync(path.join(baseFolder, `${certName}.key`)),
-      cert: fs.readFileSync(path.join(baseFolder, `${certName}.pem`)),
-    },
+    https: httpsConfig,
 
     // Порт для HMR
     hmr: {

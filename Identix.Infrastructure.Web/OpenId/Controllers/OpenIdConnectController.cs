@@ -20,7 +20,6 @@ namespace Identix.Infrastructure.Web.OpenId.Controllers;
 /// <summary>
 /// Контроллер для обработки запросов OpenID Connect (OIDC)
 /// </summary>
-[ApiController]
 public class OpenIdConnectController : Controller
 {
     #region Сообщения ошибок
@@ -28,6 +27,7 @@ public class OpenIdConnectController : Controller
     private const string LoginRequired = "The user is not authenticated.";
     private const string ExternalConsentRequired = "External consent is required to access this application.";
     private const string InteractiveConsentRequired = "Interactive user consent is required.";
+    private const string EmailNotConfirmed = "Email address has not been verified. The confirmation link has been sent.";
     private const string UserNotFound = "User not found.";
     private const string InvalidPassword = "Invalid password.";
     private const string AccountLocked = "Account is locked.";
@@ -373,11 +373,15 @@ public class OpenIdConnectController : Controller
     {
         try
         {
+            // Создает URL-адрес для подтверждения почты
+            var callbackUrl = Url.Action("ConfirmEmail", "Registration", null, HttpContext.Request.Scheme)!;
+            
             // Аутентификация пользователя по email и паролю
             var authenticateCommand = new AuthenticateUserByPasswordCommand
             {
-                Email = request.Username!, // Email передается в поле username согласно стандарту
-                Password = request.Password! // Пароль пользователя
+                Email = request.Username!,
+                Password = request.Password!,
+                ConfirmUrl = callbackUrl
             };
 
             // Выполнение команды аутентификации через Mediator
@@ -438,6 +442,9 @@ public class OpenIdConnectController : Controller
                     break;
                 case ConsentRequiredException:
                     (error, description) = (OpenIddictConstants.Errors.ConsentRequired, InteractiveConsentRequired);
+                    break;
+                case EmailNotConfirmedException:
+                    (error, description) = (OpenIddictConstants.Errors.InteractionRequired, EmailNotConfirmed);
                     break;
                 default:
                     throw;

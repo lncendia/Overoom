@@ -9,6 +9,7 @@ using Identix.Application.Abstractions;
 using Identix.Application.Abstractions.Commands.Profile;
 using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Exceptions;
+using MassTransit.MongoDbIntegration;
 
 namespace Identix.Application.Services.Commands.Profile;
 
@@ -17,10 +18,13 @@ namespace Identix.Application.Services.Commands.Profile;
 /// </summary>
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
 /// <param name="fileStore">Хранилище фотографий.</param>
+/// <param name="publishEndpoint">Сервис для публикации интеграционных событий.</param>
+/// <param name="dbContext">Контекст базы данных MongoDB</param>
 public class ChangeAvatarCommandHandler(
     UserManager<AppUser> userManager,
     IFileStorage fileStore,
-    IPublishEndpoint publishEndpoint)
+    IPublishEndpoint publishEndpoint,
+    MongoDbContext dbContext)
     : IRequestHandler<ChangeAvatarCommand, AppUser>
 {
     /// <summary>
@@ -58,6 +62,9 @@ public class ChangeAvatarCommandHandler(
         // Создаем новый клайм
         var newClaim = new Claim(OpenIddictConstants.Claims.Picture, newThumbnail);
 
+        // Начинаем транзакцию в контексте базы данных MongoDB.
+        await dbContext.BeginTransaction(cancellationToken);
+
         // Если до этого был установлен аватар
         if (oldThumbnail != null)
         {
@@ -83,6 +90,9 @@ public class ChangeAvatarCommandHandler(
             Email = user.Email!,
             Locale = user.Locale.ToString()
         }, cancellationToken);
+
+        // Фиксируем транзакцию в контексте базы данных MongoDB.
+        await dbContext.CommitTransaction(cancellationToken);
 
         // Возвращаем пользователя 
         return user;

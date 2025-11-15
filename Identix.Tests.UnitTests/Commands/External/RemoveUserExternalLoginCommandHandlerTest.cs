@@ -64,8 +64,8 @@ public class RemoveUserExternalLoginCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
-                
+                LastAuthTimeUtc = DateTime.UtcNow
+
             });
 
         // Настройка mock объекта UserManager для возврата списка уже существующих провайдеров.
@@ -153,8 +153,8 @@ public class RemoveUserExternalLoginCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
-                
+                LastAuthTimeUtc = DateTime.UtcNow
+
             });
 
         // Настройка mock объекта UserManager для возврата списка уже существующих провайдеров.

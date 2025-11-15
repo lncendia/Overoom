@@ -78,16 +78,7 @@ namespace Identix.Resources.Views.Home {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Entrance.
-        /// </summary>
-        internal static string LogIn {
-            get {
-                return ResourceManager.GetString("LogIn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exit.
+        ///   Looks up a localized string similar to Log Out.
         /// </summary>
         internal static string LogOut {
             get {
@@ -101,6 +92,15 @@ namespace Identix.Resources.Views.Home {
         internal static string Settings {
             get {
                 return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign In.
+        /// </summary>
+        internal static string SignIn {
+            get {
+                return ResourceManager.GetString("SignIn", resourceCulture);
             }
         }
         

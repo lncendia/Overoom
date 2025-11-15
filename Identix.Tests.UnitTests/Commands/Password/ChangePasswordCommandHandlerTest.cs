@@ -64,8 +64,8 @@ public class ChangePasswordCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
-                
+                LastAuthTimeUtc = DateTime.UtcNow
+
             });
 
         // Настройка mock объекта UserManager для успешного добавления пароля при вызове AddPasswordAsync.
@@ -164,7 +164,7 @@ public class ChangePasswordCommandHandlerTest
 
         // Act & Assert
         // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
-        await Assert.ThrowsAsync<OldPasswordNeededException>(
+        await Assert.ThrowsAsync<PasswordNeededException>(
             () => _handler.Handle(command, CancellationToken.None));
     }
 
@@ -187,8 +187,8 @@ public class ChangePasswordCommandHandlerTest
                 UserName = "test",
                 Email = "test@example.com",
                 RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
-                
+                LastAuthTimeUtc = DateTime.UtcNow
+
             });
 
         // Настройка mock объекта UserManager для возврата неудачного результата при вызове AddPasswordAsync.

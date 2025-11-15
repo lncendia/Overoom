@@ -85,5 +85,14 @@ namespace Identix.Infrastructure.Web.Resources.Settings.InputModels {
                 return ResourceManager.GetString("ValidEmail", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
     }
 }

@@ -98,15 +98,15 @@ const RoomInfoModule = (): ReactElement => {
           <DialogContentText id="alert-dialog-description">{alertText}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setAlertOpen(false)} color="secondary">
-            Отмена
-          </Button>
           <Button
             onClick={onApplyClicked}
             color={room.ownerId === currentViewerId ? 'error' : 'secondary'}
             autoFocus
           >
             {room.ownerId === currentViewerId ? 'Удалить' : 'Покинуть'}
+          </Button>
+          <Button onClick={() => setAlertOpen(false)} color="secondary">
+            Отмена
           </Button>
         </DialogActions>
       </Dialog>

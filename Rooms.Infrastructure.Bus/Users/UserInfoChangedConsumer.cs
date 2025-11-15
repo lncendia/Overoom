@@ -9,7 +9,6 @@ namespace Rooms.Infrastructure.Bus.Users;
 /// Обработчик интеграционного события UserInfoChangedIntegrationEvent
 /// </summary>
 /// <param name="mediator">Медиатор</param>
-[ExcludeFromConfigureEndpoints]
 public class UserInfoChangedConsumer(ISender mediator) : IConsumer<UserInfoChangedIntegrationEvent>
 {
     /// <summary>

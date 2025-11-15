@@ -23,7 +23,7 @@ public class RecoverPasswordCommandHandler(UserManager<AppUser> userManager) : I
     public async Task Handle(RecoverPasswordCommand request, CancellationToken cancellationToken)
     {
         // Находим пользователя по email
-        var user = await userManager.FindByEmailAsync(request.Email);
+        var user = await userManager.FindByIdAsync(request.UserId.ToString());
 
         // Выкидаем исключение если пользователь не найден
         if (user == null) throw new UserNotFoundException();

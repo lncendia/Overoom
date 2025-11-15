@@ -11,7 +11,6 @@
     <img class="card-logo" src="@Model.ClientLogoUrl" alt="Client logo">
 }
 
-
 <form asp-action="Index" method="post" class="consent mt-5">
 
     <input asp-for="ReturnUrl" type="hidden"/>
@@ -64,14 +63,16 @@
         </div>
     </div>
 </form>
-<div class="container-btn mb-4">
-    <div class="wrap-btn on-hover">
-        <div class="bg-btn"></div>
-        <a class="m-btn" asp-action="DenyConsent" asp-route-returnUrl="@Model.ReturnUrl">
-            Запретить
-        </a>
+
+<form asp-action="DenyConsent" method="post" class="consent">
+    <input asp-for="ReturnUrl" type="hidden"/>
+    <div class="container-btn mb-4">
+        <div class="wrap-btn on-hover">
+            <div class="bg-btn"></div>
+            <input class="m-btn" type="submit" value="Запретить"/>
+        </div>
     </div>
-</div>
+</form>
 
 @if (Model.ClientUrl != null)
 {

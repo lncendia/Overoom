@@ -32,9 +32,6 @@
     <data name="LoginNotFoundException" xml:space="preserve">
         <value>Логин не найден</value>
     </data>
-    <data name="OldPasswordNeededException" xml:space="preserve">
-        <value>Не указан старый пароль</value>
-    </data>
     <data name="InvalidCodeException" xml:space="preserve">
         <value>Срок действия ссылки истек</value>
     </data>

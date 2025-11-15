@@ -1,5 +1,4 @@
 using System;
-using AspNetCore.Identity.Mongo;
 using Common.DI.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,8 +20,8 @@ public static class AspIdentity
     /// <param name="builder">Построитель веб-приложения.</param>
     public static void AddAspIdentity(this IHostApplicationBuilder builder)
     {
-        // Извлекаем значение строки подключения из конфигурации.
-        var connectionString = builder.Configuration.GetRequiredValue<string>("MongoDB:IdentityDB");
+        // Извлекаем имя базы данных из конфигурации.
+        var database = builder.Configuration.GetRequiredValue<string>("MongoDB:IdentityDB");
 
         // Добавляет валидатор для пользователя.
         builder.Services.AddTransient<IUserValidator<AppUser>, CustomUserValidator>();
@@ -34,33 +33,28 @@ public static class AspIdentity
         builder.Services.AddScoped<SignInManager<AppUser>, OpenIdSignInManager<AppUser>>();
 
         // Добавляет и настраивает идентификационную систему для указанных пользователей и типов ролей.
-        builder.Services.AddIdentityMongoDbProvider<AppUser, AppRole, Guid>
-            (
-                identityOptions =>
-                {
-                    // Разрешает применение механизма блокировки для новых пользователей.
-                    // Если true, новые пользователи могут быть заблокированы после превышения лимита неудачных попыток входа.
-                    identityOptions.Lockout.AllowedForNewUsers = true;
+        builder.Services.AddIdentityMongoDbProviderWithOutbox<AppUser, AppRole, Guid>
+        (
+            identityOptions =>
+            {
+                // Разрешает применение механизма блокировки для новых пользователей.
+                identityOptions.Lockout.AllowedForNewUsers = true;
 
-                    // Задает временной интервал блокировки по умолчанию в 15 минут.
-                    // Пользователь будет заблокирован на этот период после превышения лимита неудачных попыток входа.
-                    identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                // Задает временной интервал блокировки по умолчанию в 15 минут.
+                identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 
-                    // Устанавливает максимальное количество неудачных попыток входа перед блокировкой.
-                    // После 10 неудачных попыток учетная запись пользователя будет заблокирована.
-                    identityOptions.Lockout.MaxFailedAccessAttempts = 10;
-                },
-                mongoOptions =>
-                {
-                    // Устанавливает строку подключения к MongoDB.
-                    // В данном случае используется локальная база данных с аутентификацией.
-                    mongoOptions.ConnectionString = connectionString;
-                }
-            )
+                // Устанавливает максимальное количество неудачных попыток входа перед блокировкой.
+                identityOptions.Lockout.MaxFailedAccessAttempts = 10;
 
-            // Добавляет поставщиков токенов по умолчанию, используемых для создания токенов для сброса паролей,
-            // операций изменения электронной почты и номера телефона, а также для создания токенов двухфакторной аутентификации.
-            .AddDefaultTokenProviders();
+                // Устанавливает необходимость подтвержденной электронной почты для входа.
+                identityOptions.SignIn.RequireConfirmedEmail = true;
+            },
+            mongoOptions =>
+            {
+                // Устанавливает имя базы в MongoDB.
+                mongoOptions.DatabaseName = database;
+            }
+        );
 
         // Добавляет службы политики авторизации в указанную коллекцию IServiceCollection.
         builder.Services.AddAuthorization();

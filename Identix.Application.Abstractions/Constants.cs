@@ -6,14 +6,14 @@ namespace Identix.Application.Abstractions;
 public static class Constants
 {
     /// <summary>
-    /// Константы для настройки Hangfire - системы фоновых заданий
+    /// Константы для OpenTelemetry
     /// </summary>
-    public static class Hangfire
+    public static class OpenTelemetry
     {
         /// <summary>
-        /// Название очереди для обработки заданий загрузки
+        /// Имя сервиса для трассировки
         /// </summary>
-        public const string Queue = "identix";
+        public const string ServiceName = "identix";
     }
     
     /// <summary>
@@ -26,6 +26,12 @@ public static class Constants
         /// {0} заменяется на ID пользователя
         /// </summary>
         public const string UserPhotoKeyFormat = "user/thumbnail/{0}";
+        
+        /// <summary>
+        /// Формат ключа для хранения фото клиента OpenID
+        /// {0} заменяется на ID клиента
+        /// </summary>
+        public const string ClientPhotoKeyFormat = "client/thumbnail/{0}";
         
         /// <summary>
         /// MIME-тип для JPEG фото

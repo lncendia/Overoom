@@ -11,6 +11,20 @@ namespace Common.Infrastructure.Repositories.SessionHandlers;
 public class OutboxSessionHandler(MongoDbContext dbContext) : ISessionHandler
 {
     /// <summary>
+    /// Выполняет действие перед сохранением в рамках транзакции Outbox.
+    /// </summary>
+    /// <param name="action">Действие для выполнения</param>
+    /// <param name="token">Токен отмены</param>
+    public async Task BeforeSaveExecuteAsync(Func<CancellationToken, Task> action, CancellationToken token = default)
+    {
+        // Начинаем транзакцию в контексте базы данных MongoDB.
+        await dbContext.BeginTransaction(token);
+        
+        // Выполняем действие
+        await action(token);
+    }
+
+    /// <summary>
     /// Выполняет операцию в рамках транзакции outbox
     /// </summary>
     /// <param name="action">Действие для выполнения</param>
@@ -19,9 +33,6 @@ public class OutboxSessionHandler(MongoDbContext dbContext) : ISessionHandler
     public async Task ExecuteAsync(Func<IClientSessionHandle, CancellationToken, Task> action,
         CancellationToken token = default)
     {
-        // Начинаем транзакцию в контексте базы данных MongoDB.
-        await dbContext.BeginTransaction(token);
-
         // Сохраняем изменения и сообщения outbox атомарно
         await action(dbContext.Session!, token);
 

@@ -21,7 +21,7 @@
     <data name="LogoutTitle" xml:space="preserve">
         <value>Log out of the system</value>
     </data>
-    <data name="YesButton" xml:space="preserve">
-        <value>Exit</value>
+    <data name="LogoutButton" xml:space="preserve">
+        <value>Log Out</value>
     </data>
 </root>

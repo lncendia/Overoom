@@ -15,7 +15,7 @@ type AwaitedReturn<T> = T extends (...args: any[]) => Promise<infer R> ? R : nev
 export function useSafeCallback<T extends (...args: any[]) => Promise<any>>(
   callback: T,
   deps: React.DependencyList
-): (...args: Parameters<T>) => Promise<AwaitedReturn<T> | void> {
+): (...args: Parameters<T>) => Promise<AwaitedReturn<T>> {
   /** Извлекаем функцию setError из контекста уведомлений */
   const { setError } = useNotify();
 

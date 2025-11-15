@@ -11,12 +11,8 @@ namespace Films.Infrastructure.Storage.Models.Rooms;
 /// </summary>
 public class RoomModel : VersionedUpdatedEntity<RoomModel>
 {
-    private string? _code;
     private TrackedCollection<Guid, RoomModel> _viewers = new();
     private TrackedCollection<Guid, RoomModel> _bannedUsers = new();
-    private Guid _filmId;
-    private Guid _ownerId;
-    private DateTime _createdAt;
 
     /// <summary>
     /// Уникальный идентификатор комнаты
@@ -28,8 +24,8 @@ public class RoomModel : VersionedUpdatedEntity<RoomModel>
     /// </summary>
     public string? Code
     {
-        get => _code;
-        set => _code = TrackChange(nameof(Code), _code, value);
+        get;
+        set => field = TrackChange(nameof(Code), field, value);
     }
 
     /// <summary>
@@ -55,8 +51,8 @@ public class RoomModel : VersionedUpdatedEntity<RoomModel>
     /// </summary>
     public Guid FilmId
     {
-        get => _filmId;
-        set => _filmId = TrackStructChange(nameof(FilmId), _filmId, value);
+        get;
+        set => field = TrackStructChange(nameof(FilmId), field, value);
     }
 
     /// <summary>
@@ -64,17 +60,17 @@ public class RoomModel : VersionedUpdatedEntity<RoomModel>
     /// </summary>
     public Guid OwnerId
     {
-        get => _ownerId;
-        set => _ownerId = TrackStructChange(nameof(OwnerId), _ownerId, value);
+        get;
+        set => field = TrackStructChange(nameof(OwnerId), field, value);
     }
-    
+
     /// <summary>
     /// Дата и время создания комнаты
     /// </summary>
     public DateTime CreatedAt
     {
-        get => _createdAt;
-        set => _createdAt = TrackStructChange(nameof(CreatedAt), _createdAt, value);
+        get;
+        set => field = TrackStructChange(nameof(CreatedAt), field, value);
     }
 
     /// <inheritdoc/>

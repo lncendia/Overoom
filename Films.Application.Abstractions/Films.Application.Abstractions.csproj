@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>13</LangVersion>
+        <LangVersion>14</LangVersion>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
     </PropertyGroup>
 
@@ -12,10 +12,6 @@
       <ProjectReference Include="..\Common.Application\Common.Application.csproj" />
       <ProjectReference Include="..\Common.IntegrationEvents\Common.IntegrationEvents.csproj" />
       <ProjectReference Include="..\Films.Domain\Films.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="MassTransit.Abstractions" Version="8.4.1" />
     </ItemGroup>
 
 </Project>

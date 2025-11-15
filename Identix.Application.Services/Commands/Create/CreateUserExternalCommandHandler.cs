@@ -11,6 +11,7 @@ using Identix.Application.Abstractions.Commands.Create;
 using Identix.Application.Abstractions.Entities;
 using Identix.Application.Abstractions.Exceptions;
 using Identix.Application.Abstractions.Extensions;
+using MassTransit.MongoDbIntegration;
 
 namespace Identix.Application.Services.Commands.Create;
 
@@ -18,10 +19,14 @@ namespace Identix.Application.Services.Commands.Create;
 /// Обработчик команды создания пользователя с внешней учетной записью.
 /// </summary>
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
+/// <param name="fileStore">Хранилище фотографий.</param>
+/// <param name="publishEndpoint">Сервис для публикации интеграционных событий.</param>
+/// <param name="dbContext">Контекст базы данных MongoDB</param>
 public class CreateUserExternalCommandHandler(
     UserManager<AppUser> userManager,
     IFileStorage fileStore,
     IPublishEndpoint publishEndpoint,
+    MongoDbContext dbContext,
     ILogger<CreateUserExternalCommandHandler> logger)
     : IRequestHandler<CreateUserExternalCommand, AppUser>
 {
@@ -68,12 +73,18 @@ public class CreateUserExternalCommandHandler(
             EmailConfirmed = true
         };
 
+        // Начинаем транзакцию в контексте базы данных MongoDB.
+        await dbContext.BeginTransaction(cancellationToken);
+
         // Сохраняем пользователя
         var result = await userManager.CreateAsync(user);
 
         // Если результат неудачный
         if (!result.Succeeded)
         {
+            // Отмена транзакции
+            await dbContext.AbortTransaction(cancellationToken);
+
             // Если хоть одна ошибка DuplicateEmail, то вызываем исключение 
             if (result.Errors.Any(e => e.Code == "DuplicateEmail")) throw new EmailAlreadyTakenException();
 
@@ -85,7 +96,7 @@ public class CreateUserExternalCommandHandler(
         }
 
         // Создаем коллекцию утверждений пользователя и добавляем в нее локаль
-        List<Claim> claims = [new( OpenIddictConstants.Claims.Locale, user.Locale.GetLocalizationString())];
+        List<Claim> claims = [new(OpenIddictConstants.Claims.Locale, user.Locale.GetLocalizationString())];
 
         // Пытаемся получить ссылку на аватар из утверждений
         var thumbnailClaim = request.LoginInfo.Principal.FindFirstValue(Constants.Claims.Thumbnail);
@@ -103,7 +114,7 @@ public class CreateUserExternalCommandHandler(
                     token: cancellationToken);
 
                 // Так же добавляем фото профиля в утверждения пользователя
-                claims.Add(new Claim( OpenIddictConstants.Claims.Picture, newThumbnail));
+                claims.Add(new Claim(OpenIddictConstants.Claims.Picture, newThumbnail));
             }
             catch (Exception ex)
             {
@@ -129,6 +140,9 @@ public class CreateUserExternalCommandHandler(
             RegistrationTimeUtc = user.RegistrationTimeUtc,
             Locale = user.Locale.ToString()
         }, cancellationToken);
+
+        // Фиксируем транзакцию в контексте базы данных MongoDB.
+        await dbContext.CommitTransaction(cancellationToken);
 
         // Возвращаем пользователя
         return user;

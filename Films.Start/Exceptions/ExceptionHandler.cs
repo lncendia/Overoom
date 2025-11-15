@@ -96,6 +96,13 @@ public class ExceptionHandler : IExceptionHandler
                 message = "Пользователь уже существует";
                 extensions["userId"] = ex.UserId;
                 break;
+            
+            case UserAlreadyInRoomException ex:
+                statusCode = HttpStatusCode.Forbidden;
+                message = "Пользователь уже состоит в комнате";
+                extensions["userId"] = ex.UserId;
+                extensions["roomId"] = ex.RoomId;
+                break;
 
             // Forbidden исключения - 403 статус код
             case ActionNotAllowedException ex:
