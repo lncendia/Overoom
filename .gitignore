@@ -483,11 +483,10 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-containers
-ssl
 bundles
 posters
 cache
 ffmpeg*
 appsettings*
 production
+development

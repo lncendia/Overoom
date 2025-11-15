@@ -16,8 +16,8 @@
     ports:
       - "443:443"  # Порты для проброса
     volumes:
-      - "./configurations/identix/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
-      - "./configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
+      - "./development/configurations/identix/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
+      - "./development/configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
       - "~/.nuget/packages:/home/app/.nuget/packages"  # Монтирование тома для NuGet пакетов
       - "./Identix:/app:rw"  # Монтирование тома для приложения
       - "./:/src:rw"  # Монтирование тома для исходного кода
@@ -45,8 +45,8 @@
     ports:
       - "7131:443"  # Порты для проброса
     volumes:
-      - "./configurations/films/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
-      - "./configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
+      - "./development/configurations/films/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
+      - "./development/configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
       - "~/.nuget/packages:/home/app/.nuget/packages"  # Монтирование тома для NuGet пакетов
       - "./Films.Start:/app:rw"  # Монтирование тома для приложения
       - "./:/src:rw"  # Монтирование тома для исходного кода
@@ -74,8 +74,8 @@
     ports:
       - "7291:443"  # Порты для проброса
     volumes:
-      - "./configurations/rooms/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
-      - "./configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
+      - "./development/configurations/rooms/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
+      - "./development/configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
       - "~/.nuget/packages:/home/app/.nuget/packages"  # Монтирование тома для NuGet пакетов
       - "./Rooms.Start:/app:rw"  # Монтирование тома для приложения
       - "./:/src:rw"  # Монтирование тома для исходного кода
@@ -92,8 +92,8 @@
     ports:
       - '27017:27017' # Выделяем порт
     volumes:
-      - "./configurations/mongo/:/mongo/config" # Монтирование конфигурационных файлов
-      - './containers/mongo/:/data/db' # Монтирование тома для хранения данных MongoDB
+      - "./development/configurations/mongo/:/mongo/config" # Монтирование конфигурационных файлов
+      - './development/containers/mongo/:/data/db' # Монтирование тома для хранения данных MongoDB
     command: [ "--replSet", "rs0", "--bind_ip_all" ] # Команда для запуска MongoDB с настройками репликации
     healthcheck:
       test: [ "CMD-SHELL", "/mongo/config/healthcheck.sh" ]  # Проверка состояния
@@ -138,7 +138,7 @@
       - MINIO_ROOT_PASSWORD=minioadmin  # Пароль администратора (по умолчанию)
       - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001  # URL для редиректа консоли
     volumes:
-      - './containers/minio/:/data/' # Монтирование тома для хранения данных
+      - './development/containers/minio/:/data/' # Монтирование тома для хранения данных
     ports:
       - "9000:9000"  # API порт (для клиентов)
       - "9001:9001"  # Консоль управления (Web UI)
@@ -155,7 +155,7 @@
       - '--config.file=/etc/prometheus/prometheus.yml' # Указываем файл конфигурации
       - '--web.config.file=/etc/prometheus/web.yml' # Указываем файл конфигурации
     volumes:
-      - "./configurations/prometheus/:/etc/prometheus" # Монтирование конфигурационных файлов
+      - "./development/configurations/prometheus/:/etc/prometheus" # Монтирование конфигурационных файлов
     ports:
       - "9090:9090"
     healthcheck:

@@ -34,31 +34,27 @@ public static class AspIdentity
 
         // Добавляет и настраивает идентификационную систему для указанных пользователей и типов ролей.
         builder.Services.AddIdentityMongoDbProviderWithOutbox<AppUser, AppRole, Guid>
-            (
-                identityOptions =>
-                {
-                    // Разрешает применение механизма блокировки для новых пользователей.
-                    identityOptions.Lockout.AllowedForNewUsers = true;
+        (
+            identityOptions =>
+            {
+                // Разрешает применение механизма блокировки для новых пользователей.
+                identityOptions.Lockout.AllowedForNewUsers = true;
 
-                    // Задает временной интервал блокировки по умолчанию в 15 минут.
-                    identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                // Задает временной интервал блокировки по умолчанию в 15 минут.
+                identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 
-                    // Устанавливает максимальное количество неудачных попыток входа перед блокировкой.
-                    identityOptions.Lockout.MaxFailedAccessAttempts = 10;
-                    
-                    // Устанавливает необходимость подтвержденной электронной почты для входа.
-                    identityOptions.SignIn.RequireConfirmedEmail = true;
-                },
-                mongoOptions =>
-                {
-                    // Устанавливает имя базы в MongoDB.
-                    mongoOptions.DatabaseName = database;
-                }
-            )
+                // Устанавливает максимальное количество неудачных попыток входа перед блокировкой.
+                identityOptions.Lockout.MaxFailedAccessAttempts = 10;
 
-            // Добавляет поставщиков токенов по умолчанию, используемых для создания токенов для сброса паролей,
-            // операций изменения электронной почты и номера телефона, а также для создания токенов двухфакторной аутентификации.
-            .AddDefaultTokenProviders();
+                // Устанавливает необходимость подтвержденной электронной почты для входа.
+                identityOptions.SignIn.RequireConfirmedEmail = true;
+            },
+            mongoOptions =>
+            {
+                // Устанавливает имя базы в MongoDB.
+                mongoOptions.DatabaseName = database;
+            }
+        );
 
         // Добавляет службы политики авторизации в указанную коллекцию IServiceCollection.
         builder.Services.AddAuthorization();

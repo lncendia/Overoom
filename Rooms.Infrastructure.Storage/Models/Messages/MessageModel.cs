@@ -10,11 +10,6 @@ namespace Rooms.Infrastructure.Storage.Models.Messages;
 /// </summary>
 public class MessageModel : VersionedUpdatedEntity<MessageModel>
 {
-    private string _text = null!;
-    private DateTime _sentAt;
-    private Guid _userId;
-    private Guid _roomId;
-
     /// <summary>
     /// Уникальный идентификатор комментария
     /// </summary>
@@ -25,17 +20,17 @@ public class MessageModel : VersionedUpdatedEntity<MessageModel>
     /// </summary>
     public string Text
     {
-        get => _text;
-        set => _text = TrackChange(nameof(Text), _text, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(Text), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Дата и время создания комментария
     /// </summary>
     public DateTime SentAt
     {
-        get => _sentAt;
-        set => _sentAt = TrackStructChange(nameof(SentAt), _sentAt, value);
+        get;
+        set => field = TrackStructChange(nameof(SentAt), field, value);
     }
 
     /// <summary>
@@ -43,8 +38,8 @@ public class MessageModel : VersionedUpdatedEntity<MessageModel>
     /// </summary>
     public Guid UserId
     {
-        get => _userId;
-        set => _userId = TrackStructChange(nameof(UserId), _userId, value);
+        get;
+        set => field = TrackStructChange(nameof(UserId), field, value);
     }
 
     /// <summary>
@@ -52,10 +47,10 @@ public class MessageModel : VersionedUpdatedEntity<MessageModel>
     /// </summary>
     public Guid RoomId
     {
-        get => _roomId;
-        set => _roomId = TrackStructChange(nameof(RoomId), _roomId, value);
+        get;
+        set => field = TrackStructChange(nameof(RoomId), field, value);
     }
-    
+
     /// <summary>
     /// Создаёт снапшот текущего состояния модели для хранения или передачи.
     /// </summary>

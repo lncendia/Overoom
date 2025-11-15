@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Films.Domain.Films.Snapshots;
+﻿using Films.Domain.Films.Snapshots;
 using Films.Domain.Films.ValueObjects;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
@@ -15,13 +14,6 @@ namespace Films.Infrastructure.Storage.Models.Films;
 [BsonIgnoreExtraElements]
 public class FilmModel : VersionedUpdatedEntity<FilmModel>
 {
-    private string _title = null!;
-    private string _posterKey = null!;
-    private string _description = null!;
-    private string? _shortDescription;
-    private DateTime _date;
-    private double? _ratingKp;
-    private double? _ratingImdb;
     private MediaContentModel? _content;
     private TrackedValueObjectCollection<SeasonModel, FilmModel>? _seasons;
     private TrackedCollection<string, FilmModel> _genres = new();
@@ -38,49 +30,46 @@ public class FilmModel : VersionedUpdatedEntity<FilmModel>
     /// <summary>
     /// Название фильма (максимальная длина - 200 символов)
     /// </summary>
-    [MaxLength(200)]
     public string Title
     {
-        get => _title;
-        set => _title = TrackChange(nameof(Title), _title, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(Title), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Ссылка на постер фильма
     /// </summary>
     public string PosterKey
     {
-        get => _posterKey;
-        set => _posterKey = TrackChange(nameof(PosterKey), _posterKey, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(PosterKey), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Полное описание фильма (максимальная длина - 1500 символов)
     /// </summary>
-    [MaxLength(1500)]
     public string Description
     {
-        get => _description;
-        set => _description = TrackChange(nameof(Description), _description, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(Description), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Краткое описание фильма (максимальная длина - 500 символов)
     /// </summary>
-    [MaxLength(500)]
-    public string? ShortDescription
+    public string ShortDescription
     {
-        get => _shortDescription;
-        set => _shortDescription = TrackChange(nameof(ShortDescription), _shortDescription, value);
-    }
+        get;
+        set => field = TrackChange(nameof(ShortDescription), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Год выпуска фильма
     /// </summary>
     public DateTime Date
     {
-        get => _date;
-        set => _date = TrackStructChange(nameof(Date), _date, value);
+        get;
+        set => field = TrackStructChange(nameof(Date), field, value);
     }
 
     /// <summary>
@@ -88,8 +77,8 @@ public class FilmModel : VersionedUpdatedEntity<FilmModel>
     /// </summary>
     public double? RatingKp
     {
-        get => _ratingKp;
-        set => _ratingKp = TrackStructChange(nameof(RatingKp), _ratingKp, value);
+        get;
+        set => field = TrackStructChange(nameof(RatingKp), field, value);
     }
 
     /// <summary>
@@ -97,8 +86,8 @@ public class FilmModel : VersionedUpdatedEntity<FilmModel>
     /// </summary>
     public double? RatingImdb
     {
-        get => _ratingImdb;
-        set => _ratingImdb = TrackStructChange(nameof(RatingImdb), _ratingImdb, value);
+        get;
+        set => field = TrackStructChange(nameof(RatingImdb), field, value);
     }
 
     /// <summary>
@@ -302,7 +291,7 @@ public class FilmModel : VersionedUpdatedEntity<FilmModel>
                     // Находим существующую модель эпизода по номеру или создаем новую
                     var episode = season.Episodes.FirstOrDefault(me => ae.Number == me.Number) ??
                                   new EpisodeModel { Number = ae.Number };
-                    
+
                     episode.Versions = ae.Versions.ToList();
                     return episode;
                 }).ToList();

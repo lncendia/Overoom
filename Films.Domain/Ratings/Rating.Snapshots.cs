@@ -32,7 +32,7 @@ public partial class Rating
     {
         FilmId = snapshot.FilmId;
         UserId = snapshot.UserId;
-        _score = snapshot.Score;
+        Score = snapshot.Score;
         CreatedAt = snapshot.CreatedAt;
     }
 }

@@ -1,9 +1,9 @@
 namespace Films.Domain.Rooms.Exceptions;
 
 /// <summary>
-/// Исключение, которое вызывается, когда пользователь заблокирован в комнате.
+/// Исключение, которое вызывается, когда пользователь уже состоит в комнате.
 /// </summary>
-public class UserBannedInRoomException : Exception
+public class UserAlreadyInRoomException : Exception
 {
     /// <summary>
     /// Идентификатор пользователя.
@@ -20,8 +20,8 @@ public class UserBannedInRoomException : Exception
     /// </summary>
     /// <param name="userId">Идентификатор пользователя.</param>
     /// <param name="roomId">Идентификатор комнаты.</param>
-    public UserBannedInRoomException(Guid userId, Guid roomId) 
-        : base($"User with ID {userId} is banned in the room with ID {roomId}.")
+    public UserAlreadyInRoomException(Guid userId, Guid roomId) 
+        : base($"User with ID {userId} is already joined in the room with ID {roomId}.")
     {
         UserId = userId;
         RoomId = roomId;

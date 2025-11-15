@@ -19,20 +19,6 @@ public partial class User(Guid id) : AggregateRoot(id)
     private const int MaxUsernameLength = 200;
 
     /// <summary>
-    /// Поле для хранения имени пользователя
-    /// </summary>
-    private string _username = null!;
-
-    /// <summary>
-    /// Настройки разрешений пользователя
-    /// </summary>
-    private RoomSettings _settings = new()
-    {
-        Beep = true,
-        Screamer = true
-    };
-
-    /// <summary>
     /// Имя пользователя
     /// </summary>
     /// <remarks>
@@ -40,8 +26,8 @@ public partial class User(Guid id) : AggregateRoot(id)
     /// </remarks>
     public required string Username
     {
-        get => _username;
-        set => _username = value.ValidateLength(nameof(Username), MaxUsernameLength);
+        get;
+        set => field = value.ValidateLength(nameof(Username), MaxUsernameLength);
     }
 
     /// <summary>
@@ -54,14 +40,18 @@ public partial class User(Guid id) : AggregateRoot(id)
     /// </summary>
     public RoomSettings RoomSettings
     {
-        get => _settings;
+        get;
         set
         {
-            if (_settings == value) return;
-            _settings = value;
+            if (field == value) return;
+            field = value;
             AddDomainEvent(new UserSettingsChangedEvent(this));
         }
-    }
+    } = new()
+    {
+        Beep = true,
+        Screamer = true
+    };
 
     /// <summary>
     /// Коллекция фильмов в списке желаемого

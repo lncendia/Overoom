@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Common.Domain.Rooms;
 using MongoDB.Driver;
 using MongoTracker.Entities;
@@ -13,17 +12,6 @@ namespace Rooms.Infrastructure.Storage.Models.Rooms;
 /// </summary>
 public class ViewerModel : UpdatedValueObject<RoomModel>
 {
-    private string _userName = null!;
-    private string? _photoKey;
-    private RoomSettings _settings = null!;
-    private bool _online;
-    private bool _fullScreen;
-    private bool _onPause;
-    private TimeSpan _timeLine;
-    private double _speed;
-    private bool _muted;
-    private int? _season;
-    private int? _episode;
     private TrackedCollection<string, RoomModel> _tags = new();
     private TrackedValueObjectCollection<StatisticProperty, RoomModel> _statistic = new();
 
@@ -35,20 +23,19 @@ public class ViewerModel : UpdatedValueObject<RoomModel>
     /// <summary>
     /// Имя пользователя (максимум 40 символов)
     /// </summary>
-    [MaxLength(40)]
     public string UserName
     {
-        get => _userName;
-        set => _userName = TrackChange(nameof(UserName), _userName, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(UserName), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Ключ фото пользователя (может быть null)
     /// </summary>
     public string? PhotoKey
     {
-        get => _photoKey;
-        set => _photoKey = TrackChange(nameof(PhotoKey), _photoKey, value);
+        get;
+        set => field = TrackChange(nameof(PhotoKey), field, value);
     }
 
     /// <summary>
@@ -56,17 +43,17 @@ public class ViewerModel : UpdatedValueObject<RoomModel>
     /// </summary>
     public RoomSettings Settings
     {
-        get => _settings;
-        set => _settings = TrackChange(nameof(Settings), _settings, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(Settings), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Состояние: онлайн/оффлайн
     /// </summary>
     public bool Online
     {
-        get => _online;
-        set => _online = TrackStructChange(nameof(Online), _online, value);
+        get;
+        set => field = TrackStructChange(nameof(Online), field, value);
     }
 
     /// <summary>
@@ -74,8 +61,8 @@ public class ViewerModel : UpdatedValueObject<RoomModel>
     /// </summary>
     public bool FullScreen
     {
-        get => _fullScreen;
-        set => _fullScreen = TrackStructChange(nameof(FullScreen), _fullScreen, value);
+        get;
+        set => field = TrackStructChange(nameof(FullScreen), field, value);
     }
 
     /// <summary>
@@ -83,17 +70,17 @@ public class ViewerModel : UpdatedValueObject<RoomModel>
     /// </summary>
     public bool OnPause
     {
-        get => _onPause;
-        set => _onPause = TrackStructChange(nameof(OnPause), _onPause, value);
+        get;
+        set => field = TrackStructChange(nameof(OnPause), field, value);
     }
-    
+
     /// <summary>
     ///
     /// </summary>
     public double Speed
     {
-        get => _speed;
-        set => _speed = TrackStructChange(nameof(Speed), _speed, value);
+        get;
+        set => field = TrackStructChange(nameof(Speed), field, value);
     }
 
     /// <summary>
@@ -101,8 +88,8 @@ public class ViewerModel : UpdatedValueObject<RoomModel>
     /// </summary>
     public bool Muted
     {
-        get => _muted;
-        set => _muted = TrackStructChange(nameof(Muted), _muted, value);
+        get;
+        set => field = TrackStructChange(nameof(Muted), field, value);
     }
 
     /// <summary>
@@ -110,8 +97,8 @@ public class ViewerModel : UpdatedValueObject<RoomModel>
     /// </summary>
     public TimeSpan TimeLine
     {
-        get => _timeLine;
-        set => _timeLine = TrackStructChange(nameof(TimeLine), _timeLine, value);
+        get;
+        set => field = TrackStructChange(nameof(TimeLine), field, value);
     }
 
     /// <summary>
@@ -119,8 +106,8 @@ public class ViewerModel : UpdatedValueObject<RoomModel>
     /// </summary>
     public int? Season
     {
-        get => _season;
-        set => _season = TrackStructChange(nameof(Season), _season, value);
+        get;
+        set => field = TrackStructChange(nameof(Season), field, value);
     }
 
     /// <summary>
@@ -128,8 +115,8 @@ public class ViewerModel : UpdatedValueObject<RoomModel>
     /// </summary>
     public int? Episode
     {
-        get => _episode;
-        set => _episode = TrackStructChange(nameof(Episode), _episode, value);
+        get;
+        set => field = TrackStructChange(nameof(Episode), field, value);
     }
 
     /// <summary>
@@ -233,9 +220,10 @@ public class ViewerModel : UpdatedValueObject<RoomModel>
         Speed = snapshot.Speed;
         Muted = snapshot.Muted;
         Tags = snapshot.Tags.ToList();
-        
+
         // Удаляем статистику, которой больше нет в снапшоте
-        Statistic.RemoveAll(statisticModel => snapshot.Statistic.All(statistic => statisticModel.Name != statistic.Key));
+        Statistic.RemoveAll(statisticModel =>
+            snapshot.Statistic.All(statistic => statisticModel.Name != statistic.Key));
 
         // Добавляем новые параметры статистики, которых нет в модели
         var newParameters = snapshot.Statistic

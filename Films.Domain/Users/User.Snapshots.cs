@@ -32,9 +32,9 @@ public partial class User
     // ReSharper disable once UnusedMember.Local
     private User(UserSnapshot snapshot) : this(snapshot.Id)
     {
-        _username = snapshot.Username;
+        Username = snapshot.Username;
         PhotoKey = snapshot.PhotoKey;
-        _settings = snapshot.RoomSettings;
+        RoomSettings = snapshot.RoomSettings;
         _watchlist = snapshot.Watchlist.ToHashSet();
         _history = snapshot.History.ToHashSet();
         _genres = snapshot.Genres.ToHashSet();

@@ -22,4 +22,8 @@ export interface RoomItemDto {
   isPrivate: boolean;
   /** Количество зрителей */
   viewersCount: number;
+  /** Имя владельца комнаты */
+  userName: string;
+  /** URL фотографии пользователя */
+  photoUrl: string | null;
 }

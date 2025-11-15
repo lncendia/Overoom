@@ -1,4 +1,5 @@
-﻿using Common.Domain.Aggregates;
+﻿using System.Diagnostics.CodeAnalysis;
+using Common.Domain.Aggregates;
 using Common.Domain.Extensions;
 using Films.Domain.Films.Exceptions;
 using Films.Domain.Films.ValueObjects;
@@ -20,27 +21,17 @@ public partial class Film(Guid id) : AggregateRoot(id)
     #region Info
 
     /// <summary> 
-    /// Заголовок фильма. 
-    /// </summary> 
-    private readonly string _title = null!;
-
-    /// <summary> 
     /// Описание фильма. 
     /// </summary> 
     private string _description = null!;
-
-    /// <summary> 
-    /// Краткое описание фильма. 
-    /// </summary> 
-    private string? _shortDescription;
 
     /// <summary> 
     /// Заголовок фильма. 
     /// </summary> 
     public required string Title
     {
-        get => _title;
-        init => _title = value.ValidateLength(nameof(Title), MaxTitleLength);
+        get;
+        init => field = value.ValidateLength(nameof(Title), MaxTitleLength);
     }
 
     /// <summary> 
@@ -55,15 +46,16 @@ public partial class Film(Guid id) : AggregateRoot(id)
     /// <summary> 
     /// Краткое описание фильма. 
     /// </summary> 
+    [field: AllowNull]
     public string ShortDescription
     {
         get
         {
-            if (!string.IsNullOrEmpty(_shortDescription)) return _shortDescription;
+            if (!string.IsNullOrEmpty(field)) return field;
             if (_description.Length < 100) return _description;
             return _description[..100] + "...";
         }
-        set => _shortDescription = value.ValidateLength(nameof(ShortDescription), MaxShortDescriptionLength);
+        set => field = value.ValidateLength(nameof(ShortDescription), MaxShortDescriptionLength);
     }
 
     /// <summary> 
@@ -253,7 +245,7 @@ public partial class Film(Guid id) : AggregateRoot(id)
             // Если это не сериал (уже есть контент), выбрасываем исключение
             if (Content != null)
                 throw new InvalidOperationException(
-                    "Нельзя добавить версию эпизода к фильму. Используйте метод без указания сезона/эпизода.");
+                    "You can't add a version of an episode to a movie. Use the method without specifying the season/episode.");
 
             // Создаем отсортированный набор для версий с нашей новой версией
             var updatedVersions = new SortedSet<string> { version };
@@ -324,7 +316,7 @@ public partial class Film(Guid id) : AggregateRoot(id)
             // Если уже есть сезоны, выбрасываем исключение
             if (Seasons != null)
                 throw new InvalidOperationException(
-                    "Нельзя добавить версию фильма к сериалу. Укажите номер сезона и эпизода.");
+                    "You can't add a movie version to a TV series. Specify the season and episode number.");
 
             // Создаем набор версий с нашей новой версией
             var updatedVersions = new SortedSet<string> { version };

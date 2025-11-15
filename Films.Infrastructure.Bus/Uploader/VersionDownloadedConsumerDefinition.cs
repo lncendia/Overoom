@@ -25,7 +25,7 @@ public class VersionDownloadedConsumerDefinition : ConsumerDefinition<VersionDow
         });
 
         // Настройка отложенной повторной доставки с экспоненциальной политикой
-        consumerConfigurator.UseScheduledRedelivery(cfg =>
+        endpointConfigurator.UseScheduledRedelivery(cfg =>
         {
             cfg.Exponential(10, TimeSpan.FromMinutes(1), TimeSpan.FromDays(1), TimeSpan.FromSeconds(30));
             cfg.Ignore<FilmNotFoundException>();

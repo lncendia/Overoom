@@ -17,7 +17,7 @@ public class CleanMessagesConsumerDefinition : ConsumerDefinition<CleanMessagesC
         IConsumerConfigurator<CleanMessagesConsumer> consumerConfigurator, IRegistrationContext context)
     {
         // Настройка отложенной повторной доставки с экспоненциальной политикой
-        consumerConfigurator.UseScheduledRedelivery(cfg =>
+        endpointConfigurator.UseScheduledRedelivery(cfg =>
         {
             cfg.Exponential(10, TimeSpan.FromMinutes(1), TimeSpan.FromDays(5), TimeSpan.FromSeconds(30));
         });

@@ -20,7 +20,6 @@ namespace Identix.Infrastructure.Web.OpenId.Controllers;
 /// <summary>
 /// Контроллер для обработки запросов OpenID Connect (OIDC)
 /// </summary>
-[ApiController]
 public class OpenIdConnectController : Controller
 {
     #region Сообщения ошибок

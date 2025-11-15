@@ -18,7 +18,7 @@ public class GetPhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<GetP
     /// <param name="cancellationToken">Токен отмены операции</param>
     /// <returns>Результат с потоком файла фотографии и информацией о content type</returns>
     /// <exception cref="ArgumentException">Выбрасывается при некорректном формате ключа фотографии</exception>
-    /// <exception cref="FileNotFoundException">Выбрасывается если файл фотографии не найден в хранилище</exception>
+    /// <exception cref="FileNotFoundException">Выбрасывается, если файл фотографии не найден в хранилище</exception>
     public async Task<FileResult> Handle(GetPhotoQuery request, CancellationToken cancellationToken)
     {
         // Валидируем запрашиваемый ключ

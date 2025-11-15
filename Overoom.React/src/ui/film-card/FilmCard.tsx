@@ -91,6 +91,7 @@ const FilmCard = ({
   return (
     <Card
       sx={{
+        width: '100%',
         position: 'relative',
         display: 'flex',
         flexDirection: { xs: 'column', lg: 'row' },

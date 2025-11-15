@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Common.DI.WebApi.Extensions;
@@ -52,7 +52,7 @@ public static class SwaggerServices
             options.SwaggerDoc(version, new OpenApiInfo { Title = title, Version = version });
 
             // Определите схему OAuth2 для Swagger
-            options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+            options.AddSecurityDefinition("OAuth2", new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.OAuth2,
                 Flows = new OpenApiOAuthFlows
@@ -61,28 +61,15 @@ public static class SwaggerServices
                     {
                         AuthorizationUrl = new Uri($"{issuer}/connect/authorize"),
                         TokenUrl = new Uri($"{issuer}/connect/token"),
-                        Scopes = scopes.ToDictionary(k => k.Name, v => v.Description)
+                        Scopes = scopes.ToDictionary(k => k.Name, v => v.Description),
                     }
                 }
             });
 
             // Используйте схему OAuth2 для всех операций в Swagger
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
             {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "oauth2"
-                        },
-                        Scheme = "oauth2",
-                        Name = "oauth2",
-                        In = ParameterLocation.Header
-                    },
-                    scopes.Select(s => s.Name).ToArray()
-                }
+                [new OpenApiSecuritySchemeReference("OAuth2", document)] = scopes.Select(s => s.Name).ToList()
             });
         });
     }

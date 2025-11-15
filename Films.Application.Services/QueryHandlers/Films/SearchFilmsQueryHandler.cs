@@ -96,8 +96,7 @@ public class SearchFilmsQueryHandler(MongoDbContext context)
                 Year = x.Date.Year,
                 RatingKp = x.RatingKp,
                 RatingImdb = x.RatingImdb,
-                Description = x.ShortDescription 
-                              ?? x.Description.Substring(0, 150) + (x.Description.Length > 150 ? "..." : string.Empty),
+                Description = x.ShortDescription,
                 IsSerial = x.Seasons != null && x.Content == null,
                 Genres = x.Genres
             })

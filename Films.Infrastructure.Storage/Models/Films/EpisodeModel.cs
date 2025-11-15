@@ -9,16 +9,15 @@ namespace Films.Infrastructure.Storage.Models.Films;
 /// </summary>
 public class EpisodeModel : UpdatedValueObject<FilmModel>
 {
-    private int _number;
     private TrackedCollection<string, FilmModel> _versions = new();
-    
+
     /// <summary>
     /// Номер эпизода в сезоне
     /// </summary>
     public int Number
     {
-        get => _number;
-        set => _number = TrackStructChange(nameof(Number), _number, value);
+        get;
+        set => field = TrackStructChange(nameof(Number), field, value);
     }
 
     /// <summary>

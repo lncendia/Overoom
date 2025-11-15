@@ -15,18 +15,6 @@ public partial class Viewer(Guid id)
     /// </summary>
     public IReadOnlySet<string> ChangedProperties => _changedProperties;
 
-    private string _userName = string.Empty;
-    private bool _online;
-    private bool _fullScreen;
-    private bool _onPause = true;
-    private TimeSpan _timeLine;
-    private RoomSettings _settings = null!;
-    private string? _photoKey;
-    private int? _season;
-    private int? _episode;
-    private double _speed = 1;
-    private bool _muted;
-
     /// <summary>
     /// Уникальный идентификатор зрителя.
     /// </summary>
@@ -37,25 +25,25 @@ public partial class Viewer(Guid id)
     /// </summary>
     public string UserName
     {
-        get => _userName;
+        get;
         internal set
         {
-            if (_userName == value) return;
-            _userName = value;
+            if (field == value) return;
+            field = value;
             _changedProperties.Add(nameof(UserName));
         }
-    }
+    } = string.Empty;
 
     /// <summary>
     /// Указывает, находится ли пользователь онлайн.
     /// </summary>
     public bool Online
     {
-        get => _online;
+        get;
         internal set
         {
-            if (_online == value) return;
-            _online = value;
+            if (field == value) return;
+            field = value;
             _changedProperties.Add(nameof(Online));
         }
     }
@@ -65,11 +53,11 @@ public partial class Viewer(Guid id)
     /// </summary>
     public bool FullScreen
     {
-        get => _fullScreen;
+        get;
         internal set
         {
-            if (_fullScreen == value) return;
-            _fullScreen = value;
+            if (field == value) return;
+            field = value;
             _changedProperties.Add(nameof(FullScreen));
         }
     }
@@ -80,53 +68,53 @@ public partial class Viewer(Guid id)
     /// </summary>
     public bool OnPause
     {
-        get => _onPause;
+        get;
         internal set
         {
-            if (_onPause == value) return;
-            _onPause = value;
+            if (field == value) return;
+            field = value;
             _changedProperties.Add(nameof(OnPause));
         }
-    }
+    } = true;
 
     /// <summary>
     /// Текущая позиция воспроизведения.
     /// </summary>
     public TimeSpan TimeLine
     {
-        get => _timeLine;
+        get;
         internal set
         {
-            if (_timeLine == value) return;
-            _timeLine = value;
+            if (field == value) return;
+            field = value;
             _changedProperties.Add(nameof(TimeLine));
         }
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
     public double Speed
     {
-        get => _speed;
+        get;
         internal set
         {
-            if (Math.Abs(_speed - value) < 0.1) return;
-            _speed = value;
+            if (Math.Abs(field - value) < 0.1) return;
+            field = value;
             _changedProperties.Add(nameof(Speed));
         }
-    }
-    
+    } = 1;
+
     /// <summary>
     ///
     /// </summary>
     public bool Muted
     {
-        get => _muted;
+        get;
         set
         {
-            if (_muted == value) return;
-            _muted = value;
+            if (field == value) return;
+            field = value;
             _changedProperties.Add(nameof(Muted));
         }
     }
@@ -136,25 +124,25 @@ public partial class Viewer(Guid id)
     /// </summary>
     public RoomSettings Settings
     {
-        get => _settings;
+        get;
         internal set
         {
-            if (_settings == value) return;
-            _settings = value;
+            if (field == value) return;
+            field = value;
             _changedProperties.Add(nameof(Settings));
         }
-    }
+    } = null!;
 
     /// <summary>
     /// Ключ фотографии пользователя.
     /// </summary>
     public string? PhotoKey
     {
-        get => _photoKey;
+        get;
         internal set
         {
-            if (_photoKey == value) return;
-            _photoKey = value;
+            if (field == value) return;
+            field = value;
             _changedProperties.Add(nameof(PhotoKey));
         }
     }
@@ -164,11 +152,11 @@ public partial class Viewer(Guid id)
     /// </summary>
     public int? Season
     {
-        get => _season;
+        get;
         internal set
         {
-            if (_season == value) return;
-            _season = value;
+            if (field == value) return;
+            field = value;
             _changedProperties.Add(nameof(Season));
         }
     }
@@ -178,11 +166,11 @@ public partial class Viewer(Guid id)
     /// </summary>
     public int? Episode
     {
-        get => _episode;
+        get;
         internal set
         {
-            if (_episode == value) return;
-            _episode = value;
+            if (field == value) return;
+            field = value;
             _changedProperties.Add(nameof(Episode));
         }
     }

@@ -1,5 +1,5 @@
 import { Lock, LockOpen, People } from '@mui/icons-material';
-import { Typography, Chip, Box, Stack } from '@mui/material';
+import { Typography, Chip, Box, Stack, Avatar } from '@mui/material';
 import { ReactElement } from 'react';
 
 import { RoomItemDto } from './room-item.dto.ts';
@@ -66,6 +66,13 @@ const RoomItem = ({ room, onClick }: RoomItemProps): ReactElement => {
             <Typography variant="caption">{room.viewersCount}</Typography>
           </Stack>
         </Stack>
+
+        {/* Имя создателя комнаты */}
+        <Chip
+          avatar={<Avatar alt={room.userName} src={room.photoUrl ?? undefined} />}
+          label={room.userName}
+          size="small"
+        />
 
         {/* Индикатор типа контента (фильм/сериал) */}
         <Chip label={room.isSerial ? 'Сериал' : 'Фильм'} size="small" />

@@ -9,7 +9,6 @@ namespace Films.Infrastructure.Storage.Models.Films;
 /// </summary>
 public class SeasonModel : UpdatedValueObject<FilmModel>
 {
-    private int _number;
     private TrackedValueObjectCollection<EpisodeModel, FilmModel> _episodes = new();
 
     /// <summary>
@@ -17,8 +16,8 @@ public class SeasonModel : UpdatedValueObject<FilmModel>
     /// </summary>
     public int Number
     {
-        get => _number;
-        set => _number = TrackStructChange(nameof(Number), _number, value);
+        get;
+        set => field = TrackStructChange(nameof(Number), field, value);
     }
 
     /// <summary>

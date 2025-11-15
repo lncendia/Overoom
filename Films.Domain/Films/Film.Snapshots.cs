@@ -9,59 +9,63 @@ public partial class Film
     {
         // Получаем тип Film
         var filmType = typeof(Film);
-    
+
         // Получаем внутренний конструктор, который принимает FilmSnapshot
         var constructor = filmType.GetConstructor(
             BindingFlags.NonPublic | BindingFlags.Instance,
             null,
             [typeof(FilmSnapshot)],
             null);
-    
+
         // Вызываем конструктор и возвращаем результат
         return (Film)constructor!.Invoke([snapshot]);
     }
-    
+
     /// <summary>
     /// Внутренний конструктор для гидратации из снапшота или БД.
     /// </summary>
     // ReSharper disable once UnusedMember.Local
-    private Film(FilmSnapshot snapshot) : this(snapshot.Id)
+    internal Film(FilmSnapshot snapshot) : this(snapshot.Id)
     {
-        _title = snapshot.Title;
-        _description = snapshot.Description;
-        _shortDescription = snapshot.ShortDescription;
         Date = snapshot.Date;
         PosterKey = snapshot.PosterKey;
         RatingKp = snapshot.RatingKp;
         RatingImdb = snapshot.RatingImdb;
         Content = snapshot.Content;
         Seasons = snapshot.Seasons;
+        Title = snapshot.Title;
+        _description = snapshot.Description;
         _genres = snapshot.Genres.ToHashSet();
         _countries = snapshot.Countries.ToHashSet();
         _actors = snapshot.Actors.ToHashSet();
         _directors = snapshot.Directors.ToHashSet();
         _screenwriters = snapshot.Screenwriters.ToHashSet();
+        if (snapshot.ShortDescription != null)
+            ShortDescription = snapshot.ShortDescription;
     }
 
     /// <summary>
     /// Получение снапшота текущего состояния агрегата.
     /// </summary>
-    internal FilmSnapshot GetSnapshot() => new()
+    internal FilmSnapshot GetSnapshot()
     {
-        Id = Id,
-        Title = Title,
-        Description = Description,
-        ShortDescription = ShortDescription,
-        Date = Date,
-        PosterKey = PosterKey,
-        RatingKp = RatingKp,
-        RatingImdb = RatingImdb,
-        Content = Content,
-        Seasons = Seasons,
-        Genres = Genres,
-        Countries = Countries,
-        Actors = Actors,
-        Directors = Directors,
-        Screenwriters = Screenwriters
-    };
+        return new FilmSnapshot
+        {
+            Id = Id,
+            Title = Title,
+            Description = Description,
+            ShortDescription = ShortDescription,
+            Date = Date,
+            PosterKey = PosterKey,
+            RatingKp = RatingKp,
+            RatingImdb = RatingImdb,
+            Content = Content,
+            Seasons = Seasons,
+            Genres = Genres,
+            Countries = Countries,
+            Actors = Actors,
+            Directors = Directors,
+            Screenwriters = Screenwriters
+        };
+    }
 }

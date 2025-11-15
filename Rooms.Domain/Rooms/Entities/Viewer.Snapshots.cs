@@ -46,18 +46,18 @@ public partial class Viewer
     // ReSharper disable once UnusedMember.Local
     private Viewer(ViewerSnapshot snapshot) : this(snapshot.Id)
     {
-        _userName = snapshot.UserName;
-        _photoKey = snapshot.PhotoKey;
-        _online = snapshot.Online;
-        _fullScreen = snapshot.FullScreen;
-        _onPause = snapshot.OnPause;
-        _timeLine = snapshot.TimeLine;
-        _season = snapshot.Season;
-        _episode = snapshot.Episode;
-        _speed = snapshot.Speed;
-        _muted = snapshot.Muted;
+        UserName = snapshot.UserName;
+        PhotoKey = snapshot.PhotoKey;
+        Online = snapshot.Online;
+        FullScreen = snapshot.FullScreen;
+        OnPause = snapshot.OnPause;
+        TimeLine = snapshot.TimeLine;
+        Season = snapshot.Season;
+        Episode = snapshot.Episode;
+        Speed = snapshot.Speed;
+        Muted = snapshot.Muted;
         _tagsSet = snapshot.Tags.ToHashSet();
         _statisticDictionary = snapshot.Statistic.ToDictionary(p => p.Key, p => p.Value);
-        _settings = snapshot.Settings;
+        Settings = snapshot.Settings;
     }
 }

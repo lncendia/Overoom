@@ -79,7 +79,7 @@ const createContainer = async (): Promise<Container> => {
   // Привязка RoomsApi к контейнеру
   container
     .bind<RoomsApi>('RoomsApi')
-    .toDynamicValue(() => new RoomsApi(filmsAxiosInstance, posterUrlFormat))
+    .toDynamicValue(() => new RoomsApi(filmsAxiosInstance, posterUrlFormat, userThumbnailUrlFormat))
     .inSingletonScope();
 
   // Привязка CommentsApi к контейнеру

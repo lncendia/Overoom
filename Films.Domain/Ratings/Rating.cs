@@ -10,11 +10,6 @@ namespace Films.Domain.Ratings;
 public partial class Rating : AggregateRoot
 {
     /// <summary>
-    /// Оценка фильма.
-    /// </summary>
-    private double _score;
-
-    /// <summary>
     /// Инициализирует новый экземпляр класса <see cref="Rating"/>.
     /// </summary>
     /// <param name="id">Идентификатор оценки.</param>
@@ -44,11 +39,11 @@ public partial class Rating : AggregateRoot
     /// </summary>
     public double Score
     {
-        get => _score;
+        get;
         set
         {
             if (value is < 0 or > 10) throw new ArgumentOutOfRangeException(nameof(value));
-            _score = value;
+            field = value;
         }
     }
 

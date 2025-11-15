@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Films.Domain.Playlists.Snapshots;
+﻿using Films.Domain.Playlists.Snapshots;
 using MongoDB.Driver;
 using MongoTracker.Entities;
 
@@ -12,12 +11,8 @@ namespace Films.Infrastructure.Storage.Models.Playlists;
 /// </summary>
 public class PlaylistModel : VersionedUpdatedEntity<PlaylistModel>
 {
-    private string _name = null!;
-    private string _description = null!;
     private TrackedCollection<Guid, PlaylistModel> _films = new();
     private TrackedCollection<string, PlaylistModel> _genres = new();
-    private DateTime _updatedAt;
-    private string _posterKey = null!;
 
     /// <summary>
     /// Уникальный идентификатор плейлиста
@@ -27,22 +22,20 @@ public class PlaylistModel : VersionedUpdatedEntity<PlaylistModel>
     /// <summary>
     /// Название плейлиста (максимальная длина - 200 символов)
     /// </summary>
-    [MaxLength(200)]
     public string Name
     {
-        get => _name;
-        set => _name = TrackChange(nameof(Name), _name, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(Name), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Описание плейлиста (максимальная длина - 500 символов)
     /// </summary>
-    [MaxLength(500)]
     public string Description
     {
-        get => _description;
-        set => _description = TrackChange(nameof(Description), _description, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(Description), field, value)!;
+    } = null!;
 
     /// <summary>
     /// Список идентификаторов фильмов в плейлисте
@@ -67,8 +60,8 @@ public class PlaylistModel : VersionedUpdatedEntity<PlaylistModel>
     /// </summary>
     public DateTime UpdatedAt
     {
-        get => _updatedAt;
-        set => _updatedAt = TrackStructChange(nameof(UpdatedAt), _updatedAt, value);
+        get;
+        set => field = TrackStructChange(nameof(UpdatedAt), field, value);
     }
 
     /// <summary>
@@ -76,9 +69,9 @@ public class PlaylistModel : VersionedUpdatedEntity<PlaylistModel>
     /// </summary>
     public string PosterKey
     {
-        get => _posterKey;
-        set => _posterKey = TrackChange(nameof(PosterKey), _posterKey, value)!;
-    }
+        get;
+        set => field = TrackChange(nameof(PosterKey), field, value)!;
+    } = null!;
 
     /// <inheritdoc/>
     /// <summary>
