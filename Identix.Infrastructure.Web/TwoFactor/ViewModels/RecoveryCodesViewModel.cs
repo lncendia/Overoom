@@ -5,13 +5,13 @@
 /// </summary>
 public class RecoveryCodesViewModel
 {
-    /// <summary>
-    /// Список кодов восстановления.
-    /// </summary>
-    public required IEnumerable<string> RecoveryCodes { get; init; }
-    
-    /// <summary>
-    /// URL для возврата.
-    /// </summary>
-    public string ReturnUrl { get; init; } = "/";
+  /// <summary>
+  /// Список кодов восстановления.
+  /// </summary>
+  public required IEnumerable<string> RecoveryCodes { get; init; }
+
+  /// <summary>
+  /// URL для возврата.
+  /// </summary>
+  public string ReturnUrl { get; init; } = "/";
 }

@@ -15,55 +15,55 @@ namespace Films.Application.Services.CommandHandlers.Playlists;
 /// <param name="unitOfWork">Единица работы для доступа к репозиториям</param>
 /// <param name="context">Контекст MongoDB для работы с фильмами</param>
 public class ChangePlaylistCommandHandler(IUnitOfWork unitOfWork, MongoDbContext context)
-    : IRequestHandler<ChangePlaylistCommand>
+  : IRequestHandler<ChangePlaylistCommand>
 {
-    /// <summary>
-    /// Обрабатывает команду изменения плейлиста
-    /// </summary>
-    /// <param name="request">Команда с данными для изменения</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    /// <exception cref="PlaylistNotFoundException">Выбрасывается если плейлист не найден</exception>
-    public async Task Handle(ChangePlaylistCommand request, CancellationToken cancellationToken)
+  /// <summary>
+  /// Обрабатывает команду изменения плейлиста
+  /// </summary>
+  /// <param name="request">Команда с данными для изменения</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  /// <exception cref="PlaylistNotFoundException">Выбрасывается если плейлист не найден</exception>
+  public async Task Handle(ChangePlaylistCommand request, CancellationToken cancellationToken)
+  {
+    // Получаем плейлист по идентификатору
+    Playlist? playlist = await unitOfWork.PlaylistRepository.Value.GetAsync(request.Id, cancellationToken);
+
+    // Если плейлист не найден - выбрасываем исключение
+    if (playlist == null) throw new PlaylistNotFoundException(request.Id);
+
+    // Обновляем описание плейлиста, если оно указано в запросе
+    playlist.Description = request.Description;
+
+    // Обработка обновления списка фильмов
+    if (request.Films != null)
     {
-        // Получаем плейлист по идентификатору
-        var playlist = await unitOfWork.PlaylistRepository.Value.GetAsync(request.Id, cancellationToken);
+      // Получаем информацию о фильмах из MongoDB
+      List<Playlist.FilmToUpdate>? films = await context.Films.AsQueryable()
 
-        // Если плейлист не найден - выбрасываем исключение
-        if (playlist == null) throw new PlaylistNotFoundException(request.Id);
+        // Фильтруем только запрошенные фильмы
+        .Where(x => request.Films.Contains(x.Id))
 
-        // Обновляем описание плейлиста, если оно указано в запросе
-        playlist.Description = request.Description;
+        // Проецируем в упрощенную модель (ID и жанры)
+        .Select(x => new Playlist.FilmToUpdate(x.Id, x.Genres.ToArray()))
 
-        // Обработка обновления списка фильмов
-        if (request.Films != null)
-        {
-            // Получаем информацию о фильмах из MongoDB
-            var films = await context.Films.AsQueryable()
+        // Преобразуем в список
+        .ToListAsync(cancellationToken: cancellationToken);
 
-                // Фильтруем только запрошенные фильмы
-                .Where(x => request.Films.Contains(x.Id))
+      // Проверяем, что все запрошенные фильмы найдены
+      foreach (Guid film in request.Films)
+      {
+        if (films.All(f => f.Id != film))
+          throw new FilmNotFoundException(film);
+      }
 
-                // Проецируем в упрощенную модель (ID и жанры)
-                .Select(x => new Playlist.FilmToUpdate(x.Id, x.Genres.ToArray()))
-
-                // Преобразуем в список
-                .ToListAsync(cancellationToken: cancellationToken);
-
-            // Проверяем, что все запрошенные фильмы найдены
-            foreach (var film in request.Films)
-            {
-                if (films.All(f => f.Id != film))
-                    throw new FilmNotFoundException(film);
-            }
-
-            // Обновляем список фильмов в плейлисте
-            playlist.UpdateFilms(films);
-        }
-
-        // Сохраняем изменения плейлиста в репозитории
-        await unitOfWork.PlaylistRepository.Value.UpdateAsync(playlist, cancellationToken);
-
-        // Фиксируем изменения в базе данных
-        await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
+      // Обновляем список фильмов в плейлисте
+      playlist.UpdateFilms(films);
     }
+
+    // Сохраняем изменения плейлиста в репозитории
+    await unitOfWork.PlaylistRepository.Value.UpdateAsync(playlist, cancellationToken);
+
+    // Фиксируем изменения в базе данных
+    await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
+  }
 }

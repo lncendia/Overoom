@@ -7,13 +7,13 @@ namespace Identix.Application.Abstractions.Commands.OpenId;
 /// </summary>
 public class RevokeGrantCommand : IRequest
 {
-    /// <summary>
-    /// Идентификатор гранта (авторизации), который нужно отозвать.
-    /// </summary>
-    public required string GrantId { get; init; }
-    
-    /// <summary>
-    /// Идентификатор пользователя, которому должен принадлежать грант.
-    /// </summary>
-    public required Guid UserId { get; init; }
+  /// <summary>
+  /// Идентификатор гранта (авторизации), который нужно отозвать.
+  /// </summary>
+  public required string GrantId { get; init; }
+
+  /// <summary>
+  /// Идентификатор пользователя, которому должен принадлежать грант.
+  /// </summary>
+  public required Guid UserId { get; init; }
 }

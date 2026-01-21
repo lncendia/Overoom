@@ -5,8 +5,8 @@ namespace Rooms.Application.Abstractions.RoomEvents.Notifications;
 /// </summary>
 public class ErrorNotificationEvent : RoomBaseEvent
 {
-    /// <summary>
-    /// Текст сообщения об ошибке.
-    /// </summary>
-    public required string Message { get; init; }
+  /// <summary>
+  /// Текст сообщения об ошибке.
+  /// </summary>
+  public required string Message { get; init; }
 }

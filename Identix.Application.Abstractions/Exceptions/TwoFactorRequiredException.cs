@@ -8,8 +8,8 @@ namespace Identix.Application.Abstractions.Exceptions;
 /// <param name="user">Объект Identity пользователя</param>
 public class TwoFactorRequiredException(AppUser user) : Exception("Two factor authentication is required")
 {
-    /// <summary>
-    /// Аутентифицированный пользователь
-    /// </summary>
-    public AppUser User { get; } = user;
+  /// <summary>
+  /// Аутентифицированный пользователь
+  /// </summary>
+  public AppUser User { get; } = user;
 }

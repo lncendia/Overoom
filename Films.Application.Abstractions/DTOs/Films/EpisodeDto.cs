@@ -5,8 +5,8 @@ namespace Films.Application.Abstractions.DTOs.Films;
 /// </summary>
 public class EpisodeDto : MediaContentDto
 {
-    /// <summary>
-    /// Номер эпизода в сезоне. Используется для идентификации и сортировки.
-    /// </summary>
-    public int Number { get; init; }
+  /// <summary>
+  /// Номер эпизода в сезоне. Используется для идентификации и сортировки.
+  /// </summary>
+  public int Number { get; init; }
 }

@@ -7,12 +7,14 @@ using Films.Infrastructure.Storage.Models.Comments;
 
 namespace Films.Infrastructure.Storage.Visitors;
 
-public class CommentVisitor : BaseSpecificationVisitor<CommentModel, ICommentSpecificationVisitor, Comment>, ICommentSpecificationVisitor
+public class CommentVisitor : BaseSpecificationVisitor<CommentModel, ICommentSpecificationVisitor, Comment>,
+  ICommentSpecificationVisitor
 {
-    protected override Expression<Func<CommentModel, bool>> ConvertSpecToExpression(ISpecification<Comment, ICommentSpecificationVisitor> spec)
-    {
-        var visitor = new CommentVisitor();
-        spec.Accept(visitor);
-        return visitor.Expr!;
-    }
+  protected override Expression<Func<CommentModel, bool>> ConvertSpecToExpression(
+    ISpecification<Comment, ICommentSpecificationVisitor> spec)
+  {
+    var visitor = new CommentVisitor();
+    spec.Accept(visitor);
+    return visitor.Expr!;
+  }
 }

@@ -6,10 +6,10 @@ export class CultureForm {
 
         // Получаем элемент формы
         const form: HTMLFormElement = document.querySelector('.form-culture') as HTMLFormElement;
-        
+
         // добавляем обработчик изменения списка
         form.querySelector('select').addEventListener('change', () => {
-            
+
             // Отправляем форму
             form.submit();
         });

@@ -3,28 +3,28 @@ export class PasswordStrengthValidator {
 
     /** Блок элементов надежности пароля - ползунок прогресса и сообщения для пользователя */
     indicatorField: HTMLDivElement;
-    
+
     /** Блок с ошибками */
     errorsBlock: HTMLSpanElement;
-    
+
     /** Блок прогресс-бара */
     progress: HTMLDivElement;
-    
+
     /** Элемент отправляемой формы */
     form: HTMLFormElement;
 
     /** Конструктор принимает блок с ползунком прогресса и сообщениями для пользователя и отпрвляемую форму */
     constructor(indicatorField: HTMLDivElement, form: HTMLFormElement) {
-        
+
         // блок элементов надежности пароля
         this.indicatorField = indicatorField;
-        
+
         // блок с ошибками
         this.errorsBlock = indicatorField.querySelector('.pass-valid-errors')
-        
+
         // прогресс-бар
         this.progress = indicatorField.querySelector('.progress-bar')
-        
+
         // отправляемая форма
         this.form = form;
     }
@@ -46,7 +46,7 @@ export class PasswordStrengthValidator {
 
         // длина также участвует в оценке надежности
         if (password.length >= 8) strength++;
-        
+
         // Возвращаем оценку
         return strength;
     }
@@ -62,16 +62,16 @@ export class PasswordStrengthValidator {
 
         // если надежность пароля максимальная
         if (passwordStrength === 5) {
-            
+
             // отправляем форму
             this.form.submit();
         }
         // если пароль не является надежным - выводим сообщение на форму
         else {
-            
+
             // выводим сообщение
             this.errorsBlock.innerHTML = this.indicatorField.querySelector('#invalid-pass').innerHTML;
-            
+
             // выделяем его красным цветом
             this.errorsBlock.style.color = "var(--bs-red)";
         }
@@ -82,7 +82,7 @@ export class PasswordStrengthValidator {
 
         // Получаем элемент ползунка прогресса
         let progress: HTMLDivElement = this.indicatorField.querySelector('.progress-bar');
-        
+
         // если длина пароля больше 3 символов, начинаем оценивать его надежность
         if (password.length > 0) {
 
@@ -110,7 +110,7 @@ export class PasswordStrengthValidator {
                 style = 'bg-danger'
             }
             // при оценке от 3 до 4 - пароль средний
-            else if (strength >=3 && strength <= 4) {
+            else if (strength >= 3 && strength <= 4) {
                 messageBlock = '#medium-pass';
                 style = 'bg-warning';
             }
@@ -132,10 +132,10 @@ export class PasswordStrengthValidator {
             // также увеличиваем длину активной части ползунка (прогресса)
             progress.style.width = `${strength * 20}%`;
         }
-        
+
         // Если длина пароля - 3 и менее символов
         else {
-            
+
             // скрываем блок с показателем и комментарием
             this.indicatorField.setAttribute('hidden', 'hidden');
         }

@@ -12,61 +12,61 @@ namespace Identix.Application.Services.Commands.TwoFactor;
 /// </summary>
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
 public class ResetTwoFactorCommandHandler(UserManager<AppUser> userManager)
-    : IRequestHandler<ResetTwoFactorCommand, AppUser>
+  : IRequestHandler<ResetTwoFactorCommand, AppUser>
 {
-    /// <summary>
-    /// Название EmailTokenProvider'а
-    /// </summary>
-    private const string EmailTokenProvider = "Email";
+  /// <summary>
+  /// Название EmailTokenProvider'а
+  /// </summary>
+  private const string EmailTokenProvider = "Email";
 
-    /// <summary>
-    /// Метод обработки команды сброса 2фа
-    /// </summary>
-    /// <param name="request">Запрос на сброс 2фа</param>
-    ///<param name="cancellationToken">Токен отмены для асинхронной операции.</param>
-    /// <returns>Возвращает пользователя со сброшенной 2фа</returns>
-    /// <exception cref="UserNotFoundException">Возникает, если пользователь не был найден</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Возникает, при неопознанном типе кода сброса 2фа</exception>
-    /// <exception cref="InvalidCodeException">Возникает, при невалидном коде</exception>
-    /// <exception cref="TwoFactorNotEnabledException">Возникает, при попытка отключить 2фа, когда она уже отключена</exception>
-    public async Task<AppUser> Handle(ResetTwoFactorCommand request, CancellationToken cancellationToken)
+  /// <summary>
+  /// Метод обработки команды сброса 2фа
+  /// </summary>
+  /// <param name="request">Запрос на сброс 2фа</param>
+  ///<param name="cancellationToken">Токен отмены для асинхронной операции.</param>
+  /// <returns>Возвращает пользователя со сброшенной 2фа</returns>
+  /// <exception cref="UserNotFoundException">Возникает, если пользователь не был найден</exception>
+  /// <exception cref="ArgumentOutOfRangeException">Возникает, при неопознанном типе кода сброса 2фа</exception>
+  /// <exception cref="InvalidCodeException">Возникает, при невалидном коде</exception>
+  /// <exception cref="TwoFactorNotEnabledException">Возникает, при попытка отключить 2фа, когда она уже отключена</exception>
+  public async Task<AppUser> Handle(ResetTwoFactorCommand request, CancellationToken cancellationToken)
+  {
+    // Получаем пользователя
+    AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
+
+    // Если пользователь не найден - выбрасываем исключение
+    if (user == null) throw new UserNotFoundException();
+
+    // Если у пользователя уже отключена 2фа - выбрасываем исключение
+    if (!await userManager.GetTwoFactorEnabledAsync(user)) throw new TwoFactorNotEnabledException();
+
+    // Верифицируем токен на основе указанного провайдера
+    bool result = request.Type switch
     {
-        // Получаем пользователя
-        var user = await userManager.FindByIdAsync(request.UserId.ToString());
+      // Если код от аутентификатора - указываем AuthenticatorTokenProvider в качестве провайдера валидации
+      CodeType.Authenticator => await userManager.VerifyTwoFactorTokenAsync(user,
+        userManager.Options.Tokens.AuthenticatorTokenProvider, request.Code),
 
-        // Если пользователь не найден - выбрасываем исключение
-        if (user == null) throw new UserNotFoundException();
+      // Если код от провайдера Email - указываем EmailTokenProvider в качестве провайдера валидации
+      CodeType.Email => await userManager.VerifyTwoFactorTokenAsync(user, EmailTokenProvider, request.Code),
 
-        // Если у пользователя уже отключена 2фа - выбрасываем исключение
-        if (!await userManager.GetTwoFactorEnabledAsync(user)) throw new TwoFactorNotEnabledException();
+      // Если пришел код восстановления - проверяем его методом RedeemTwoFactorRecoveryCodeAsync
+      CodeType.RecoveryCode => (await userManager.RedeemTwoFactorRecoveryCodeAsync(user, request.Code)).Succeeded,
 
-        // Верифицируем токен на основе указанного провайдера
-        var result = request.Type switch
-        {
-            // Если код от аутентификатора - указываем AuthenticatorTokenProvider в качестве провайдера валидации
-            CodeType.Authenticator => await userManager.VerifyTwoFactorTokenAsync(user,
-                userManager.Options.Tokens.AuthenticatorTokenProvider, request.Code),
+      // При ином значении CodeType выбрасываем исключение
+      _ => throw new ArgumentOutOfRangeException(nameof(request))
+    };
 
-            // Если код от провайдера Email - указываем EmailTokenProvider в качестве провайдера валидации
-            CodeType.Email => await userManager.VerifyTwoFactorTokenAsync(user, EmailTokenProvider, request.Code),
+    // Если код не удалось верифицировать - выбрасываем исключение
+    if (!result) throw new InvalidCodeException();
 
-            // Если пришел код восстановления - проверяем его методом RedeemTwoFactorRecoveryCodeAsync
-            CodeType.RecoveryCode => (await userManager.RedeemTwoFactorRecoveryCodeAsync(user, request.Code)).Succeeded,
+    // Отключаем 2FA у пользователя
+    await userManager.SetTwoFactorEnabledAsync(user, false);
 
-            // При ином значении CodeType выбрасываем исключение
-            _ => throw new ArgumentOutOfRangeException(nameof(request))
-        };
+    // Сбрасываем аутентификатор пользователя
+    await userManager.ResetAuthenticatorKeyAsync(user);
 
-        // Если код не удалось верифицировать - выбрасываем исключение
-        if (!result) throw new InvalidCodeException();
-
-        // Отключаем 2FA у пользователя
-        await userManager.SetTwoFactorEnabledAsync(user, false);
-
-        // Сбрасываем аутентификатор пользователя
-        await userManager.ResetAuthenticatorKeyAsync(user);
-
-        // Возвращаем пользователя со сброшенной 2фа
-        return user;
-    }
+    // Возвращаем пользователя со сброшенной 2фа
+    return user;
+  }
 }

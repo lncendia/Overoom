@@ -8,12 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Identix.Application.Abstractions\Identix.Application.Abstractions.csproj" />
+        <ProjectReference Include="..\Identix.Application.Abstractions\Identix.Application.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="OpenIddict.AspNetCore" Version="7.2.0" />
-        <PackageReference Include="OpenIddict.Client.WebIntegration" Version="7.2.0" />
+        <PackageReference Include="OpenIddict.AspNetCore" Version="7.2.0"/>
+        <PackageReference Include="OpenIddict.Client.WebIntegration" Version="7.2.0"/>
     </ItemGroup>
 
     <ItemGroup>

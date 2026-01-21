@@ -8,23 +8,22 @@ using Films.Infrastructure.Storage.Models.Films;
 
 namespace Films.Infrastructure.Storage.Visitors;
 
-public class FilmVisitor : BaseSpecificationVisitor<FilmModel, IFilmSpecificationVisitor, Film>, IFilmSpecificationVisitor
+public class FilmVisitor : BaseSpecificationVisitor<FilmModel, IFilmSpecificationVisitor, Film>,
+  IFilmSpecificationVisitor
 {
-    protected override Expression<Func<FilmModel, bool>> ConvertSpecToExpression(
-        ISpecification<Film, IFilmSpecificationVisitor> spec)
-    {
-        var visitor = new FilmVisitor();
-        spec.Accept(visitor);
-        return visitor.Expr!;
-    }
+  protected override Expression<Func<FilmModel, bool>> ConvertSpecToExpression(
+    ISpecification<Film, IFilmSpecificationVisitor> spec)
+  {
+    var visitor = new FilmVisitor();
+    spec.Accept(visitor);
+    return visitor.Expr!;
+  }
 
-    public void Visit(FilmsByTitleSpecification specification) =>
-        Expr = model => model.Title == specification.Title;
-
-    public void Visit(FilmsByDateSpecification specification)
-    {
-        Expr = model => model.Date.Year == specification.Date.Year
-                        && model.Date.Month == specification.Date.Month
-                        && model.Date.Day == specification.Date.Day;
-    }
+  public void Visit(DuplicateFilmsSpecification specification)
+  {
+    Expr = model => model.Title == specification.Title
+                    && model.Date.Year == specification.Date.Year
+                    && model.Date.Month == specification.Date.Month
+                    && model.Date.Day == specification.Date.Day;
+  }
 }

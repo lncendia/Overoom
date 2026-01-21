@@ -6,8 +6,8 @@ namespace Common.Domain.Events;
 /// <typeparam name="T">Тип агрегата</typeparam>
 public class CreateEvent<T> : DomainEvent
 {
-    /// <summary>
-    /// Агрегат
-    /// </summary>
-    public required T Aggregate { get; init; }
+  /// <summary>
+  /// Агрегат
+  /// </summary>
+  public required T Aggregate { get; init; }
 }

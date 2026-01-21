@@ -3,7 +3,8 @@
     @foreach (var provider in Model.providers)
     {
         var lover = provider.ToLower();
-        <a class="@lover" asp-controller="External" asp-action="Challenge" asp-route-provider="@provider" asp-route-returnUrl="@Model.returnUrl">
+        <a class="@lover" asp-controller="External" asp-action="Challenge" asp-route-provider="@provider"
+           asp-route-returnUrl="@Model.returnUrl">
             <svg-icon class="oauth" src="~/img/@(lover).svg" alt="provider icon"/>
         </a>
     }

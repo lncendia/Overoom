@@ -10,13 +10,13 @@ namespace Identix.Application.Abstractions.Commands.Create;
 /// </summary>
 public class CreateUserExternalCommand : IRequest<AppUser>
 {
-    /// <summary>
-    /// Информация о внешней аутентификации.
-    /// </summary>
-    public required ExternalLoginInfo LoginInfo { get; init; }
+  /// <summary>
+  /// Информация о внешней аутентификации.
+  /// </summary>
+  public required ExternalLoginInfo LoginInfo { get; init; }
 
-    /// <summary>
-    /// Локаль пользователя.
-    /// </summary>
-    public required Localization Locale { get; init; }
+  /// <summary>
+  /// Локаль пользователя.
+  /// </summary>
+  public required Localization Locale { get; init; }
 }

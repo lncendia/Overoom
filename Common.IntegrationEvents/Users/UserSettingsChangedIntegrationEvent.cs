@@ -7,13 +7,13 @@ namespace Common.IntegrationEvents.Users;
 /// </summary>
 public class UserSettingsChangedIntegrationEvent
 {
-    /// <summary>
-    /// Идентификатор пользователя, данные которого были изменены.
-    /// </summary>
-    public required Guid Id { get; init; }
-    
-    /// <summary>
-    /// Настройки пользователя.
-    /// </summary>
-    public required RoomSettings Settings { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя, данные которого были изменены.
+  /// </summary>
+  public required Guid Id { get; init; }
+
+  /// <summary>
+  /// Настройки пользователя.
+  /// </summary>
+  public required RoomSettings Settings { get; init; }
 }

@@ -5,8 +5,8 @@ namespace Rooms.Application.Abstractions.RoomEvents.Player;
 /// </summary>
 public class SpeedEvent : RoomBaseEvent
 {
-    /// <summary>
-    /// Новая скорость воспроизведения медиа-контента
-    /// </summary>
-    public required double Speed { get; init; }
+  /// <summary>
+  /// Новая скорость воспроизведения медиа-контента
+  /// </summary>
+  public required double Speed { get; init; }
 }

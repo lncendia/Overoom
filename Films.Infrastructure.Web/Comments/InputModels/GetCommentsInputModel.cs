@@ -7,13 +7,13 @@ namespace Films.Infrastructure.Web.Comments.InputModels;
 /// </summary>
 public class GetCommentsInputModel : IWithInputPagination
 {
-    /// <summary>
-    /// Количество элементов для получения (по умолчанию 10, максимум 50)
-    /// </summary>
-    public int Take { get; init; } = 10;
+  /// <summary>
+  /// Количество элементов для получения (по умолчанию 10, максимум 50)
+  /// </summary>
+  public int Take { get; init; } = 10;
 
-    /// <summary>
-    /// Количество элементов для пропуска
-    /// </summary>
-    public int Skip { get; init; } = 0;
+  /// <summary>
+  /// Количество элементов для пропуска
+  /// </summary>
+  public int Skip { get; init; } = 0;
 }

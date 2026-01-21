@@ -8,15 +8,15 @@ namespace Films.Infrastructure.Web.Films.Mappers;
 /// </summary>
 public class FilmsMapperProfile : AutoMapper.Profile
 {
-    /// <summary>
-    /// Маппинг входных моделей в команды
-    /// </summary>
-    public FilmsMapperProfile()
-    {
-        // Карта для GetPopularFilmsInputModel в GetPopularFilmsQuery
-        CreateMap<GetPopularFilmsInputModel, GetPopularFilmsQuery>();
-        
-        // Карта для SearchFilmsInputModel в SearchFilmsQuery
-        CreateMap<SearchFilmsInputModel, SearchFilmsQuery>();
-    }
+  /// <summary>
+  /// Маппинг входных моделей в команды
+  /// </summary>
+  public FilmsMapperProfile()
+  {
+    // Карта для GetPopularFilmsInputModel в GetPopularFilmsQuery
+    CreateMap<GetPopularFilmsInputModel, GetPopularFilmsQuery>();
+
+    // Карта для SearchFilmsInputModel в SearchFilmsQuery
+    CreateMap<SearchFilmsInputModel, SearchFilmsQuery>();
+  }
 }

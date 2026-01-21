@@ -9,12 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Uploader.Application.Abstractions\Uploader.Application.Abstractions.csproj" />
+        <ProjectReference Include="..\Uploader.Application.Abstractions\Uploader.Application.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="14.0.0" />
-      <PackageReference Include="FluentValidation" Version="12.1.0" />
+        <PackageReference Include="AutoMapper" Version="14.0.0"/>
+        <PackageReference Include="FluentValidation" Version="12.1.0"/>
     </ItemGroup>
 
 </Project>

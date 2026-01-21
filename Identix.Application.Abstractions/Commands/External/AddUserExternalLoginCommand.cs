@@ -9,13 +9,13 @@ namespace Identix.Application.Abstractions.Commands.External;
 /// </summary>
 public class AddUserExternalLoginCommand : IRequest<AppUser>
 {
-    /// <summary>
-    /// Идентификатор пользователя.
-    /// </summary>
-    public required Guid UserId { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя.
+  /// </summary>
+  public required Guid UserId { get; init; }
 
-    /// <summary>
-    /// Информация о внешней аутентификации.
-    /// </summary>
-    public required ExternalLoginInfo LoginInfo { get; init; }
+  /// <summary>
+  /// Информация о внешней аутентификации.
+  /// </summary>
+  public required ExternalLoginInfo LoginInfo { get; init; }
 }

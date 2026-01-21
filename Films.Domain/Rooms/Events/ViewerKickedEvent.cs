@@ -10,13 +10,13 @@ namespace Films.Domain.Rooms.Events;
 /// <param name="viewerId">Идентификатор зрителя, который был исключен</param>
 public class ViewerKickedEvent(Room room, Guid viewerId) : DomainEvent
 {
-    /// <summary>
-    /// Комната, из которой был исключен зритель
-    /// </summary>
-    public Room Room { get; } = room;
-    
-    /// <summary>
-    /// Идентификатор зрителя, который был исключен из комнаты
-    /// </summary>
-    public Guid ViewerId { get; } = viewerId;
+  /// <summary>
+  /// Комната, из которой был исключен зритель
+  /// </summary>
+  public Room Room { get; } = room;
+
+  /// <summary>
+  /// Идентификатор зрителя, который был исключен из комнаты
+  /// </summary>
+  public Guid ViewerId { get; } = viewerId;
 }

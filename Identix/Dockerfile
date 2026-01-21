@@ -17,6 +17,7 @@ COPY ["Identix.Application.Abstractions/Identix.Application.Abstractions.csproj"
 COPY ["Common.IntegrationEvents/Common.IntegrationEvents.csproj", "Common.IntegrationEvents/"]
 COPY ["Identix.Application.Services/Identix.Application.Services.csproj", "Identix.Application.Services/"]
 COPY ["Identix.Infrastructure.Web/Identix.Infrastructure.Web.csproj", "Identix.Infrastructure.Web/"]
+COPY ["Identix.Infrastructure.Bus/Identix.Infrastructure.Bus.csproj", "Identix.Infrastructure.Bus/"]
 RUN dotnet restore "Identix/Identix.csproj"
 
 COPY ["Identix/.", "Identix/"]
@@ -29,6 +30,7 @@ COPY ["Identix.Application.Abstractions/.", "Identix.Application.Abstractions/"]
 COPY ["Common.IntegrationEvents/.", "Common.IntegrationEvents/"]
 COPY ["Identix.Application.Services/.", "Identix.Application.Services/"]
 COPY ["Identix.Infrastructure.Web/.", "Identix.Infrastructure.Web/"]
+COPY ["Identix.Infrastructure.Bus/.", "Identix.Infrastructure.Bus/"]
 
 FROM node:23-alpine AS npmbuild
 WORKDIR /src/Identix/client

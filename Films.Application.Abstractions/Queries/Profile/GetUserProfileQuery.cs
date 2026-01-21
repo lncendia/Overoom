@@ -8,8 +8,8 @@ namespace Films.Application.Abstractions.Queries.Profile;
 /// </summary>
 public class GetUserProfileQuery : IRequest<UserProfileDto>
 {
-    /// <summary>
-    /// Идентификатор пользователя
-    /// </summary>
-    public required Guid Id { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя
+  /// </summary>
+  public required Guid Id { get; init; }
 }

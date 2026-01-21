@@ -5,8 +5,8 @@
 /// </summary>
 public class ChangeFilmPosterInputModel
 {
-    /// <summary>
-    /// Постер фильма
-    /// </summary>
-    public IFormFile? Poster { get; init; }
+  /// <summary>
+  /// Постер фильма
+  /// </summary>
+  public IFormFile? Poster { get; init; }
 }

@@ -9,19 +9,20 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// Обработчик события отправки крика зрителем
 /// </summary>
 /// <param name="eventSender">Отправитель событий комнаты</param>
-public class ViewerScreamedEventHandler(IRoomEventSender eventSender) : AfterSaveNotificationHandler<ViewerScreamedEvent>
+public class ViewerScreamedEventHandler(IRoomEventSender eventSender)
+  : AfterSaveNotificationHandler<ViewerScreamedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие отправки крика зрителем
-    /// </summary>
-    /// <param name="event">Событие отправки крика</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerScreamedEvent @event, CancellationToken cancellationToken)
+  /// <summary>
+  /// Обрабатывает событие отправки крика зрителем
+  /// </summary>
+  /// <param name="event">Событие отправки крика</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerScreamedEvent @event, CancellationToken cancellationToken)
+  {
+    await eventSender.SendAsync(new ScreamNotificationEvent
     {
-        await eventSender.SendAsync(new ScreamNotificationEvent
-        {
-            Initiator = @event.Initiator.Id,
-            Target = @event.Target.Id
-        }, @event.Room.Id, null, cancellationToken);
-    }
+      Initiator = @event.Initiator.Id,
+      Target = @event.Target.Id
+    }, @event.Room.Id, null, cancellationToken);
+  }
 }

@@ -5,13 +5,13 @@ namespace Films.Infrastructure.Web.Components.Interfaces;
 /// </summary>
 public interface IWithInputPagination
 {
-    /// <summary>
-    /// Лимит.
-    /// </summary>
-    public int Take { get; init; }
+  /// <summary>
+  /// Лимит.
+  /// </summary>
+  public int Take { get; init; }
 
-    /// <summary>
-    /// Смещение.
-    /// </summary>
-    public int Skip { get; init; }
+  /// <summary>
+  /// Смещение.
+  /// </summary>
+  public int Skip { get; init; }
 }

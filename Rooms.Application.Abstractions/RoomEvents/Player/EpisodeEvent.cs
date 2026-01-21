@@ -5,13 +5,13 @@ namespace Rooms.Application.Abstractions.RoomEvents.Player;
 /// </summary>
 public class EpisodeEvent : RoomBaseEvent
 {
-    /// <summary>
-    /// Сезон
-    /// </summary>
-    public required int Season { get; init; }
+  /// <summary>
+  /// Сезон
+  /// </summary>
+  public required int Season { get; init; }
 
-    /// <summary>
-    /// Серия
-    /// </summary>
-    public required int Episode { get; init; }
+  /// <summary>
+  /// Серия
+  /// </summary>
+  public required int Episode { get; init; }
 }

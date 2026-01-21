@@ -12,7 +12,7 @@ using Uploader.Application.Abstractions;
 
 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Инициализируем подключение к MongoDB
 builder.InitializeMongoDb();
@@ -60,7 +60,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenTelemetryServices(Constants.OpenTelemetry.ServiceName);
 
 // Создаем экземпляр приложения ASP.NET Core
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Преобразует необработанные исключения в ответы с подробной информацией о проблеме
 app.UseExceptionHandler();

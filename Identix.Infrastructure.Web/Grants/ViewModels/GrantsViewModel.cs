@@ -5,8 +5,8 @@
 /// </summary>
 public class GrantsViewModel
 {
-    /// <summary>
-    /// Список моделей представления разрешений.
-    /// </summary>
-    public required IEnumerable<GrantViewModel> Grants { get; init; }
+  /// <summary>
+  /// Список моделей представления разрешений.
+  /// </summary>
+  public required IEnumerable<GrantViewModel> Grants { get; init; }
 }

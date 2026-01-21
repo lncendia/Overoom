@@ -21,7 +21,7 @@ export class EmailCodeHandler {
             this.processRequest(link, requestLink);
         });
     }
-    
+
     /** Оработчик запроса */
     async processRequest(link: HTMLLinkElement, requestLink: string) {
 

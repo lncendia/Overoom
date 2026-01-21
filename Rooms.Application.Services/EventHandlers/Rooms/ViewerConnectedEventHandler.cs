@@ -13,18 +13,18 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <param name="eventSender">Отправитель событий комнаты</param>
 public class ViewerConnectedEventHandler(IRoomEventSender eventSender) : AfterSaveNotificationHandler<ViewerJoinedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие подключения зрителя
-    /// </summary>
-    /// <param name="event">Событие подключения зрителя</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerJoinedEvent @event, CancellationToken cancellationToken)
-    {
-        await eventSender.SendAsync(new JoinEvent { Viewer = ViewerDto.Create(@event.Viewer) },
-            @event.Room.Id, null, cancellationToken);
+  /// <summary>
+  /// Обрабатывает событие подключения зрителя
+  /// </summary>
+  /// <param name="event">Событие подключения зрителя</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerJoinedEvent @event, CancellationToken cancellationToken)
+  {
+    await eventSender.SendAsync(new JoinEvent { Viewer = ViewerDto.Create(@event.Viewer) },
+      @event.Room.Id, null, cancellationToken);
 
-        await eventSender.SendAsync(
-            new JoinNotificationEvent { Initiator = @event.Viewer.Id, Name = @event.Viewer.UserName },
-            @event.Room.Id, null, cancellationToken);
-    }
+    await eventSender.SendAsync(
+      new JoinNotificationEvent { Initiator = @event.Viewer.Id, Name = @event.Viewer.UserName },
+      @event.Room.Id, null, cancellationToken);
+  }
 }

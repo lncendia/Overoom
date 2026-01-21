@@ -5,8 +5,8 @@ namespace Rooms.Application.Abstractions.RoomEvents.Notifications;
 /// </summary>
 public sealed class LeaveNotificationEvent : NotificationEvent
 {
-    /// <summary>
-    /// Имя вышедшего зрителя
-    /// </summary>
-    public required string Name { get; init; }
+  /// <summary>
+  /// Имя вышедшего зрителя
+  /// </summary>
+  public required string Name { get; init; }
 }

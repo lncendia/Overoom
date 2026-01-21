@@ -11,18 +11,18 @@ namespace Rooms.Application.Services.EventHandlers.Tags;
 /// <param name="unitOfWork">Единица работы для взаимодействия с репозиториями</param>
 public class MutedEventHandler(IUnitOfWork unitOfWork) : BeforeSaveNotificationHandler<ViewerMuteChangedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие изменения состояния звука
-    /// </summary>
-    /// <param name="notification">Событие изменения состояния звука</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerMuteChangedEvent notification, CancellationToken cancellationToken)
-    {
-        if (notification.Viewer.Muted)
-            notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.Muted);
-        else
-            notification.Room.RemoveTag(notification.Viewer.Id, Constants.ViewerTags.Muted);
+  /// <summary>
+  /// Обрабатывает событие изменения состояния звука
+  /// </summary>
+  /// <param name="notification">Событие изменения состояния звука</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerMuteChangedEvent notification, CancellationToken cancellationToken)
+  {
+    if (notification.Viewer.Muted)
+      notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.Muted);
+    else
+      notification.Room.RemoveTag(notification.Viewer.Id, Constants.ViewerTags.Muted);
 
-        await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
-    }
+    await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
+  }
 }

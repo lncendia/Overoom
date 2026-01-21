@@ -8,8 +8,8 @@ namespace Films.Application.Abstractions.Queries.Playlists;
 /// </summary>
 public class GetPlaylistByIdQuery : IRequest<PlaylistDto>
 {
-    /// <summary>
-    /// Идентификатор плейлиста
-    /// </summary>
-    public required Guid Id { get; init; }
+  /// <summary>
+  /// Идентификатор плейлиста
+  /// </summary>
+  public required Guid Id { get; init; }
 }

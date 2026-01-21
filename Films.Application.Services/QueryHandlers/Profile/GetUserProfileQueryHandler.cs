@@ -13,30 +13,30 @@ namespace Films.Application.Services.QueryHandlers.Profile;
 /// </summary>
 /// <param name="context">Контекст базы данных MongoDB</param>
 public class GetUserProfileQueryHandler(MongoDbContext context)
-    : IRequestHandler<GetUserProfileQuery, UserProfileDto>
+  : IRequestHandler<GetUserProfileQuery, UserProfileDto>
 {
-    /// <summary>
-    /// Обрабатывает запрос на получение профиля пользователя
-    /// </summary>
-    /// <param name="request">Запрос, содержащий идентификатор пользователя</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    /// <returns>DTO профиля пользователя</returns>
-    /// <exception cref="UserNotFoundException">Выбрасывается, если пользователь с указанным ID не найден</exception>
-    public async Task<UserProfileDto> Handle(GetUserProfileQuery request, CancellationToken cancellationToken)
-    {
-        // Находим первого пользователя с указанным ID
-        var user = await context.Users.AsQueryable()
-            .Where(u => u.Id == request.Id)
-            .Select(u => new UserProfileDto
-            {
-                UserName = u.Username,
-                PhotoKey = u.PhotoKey,
-                RoomSettings = u.RoomSettings,
-                Genres = u.Genres
-            })
-            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+  /// <summary>
+  /// Обрабатывает запрос на получение профиля пользователя
+  /// </summary>
+  /// <param name="request">Запрос, содержащий идентификатор пользователя</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  /// <returns>DTO профиля пользователя</returns>
+  /// <exception cref="UserNotFoundException">Выбрасывается, если пользователь с указанным ID не найден</exception>
+  public async Task<UserProfileDto> Handle(GetUserProfileQuery request, CancellationToken cancellationToken)
+  {
+    // Находим первого пользователя с указанным ID
+    UserProfileDto? user = await context.Users.AsQueryable()
+      .Where(u => u.Id == request.Id)
+      .Select(u => new UserProfileDto
+      {
+        UserName = u.Username,
+        PhotoKey = u.PhotoKey,
+        RoomSettings = u.RoomSettings,
+        Genres = u.Genres
+      })
+      .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-        // Возвращаем найденного пользователя или выбрасываем исключение
-        return user ?? throw new UserNotFoundException(request.Id);
-    }
+    // Возвращаем найденного пользователя или выбрасываем исключение
+    return user ?? throw new UserNotFoundException(request.Id);
+  }
 }

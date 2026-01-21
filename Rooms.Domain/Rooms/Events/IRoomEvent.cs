@@ -5,8 +5,8 @@ namespace Rooms.Domain.Rooms.Events;
 /// </summary>
 public interface IRoomEvent
 {
-    /// <summary>
-    /// Комната, в которой произошло событие
-    /// </summary>
-    public Room Room { get; }
+  /// <summary>
+  /// Комната, в которой произошло событие
+  /// </summary>
+  public Room Room { get; }
 }

@@ -10,18 +10,18 @@ namespace Rooms.Application.Services.EventHandlers.Tags;
 /// </summary>
 /// <param name="unitOfWork">Единица работы для взаимодействия с репозиториями</param>
 public class FirstInEventHandler(IUnitOfWork unitOfWork)
-    : BeforeSaveNotificationHandler<ViewerJoinedEvent>
+  : BeforeSaveNotificationHandler<ViewerJoinedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие подключения зрителя
-    /// </summary>
-    /// <param name="notification">Событие подключения зрителя</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerJoinedEvent notification, CancellationToken cancellationToken)
-    {
-        if (notification.Room.Viewers.Count == 2)
-            notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.FirstIn);
+  /// <summary>
+  /// Обрабатывает событие подключения зрителя
+  /// </summary>
+  /// <param name="notification">Событие подключения зрителя</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerJoinedEvent notification, CancellationToken cancellationToken)
+  {
+    if (notification.Room.Viewers.Count == 2)
+      notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.FirstIn);
 
-        await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
-    }
+    await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
+  }
 }

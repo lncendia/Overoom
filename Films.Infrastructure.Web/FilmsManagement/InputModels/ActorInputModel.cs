@@ -5,13 +5,13 @@ namespace Films.Infrastructure.Web.FilmsManagement.InputModels;
 /// </summary>
 public class ActorInputModel
 {
-    /// <summary>
-    /// Полное имя актёра
-    /// </summary>
-    public string? Name { get; init; }
-    
-    /// <summary>
-    /// Роль актёра в фильме
-    /// </summary>
-    public string? Role { get; init; }
+  /// <summary>
+  /// Полное имя актёра
+  /// </summary>
+  public string? Name { get; init; }
+
+  /// <summary>
+  /// Роль актёра в фильме
+  /// </summary>
+  public string? Role { get; init; }
 }

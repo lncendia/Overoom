@@ -8,13 +8,13 @@ namespace Rooms.Domain.Rooms.Events;
 /// </summary>
 public class ViewerLeavedEvent : DomainEvent, IViewerEvent
 {
-    /// <summary>
-    /// Комната, которую покинул зритель
-    /// </summary>
-    public required Room Room { get; init; }
-    
-    /// <summary>
-    /// Зритель, покинувший комнату
-    /// </summary>
-    public required Viewer Viewer { get; init; }
+  /// <summary>
+  /// Комната, которую покинул зритель
+  /// </summary>
+  public required Room Room { get; init; }
+
+  /// <summary>
+  /// Зритель, покинувший комнату
+  /// </summary>
+  public required Viewer Viewer { get; init; }
 }

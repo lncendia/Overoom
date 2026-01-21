@@ -12,205 +12,190 @@ namespace Identix.Tests.UnitTests.Validators;
 /// </summary>
 public class CustomUserValidatorTest
 {
-    /// <summary>
-    /// Поле валидатора.
-    /// </summary>
-    private readonly CustomUserValidator _customUserValidator = new();
+  /// <summary>
+  /// Поле валидатора.
+  /// </summary>
+  private readonly CustomUserValidator _customUserValidator = new();
 
-    /// <summary>
-    /// Поле Mock объекта UserManager.
-    /// </summary>
-    private readonly Mock<UserManager<AppUser>> _userManagerMock = new(
-        new Mock<IUserStore<AppUser>>().Object,
-        new Mock<IOptions<IdentityOptions>>().Object,
-        new Mock<IPasswordHasher<AppUser>>().Object,
-        Array.Empty<IUserValidator<AppUser>>(),
-        Array.Empty<IPasswordValidator<AppUser>>(),
-        new Mock<ILookupNormalizer>().Object,
-        new Mock<IdentityErrorDescriber>().Object,
-        new Mock<IServiceProvider>().Object,
-        new Mock<ILogger<UserManager<AppUser>>>().Object);
+  /// <summary>
+  /// Поле Mock объекта UserManager.
+  /// </summary>
+  private readonly Mock<UserManager<AppUser>> _userManagerMock = new(
+    new Mock<IUserStore<AppUser>>().Object,
+    new Mock<IOptions<IdentityOptions>>().Object,
+    new Mock<IPasswordHasher<AppUser>>().Object,
+    Array.Empty<IUserValidator<AppUser>>(),
+    Array.Empty<IPasswordValidator<AppUser>>(),
+    new Mock<ILookupNormalizer>().Object,
+    new Mock<IdentityErrorDescriber>().Object,
+    new Mock<IServiceProvider>().Object,
+    new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    /// <summary>
-    /// Проверка валидного почты.
-    /// </summary>
-    [Theory]
-    [InlineData("test@example.com")]
-    [InlineData("test@yandex.net")]
-    [InlineData("test@gmail.com")]
-    [InlineData("test@mail.ru")]
-    public async Task ValidateAsync_ValidEmail(string email)
+  /// <summary>
+  /// Проверка валидного почты.
+  /// </summary>
+  [Theory]
+  [InlineData("test@example.com")]
+  [InlineData("test@yandex.net")]
+  [InlineData("test@gmail.com")]
+  [InlineData("test@mail.ru")]
+  public async Task ValidateAsync_ValidEmail(string email)
+  {
+    // Arrange
+    // Создаем экземпляр пользователя.
+    var user = new AppUser
     {
-        // Arrange
-        // Создаем экземпляр пользователя.
-        var user = new AppUser
-        {
-            UserName = email.Split('@')[0],
-            Email = email,
-            RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow
+      UserName = email.Split('@')[0],
+      Email = email,
+      RegistrationTimeUtc = DateTime.UtcNow,
+      LastAuthTimeUtc = DateTime.UtcNow
+    };
 
-        };
+    // Настройка mock объекта UserManager для возвращения null при вызове FindByEmailAsync.
+    _userManagerMock
+      .Setup(m => m.FindByEmailAsync(email))
+      .ReturnsAsync(() => null);
 
-        // Настройка mock объекта UserManager для возвращения null при вызове FindByEmailAsync.
-        _userManagerMock
+    // Act
+    // Валидация почты
+    IdentityResult result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
 
-            // Выбираем метод, к которому делаем заглушку.
-            .Setup(m => m.FindByEmailAsync(email))
+    // Assert
+    // Проверяем является ли тип результата нашим ожиданием.
+    Assert.Equal(IdentityResult.Success, result);
+  }
 
-            // Возвращаем null. 
-            .ReturnsAsync(() => null);
-
-        // Act
-        // Валидация почты
-        var result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
-
-        // Assert
-        // Проверяем является ли тип результата нашим ожиданием.
-        Assert.Equal(IdentityResult.Success, result);
-    }
-    
-    /// <summary>
-    /// Проверка невалидной почты.
-    /// </summary>
-    [Theory]
-    [InlineData("")]
-    public async Task ValidateAsync_InvalidEmailWithNullOrWhiteSpace(string email)
+  /// <summary>
+  /// Проверка невалидной почты.
+  /// </summary>
+  [Theory]
+  [InlineData("")]
+  public async Task ValidateAsync_InvalidEmailWithNullOrWhiteSpace(string email)
+  {
+    // Arrange
+    // Создаем экземпляр пользователя.
+    var user = new AppUser
     {
-        // Arrange
-        // Создаем экземпляр пользователя.
-        var user = new AppUser
-        {
-            UserName = email.Split('@')[0],
-            Email = email,
-            RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow
+      UserName = email.Split('@')[0],
+      Email = email,
+      RegistrationTimeUtc = DateTime.UtcNow,
+      LastAuthTimeUtc = DateTime.UtcNow
+    };
 
-        };
+    // Act
+    // Валидация пароля
+    IdentityResult result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
 
-        // Act
-        // Валидация пароля
-        var result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
-        
-        // Assert
-        // Проверяем является ли код ошибки тем, который мы ожидали
-        Assert.Equal("InvalidUserNameLength", result.Errors.FirstOrDefault()?.Code);
-    }
-    
-    /// <summary>
-    /// Проверка невалидной почты.
-    /// </summary>
-    [Theory]
-    [InlineData("test")]
-    [InlineData("test@")]
-    [InlineData("@")]
-    [InlineData("@mail.ru")]
-    public async Task ValidateAsync_InvalidFormatEmail(string email)
+    // Assert
+    // Проверяем является ли код ошибки тем, который мы ожидали
+    Assert.Equal("InvalidUserNameLength", result.Errors.FirstOrDefault()?.Code);
+  }
+
+  /// <summary>
+  /// Проверка невалидной почты.
+  /// </summary>
+  [Theory]
+  [InlineData("test")]
+  [InlineData("test@")]
+  [InlineData("@")]
+  [InlineData("@mail.ru")]
+  public async Task ValidateAsync_InvalidFormatEmail(string email)
+  {
+    // Arrange
+    // Создаем экземпляр пользователя.
+    var user = new AppUser
     {
-        // Arrange
-        // Создаем экземпляр пользователя.
-        var user = new AppUser
-        {
-            UserName = "test_user",
-            Email = email,
-            RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow
+      UserName = "test_user",
+      Email = email,
+      RegistrationTimeUtc = DateTime.UtcNow,
+      LastAuthTimeUtc = DateTime.UtcNow
+    };
 
-        };
-        
-        // Act
-        // Валидация пароля
-        var result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
-        
-        // Assert
-        // Проверяем является ли код ошибки тем, который мы ожидали
-        Assert.Equal("InvalidEmail", result.Errors.FirstOrDefault()?.Code);
-    }
-    
-    /// <summary>
-    /// Проверка валидного почты.
-    /// </summary>
-    [Theory]
-    [InlineData("test@example.com")]
-    public async Task ValidateAsync_WhenEmailAlreadyTaken(string email)
+    // Act
+    // Валидация пароля
+    IdentityResult result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
+
+    // Assert
+    // Проверяем является ли код ошибки тем, который мы ожидали
+    Assert.Equal("InvalidEmail", result.Errors.FirstOrDefault()?.Code);
+  }
+
+  /// <summary>
+  /// Проверка валидного почты.
+  /// </summary>
+  [Theory]
+  [InlineData("test@example.com")]
+  public async Task ValidateAsync_WhenEmailAlreadyTaken(string email)
+  {
+    // Arrange
+    // Создаем экземпляр пользователя.
+    var user = new AppUser
     {
-        // Arrange
-        // Создаем экземпляр пользователя.
-        var user = new AppUser
-        {
-            UserName = email.Split('@')[0],
-            Email = email,
-            RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            Id = Guid.NewGuid()
-        };
-        
-        // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
-        _userManagerMock
-                
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByEmailAsync(email))
-            
-            // Возвращаем тестового пользователя.  
-            .ReturnsAsync(() => new AppUser
-            {
-                UserName = email.Split('@')[0],
-                Email = email,
-                RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
-                Id = Guid.NewGuid()
-            });
+      UserName = email.Split('@')[0],
+      Email = email,
+      RegistrationTimeUtc = DateTime.UtcNow,
+      LastAuthTimeUtc = DateTime.UtcNow,
+      Id = Guid.NewGuid()
+    };
 
-        // Act
-        // Валидация пароля
-        var result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
-        
-        // Assert
-        // Проверяем является ли код ошибки тем, который мы ожидали
-        Assert.Equal("DuplicateEmail", result.Errors.FirstOrDefault()?.Code);
-    }
-    
-    /// <summary>
-    /// Проверка невалидного имени пользователя.
-    /// </summary>
-    [Theory]
-    [InlineData("")]
-    [InlineData("dsajdashjbcxzbnczxhgdhadsadassgdashdgashdasbcxgzvcgxzgvadgstdasdash@example.com")]
-    public async Task ValidateAsync_WhenUsernameLengthIsInvalid(string username)
+    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
+    _userManagerMock
+      .Setup(m => m.FindByEmailAsync(email))
+      .ReturnsAsync(() => new AppUser
+      {
+        UserName = email.Split('@')[0],
+        Email = email,
+        RegistrationTimeUtc = DateTime.UtcNow,
+        LastAuthTimeUtc = DateTime.UtcNow,
+        Id = Guid.NewGuid()
+      });
+
+    // Act
+    // Валидация пароля
+    IdentityResult result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
+
+    // Assert
+    // Проверяем является ли код ошибки тем, который мы ожидали
+    Assert.Equal("DuplicateEmail", result.Errors.FirstOrDefault()?.Code);
+  }
+
+  /// <summary>
+  /// Проверка невалидного имени пользователя.
+  /// </summary>
+  [Theory]
+  [InlineData("")]
+  [InlineData("dsajdashjbcxzbnczxhgdhadsadassgdashdgashdasbcxgzvcgxzgvadgstdasdash@example.com")]
+  public async Task ValidateAsync_WhenUsernameLengthIsInvalid(string username)
+  {
+    // Arrange
+    // Создаем экземпляр пользователя.
+    var user = new AppUser
     {
-        // Arrange
-        // Создаем экземпляр пользователя.
-        var user = new AppUser
-        {
-            UserName = username,
-            Email = username + "@test.ru",
-            RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow,
-            Id = Guid.NewGuid()
-        };
-        
-        // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
-        _userManagerMock
-                
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByEmailAsync(username))
-            
-            // Возвращаем тестового пользователя.  
-            .ReturnsAsync(() => new AppUser
-            {
-                UserName = username,
-                Email = username + "@test.ru",
-                RegistrationTimeUtc = DateTime.UtcNow,
-                LastAuthTimeUtc = DateTime.UtcNow,
-                Id = Guid.NewGuid()
-            });
+      UserName = username,
+      Email = username + "@test.ru",
+      RegistrationTimeUtc = DateTime.UtcNow,
+      LastAuthTimeUtc = DateTime.UtcNow,
+      Id = Guid.NewGuid()
+    };
 
-        // Act
-        // Валидация пароля
-        var result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
-        
-        // Assert
-        // Проверяем является ли код ошибки тем, который мы ожидали
-        Assert.Equal("InvalidUserNameLength", result.Errors.FirstOrDefault()?.Code);
-    }
+    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
+    _userManagerMock
+      .Setup(m => m.FindByEmailAsync(username))
+      .ReturnsAsync(() => new AppUser
+      {
+        UserName = username,
+        Email = username + "@test.ru",
+        RegistrationTimeUtc = DateTime.UtcNow,
+        LastAuthTimeUtc = DateTime.UtcNow,
+        Id = Guid.NewGuid()
+      });
+
+    // Act
+    // Валидация пароля
+    IdentityResult result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
+
+    // Assert
+    // Проверяем является ли код ошибки тем, который мы ожидали
+    Assert.Equal("InvalidUserNameLength", result.Errors.FirstOrDefault()?.Code);
+  }
 }

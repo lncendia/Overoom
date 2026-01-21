@@ -8,8 +8,8 @@ namespace Films.Application.Abstractions.Queries.Films;
 /// </summary>
 public class GetPopularFilmsQuery : IRequest<IReadOnlyList<FilmShortDto>>
 {
-    /// <summary>
-    /// Количество получаемых фильмов
-    /// </summary>
-    public required int Take { get; init; }
+  /// <summary>
+  /// Количество получаемых фильмов
+  /// </summary>
+  public required int Take { get; init; }
 }

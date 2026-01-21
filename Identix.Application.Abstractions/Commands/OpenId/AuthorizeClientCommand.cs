@@ -10,13 +10,13 @@ namespace Identix.Application.Abstractions.Commands.OpenId;
 /// </summary>
 public sealed record AuthorizeClientCommand : IRequest<ClaimsPrincipal>
 {
-    /// <summary>
-    /// Идентификатор клиентского приложения (ClientId)
-    /// </summary>
-    public required string ClientId { get; init; }
-    
-    /// <summary>
-    /// Запрашиваемые scope'ы доступа для клиентского приложения
-    /// </summary>
-    public required ImmutableArray<string> Scopes { get; init; }
+  /// <summary>
+  /// Идентификатор клиентского приложения (ClientId)
+  /// </summary>
+  public required string ClientId { get; init; }
+
+  /// <summary>
+  /// Запрашиваемые scope'ы доступа для клиентского приложения
+  /// </summary>
+  public required ImmutableArray<string> Scopes { get; init; }
 }

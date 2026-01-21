@@ -7,8 +7,8 @@ namespace Rooms.Domain.Rooms.Events;
 /// </summary>
 public interface IViewerEvent : IRoomEvent
 {
-    /// <summary>
-    /// Зритель, который совершил действие
-    /// </summary>
-    public Viewer Viewer { get; }
+  /// <summary>
+  /// Зритель, который совершил действие
+  /// </summary>
+  public Viewer Viewer { get; }
 }

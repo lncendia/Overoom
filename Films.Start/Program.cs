@@ -12,7 +12,7 @@ using Films.Infrastructure.Web.Films.Validators;
 using Films.Start.Exceptions;
 using Films.Start.Extensions;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Инициализируем подключение к MongoDB
 builder.InitializeMongoDb();
@@ -62,20 +62,20 @@ builder.Services.AddExceptionHandler<ExceptionHandler>();
 // Регистрация контроллеров с поддержкой сериализации JSON
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+  options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
 });
 
 // Настраиваем OpenTelemetry
 builder.Services.AddOpenTelemetryServices(Constants.OpenTelemetry.ServiceName);
 
 // Создаем экземпляр приложения ASP.NET Core
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Создаем область для инициализации баз данных
-using (var scope = app.Services.CreateScope())
+using (IServiceScope scope = app.Services.CreateScope())
 {
-    // Инициализация начальных данных в базу данных
-    await DatabaseInitializer.InitAsync(scope.ServiceProvider);
+  // Инициализация начальных данных в базу данных
+  await DatabaseInitializer.InitAsync(scope.ServiceProvider);
 }
 
 // Преобразует необработанные исключения в ответы с подробной информацией о проблеме

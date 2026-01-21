@@ -7,14 +7,14 @@ namespace Identix.Application.Abstractions.Emails;
 /// </summary>
 public class ConfirmMailChangeEmail : EmailMessage
 {
-    /// <summary>
-    /// Ссылка для подтверждения изменения электронной почты.
-    /// </summary>
-    public required string ConfirmLink { get; init; }
+  /// <summary>
+  /// Ссылка для подтверждения изменения электронной почты.
+  /// </summary>
+  public required string ConfirmLink { get; init; }
 
-    /// <summary>
-    /// Метод, позволяющий посетителю IEmailVisitor посетить текущий объект ConfirmMailChangeEmail и выполнить соответствующие действия.
-    /// </summary>
-    /// <param name="visitor">Посетитель IEmailVisitor.</param>
-    public override void Accept(IEmailVisitor visitor) => visitor.Extended<IExtendedEmailVisitor>().Visit(this);
+  /// <summary>
+  /// Метод, позволяющий посетителю IEmailVisitor посетить текущий объект ConfirmMailChangeEmail и выполнить соответствующие действия.
+  /// </summary>
+  /// <param name="visitor">Посетитель IEmailVisitor.</param>
+  public override void Accept(IEmailVisitor visitor) => visitor.Extended<IExtendedEmailVisitor>().Visit(this);
 }

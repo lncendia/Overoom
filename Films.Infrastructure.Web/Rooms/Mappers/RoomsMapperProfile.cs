@@ -9,15 +9,15 @@ namespace Films.Infrastructure.Web.Rooms.Mappers;
 /// </summary>
 public class RoomsMapperProfile : AutoMapper.Profile
 {
-    /// <summary>
-    /// Маппинг входных моделей в команды
-    /// </summary>
-    public RoomsMapperProfile()
-    {
-        // Карта для CreateRoomInputModel в CreateRoomCommand
-        CreateMap<CreateRoomInputModel, CreateRoomCommand>();
+  /// <summary>
+  /// Маппинг входных моделей в команды
+  /// </summary>
+  public RoomsMapperProfile()
+  {
+    // Карта для CreateRoomInputModel в CreateRoomCommand
+    CreateMap<CreateRoomInputModel, CreateRoomCommand>();
 
-        // Карта для SearchRoomsInputModel в SearchRoomsQuery
-        CreateMap<SearchRoomsInputModel, SearchRoomsQuery>();
-    }
+    // Карта для SearchRoomsInputModel в SearchRoomsQuery
+    CreateMap<SearchRoomsInputModel, SearchRoomsQuery>();
+  }
 }

@@ -9,28 +9,28 @@ namespace Identix.Application.Abstractions.Commands.Create;
 /// </summary>
 public class CreateUserCommand : IRequest<AppUser>
 {
-    /// <summary>
-    /// Пароль пользователя.
-    /// </summary>
-    public required string Password { get; init; }
+  /// <summary>
+  /// Пароль пользователя.
+  /// </summary>
+  public required string Password { get; init; }
 
-    /// <summary>
-    /// Электронная почта пользователя.
-    /// </summary>
-    public required string Email { get; init; }
+  /// <summary>
+  /// Электронная почта пользователя.
+  /// </summary>
+  public required string Email { get; init; }
 
-    /// <summary>
-    /// URL для подтверждения пользователя.
-    /// </summary>
-    public required string ConfirmUrl { get; init; }
-    
-    /// <summary>
-    /// URL адрес возврата
-    /// </summary>
-    public string? ReturnUrl { get; init; }
+  /// <summary>
+  /// URL для подтверждения пользователя.
+  /// </summary>
+  public required string ConfirmUrl { get; init; }
 
-    /// <summary>
-    /// Локаль пользователя.
-    /// </summary>
-    public required Localization Locale { get; init; }
+  /// <summary>
+  /// URL адрес возврата
+  /// </summary>
+  public string? ReturnUrl { get; init; }
+
+  /// <summary>
+  /// Локаль пользователя.
+  /// </summary>
+  public required Localization Locale { get; init; }
 }

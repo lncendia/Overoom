@@ -8,18 +8,18 @@ namespace Films.Infrastructure.Web.PlaylistManagement.Mappers;
 /// </summary>
 public class PlaylistManagementMapperProfile : AutoMapper.Profile
 {
-    /// <summary>
-    /// Маппинг входных моделей в команды
-    /// </summary>
-    public PlaylistManagementMapperProfile()
-    {
-        // Карта для CreatePlaylistInputModel в CreatePlaylistCommand
-        CreateMap<CreatePlaylistInputModel, CreatePlaylistCommand>();
-        
-        // Карта для ChangePlaylistInputModel в ChangePlaylistCommand
-        CreateMap<ChangePlaylistInputModel, ChangePlaylistCommand>();
-        
-        // Карта для ChangePlaylistPosterInputModel в ChangePlaylistPosterCommand
-        CreateMap<ChangePlaylistPosterInputModel, ChangePlaylistPosterCommand>();
-    }
+  /// <summary>
+  /// Маппинг входных моделей в команды
+  /// </summary>
+  public PlaylistManagementMapperProfile()
+  {
+    // Карта для CreatePlaylistInputModel в CreatePlaylistCommand
+    CreateMap<CreatePlaylistInputModel, CreatePlaylistCommand>();
+
+    // Карта для ChangePlaylistInputModel в ChangePlaylistCommand
+    CreateMap<ChangePlaylistInputModel, ChangePlaylistCommand>();
+
+    // Карта для ChangePlaylistPosterInputModel в ChangePlaylistPosterCommand
+    CreateMap<ChangePlaylistPosterInputModel, ChangePlaylistPosterCommand>();
+  }
 }

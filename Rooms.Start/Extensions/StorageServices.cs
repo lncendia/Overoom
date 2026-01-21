@@ -18,39 +18,39 @@ namespace Rooms.Start.Extensions;
 ///</summary>
 public static class StorageServices
 {
-    /// <summary>
-    /// Расширяющий метод для регистрации сервисов хранилища в коллекции служб.
-    /// Метод настраивает зависимости для работы с базами данных, файловым хранилищем и другими компонентами системы.
-    /// </summary>
-    /// <param name="builder">Построитель веб-приложения.</param>
-    public static void AddStorageServices(this IHostApplicationBuilder builder)
+  /// <summary>
+  /// Расширяющий метод для регистрации сервисов хранилища в коллекции служб.
+  /// Метод настраивает зависимости для работы с базами данных, файловым хранилищем и другими компонентами системы.
+  /// </summary>
+  /// <param name="builder">Построитель веб-приложения.</param>
+  public static void AddStorageServices(this IHostApplicationBuilder builder)
+  {
+    // Получаем секцию конфигурации, содержащую параметры подключения к базе данных.
+    IConfigurationSection database = builder.Configuration.GetSection("MongoDB");
+
+    // Извлекаем имя базы данных для приложения из конфигурации.
+    string applicationDatabaseName = database.GetRequiredValue<string>("ApplicationDB");
+
+    // Регистрируем MongoDbContext как синглтон.
+    builder.Services.AddSingleton<MongoDbContext>(sp =>
     {
-        // Получаем секцию конфигурации, содержащую параметры подключения к базе данных.
-        var database = builder.Configuration.GetSection("MongoDB");
+      // Получаем IMongoClient из контейнера зависимостей.
+      IMongoClient client = sp.GetRequiredService<IMongoClient>();
 
-        // Извлекаем имя базы данных для приложения из конфигурации.
-        var applicationDatabaseName = database.GetRequiredValue<string>("ApplicationDB");
-        
-        // Регистрируем MongoDbContext как синглтон.
-        builder.Services.AddSingleton<MongoDbContext>(sp =>
-        {
-            // Получаем IMongoClient из контейнера зависимостей.
-            var client = sp.GetRequiredService<IMongoClient>();
-            
-            // Создаем и возвращаем контекст MongoDB.
-            return new MongoDbContext(client, applicationDatabaseName);
-        });
+      // Создаем и возвращаем контекст MongoDB.
+      return new MongoDbContext(client, applicationDatabaseName);
+    });
 
-        // Регистрируем фабрику обработчиков сессий как Singleton
-        builder.Services.AddScoped<ISessionHandlerFactory, SessionHandlerFactory>();
+    // Регистрируем фабрику обработчиков сессий как Singleton
+    builder.Services.AddScoped<ISessionHandlerFactory, SessionHandlerFactory>();
 
-        // Регистрируем UnitOfWork как реализацию интерфейса IUnitOfWork с областью видимости Scoped.
-        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+    // Регистрируем UnitOfWork как реализацию интерфейса IUnitOfWork с областью видимости Scoped.
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        // Регистрируем сервис отчистки старых сообщений.
-        builder.Services.AddScoped<IMessagesCleaner, MessagesCleaner>();
-        
-        // Регистрирует сериализатор для типа Guid с использованием стандартного представления
-        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
-    }
+    // Регистрируем сервис отчистки старых сообщений.
+    builder.Services.AddScoped<IMessagesCleaner, MessagesCleaner>();
+
+    // Регистрирует сериализатор для типа Guid с использованием стандартного представления
+    BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+  }
 }

@@ -7,8 +7,8 @@ namespace Rooms.Application.Abstractions.RoomEvents.Room;
 /// </summary>
 public class JoinEvent : RoomBaseEvent
 {
-    /// <summary>
-    /// Данные зрителя
-    /// </summary>
-    public required ViewerDto Viewer { get; init; }
+  /// <summary>
+  /// Данные зрителя
+  /// </summary>
+  public required ViewerDto Viewer { get; init; }
 }

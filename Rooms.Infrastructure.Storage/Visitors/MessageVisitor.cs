@@ -9,16 +9,16 @@ using Rooms.Infrastructure.Storage.Models.Messages;
 namespace Rooms.Infrastructure.Storage.Visitors;
 
 public class MessageVisitor :
-    BaseSpecificationVisitor<MessageModel, IMessageSpecificationVisitor, Message>,
-    IMessageSpecificationVisitor
+  BaseSpecificationVisitor<MessageModel, IMessageSpecificationVisitor, Message>,
+  IMessageSpecificationVisitor
 {
-    protected override Expression<Func<MessageModel, bool>> ConvertSpecToExpression(
-        ISpecification<Message, IMessageSpecificationVisitor> spec)
-    {
-        var visitor = new MessageVisitor();
-        spec.Accept(visitor);
-        return visitor.Expr!;
-    }
+  protected override Expression<Func<MessageModel, bool>> ConvertSpecToExpression(
+    ISpecification<Message, IMessageSpecificationVisitor> spec)
+  {
+    var visitor = new MessageVisitor();
+    spec.Accept(visitor);
+    return visitor.Expr!;
+  }
 
-    public void Visit(RoomMessagesSpecification spec) => Expr = m => m.RoomId == spec.RoomId;
+  public void Visit(RoomMessagesSpecification spec) => Expr = m => m.RoomId == spec.RoomId;
 }

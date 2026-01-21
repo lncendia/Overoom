@@ -8,13 +8,13 @@ namespace Identix.Application.Abstractions.Commands.Profile;
 /// </summary>
 public class ChangeAvatarCommand : IRequest<AppUser>
 {
-    /// <summary>
-    /// Идентификатор пользователя.
-    /// </summary>
-    public required Guid UserId { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя.
+  /// </summary>
+  public required Guid UserId { get; init; }
 
-    /// <summary>
-    /// Поток данных с аватаром.
-    /// </summary>
-    public required Stream Thumbnail { get; init; }
+  /// <summary>
+  /// Поток данных с аватаром.
+  /// </summary>
+  public required Stream Thumbnail { get; init; }
 }

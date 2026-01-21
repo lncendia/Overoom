@@ -7,13 +7,13 @@ namespace Films.Application.Abstractions.Commands.Rooms;
 /// </summary>
 public class LeaveRoomCommand : IRequest
 {
-    /// <summary>
-    /// Идентификатор пользователя
-    /// </summary>
-    public required Guid UserId { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя
+  /// </summary>
+  public required Guid UserId { get; init; }
 
-    /// <summary>
-    /// Идентификатор комнаты
-    /// </summary>
-    public required Guid RoomId { get; init; }
+  /// <summary>
+  /// Идентификатор комнаты
+  /// </summary>
+  public required Guid RoomId { get; init; }
 }

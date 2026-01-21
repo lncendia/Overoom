@@ -5,13 +5,13 @@ namespace Common.Domain.Rooms;
 /// </summary>
 public record RoomSettings
 {
-    /// <summary>
-    /// Разрешение на воспроизведение звукового сигнала (бип).
-    /// </summary>
-    public required bool Beep { get; init; }
+  /// <summary>
+  /// Разрешение на воспроизведение звукового сигнала (бип).
+  /// </summary>
+  public required bool Beep { get; init; }
 
-    /// <summary>
-    /// Разрешение на использование громких звуков (криков).
-    /// </summary>
-    public required bool Screamer { get; init; }
+  /// <summary>
+  /// Разрешение на использование громких звуков (криков).
+  /// </summary>
+  public required bool Screamer { get; init; }
 }

@@ -8,10 +8,10 @@ module.exports = {
 
     // Тип сборки
     mode: "production",
-    
+
     // Точка входа
     entry: {
-        
+
         // Имя выходного файла и путь к входному файлу
         app: './src/scripts/main.ts',
     },

@@ -16,30 +16,30 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Rooms\CleanMessagesConsumerDefinition.cs">
-        <DependentUpon>CleanMessagesConsumer.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Rooms\RoomCreatedConsumerDefinition.cs">
-        <DependentUpon>RoomCreatedConsumer.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Rooms\RoomDeletedConsumerDefinition.cs">
-        <DependentUpon>RoomDeletedConsumer.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Rooms\RoomViewerJoinedConsumerDefinition.cs">
-        <DependentUpon>RoomViewerJoinedConsumer.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Rooms\RoomViewerKickedConsumerDefinition.cs">
-        <DependentUpon>RoomViewerKickedConsumer.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Rooms\RoomViewerLeavedConsumerDefinition.cs">
-        <DependentUpon>RoomViewerLeavedConsumer.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Users\RoomViewerJoinedConsumerDefinition.cs">
-        <DependentUpon>UserSettingsChangedConsumer.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Users\UserInfoChangedConsumerDefinition.cs">
-        <DependentUpon>UserInfoChangedConsumer.cs</DependentUpon>
-      </Compile>
+        <Compile Update="Rooms\CleanMessagesConsumerDefinition.cs">
+            <DependentUpon>CleanMessagesConsumer.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Rooms\RoomCreatedConsumerDefinition.cs">
+            <DependentUpon>RoomCreatedConsumer.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Rooms\RoomDeletedConsumerDefinition.cs">
+            <DependentUpon>RoomDeletedConsumer.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Rooms\RoomViewerJoinedConsumerDefinition.cs">
+            <DependentUpon>RoomViewerJoinedConsumer.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Rooms\RoomViewerKickedConsumerDefinition.cs">
+            <DependentUpon>RoomViewerKickedConsumer.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Rooms\RoomViewerLeavedConsumerDefinition.cs">
+            <DependentUpon>RoomViewerLeavedConsumer.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Users\RoomViewerJoinedConsumerDefinition.cs">
+            <DependentUpon>UserSettingsChangedConsumer.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Users\UserInfoChangedConsumerDefinition.cs">
+            <DependentUpon>UserInfoChangedConsumer.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

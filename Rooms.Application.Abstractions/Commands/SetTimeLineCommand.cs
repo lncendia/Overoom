@@ -5,8 +5,8 @@ namespace Rooms.Application.Abstractions.Commands;
 /// </summary>
 public class SetTimeLineCommand : RoomBaseCommand
 {
-    /// <summary>
-    /// Таймлайн
-    /// </summary>
-    public required TimeSpan TimeLine { get; init; }
+  /// <summary>
+  /// Таймлайн
+  /// </summary>
+  public required TimeSpan TimeLine { get; init; }
 }

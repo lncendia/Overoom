@@ -13,20 +13,20 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <param name="eventSender">Отправитель событий комнаты</param>
 /// <param name="context">Контекст выполняемой области</param>
 public class OwnerTimeLineChangedEventHandler(IRoomEventSender eventSender, IScopedContext context)
-    : AfterSaveNotificationHandler<ViewerTimeLineChangedEvent>
+  : AfterSaveNotificationHandler<ViewerTimeLineChangedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие изменения временной позиции
-    /// </summary>
-    /// <param name="event">Событие изменения временной позиции</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerTimeLineChangedEvent @event, CancellationToken cancellationToken)
-    {
-        if (@event.Viewer != @event.Room.Owner) return;
+  /// <summary>
+  /// Обрабатывает событие изменения временной позиции
+  /// </summary>
+  /// <param name="event">Событие изменения временной позиции</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerTimeLineChangedEvent @event, CancellationToken cancellationToken)
+  {
+    if (@event.Viewer != @event.Room.Owner) return;
 
-        var excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
+    string excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
 
-        await eventSender.SendAsync(new TimeLineEvent { TimeLine = @event.Viewer.TimeLine.Ticks }, @event.Room.Id,
-            excludedConnectionId, cancellationToken);
-    }
+    await eventSender.SendAsync(new TimeLineEvent { TimeLine = @event.Viewer.TimeLine.Ticks }, @event.Room.Id,
+      excludedConnectionId, cancellationToken);
+  }
 }

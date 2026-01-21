@@ -9,26 +9,26 @@ namespace Rooms.Infrastructure.Web.HubFilters;
 /// </summary>
 public class HubConnectionIdFilter : IHubFilter
 {
-    /// <summary>
-    /// Обрабатывает вызов методов хаба, сохраняя ConnectionId в контексте области
-    /// </summary>
-    /// <param name="invocationContext">Контекст вызова метода хаба</param>
-    /// <param name="next">Делегат для вызова следующего фильтра или метода хаба</param>
-    public async ValueTask<object?> InvokeMethodAsync(
-        HubInvocationContext invocationContext,
-        Func<HubInvocationContext, ValueTask<object?>> next)
+  /// <summary>
+  /// Обрабатывает вызов методов хаба, сохраняя ConnectionId в контексте области
+  /// </summary>
+  /// <param name="invocationContext">Контекст вызова метода хаба</param>
+  /// <param name="next">Делегат для вызова следующего фильтра или метода хаба</param>
+  public async ValueTask<object?> InvokeMethodAsync(
+    HubInvocationContext invocationContext,
+    Func<HubInvocationContext, ValueTask<object?>> next)
+  {
+    // Получаем сервис контекста области из DI контейнера
+    IScopedContext context = invocationContext.ServiceProvider.GetRequiredService<IScopedContext>();
+
+    // Создаем новую область видимости для изоляции данных вызова
+    using (context.CreateScope())
     {
-        // Получаем сервис контекста области из DI контейнера
-        var context = invocationContext.ServiceProvider.GetRequiredService<IScopedContext>();
+      // Сохраняем идентификатор подключения SignalR в контексте области
+      context.Current.Add(Constants.ScopedDictionary.CurrentConnectionIdKey, invocationContext.Context.ConnectionId);
 
-        // Создаем новую область видимости для изоляции данных вызова
-        using (context.CreateScope())
-        {
-            // Сохраняем идентификатор подключения SignalR в контексте области
-            context.Current.Add(Constants.ScopedDictionary.CurrentConnectionIdKey, invocationContext.Context.ConnectionId);
-
-            // Выполняем следующий фильтр или метод хаба
-            return await next(invocationContext);
-        }
+      // Выполняем следующий фильтр или метод хаба
+      return await next(invocationContext);
     }
+  }
 }

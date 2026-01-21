@@ -15,126 +15,102 @@ namespace Identix.Tests.UnitTests.Commands.Email;
 /// </summary>
 public class RequestChangeEmailCommandHandlerTest
 {
-    /// <summary>
-    /// Поле Mock объекта UserManager.
-    /// </summary>
-    private readonly Mock<UserManager<AppUser>> _userManagerMock;
+  /// <summary>
+  /// Поле Mock объекта UserManager.
+  /// </summary>
+  private readonly Mock<UserManager<AppUser>> _userManagerMock;
 
-    /// <summary>
-    /// Поле обработчика.
-    /// </summary>
-    private readonly RequestChangeEmailCommandHandler _handler;
+  /// <summary>
+  /// Поле обработчика.
+  /// </summary>
+  private readonly RequestChangeEmailCommandHandler _handler;
 
-    /// <summary>
-    /// Конструктор.
-    /// </summary>
-    public RequestChangeEmailCommandHandlerTest()
+  /// <summary>
+  /// Конструктор.
+  /// </summary>
+  public RequestChangeEmailCommandHandlerTest()
+  {
+    // Инициализация mock объекта UserManager.
+    _userManagerMock = new Mock<UserManager<AppUser>>(
+      new Mock<IUserStore<AppUser>>().Object,
+      new Mock<IOptions<IdentityOptions>>().Object,
+      new Mock<IPasswordHasher<AppUser>>().Object,
+      Array.Empty<IUserValidator<AppUser>>(),
+      Array.Empty<IPasswordValidator<AppUser>>(),
+      new Mock<ILookupNormalizer>().Object,
+      new Mock<IdentityErrorDescriber>().Object,
+      new Mock<IServiceProvider>().Object,
+      new Mock<ILogger<UserManager<AppUser>>>().Object);
+
+    // Инициализация обработчика.
+    _handler = new RequestChangeEmailCommandHandler(_userManagerMock.Object, new Mock<IPublishEndpoint>().Object);
+  }
+
+  /// <summary>
+  /// Проверка валидной команды запроса на смену электронной почты у пользователя.
+  /// </summary>
+  [Fact]
+  public async Task Handle_ValidCommand_SendRequest()
+  {
+    // Arrange
+    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
+    _userManagerMock
+      .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
+      .ReturnsAsync(() => new AppUser
+      {
+        UserName = "test",
+        Email = "test@example.com",
+        RegistrationTimeUtc = DateTime.UtcNow,
+        LastAuthTimeUtc = DateTime.UtcNow
+      });
+
+    // Настройка mock объекта UserManager для возврата true(почта подтверждена) при вызове IsEmailConfirmedAsync.
+    _userManagerMock
+      .Setup(m => m.IsEmailConfirmedAsync(It.IsAny<AppUser>()))
+      .ReturnsAsync(() => true);
+
+    // Создаем команду для запроса изменения электронной почты.
+    var command = new RequestChangeEmailCommand
     {
-        // Инициализация mock объекта UserManager.
-        _userManagerMock = new Mock<UserManager<AppUser>>(
-            new Mock<IUserStore<AppUser>>().Object,
-            new Mock<IOptions<IdentityOptions>>().Object,
-            new Mock<IPasswordHasher<AppUser>>().Object,
-            Array.Empty<IUserValidator<AppUser>>(),
-            Array.Empty<IPasswordValidator<AppUser>>(),
-            new Mock<ILookupNormalizer>().Object,
-            new Mock<IdentityErrorDescriber>().Object,
-            new Mock<IServiceProvider>().Object,
-            new Mock<ILogger<UserManager<AppUser>>>().Object);
+      UserId = Guid.NewGuid(),
+      NewEmail = "new_test@example.com",
+      ResetUrl = "test_url"
+    };
 
-        // Инициализация обработчика.
-        _handler = new RequestChangeEmailCommandHandler(_userManagerMock.Object, new Mock<IPublishEndpoint>().Object);
-    }
-    
-    /// <summary>
-    /// Проверка валидной команды запроса на смену электронной почты у пользователя.
-    /// </summary>
-    [Fact]
-    public async Task Handle_ValidCommand_SendRequest()
+    // Act
+    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
+    Exception? exception = await Record.ExceptionAsync(async () =>
     {
-        // Arrange
-        // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
-        _userManagerMock
-                
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
-            
-            // Возвращаем тестового пользователя.  
-            .ReturnsAsync(() => new AppUser
-        {
-            UserName = "test",
-            Email = "test@example.com",
-            RegistrationTimeUtc = DateTime.UtcNow,
-            LastAuthTimeUtc = DateTime.UtcNow
+      await _handler.Handle(command, CancellationToken.None);
+    });
 
-        });
+    // Assert
+    // Проверка на отсутствие исключения.
+    Assert.Null(exception);
+  }
 
-        // Настройка mock объекта UserManager для возврата true(почта подтверждена) при вызове IsEmailConfirmedAsync.
-        _userManagerMock
-                
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.IsEmailConfirmedAsync(It.IsAny<AppUser>()))
-            
-            // Возвращаем true -> почта подтверждена.
-            .ReturnsAsync(() => true);
-        
-        // Создаем команду для запроса изменения электронной почты.
-        var command = new RequestChangeEmailCommand
-        {
-            // Задаем Id пользователя.
-            UserId = Guid.NewGuid(),
-            
-            // Задаем новый электронную почту.
-            NewEmail = "new_test@example.com",
-           
-            // Задаем url для сброса электронной почты.
-            ResetUrl = "test_url"
-        };
+  /// <summary>
+  /// Проверка случая, когда пользователь не найден по Id.
+  /// </summary>
+  [Fact]
+  public async Task Handle_WhenUserNotFoundById_ThrowsUserNotFoundException()
+  {
+    // Arrange
+    // Настройка mock объекта UserManager для возвращения null при вызове FindByIdAsync.
+    _userManagerMock
+      .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
+      .ReturnsAsync(() => null);
 
-        // Act
-        // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
-        var exception = await Record.ExceptionAsync(async () =>
-        {
-            await _handler.Handle(command, CancellationToken.None);
-        });
-
-        // Assert
-        // Проверка на отсутствие исключения.
-        Assert.Null(exception);
-    }
-    
-    /// <summary>
-    /// Проверка случая, когда пользователь не найден по Id.
-    /// </summary>
-    [Fact]
-    public async Task Handle_WhenUserNotFoundById_ThrowsUserNotFoundException()
+    // Создаем команду для запроса изменения электронной почты.
+    var command = new RequestChangeEmailCommand
     {
-        // Arrange
-        // Настройка mock объекта UserManager для возвращения null при вызове FindByIdAsync.
-        _userManagerMock
-                
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
-            
-            // Возвращаем null.
-            .ReturnsAsync(() => null);
-        
-        // Создаем команду для запроса изменения электронной почты.
-        var command = new RequestChangeEmailCommand
-        {
-            // Задаем Id пользователя.
-            UserId = Guid.NewGuid(),
-            
-            // Задаем новый электронную почту.
-            NewEmail = "new_test@example.com",
-           
-            // Задаем url для сброса электронной почты.
-            ResetUrl = "test_url"
-        };
-        
-        // Act & Assert
-        // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
-        await Assert.ThrowsAsync<UserNotFoundException>(
-            () => _handler.Handle(command, CancellationToken.None));
-    }
+      UserId = Guid.NewGuid(),
+      NewEmail = "new_test@example.com",
+      ResetUrl = "test_url"
+    };
+
+    // Act & Assert
+    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
+    await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
+  }
 }

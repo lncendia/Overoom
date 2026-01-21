@@ -5,17 +5,17 @@ namespace Identix.Application.Abstractions.Exceptions;
 /// </summary>
 public class ConsentRequiredException : Exception
 {
-    /// <summary>
-    /// Тип согласия, который требуется
-    /// </summary>
-    public string ConsentType { get; }
+  /// <summary>
+  /// Тип согласия, который требуется
+  /// </summary>
+  public string ConsentType { get; }
 
-    /// <summary>
-    /// Создает новое исключение требования согласия
-    /// </summary>
-    /// <param name="consentType">Тип согласия из OpenIddictConstants.ConsentTypes</param>
-    public ConsentRequiredException(string consentType) : base("Consent required")
-    {
-        ConsentType = consentType;
-    }
+  /// <summary>
+  /// Создает новое исключение требования согласия
+  /// </summary>
+  /// <param name="consentType">Тип согласия из OpenIddictConstants.ConsentTypes</param>
+  public ConsentRequiredException(string consentType) : base("Consent required")
+  {
+    ConsentType = consentType;
+  }
 }

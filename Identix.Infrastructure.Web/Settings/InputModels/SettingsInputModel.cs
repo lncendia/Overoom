@@ -5,23 +5,23 @@ namespace Identix.Infrastructure.Web.Settings.InputModels;
 /// </summary>
 public class SettingsInputModel
 {
-    /// <summary>
-    /// Сообщение для пользователя.
-    /// </summary>
-    public string? Message { get; init; }
-    
-    /// <summary>
-    /// Сообщение об ошибке.
-    /// </summary>
-    public string? ErrorMessage { get; init; }
-    
-    /// <summary>
-    /// Номер вкладки, которая должна быть раскрыта.
-    /// </summary>
-    public int ExpandElement { get; init; } = 1;
+  /// <summary>
+  /// Сообщение для пользователя.
+  /// </summary>
+  public string? Message { get; init; }
 
-    /// <summary>
-    /// URL для возврата.
-    /// </summary>
-    public string ReturnUrl { get; init; } = "/";
+  /// <summary>
+  /// Сообщение об ошибке.
+  /// </summary>
+  public string? ErrorMessage { get; init; }
+
+  /// <summary>
+  /// Номер вкладки, которая должна быть раскрыта.
+  /// </summary>
+  public int ExpandElement { get; init; } = 1;
+
+  /// <summary>
+  /// URL для возврата.
+  /// </summary>
+  public string ReturnUrl { get; init; } = "/";
 }

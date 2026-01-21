@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Update="win-x64\ffmpeg.exe">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="win-x64\ffmpeg.exe">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

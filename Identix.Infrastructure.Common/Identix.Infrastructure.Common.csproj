@@ -6,12 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="OpenIddict.MongoDb" Version="7.2.0" />
+        <PackageReference Include="OpenIddict.MongoDb" Version="7.2.0"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj"/>
-        <ProjectReference Include="..\Identix.Application.Abstractions\Identix.Application.Abstractions.csproj" />
+        <ProjectReference Include="..\Identix.Application.Abstractions\Identix.Application.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -19,6 +19,15 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>EmailContentVisitor.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Incendia.Identity.Mongo">
+        <HintPath>..\..\Identity.Mongo\Incendia.Identity.Mongo\bin\Release\net10.0\Incendia.Identity.Mongo.dll</HintPath>
+      </Reference>
+      <Reference Include="Incendia.MongoTracker">
+        <HintPath>..\..\MongoTracker\Incendia.MongoTracker\bin\Release\netstandard2.1\Incendia.MongoTracker.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

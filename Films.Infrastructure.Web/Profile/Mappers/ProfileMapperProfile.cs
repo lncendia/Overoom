@@ -9,16 +9,16 @@ namespace Films.Infrastructure.Web.Profile.Mappers;
 /// </summary>
 public class ProfileMapperProfile : AutoMapper.Profile
 {
-    /// <summary>
-    /// Маппинг входных моделей в команды
-    /// </summary>
-    public ProfileMapperProfile()
-    {
-        // Карта для UpdateRoomSettingsInputModel в RoomSettings
-        CreateMap<UpdateRoomSettingsInputModel, RoomSettings>();
-        
-        // Карта для UpdateRoomSettingsInputModel в UpdateRoomSettingsCommand
-        CreateMap<UpdateRoomSettingsInputModel, UpdateRoomSettingsCommand>()
-            .ForMember(dest => dest.Settings, opt => opt.MapFrom(s => s));
-    }
+  /// <summary>
+  /// Маппинг входных моделей в команды
+  /// </summary>
+  public ProfileMapperProfile()
+  {
+    // Карта для UpdateRoomSettingsInputModel в RoomSettings
+    CreateMap<UpdateRoomSettingsInputModel, RoomSettings>();
+
+    // Карта для UpdateRoomSettingsInputModel в UpdateRoomSettingsCommand
+    CreateMap<UpdateRoomSettingsInputModel, UpdateRoomSettingsCommand>()
+      .ForMember(dest => dest.Settings, opt => opt.MapFrom(s => s));
+  }
 }

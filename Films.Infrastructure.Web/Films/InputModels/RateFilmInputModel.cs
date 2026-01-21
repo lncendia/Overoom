@@ -5,8 +5,8 @@ namespace Films.Infrastructure.Web.Films.InputModels;
 /// </summary>
 public class RateFilmInputModel
 {
-    /// <summary>
-    /// Оценка фильма (должна быть в диапазоне от 0 до 10)
-    /// </summary>
-    public double Score { get; init; }
+  /// <summary>
+  /// Оценка фильма (должна быть в диапазоне от 0 до 10)
+  /// </summary>
+  public double Score { get; init; }
 }

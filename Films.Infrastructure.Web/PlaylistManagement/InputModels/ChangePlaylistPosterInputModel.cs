@@ -5,8 +5,8 @@
 /// </summary>
 public class ChangePlaylistPosterInputModel
 {
-    /// <summary>
-    /// Постер подборки
-    /// </summary>
-    public IFormFile? Poster { get; init; }
+  /// <summary>
+  /// Постер подборки
+  /// </summary>
+  public IFormFile? Poster { get; init; }
 }

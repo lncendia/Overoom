@@ -9,10 +9,10 @@ namespace Common.Infrastructure.FileStorage;
 /// <param name="httpClient">Экземпляр HttpClient, используемый для выполнения HTTP-запросов</param>
 public sealed class AwsS3HttpClientFactory(HttpClient httpClient) : HttpClientFactory
 {
-    /// <summary>
-    /// Создает экземпляр HttpClient с заданной конфигурацией клиента
-    /// </summary>
-    /// <param name="clientConfig">Конфигурация клиента, используемая для настройки HttpClient</param>
-    /// <returns>Экземпляр HttpClient, настроенный в соответствии с конфигурацией клиента</returns>
-    public override HttpClient CreateHttpClient(IClientConfig clientConfig) => httpClient;
+  /// <summary>
+  /// Создает экземпляр HttpClient с заданной конфигурацией клиента
+  /// </summary>
+  /// <param name="clientConfig">Конфигурация клиента, используемая для настройки HttpClient</param>
+  /// <returns>Экземпляр HttpClient, настроенный в соответствии с конфигурацией клиента</returns>
+  public override HttpClient CreateHttpClient(IClientConfig clientConfig) => httpClient;
 }

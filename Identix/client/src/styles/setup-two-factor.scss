@@ -5,7 +5,7 @@
   .auth-key {
     cursor: pointer;
     transition: color 0.3s;
-    
+
     @media (max-width: 670px) {
       margin-top: 14px;
     }
@@ -21,6 +21,6 @@
   }
 
   .qrcode {
-      margin: 0 auto;
+    margin: 0 auto;
   }
 }

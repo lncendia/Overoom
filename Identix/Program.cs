@@ -21,7 +21,7 @@ using Identix.Application.Services.Commands.Create;
 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
 // Создаем билдер приложения
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Инициализируем подключение к MongoDB
 builder.InitializeMongoDb();
@@ -47,14 +47,14 @@ builder.AddCorsServices();
 // Добавляет службы для контроллеров в указанную коллекцию IServiceCollection.
 builder.Services.AddControllersWithViews()
 
-    // Добавляет в приложение локализацию аннотаций данных MVC.
-    .AddDataAnnotationsLocalization()
+  // Добавляет в приложение локализацию аннотаций данных MVC.
+  .AddDataAnnotationsLocalization()
 
-    // компиляцию View при изменениях
-    .AddRazorRuntimeCompilation()
+  // компиляцию View при изменениях
+  .AddRazorRuntimeCompilation()
 
-    // Добавляет службы локализации представлений MVC в приложение.
-    .AddViewLocalization();
+  // Добавляет службы локализации представлений MVC в приложение.
+  .AddViewLocalization();
 
 // Добавляет HTTP Client для сервиса хранения файлов.
 builder.Services.AddFileStorageHttpClient();
@@ -81,13 +81,13 @@ builder.AddEmailTemplates();
 builder.Services.AddOpenTelemetryServices(Constants.OpenTelemetry.ServiceName);
 
 // Создаем объект приложения
-await using var app = builder.Build();
+await using WebApplication app = builder.Build();
 
 // Создаем область для инициализации баз данных
-using (var scope = app.Services.CreateScope())
+using (IServiceScope scope = app.Services.CreateScope())
 {
-    // Инициализация начальных данных в базу данных
-    await DatabaseInitializer.InitAsync(scope.ServiceProvider, builder.Configuration);
+  // Инициализация начальных данных в базу данных
+  await DatabaseInitializer.InitAsync(scope.ServiceProvider, builder.Configuration);
 }
 
 // Добавляет RequestLocalizationMiddleware для автоматической установки сведений о культуре

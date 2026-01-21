@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Uploader.Application.Abstractions\Uploader.Application.Abstractions.csproj" />
+        <ProjectReference Include="..\Uploader.Application.Abstractions\Uploader.Application.Abstractions.csproj"/>
     </ItemGroup>
 
 </Project>

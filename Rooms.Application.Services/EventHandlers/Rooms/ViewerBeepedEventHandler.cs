@@ -11,17 +11,17 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <param name="eventSender">Отправитель событий комнаты</param>
 public class ViewerBeepedEventHandler(IRoomEventSender eventSender) : AfterSaveNotificationHandler<ViewerBeepedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие отправки бипа зрителем
-    /// </summary>
-    /// <param name="event">Событие отправки бипа</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerBeepedEvent @event, CancellationToken cancellationToken)
+  /// <summary>
+  /// Обрабатывает событие отправки бипа зрителем
+  /// </summary>
+  /// <param name="event">Событие отправки бипа</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerBeepedEvent @event, CancellationToken cancellationToken)
+  {
+    await eventSender.SendAsync(new BeepNotificationEvent
     {
-        await eventSender.SendAsync(new BeepNotificationEvent
-        {
-            Initiator = @event.Initiator.Id,
-            Target = @event.Target.Id
-        }, @event.Room.Id, null, cancellationToken);
-    }
+      Initiator = @event.Initiator.Id,
+      Target = @event.Target.Id
+    }, @event.Room.Id, null, cancellationToken);
+  }
 }

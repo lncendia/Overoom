@@ -5,8 +5,8 @@ namespace Rooms.Application.Abstractions.Commands;
 /// </summary>
 public class SetFullscreenCommand : RoomBaseCommand
 {
-    /// <summary>
-    /// Флаг нахождения в полноэкранном режиме
-    /// </summary>
-    public required bool Fullscreen { get; init; }
+  /// <summary>
+  /// Флаг нахождения в полноэкранном режиме
+  /// </summary>
+  public required bool Fullscreen { get; init; }
 }

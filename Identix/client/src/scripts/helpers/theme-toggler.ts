@@ -9,7 +9,7 @@ export class ThemeToggler {
 
     /** Метод запускает функционал переключения темы */
     startThemeToggler() {
-        
+
         // Находим элемент с классом "theme-toggler" и сохраняем его в переменной toggler
         const toggler = document.querySelector(".theme-toggler");
 

@@ -7,13 +7,13 @@ namespace Rooms.Application.Abstractions.Commands;
 /// </summary>
 public abstract class RoomBaseCommand : IRequest
 {
-    /// <summary>
-    /// Идентификатор пользователя
-    /// </summary>
-    public required Guid ViewerId { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя
+  /// </summary>
+  public required Guid ViewerId { get; init; }
 
-    /// <summary>
-    /// Идентификатор комнаты
-    /// </summary>
-    public required Guid RoomId { get; init; }
+  /// <summary>
+  /// Идентификатор комнаты
+  /// </summary>
+  public required Guid RoomId { get; init; }
 }

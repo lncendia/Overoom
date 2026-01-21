@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Common.Domain\Common.Domain.csproj"/>
-        <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />
+        <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -18,15 +18,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Messages\Message.Snapshots.cs">
-        <DependentUpon>Message.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Rooms\Room.Snapshots.cs">
-        <DependentUpon>Room.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Rooms\Entities\Viewer.Snapshots.cs">
-        <DependentUpon>Viewer.cs</DependentUpon>
-      </Compile>
+        <Compile Update="Messages\Message.Snapshots.cs">
+            <DependentUpon>Message.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Rooms\Room.Snapshots.cs">
+            <DependentUpon>Room.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Rooms\Entities\Viewer.Snapshots.cs">
+            <DependentUpon>Viewer.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

@@ -11,20 +11,20 @@ namespace Rooms.Infrastructure.Bus.Rooms;
 /// <param name="mediator">Медиатор</param>
 public class RoomViewerLeavedConsumer(ISender mediator) : IConsumer<RoomViewerLeavedIntegrationEvent>
 {
-    /// <summary>
-    /// Метод обработчик 
-    /// </summary>
-    /// <param name="context">Контекст сообщения</param>
-    public Task Consume(ConsumeContext<RoomViewerLeavedIntegrationEvent> context)
-    {
-        // Получаем данные события
-        var integrationEvent = context.Message;
+  /// <summary>
+  /// Метод обработчик 
+  /// </summary>
+  /// <param name="context">Контекст сообщения</param>
+  public Task Consume(ConsumeContext<RoomViewerLeavedIntegrationEvent> context)
+  {
+    // Получаем данные события
+    RoomViewerLeavedIntegrationEvent integrationEvent = context.Message;
 
-        // Отправляем команду на обработку события
-        return mediator.Send(new LeaveCommand
-        {
-            RoomId = integrationEvent.RoomId,
-            ViewerId = integrationEvent.ViewerId
-        }, context.CancellationToken);
-    }
+    // Отправляем команду на обработку события
+    return mediator.Send(new LeaveCommand
+    {
+      RoomId = integrationEvent.RoomId,
+      ViewerId = integrationEvent.ViewerId
+    }, context.CancellationToken);
+  }
 }

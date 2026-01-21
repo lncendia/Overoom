@@ -5,8 +5,8 @@ namespace Rooms.Application.Abstractions.RoomEvents.Notifications;
 /// </summary>
 public sealed class JoinNotificationEvent : NotificationEvent
 {
-    /// <summary>
-    /// Имя подключившегося зрителя
-    /// </summary>
-    public required string Name { get; init; }
+  /// <summary>
+  /// Имя подключившегося зрителя
+  /// </summary>
+  public required string Name { get; init; }
 }

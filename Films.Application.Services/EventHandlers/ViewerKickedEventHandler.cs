@@ -10,23 +10,23 @@ namespace Films.Application.Services.EventHandlers;
 /// </summary>
 /// <param name="publishEndpoint">Сервис для публикации интеграционных событий.</param>
 public class ViewerKickedEventHandler(IPublishEndpoint publishEndpoint)
-    : BeforeSaveNotificationHandler<ViewerKickedEvent>
+  : BeforeSaveNotificationHandler<ViewerKickedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие исключения зрителя и публикует интеграционное событие
-    /// </summary>
-    /// <param name="notification">Доменное событие исключения зрителя</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerKickedEvent notification, CancellationToken cancellationToken)
+  /// <summary>
+  /// Обрабатывает событие исключения зрителя и публикует интеграционное событие
+  /// </summary>
+  /// <param name="notification">Доменное событие исключения зрителя</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerKickedEvent notification, CancellationToken cancellationToken)
+  {
+    // Создаем событие интеграции для оповещения других сервисов об исключении зрителя
+    var integrationEvent = new RoomViewerKickedIntegrationEvent
     {
-        // Создаем событие интеграции для оповещения других сервисов об исключении зрителя
-        var integrationEvent = new RoomViewerKickedIntegrationEvent
-        {
-            RoomId = notification.Room.Id,
-            ViewerId = notification.ViewerId
-        };
+      RoomId = notification.Room.Id,
+      ViewerId = notification.ViewerId
+    };
 
-        // Публикуем событие интеграции через MassTransit
-        await publishEndpoint.Publish(integrationEvent, cancellationToken: cancellationToken);
-    }
+    // Публикуем событие интеграции через MassTransit
+    await publishEndpoint.Publish(integrationEvent, cancellationToken: cancellationToken);
+  }
 }

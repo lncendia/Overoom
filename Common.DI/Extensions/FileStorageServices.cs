@@ -15,50 +15,50 @@ namespace Common.DI.Extensions;
 /// </summary>
 public static class FileStorageServices
 {
-    /// <summary>
-    /// Имя секции конфигурации по умолчанию для настроек S3 клиента
-    /// </summary>
-    private const string ConfigurationSectionName = "MinIO";
+  /// <summary>
+  /// Имя секции конфигурации по умолчанию для настроек S3 клиента
+  /// </summary>
+  private const string ConfigurationSectionName = "MinIO";
 
-    /// <summary>
-    /// Регистрирует все инфраструктурные сервисы приложения в DI-контейнере
-    /// </summary>
-    /// <param name="builder">Построитель веб-приложения</param>
-    public static void AddFileStorage(this IHostApplicationBuilder builder)
+  /// <summary>
+  /// Регистрирует все инфраструктурные сервисы приложения в DI-контейнере
+  /// </summary>
+  /// <param name="builder">Построитель веб-приложения</param>
+  public static void AddFileStorage(this IHostApplicationBuilder builder)
+  {
+    // Получаем настройки S3 клиента из конфигурации
+    IConfigurationSection section = builder.Configuration.GetSection(ConfigurationSectionName);
+
+    string defaultBucket = section.GetRequiredValue<string>("DefaultBucket");
+    string accessKey = section.GetRequiredValue<string>("AccessKey");
+    string secretKey = section.GetRequiredValue<string>("SecretKey");
+    string baseAddress = section.GetRequiredValue<string>("BaseAddress");
+    string region = section.GetRequiredValue<string>("Region");
+    int? maxErrorRetry = section.GetValue<int?>("MaxErrorRetry");
+
+    // Регистрируем фабрику HTTP-клиентов для работы с S3
+    builder.Services.AddHttpClient<AwsS3HttpClientFactory>();
+
+    // Регистрируем реализацию файлового хранилища на основе S3
+    builder.Services.AddSingleton<IFileStorage, AwsS3ApiClient>(sp => new AwsS3ApiClient(
+      sp.GetRequiredService<IAmazonS3>(),
+      sp.GetRequiredService<IHttpClientFactory>(),
+      sp.GetRequiredService<AwsS3HttpClientFactory>(),
+      defaultBucket));
+
+    // Настраиваем и регистрируем клиент Amazon S3XL: 
+    builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
     {
-        // Получаем настройки S3 клиента из конфигурации
-        var section = builder.Configuration.GetSection(ConfigurationSectionName);
+      Credentials = new BasicAWSCredentials(accessKey, secretKey),
+      DefaultClientConfig =
+      {
+        ServiceURL = baseAddress,
+        MaxErrorRetry = maxErrorRetry
+      },
+      Region = RegionEndpoint.GetBySystemName(region)
+    });
 
-        var defaultBucket = section.GetRequiredValue<string>("DefaultBucket");
-        var accessKey = section.GetRequiredValue<string>("AccessKey");
-        var secretKey = section.GetRequiredValue<string>("SecretKey");
-        var baseAddress = section.GetRequiredValue<string>("BaseAddress");
-        var region = section.GetRequiredValue<string>("Region");
-        var maxErrorRetry = section.GetValue<int?>("MaxErrorRetry");
-
-        // Регистрируем фабрику HTTP-клиентов для работы с S3
-        builder.Services.AddHttpClient<AwsS3HttpClientFactory>();
-
-        // Регистрируем реализацию файлового хранилища на основе S3
-        builder.Services.AddSingleton<IFileStorage, AwsS3ApiClient>(sp => new AwsS3ApiClient(
-            sp.GetRequiredService<IAmazonS3>(),
-            sp.GetRequiredService<IHttpClientFactory>(),
-            sp.GetRequiredService<AwsS3HttpClientFactory>(),
-            defaultBucket));
-
-        // Настраиваем и регистрируем клиент Amazon S3XL: 
-        builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
-        {
-            Credentials = new BasicAWSCredentials(accessKey, secretKey),
-            DefaultClientConfig =
-            {
-                ServiceURL = baseAddress,
-                MaxErrorRetry = maxErrorRetry
-            },
-            Region = RegionEndpoint.GetBySystemName(region)
-        });
-        
-        // Регистрация именного HttpClient с именем AwsS3ApiClient.HttpClientName.
-        builder.Services.AddHttpClient(AwsS3ApiClient.HttpClientName);
-    }
+    // Регистрация именного HttpClient с именем AwsS3ApiClient.HttpClientName.
+    builder.Services.AddHttpClient(AwsS3ApiClient.HttpClientName);
+  }
 }

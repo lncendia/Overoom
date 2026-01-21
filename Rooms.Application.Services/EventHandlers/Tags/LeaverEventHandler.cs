@@ -10,23 +10,23 @@ namespace Rooms.Application.Services.EventHandlers.Tags;
 /// </summary>
 /// <param name="unitOfWork">Единица работы для взаимодействия с репозиториями</param>
 public class LeaverEventHandler(IUnitOfWork unitOfWork)
-    : BeforeSaveNotificationHandler<ViewerOnlineChangedEvent>
+  : BeforeSaveNotificationHandler<ViewerOnlineChangedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие изменения онлайн-статуса зрителя
-    /// </summary>
-    /// <param name="notification">Событие изменения онлайн-статуса</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerOnlineChangedEvent notification, CancellationToken cancellationToken)
-    {
-        if (notification.Viewer.Online) return;
-        
-        var count = notification.Room.IncrementStatisticParameter(
-            notification.Viewer.Id, Constants.ViewerStatisticParameters.DisconnectCount);
+  /// <summary>
+  /// Обрабатывает событие изменения онлайн-статуса зрителя
+  /// </summary>
+  /// <param name="notification">Событие изменения онлайн-статуса</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerOnlineChangedEvent notification, CancellationToken cancellationToken)
+  {
+    if (notification.Viewer.Online) return;
 
-        if (count > 5)
-            notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.Leaver);
+    int count = notification.Room.IncrementStatisticParameter(
+      notification.Viewer.Id, Constants.ViewerStatisticParameters.DisconnectCount);
 
-        await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
-    }
+    if (count > 5)
+      notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.Leaver);
+
+    await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
+  }
 }

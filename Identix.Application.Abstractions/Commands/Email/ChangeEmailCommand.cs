@@ -8,18 +8,18 @@ namespace Identix.Application.Abstractions.Commands.Email;
 /// </summary>
 public class ChangeEmailCommand : IRequest<AppUser>
 {
-    /// <summary>
-    /// Идентификатор пользователя.
-    /// </summary>
-    public required Guid UserId { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя.
+  /// </summary>
+  public required Guid UserId { get; init; }
 
-    /// <summary>
-    /// Код подтверждения.
-    /// </summary>
-    public required string Code { get; init; }
+  /// <summary>
+  /// Код подтверждения.
+  /// </summary>
+  public required string Code { get; init; }
 
-    /// <summary>
-    /// Новая электронная почта пользователя.
-    /// </summary>
-    public required string NewEmail { get; init; }
+  /// <summary>
+  /// Новая электронная почта пользователя.
+  /// </summary>
+  public required string NewEmail { get; init; }
 }

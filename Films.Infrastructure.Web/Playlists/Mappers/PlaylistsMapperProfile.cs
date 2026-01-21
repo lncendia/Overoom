@@ -8,12 +8,12 @@ namespace Films.Infrastructure.Web.Playlists.Mappers;
 /// </summary>
 public class PlaylistsMapperProfile : AutoMapper.Profile
 {
-    /// <summary>
-    /// Маппинг входных моделей в команды
-    /// </summary>
-    public PlaylistsMapperProfile()
-    {
-        // Карта для PlaylistsSearchInputModel в SearchPlaylistsQuery
-        CreateMap<SearchPlaylistsInputModel, SearchPlaylistsQuery>();
-    }
+  /// <summary>
+  /// Маппинг входных моделей в команды
+  /// </summary>
+  public PlaylistsMapperProfile()
+  {
+    // Карта для PlaylistsSearchInputModel в SearchPlaylistsQuery
+    CreateMap<SearchPlaylistsInputModel, SearchPlaylistsQuery>();
+  }
 }

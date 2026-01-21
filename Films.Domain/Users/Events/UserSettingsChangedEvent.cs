@@ -7,8 +7,8 @@ namespace Films.Domain.Users.Events;
 /// </summary>
 public class UserSettingsChangedEvent(User user) : DomainEvent
 {
-    /// <summary>
-    /// Пользователь, чьи настройки были изменены
-    /// </summary>
-    public User User { get; } = user;
+  /// <summary>
+  /// Пользователь, чьи настройки были изменены
+  /// </summary>
+  public User User { get; } = user;
 }

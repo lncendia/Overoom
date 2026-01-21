@@ -11,29 +11,29 @@ namespace Identix.Infrastructure.Web.External.Services;
 /// </summary>
 public class GoogleClaimsMapper() : ExternalClaimsMapperBase(OpenIddictClientWebIntegrationConstants.Providers.Google)
 {
-    /// <summary>
-    /// Выполняет маппинг claims из результата аутентификации Google
-    /// </summary>
-    /// <param name="result">Результат аутентификации Google</param>
-    /// <returns>ClaimsIdentity с маппированными claims Google</returns>
-    /// <exception cref="Exception">Когда отсутствует обязательный идентификатор пользователя</exception>
-    public override Task<ClaimsIdentity> MapAsync(AuthenticateResult result)
-    {
-        // Получаем обязательный идентификатор пользователя из Google
-        var id = result.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+  /// <summary>
+  /// Выполняет маппинг claims из результата аутентификации Google
+  /// </summary>
+  /// <param name="result">Результат аутентификации Google</param>
+  /// <returns>ClaimsIdentity с маппированными claims Google</returns>
+  /// <exception cref="Exception">Когда отсутствует обязательный идентификатор пользователя</exception>
+  public override Task<ClaimsIdentity> MapAsync(AuthenticateResult result)
+  {
+    // Получаем обязательный идентификатор пользователя из Google
+    string? id = result.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        // Создаем базовую identity с идентификатором
-        var identity = CreateBaseIdentity(id);
-        
-        // Маппим отображаемое имя пользователя
-        identity.TryAddClaim(ClaimTypes.Name, result.Principal?.FindFirstValue(ClaimTypes.Name));
-        
-        // Маппим email пользователя
-        identity.TryAddClaim(ClaimTypes.Email, result.Principal?.FindFirstValue(ClaimTypes.Email));
-        
-        // Маппим URL аватара пользователя из claim "picture"
-        identity.TryAddClaim(Constants.Claims.Thumbnail, result.Principal?.FindFirstValue("picture"));
+    // Создаем базовую identity с идентификатором
+    ClaimsIdentity identity = CreateBaseIdentity(id);
 
-        return Task.FromResult(identity);
-    }
+    // Маппим отображаемое имя пользователя
+    identity.TryAddClaim(ClaimTypes.Name, result.Principal?.FindFirstValue(ClaimTypes.Name));
+
+    // Маппим email пользователя
+    identity.TryAddClaim(ClaimTypes.Email, result.Principal?.FindFirstValue(ClaimTypes.Email));
+
+    // Маппим URL аватара пользователя из claim "picture"
+    identity.TryAddClaim(Constants.Claims.Thumbnail, result.Principal?.FindFirstValue("picture"));
+
+    return Task.FromResult(identity);
+  }
 }

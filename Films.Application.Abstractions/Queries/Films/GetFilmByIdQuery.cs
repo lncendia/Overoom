@@ -8,13 +8,13 @@ namespace Films.Application.Abstractions.Queries.Films;
 /// </summary>
 public class GetFilmByIdQuery : IRequest<FilmDto>
 {
-    /// <summary>
-    /// Идентификатор фильма
-    /// </summary>
-    public required Guid Id { get; init; }
-    
-    /// <summary>
-    /// Идентификатор пользователя (опционально) для получения персональных данных
-    /// </summary>
-    public Guid? UserId { get; init; }
+  /// <summary>
+  /// Идентификатор фильма
+  /// </summary>
+  public required Guid Id { get; init; }
+
+  /// <summary>
+  /// Идентификатор пользователя (опционально) для получения персональных данных
+  /// </summary>
+  public Guid? UserId { get; init; }
 }

@@ -1,6 +1,8 @@
 using Films.Application.Abstractions.Commands.Profile;
 using Films.Application.Abstractions.Exceptions;
 using Films.Domain.Repositories;
+using Films.Domain.Users;
+
 using MediatR;
 
 namespace Films.Application.Services.CommandHandlers.Profile;
@@ -11,30 +13,30 @@ namespace Films.Application.Services.CommandHandlers.Profile;
 /// <param name="unitOfWork">Единица работы для взаимодействия с базой данных</param>
 public class ChangeUserCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<ChangeUserCommand>
 {
-    /// <summary>
-    /// Обновляет основные данные пользователя
-    /// </summary>
-    /// <param name="request">Команда с новыми данными пользователя</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    /// <exception cref="UserNotFoundException">Если пользователь с указанным ID не найден</exception>
-    public async Task Handle(ChangeUserCommand request, CancellationToken cancellationToken)
-    { 
-        // Получаем пользователя по ID из запроса
-        var user = await unitOfWork.UserRepository.Value.GetAsync(request.Id, cancellationToken);
-        
-        // Проверяем существование пользователя
-        if (user == null) throw new UserNotFoundException(request.Id);
+  /// <summary>
+  /// Обновляет основные данные пользователя
+  /// </summary>
+  /// <param name="request">Команда с новыми данными пользователя</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  /// <exception cref="UserNotFoundException">Если пользователь с указанным ID не найден</exception>
+  public async Task Handle(ChangeUserCommand request, CancellationToken cancellationToken)
+  {
+    // Получаем пользователя по ID из запроса
+    User? user = await unitOfWork.UserRepository.Value.GetAsync(request.Id, cancellationToken);
 
-        // Обновляем имя пользователя
-        user.Username = request.UserName;
-        
-        // Обновляем ключ аватара пользователя
-        user.PhotoKey = request.PhotoKey;
+    // Проверяем существование пользователя
+    if (user == null) throw new UserNotFoundException(request.Id);
 
-        // Сохраняем обновленные данные в репозитории
-        await unitOfWork.UserRepository.Value.UpdateAsync(user, cancellationToken);
-        
-        // Фиксируем изменения в базе данных
-        await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
-    }
+    // Обновляем имя пользователя
+    user.Username = request.UserName;
+
+    // Обновляем ключ аватара пользователя
+    user.PhotoKey = request.PhotoKey;
+
+    // Сохраняем обновленные данные в репозитории
+    await unitOfWork.UserRepository.Value.UpdateAsync(user, cancellationToken);
+
+    // Фиксируем изменения в базе данных
+    await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
+  }
 }

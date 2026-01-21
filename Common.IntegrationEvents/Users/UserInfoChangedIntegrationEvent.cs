@@ -5,28 +5,28 @@ namespace Common.IntegrationEvents.Users;
 /// </summary>
 public class UserInfoChangedIntegrationEvent
 {
-    /// <summary>
-    /// Идентификатор пользователя, данные которого были изменены.
-    /// </summary>
-    public required Guid Id { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя, данные которого были изменены.
+  /// </summary>
+  public required Guid Id { get; init; }
 
-    /// <summary>
-    /// Ключ фотографии пользователя.
-    /// </summary>
-    public string? PhotoKey { get; init; }
+  /// <summary>
+  /// Ключ фотографии пользователя.
+  /// </summary>
+  public string? PhotoKey { get; init; }
 
-    /// <summary>
-    /// Новое имя пользователя.
-    /// </summary>
-    public required string Name { get; init; }
+  /// <summary>
+  /// Новое имя пользователя.
+  /// </summary>
+  public required string Name { get; init; }
 
-    /// <summary>
-    /// Новая электронная почта пользователя.
-    /// </summary>
-    public required string Email { get; init; }
+  /// <summary>
+  /// Новая электронная почта пользователя.
+  /// </summary>
+  public required string Email { get; init; }
 
-    /// <summary>
-    /// Новая локаль пользователя.
-    /// </summary>
-    public required string Locale { get; init; }
+  /// <summary>
+  /// Новая локаль пользователя.
+  /// </summary>
+  public required string Locale { get; init; }
 }

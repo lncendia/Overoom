@@ -5,14 +5,14 @@
 /// </summary>
 public abstract class EmailMessage
 {
-    /// <summary>
-    /// Email адрес получателя
-    /// </summary>
-    public required string Recipient { get; init; }
+  /// <summary>
+  /// Email адрес получателя
+  /// </summary>
+  public required string Recipient { get; init; }
 
-    /// <summary>
-    /// Абстрактный метод, который позволяет посетителю IEmailVisitor посетить объект и выполнить соответствующие действия.
-    /// </summary>
-    /// <param name="visitor">Посетитель IEmailVisitor.</param>
-    public abstract void Accept(IEmailVisitor visitor);
+  /// <summary>
+  /// Абстрактный метод, который позволяет посетителю IEmailVisitor посетить объект и выполнить соответствующие действия.
+  /// </summary>
+  /// <param name="visitor">Посетитель IEmailVisitor.</param>
+  public abstract void Accept(IEmailVisitor visitor);
 }

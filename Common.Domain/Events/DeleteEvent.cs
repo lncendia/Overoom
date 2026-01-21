@@ -6,8 +6,8 @@ namespace Common.Domain.Events;
 /// <typeparam name="T">Тип агрегата</typeparam>
 public class DeleteEvent<T> : DomainEvent
 {
-    /// <summary>
-    /// Идентификатор удаленного агрегата
-    /// </summary>
-    public required Guid Id { get; init; }
+  /// <summary>
+  /// Идентификатор удаленного агрегата
+  /// </summary>
+  public required Guid Id { get; init; }
 }

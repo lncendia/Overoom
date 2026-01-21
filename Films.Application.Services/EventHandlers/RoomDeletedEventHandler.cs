@@ -10,22 +10,23 @@ namespace Films.Application.Services.EventHandlers;
 /// Обработчик доменного события удаления комнаты
 /// </summary>
 /// <param name="publishEndpoint">Сервис для публикации интеграционных событий.</param>
-public class RoomDeletedEventHandler(IPublishEndpoint publishEndpoint) : BeforeSaveNotificationHandler<DeleteEvent<Room>>
+public class RoomDeletedEventHandler(IPublishEndpoint publishEndpoint)
+  : BeforeSaveNotificationHandler<DeleteEvent<Room>>
 {
-    /// <summary>
-    /// Обрабатывает событие удаления комнаты и публикует интеграционное событие
-    /// </summary>
-    /// <param name="notification">Доменное событие удаления комнаты</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(DeleteEvent<Room> notification, CancellationToken cancellationToken)
+  /// <summary>
+  /// Обрабатывает событие удаления комнаты и публикует интеграционное событие
+  /// </summary>
+  /// <param name="notification">Доменное событие удаления комнаты</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(DeleteEvent<Room> notification, CancellationToken cancellationToken)
+  {
+    // Создаем событие интеграции для оповещения других сервисов об удалении комнаты
+    var integrationEvent = new RoomDeletedIntegrationEvent
     {
-        // Создаем событие интеграции для оповещения других сервисов об удалении комнаты
-        var integrationEvent = new RoomDeletedIntegrationEvent
-        {
-            Id = notification.Id
-        };
-        
-        // Публикуем событие интеграции через MassTransit
-        await publishEndpoint.Publish(integrationEvent, cancellationToken: cancellationToken);
-    }
+      Id = notification.Id
+    };
+
+    // Публикуем событие интеграции через MassTransit
+    await publishEndpoint.Publish(integrationEvent, cancellationToken: cancellationToken);
+  }
 }

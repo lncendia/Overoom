@@ -1,4 +1,3 @@
-
 namespace Rooms.Application.Abstractions.RoomEvents.Notifications;
 
 /// <summary>
@@ -7,8 +6,8 @@ namespace Rooms.Application.Abstractions.RoomEvents.Notifications;
 /// </summary>
 public abstract class NotificationEvent : RoomBaseEvent
 {
-    /// <summary>
-    /// Идентификатор пользователя, который инициировал событие.
-    /// </summary>
-    public required Guid Initiator { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя, который инициировал событие.
+  /// </summary>
+  public required Guid Initiator { get; init; }
 }

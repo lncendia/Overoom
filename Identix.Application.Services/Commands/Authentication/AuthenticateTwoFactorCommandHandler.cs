@@ -12,57 +12,57 @@ namespace Identix.Application.Services.Commands.Authentication;
 /// </summary>
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
 public class AuthenticateTwoFactorCommandHandler(UserManager<AppUser> userManager)
-    : IRequestHandler<AuthenticateTwoFactorCommand, AppUser>
+  : IRequestHandler<AuthenticateTwoFactorCommand, AppUser>
 {
-    /// <summary>
-    /// Название EmailTokenProvider'а
-    /// </summary>
-    private const string EmailTokenProvider = "Email";
+  /// <summary>
+  /// Название EmailTokenProvider'а
+  /// </summary>
+  private const string EmailTokenProvider = "Email";
 
-    /// <summary>
-    /// Метод обработки команды прохождения 2FA
-    /// </summary>
-    /// <param name="request">Запрос на прохождение 2FA</param>
-    /// <param name="cancellationToken">Токен отмены для асинхронной операции.</param>
-    /// <returns>Возвращает аутентифицированного пользователя</returns>
-    /// <exception cref="UserNotFoundException">Вызывается, если пользователь не был найден</exception>
-    /// <exception cref="InvalidCodeException">Вызывается, если код аутентификации не верен</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Возникает, при неопознанном типе кода сброса 2фа</exception>
-    public async Task<AppUser> Handle(AuthenticateTwoFactorCommand request, CancellationToken cancellationToken)
+  /// <summary>
+  /// Метод обработки команды прохождения 2FA
+  /// </summary>
+  /// <param name="request">Запрос на прохождение 2FA</param>
+  /// <param name="cancellationToken">Токен отмены для асинхронной операции.</param>
+  /// <returns>Возвращает аутентифицированного пользователя</returns>
+  /// <exception cref="UserNotFoundException">Вызывается, если пользователь не был найден</exception>
+  /// <exception cref="InvalidCodeException">Вызывается, если код аутентификации не верен</exception>
+  /// <exception cref="ArgumentOutOfRangeException">Возникает, при неопознанном типе кода сброса 2фа</exception>
+  public async Task<AppUser> Handle(AuthenticateTwoFactorCommand request, CancellationToken cancellationToken)
+  {
+    // Поиск пользователя по идентификатору
+    AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
+
+    // Вызываем исключение UserNotFoundException если не найден пользователь
+    if (user == null) throw new UserNotFoundException();
+
+    // Верифицируем токен на основе указанного провайдера
+    bool result = request.Type switch
     {
-        // Поиск пользователя по идентификатору
-        var user = await userManager.FindByIdAsync(request.UserId.ToString());
+      // Если код от аутентификатора - указываем AuthenticatorTokenProvider в качестве провайдера валидации
+      CodeType.Authenticator => await userManager.VerifyTwoFactorTokenAsync(user,
+        userManager.Options.Tokens.AuthenticatorTokenProvider, request.Code),
 
-        // Вызываем исключение UserNotFoundException если не найден пользователь
-        if (user == null) throw new UserNotFoundException();
+      // Если код от провайдера Email - указываем EmailTokenProvider в качестве провайдера валидации
+      CodeType.Email => await userManager.VerifyTwoFactorTokenAsync(user, EmailTokenProvider, request.Code),
 
-        // Верифицируем токен на основе указанного провайдера
-        var result = request.Type switch
-        {
-            // Если код от аутентификатора - указываем AuthenticatorTokenProvider в качестве провайдера валидации
-            CodeType.Authenticator => await userManager.VerifyTwoFactorTokenAsync(user,
-                userManager.Options.Tokens.AuthenticatorTokenProvider, request.Code),
+      // Если пришел код восстановления - проверяем его методом RedeemTwoFactorRecoveryCodeAsync
+      CodeType.RecoveryCode => (await userManager.RedeemTwoFactorRecoveryCodeAsync(user, request.Code)).Succeeded,
 
-            // Если код от провайдера Email - указываем EmailTokenProvider в качестве провайдера валидации
-            CodeType.Email => await userManager.VerifyTwoFactorTokenAsync(user, EmailTokenProvider, request.Code),
+      // При ином значении CodeType выбрасываем исключение
+      _ => throw new ArgumentOutOfRangeException(nameof(request))
+    };
 
-            // Если пришел код восстановления - проверяем его методом RedeemTwoFactorRecoveryCodeAsync
-            CodeType.RecoveryCode => (await userManager.RedeemTwoFactorRecoveryCodeAsync(user, request.Code)).Succeeded,
+    // Если код неверный, выбрасываем исключение
+    if (!result) throw new InvalidCodeException();
 
-            // При ином значении CodeType выбрасываем исключение
-            _ => throw new ArgumentOutOfRangeException(nameof(request))
-        };
+    // Устанавливаем время последнего входа
+    user.LastAuthTimeUtc = DateTime.UtcNow;
 
-        // Если код неверный, выбрасываем исключение
-        if (!result) throw new InvalidCodeException();
+    // Обновляем данные
+    await userManager.UpdateAsync(user);
 
-        // Устанавливаем время последнего входа
-        user.LastAuthTimeUtc = DateTime.UtcNow;
-
-        // Обновляем данные
-        await userManager.UpdateAsync(user);
-
-        // Возвращаем аутентифицированного пользователя
-        return user;
-    }
+    // Возвращаем аутентифицированного пользователя
+    return user;
+  }
 }

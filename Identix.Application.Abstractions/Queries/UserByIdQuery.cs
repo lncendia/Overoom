@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 using Identix.Application.Abstractions.Entities;
 using MediatR;
 
@@ -6,10 +8,10 @@ namespace Identix.Application.Abstractions.Queries;
 /// <summary>
 /// Запрос для получения пользователя по идентификатору.
 /// </summary>
-public class UserByIdQuery : IRequest<AppUser>
+public class UserByIdQuery : IRequest<(AppUser user, ICollection<Claim> claims)>
 {
-    /// <summary>
-    /// Идентификатор пользователя.
-    /// </summary>
-    public required Guid Id { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя.
+  /// </summary>
+  public required Guid Id { get; init; }
 }

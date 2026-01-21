@@ -13,20 +13,20 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <param name="eventSender">Отправитель событий комнаты</param>
 /// <param name="context">Контекст выполняемой области</param>
 public class OwnerPauseChangedEventHandler(IRoomEventSender eventSender, IScopedContext context)
-    : AfterSaveNotificationHandler<ViewerPauseChangedEvent>
+  : AfterSaveNotificationHandler<ViewerPauseChangedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие изменения состояния паузы
-    /// </summary>
-    /// <param name="event">Событие изменения паузы</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerPauseChangedEvent @event, CancellationToken cancellationToken)
-    {
-        if (@event.Viewer != @event.Room.Owner) return;
+  /// <summary>
+  /// Обрабатывает событие изменения состояния паузы
+  /// </summary>
+  /// <param name="event">Событие изменения паузы</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerPauseChangedEvent @event, CancellationToken cancellationToken)
+  {
+    if (@event.Viewer != @event.Room.Owner) return;
 
-        var excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
+    string excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
 
-        await eventSender.SendAsync(new PauseEvent { Pause = @event.Viewer.OnPause }, @event.Room.Id, excludedConnectionId,
-            cancellationToken);
-    }
+    await eventSender.SendAsync(new PauseEvent { Pause = @event.Viewer.OnPause }, @event.Room.Id, excludedConnectionId,
+      cancellationToken);
+  }
 }

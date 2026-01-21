@@ -8,14 +8,14 @@ namespace Films.Infrastructure.Web.FilmsManagement.Validators;
 /// </summary>
 public class ChangeFilmPosterValidator : AbstractValidator<ChangeFilmPosterInputModel>
 {
-    /// <summary>
-    /// Инициализирует валидатор для модели изменения постера фильма
-    /// </summary>
-    public ChangeFilmPosterValidator()
-    {
-        RuleFor(x => x.Poster)
-            .NotNull().WithMessage("Поле не должно быть пустым")
-            .Must(file => file?.ContentType is "image/jpeg" or "image/png")
-            .WithMessage("Постер должен быть в формате JPG или PNG");
-    }
+  /// <summary>
+  /// Инициализирует валидатор для модели изменения постера фильма
+  /// </summary>
+  public ChangeFilmPosterValidator()
+  {
+    RuleFor(x => x.Poster)
+      .NotNull().WithMessage("Поле не должно быть пустым")
+      .Must(file => file?.ContentType is "image/jpeg" or "image/png")
+      .WithMessage("Постер должен быть в формате JPG или PNG");
+  }
 }

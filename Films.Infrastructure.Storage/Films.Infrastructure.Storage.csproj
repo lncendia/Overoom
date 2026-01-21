@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />
-      <ProjectReference Include="..\Films.Application.Abstractions\Films.Application.Abstractions.csproj" />
+        <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Films.Application.Abstractions\Films.Application.Abstractions.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -5,8 +5,8 @@ namespace Films.Infrastructure.Web.Rooms.InputModels;
 /// </summary>
 public class JoinRoomInputModel
 {
-    /// <summary>
-    /// Код доступа к комнате (не более 5 символов)
-    /// </summary>
-    public string? Code { get; init; }
+  /// <summary>
+  /// Код доступа к комнате (не более 5 символов)
+  /// </summary>
+  public string? Code { get; init; }
 }

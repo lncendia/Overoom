@@ -5,13 +5,13 @@ namespace Common.Application.EmailService;
 /// </summary>
 public interface IEmailVisitor
 {
-    /// <summary>
-    /// Тема письма
-    /// </summary>
-    string? Subject { get; }
-    
-    /// <summary>
-    /// Контент письма
-    /// </summary>
-    string? Body { get; }
+  /// <summary>
+  /// Тема письма
+  /// </summary>
+  string? Subject { get; }
+
+  /// <summary>
+  /// Контент письма
+  /// </summary>
+  string? Body { get; }
 }

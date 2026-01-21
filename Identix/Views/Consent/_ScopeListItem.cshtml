@@ -10,7 +10,8 @@
            value="@Model.Value"
            id="scopes_@Model.Value"
            class="form-check-input"/>
-    <label class="form-check-label @(Model.Emphasize ? "emphasize" : "")" for="scopes_@Model.Value">@Model.DisplayName</label>
+    <label class="form-check-label @(Model.Emphasize ? "emphasize" : "")"
+           for="scopes_@Model.Value">@Model.DisplayName</label>
 
     @if (Model.Required)
     {

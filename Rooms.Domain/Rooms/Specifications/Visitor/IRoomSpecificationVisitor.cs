@@ -4,5 +4,5 @@ namespace Rooms.Domain.Rooms.Specifications.Visitor;
 
 public interface IRoomSpecificationVisitor : ISpecificationVisitor<IRoomSpecificationVisitor, Room>
 {
-    void Visit(RoomsByViewerSpecification spec);
+  void Visit(RoomsByViewerSpecification spec);
 }

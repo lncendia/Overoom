@@ -39,23 +39,24 @@ export class PasswordHide {
         });
 
     }
+
     /** Метод переключает видимость пароля */
     togglePassword(showPass: boolean) {
         // Проверяем, если showPass равно false
         if (!showPass) {
-            
+
             // Если showPass равно false, скрываем элемент this.show и показываем элемент this.hide
             this.show.style.display = "none";
             this.hide.style.display = "block";
-            
+
             // Устанавливаем тип атрибута input на 'text'
             this.input.setAttribute('type', 'text');
         } else {
-            
+
             // Если showPass не равно false (т.е. true), показываем элемент this.show и скрываем элемент this.hide
             this.show.style.display = "block";
             this.hide.style.display = "none";
-            
+
             // Устанавливаем тип атрибута input на 'password'
             this.input.setAttribute('type', 'password');
         }

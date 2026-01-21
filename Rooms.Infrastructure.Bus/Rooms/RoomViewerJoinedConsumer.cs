@@ -12,26 +12,26 @@ namespace Rooms.Infrastructure.Bus.Rooms;
 /// <param name="mediator">Медиатор</param>
 public class RoomViewerJoinedConsumer(ISender mediator) : IConsumer<RoomViewerJoinedIntegrationEvent>
 {
-    /// <summary>
-    /// Метод обработчик 
-    /// </summary>
-    /// <param name="context">Контекст сообщения</param>
-    public async Task Consume(ConsumeContext<RoomViewerJoinedIntegrationEvent> context)
-    {
-        // Получаем данные события
-        var integrationEvent = context.Message;
+  /// <summary>
+  /// Метод обработчик
+  /// </summary>
+  /// <param name="context">Контекст сообщения</param>
+  public async Task Consume(ConsumeContext<RoomViewerJoinedIntegrationEvent> context)
+  {
+    // Получаем данные события
+    RoomViewerJoinedIntegrationEvent integrationEvent = context.Message;
 
-        // Отправляем команду на обработку события
-        await mediator.Send(new JoinCommand
-        {
-            RoomId = integrationEvent.RoomId,
-            Viewer = new ViewerData
-            {
-                Id = integrationEvent.Viewer.Id,
-                UserName = integrationEvent.Viewer.UserName,
-                PhotoKey = integrationEvent.Viewer.PhotoKey,
-                Settings = integrationEvent.Viewer.Settings
-            }
-        }, context.CancellationToken);
-    }
+    // Отправляем команду на обработку события
+    await mediator.Send(new JoinCommand
+    {
+      RoomId = integrationEvent.RoomId,
+      Viewer = new ViewerData
+      {
+        Id = integrationEvent.Viewer.Id,
+        UserName = integrationEvent.Viewer.UserName,
+        PhotoKey = integrationEvent.Viewer.PhotoKey,
+        Settings = integrationEvent.Viewer.Settings
+      }
+    }, context.CancellationToken);
+  }
 }

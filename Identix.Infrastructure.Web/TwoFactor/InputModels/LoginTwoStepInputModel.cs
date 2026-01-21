@@ -5,8 +5,8 @@ namespace Identix.Infrastructure.Web.TwoFactor.InputModels;
 /// </summary>
 public class LoginTwoStepInputModel : TwoFactorAuthenticateInputModel
 {
-    /// <summary>
-    /// Флаг необходимости запомнить пользователя
-    /// </summary>
-    public bool RememberMe { get; init; }
+  /// <summary>
+  /// Флаг необходимости запомнить пользователя
+  /// </summary>
+  public bool RememberMe { get; init; }
 }

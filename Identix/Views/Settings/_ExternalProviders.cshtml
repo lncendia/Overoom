@@ -6,7 +6,8 @@
 {
     var lover = provider.AuthenticationScheme.ToLower();
     <div class="oauth-block">
-        <a asp-action="Challenge" asp-route-provider="@provider.AuthenticationScheme" asp-route-returnUrl="@Model.ReturnUrl"
+        <a asp-action="Challenge" asp-route-provider="@provider.AuthenticationScheme"
+           asp-route-returnUrl="@Model.ReturnUrl"
            class="provider @lover @(provider.IsAssociated ? "disabled" : "active")">
             <svg-icon class="icon" src="~/img/@(lover).svg" alt="provider icon"/>
             <div class="name">@provider.DisplayName</div>

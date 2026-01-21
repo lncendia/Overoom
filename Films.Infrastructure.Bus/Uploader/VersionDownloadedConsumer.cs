@@ -11,22 +11,22 @@ namespace Films.Infrastructure.Bus.Uploader;
 /// <param name="mediator">Медиатор</param>
 public class VersionDownloadedConsumer(ISender mediator) : IConsumer<VersionDownloadedIntegrationEvent>
 {
-    /// <summary>
-    /// Метод обработчик 
-    /// </summary>
-    /// <param name="context">Контекст сообщения</param>
-    public Task Consume(ConsumeContext<VersionDownloadedIntegrationEvent> context)
-    {
-        // Получаем данные события
-        var integrationEvent = context.Message;
+  /// <summary>
+  /// Метод обработчик 
+  /// </summary>
+  /// <param name="context">Контекст сообщения</param>
+  public Task Consume(ConsumeContext<VersionDownloadedIntegrationEvent> context)
+  {
+    // Получаем данные события
+    VersionDownloadedIntegrationEvent integrationEvent = context.Message;
 
-        // Отправляем команду на обработку события
-        return mediator.Send(new AddVersionCommand
-        {
-            FilmId = integrationEvent.FilmId,
-            Version = integrationEvent.Version,
-            Season = integrationEvent.Season,
-            Episode = integrationEvent.Episode
-        }, context.CancellationToken);
-    }
+    // Отправляем команду на обработку события
+    return mediator.Send(new AddVersionCommand
+    {
+      FilmId = integrationEvent.FilmId,
+      Version = integrationEvent.Version,
+      Season = integrationEvent.Season,
+      Episode = integrationEvent.Episode
+    }, context.CancellationToken);
+  }
 }

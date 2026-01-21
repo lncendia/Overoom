@@ -8,16 +8,17 @@ using Films.Infrastructure.Storage.Models.Ratings;
 
 namespace Films.Infrastructure.Storage.Visitors;
 
-public class RatingVisitor : BaseSpecificationVisitor<RatingModel, IRatingSpecificationVisitor, Rating>, IRatingSpecificationVisitor
+public class RatingVisitor : BaseSpecificationVisitor<RatingModel, IRatingSpecificationVisitor, Rating>,
+  IRatingSpecificationVisitor
 {
-    protected override Expression<Func<RatingModel, bool>> ConvertSpecToExpression(
-        ISpecification<Rating, IRatingSpecificationVisitor> spec)
-    {
-        var visitor = new RatingVisitor();
-        spec.Accept(visitor);
-        return visitor.Expr!;
-    }
+  protected override Expression<Func<RatingModel, bool>> ConvertSpecToExpression(
+    ISpecification<Rating, IRatingSpecificationVisitor> spec)
+  {
+    var visitor = new RatingVisitor();
+    spec.Accept(visitor);
+    return visitor.Expr!;
+  }
 
-    public void Visit(RatingByUserSpecification specification) => Expr = x => x.UserId == specification.UserId;
-    public void Visit(RatingByFilmSpecification specification) => Expr = x => x.FilmId == specification.FilmId;
+  public void Visit(DuplicateRatingsSpecification specification) => Expr = x => x.FilmId == specification.FilmId
+    && x.UserId == specification.UserId;
 }

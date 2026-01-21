@@ -8,8 +8,8 @@ namespace Rooms.Application.Abstractions.RoomEvents.Messages;
 /// </summary>
 public class MessagesEvent : RoomBaseEvent
 {
-    /// <summary>
-    /// Сообщения
-    /// </summary>
-    public required CountResult<MessageDto> Messages { get; init; }
+  /// <summary>
+  /// Сообщения
+  /// </summary>
+  public required CountResult<MessageDto> Messages { get; init; }
 }

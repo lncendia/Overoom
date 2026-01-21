@@ -5,8 +5,8 @@ namespace Rooms.Application.Abstractions.RoomEvents.Messages;
 /// </summary>
 public class TypingEvent : RoomBaseEvent
 {
-    /// <summary>
-    /// Идентификатор пользователя, который набирает сообщение
-    /// </summary>
-    public required Guid Initiator { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя, который набирает сообщение
+  /// </summary>
+  public required Guid Initiator { get; init; }
 }

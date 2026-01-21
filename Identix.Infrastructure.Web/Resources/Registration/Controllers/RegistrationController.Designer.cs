@@ -38,7 +38,8 @@ namespace Identix.Infrastructure.Web.Resources.Registration.Controllers {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Identix.Infrastructure.Web.Resources.Registration.Controllers.RegistrationController", typeof(RegistrationController).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Identix.Infrastructure.Web.Resources.Registration.Controllers.RegistrationControl" +
+                            "ler", typeof(RegistrationController).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -13,23 +13,23 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <param name="eventSender">Отправитель событий комнаты</param>
 /// <param name="context">Контекст выполняемой области</param>
 public class OwnerEpisodeChangedEventHandler(IRoomEventSender eventSender, IScopedContext context)
-    : AfterSaveNotificationHandler<ViewerEpisodeChangedEvent>
+  : AfterSaveNotificationHandler<ViewerEpisodeChangedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие изменения серии
-    /// </summary>
-    /// <param name="event">Событие изменения серии</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerEpisodeChangedEvent @event, CancellationToken cancellationToken)
+  /// <summary>
+  /// Обрабатывает событие изменения серии
+  /// </summary>
+  /// <param name="event">Событие изменения серии</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerEpisodeChangedEvent @event, CancellationToken cancellationToken)
+  {
+    if (@event.Viewer != @event.Room.Owner) return;
+
+    string excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
+
+    await eventSender.SendAsync(new EpisodeEvent
     {
-        if (@event.Viewer != @event.Room.Owner) return;
-
-        var excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
-
-        await eventSender.SendAsync(new EpisodeEvent
-        {
-            Season = @event.Viewer.Season!.Value,
-            Episode = @event.Viewer.Episode!.Value
-        }, @event.Room.Id, excludedConnectionId, cancellationToken);
-    }
+      Season = @event.Viewer.Season!.Value,
+      Episode = @event.Viewer.Episode!.Value
+    }, @event.Room.Id, excludedConnectionId, cancellationToken);
+  }
 }

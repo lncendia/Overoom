@@ -8,13 +8,13 @@ namespace Rooms.Domain.Rooms.Events;
 /// </summary>
 public class ViewerKickedEvent : DomainEvent, IRoomEvent
 {
-    /// <summary>
-    /// Комната, из которой был исключен зритель
-    /// </summary>
-    public required Room Room { get; init; }
-    
-    /// <summary>
-    /// Исключенный зритель
-    /// </summary>
-    public required Viewer Target { get; init; }
+  /// <summary>
+  /// Комната, из которой был исключен зритель
+  /// </summary>
+  public required Room Room { get; init; }
+
+  /// <summary>
+  /// Исключенный зритель
+  /// </summary>
+  public required Viewer Target { get; init; }
 }

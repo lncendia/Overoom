@@ -7,49 +7,49 @@ namespace Rooms.Infrastructure.Web.Metrics;
 /// </summary>
 public static class RoomsConnectionMetrics
 {
-    /// <summary>
-    /// Имя Meter для группировки метрик
-    /// </summary>
-    public const string MeterName = "Rooms.Web";
-        
-    /// <summary>
-    /// Meter для создания метрик
-    /// </summary>
-    private static readonly Meter Meter = new(MeterName);
+  /// <summary>
+  /// Имя Meter для группировки метрик
+  /// </summary>
+  public const string MeterName = "Rooms.Web";
 
-    /// <summary>
-    /// Количество активных подключений в текущий момент
-    /// </summary>
-    private static int _activeConnections;
+  /// <summary>
+  /// Meter для создания метрик
+  /// </summary>
+  private static readonly Meter _meter = new(MeterName);
 
-    /// <summary>
-    /// Гистограмма времени выполнения методов хаба в миллисекундах
-    /// </summary>
-    internal static readonly Histogram<double> MethodDuration =
-        Meter.CreateHistogram<double>(
-            "signalr_method_duration_ms", 
-            unit: "ms", 
-            description: "Execution duration of SignalR hub methods in milliseconds");
+  /// <summary>
+  /// Количество активных подключений в текущий момент
+  /// </summary>
+  private static int _activeConnections;
 
-    /// <summary>
-    /// Статический конструктор для инициализации ObservableGauge
-    /// </summary>
-    static RoomsConnectionMetrics()
-    {
-        // Gauge — метрика, отражающая текущее состояние (в отличие от Counter)
-        Meter.CreateObservableGauge(
-            "rooms_active_connections",
-            () => new Measurement<int>(_activeConnections),
-            description: "Current number of active room connections");
-    }
+  /// <summary>
+  /// Гистограмма времени выполнения методов хаба в миллисекундах
+  /// </summary>
+  internal static readonly Histogram<double> MethodDuration =
+    _meter.CreateHistogram<double>(
+      "signalr_method_duration_ms",
+      unit: "ms",
+      description: "Execution duration of SignalR hub methods in milliseconds");
 
-    /// <summary>
-    /// Увеличивает количество активных подключений на 1
-    /// </summary>
-    internal static void Increment() => Interlocked.Increment(ref _activeConnections);
+  /// <summary>
+  /// Статический конструктор для инициализации ObservableGauge
+  /// </summary>
+  static RoomsConnectionMetrics()
+  {
+    // Gauge — метрика, отражающая текущее состояние (в отличие от Counter)
+    _meter.CreateObservableGauge(
+      "rooms_active_connections",
+      () => new Measurement<int>(_activeConnections),
+      description: "Current number of active room connections");
+  }
 
-    /// <summary>
-    /// Уменьшает количество активных подключений на 1
-    /// </summary>
-    internal static void Decrement() => Interlocked.Decrement(ref _activeConnections);
+  /// <summary>
+  /// Увеличивает количество активных подключений на 1
+  /// </summary>
+  internal static void Increment() => Interlocked.Increment(ref _activeConnections);
+
+  /// <summary>
+  /// Уменьшает количество активных подключений на 1
+  /// </summary>
+  internal static void Decrement() => Interlocked.Decrement(ref _activeConnections);
 }

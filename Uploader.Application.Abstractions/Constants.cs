@@ -5,14 +5,14 @@ namespace Uploader.Application.Abstractions;
 /// </summary>
 public static class Constants
 {
+  /// <summary>
+  /// Константы для OpenTelemetry
+  /// </summary>
+  public static class OpenTelemetry
+  {
     /// <summary>
-    /// Константы для OpenTelemetry
+    /// Имя сервиса для трассировки
     /// </summary>
-    public static class OpenTelemetry
-    {
-        /// <summary>
-        /// Имя сервиса для трассировки
-        /// </summary>
-        public const string ServiceName = "uploader";
-    }
+    public const string ServiceName = "uploader";
+  }
 }

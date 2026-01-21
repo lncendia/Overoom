@@ -3,7 +3,7 @@ import {EmailCodeHandler} from "../helpers/email-code-handler";
 
 /** Класс функционала страницы входа 2FA */
 export class LoginTwoStep {
-    
+
     /** Метод запускает функционал страницы входа 2FA */
     startLoginTwoStep() {
 

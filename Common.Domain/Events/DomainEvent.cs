@@ -7,8 +7,8 @@ namespace Common.Domain.Events;
 /// </summary>
 public abstract class DomainEvent : INotification
 {
-    /// <summary>
-    /// Флаг, указывающий должно ли событие обрабатываться до сохранения
-    /// </summary>
-    public bool BeforeSave { get; set; }
+  /// <summary>
+  /// Флаг, указывающий должно ли событие обрабатываться до сохранения
+  /// </summary>
+  public bool BeforeSave { get; set; }
 }

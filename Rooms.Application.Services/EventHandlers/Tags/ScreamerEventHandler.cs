@@ -10,21 +10,21 @@ namespace Rooms.Application.Services.EventHandlers.Tags;
 /// </summary>
 /// <param name="unitOfWork">Единица работы для взаимодействия с репозиториями</param>
 public class ScreamerEventHandler(IUnitOfWork unitOfWork)
-    : BeforeSaveNotificationHandler<ViewerScreamedEvent>
+  : BeforeSaveNotificationHandler<ViewerScreamedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие отправки крика
-    /// </summary>
-    /// <param name="notification">Событие отправки крика</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerScreamedEvent notification, CancellationToken cancellationToken)
-    {
-        var count = notification.Room.IncrementStatisticParameter(
-            notification.Initiator.Id, Constants.ViewerStatisticParameters.ScreamCount);
+  /// <summary>
+  /// Обрабатывает событие отправки крика
+  /// </summary>
+  /// <param name="notification">Событие отправки крика</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerScreamedEvent notification, CancellationToken cancellationToken)
+  {
+    int count = notification.Room.IncrementStatisticParameter(
+      notification.Initiator.Id, Constants.ViewerStatisticParameters.ScreamCount);
 
-        if (count > 5)
-            notification.Room.AddTag(notification.Initiator.Id, Constants.ViewerTags.Screamer);
+    if (count > 5)
+      notification.Room.AddTag(notification.Initiator.Id, Constants.ViewerTags.Screamer);
 
-        await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
-    }
+    await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
+  }
 }

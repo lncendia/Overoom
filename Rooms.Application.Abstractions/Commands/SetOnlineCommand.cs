@@ -5,5 +5,5 @@ namespace Rooms.Application.Abstractions.Commands;
 /// </summary>
 public class SetOnlineCommand : RoomBaseCommand
 {
-    public required bool Online { get; init; }
+  public required bool Online { get; init; }
 }

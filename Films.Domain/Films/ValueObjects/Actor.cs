@@ -8,36 +8,35 @@ namespace Films.Domain.Films.ValueObjects;
 /// </summary>
 public record Actor
 {
-    private const int MaxPersonLength = 100;
-    private const int MaxActorsDescriptionLength = 200;
+  private const int MaxPersonLength = 100;
+  private const int MaxActorsDescriptionLength = 200;
 
-    private readonly string _name;
-    private readonly string? _role;
+  private readonly string _name;
 
-    /// <summary>
-    /// Имя актера.
-    /// </summary>
-    public required string Name
+  /// <summary>
+  /// Имя актера.
+  /// </summary>
+  public required string Name
+  {
+    get => _name;
+    [MemberNotNull(nameof(_name))]
+    init
     {
-        get => _name;
-        [MemberNotNull(nameof(_name))]
-        init
-        {
-            value.ValidateLength(nameof(Name), MaxPersonLength);
-            _name = value;
-        }
+      value.ValidateLength(nameof(Name), MaxPersonLength);
+      _name = value;
     }
+  }
 
-    /// <summary>
-    /// Описание актера.
-    /// </summary>
-    public string? Role
+  /// <summary>
+  /// Описание актера.
+  /// </summary>
+  public string? Role
+  {
+    get;
+    init
     {
-        get => _role;
-        init
-        {
-            value?.ValidateLength(nameof(Role), MaxActorsDescriptionLength);
-            _role = value;
-        }
+      value?.ValidateLength(nameof(Role), MaxActorsDescriptionLength);
+      field = value;
     }
+  }
 }

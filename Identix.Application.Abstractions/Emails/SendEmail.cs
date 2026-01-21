@@ -7,8 +7,8 @@ namespace Identix.Application.Abstractions.Emails;
 /// </summary>
 public class SendEmail
 {
-    /// <summary>
-    /// Содержимое email сообщения
-    /// </summary>
-    public required EmailMessage Message { get; set; }
+  /// <summary>
+  /// Содержимое email сообщения
+  /// </summary>
+  public required EmailMessage Message { get; set; }
 }

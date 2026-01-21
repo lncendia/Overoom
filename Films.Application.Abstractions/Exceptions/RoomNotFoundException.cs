@@ -5,17 +5,17 @@
 /// </summary>
 public class RoomNotFoundException : Exception
 {
-    /// <summary>
-    /// Идентификатор комнаты, который не был найден.
-    /// </summary>
-    public Guid RoomId { get; }
+  /// <summary>
+  /// Идентификатор комнаты, который не был найден.
+  /// </summary>
+  public Guid RoomId { get; }
 
-    /// <summary>
-    /// Конструктор исключения.
-    /// </summary>
-    /// <param name="roomId">Идентификатор комнаты.</param>
-    public RoomNotFoundException(Guid roomId) : base($"Room with ID {roomId} not found.")
-    {
-        RoomId = roomId;
-    }
+  /// <summary>
+  /// Конструктор исключения.
+  /// </summary>
+  /// <param name="roomId">Идентификатор комнаты.</param>
+  public RoomNotFoundException(Guid roomId) : base($"Room with ID {roomId} not found.")
+  {
+    RoomId = roomId;
+  }
 }

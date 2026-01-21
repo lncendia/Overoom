@@ -9,17 +9,17 @@ namespace Uploader.Start.Extensions;
 /// </summary>
 public static class FilmDownloadServices
 {
-    /// <summary>
-    /// Регистрирует все сервисы загрузки фильмов в DI-контейнере
-    /// </summary>
-    /// <param name="builder">Построитель веб-приложения.</param>
-    public static void AddFilmDownloadServices(this IHostApplicationBuilder builder)
-    {
-        // Получение пути сохранения файлов Torrent;
-        var path = builder.Configuration.GetRequiredValue<string>("Torrent:Path");
+  /// <summary>
+  /// Регистрирует все сервисы загрузки фильмов в DI-контейнере
+  /// </summary>
+  /// <param name="builder">Построитель веб-приложения.</param>
+  public static void AddFilmDownloadServices(this IHostApplicationBuilder builder)
+  {
+    // Получение пути сохранения файлов Torrent;
+    string path = builder.Configuration.GetRequiredValue<string>("Torrent:Path");
 
-        // Добавление сервиса загрузки фильмов.
-        builder.Services.AddSingleton<IFilmDownloadService>(sp =>
-            new TorrentDownloadService(path, sp.GetRequiredService<ILogger<TorrentDownloadService>>()));
-    }
+    // Добавление сервиса загрузки фильмов.
+    builder.Services.AddSingleton<IFilmDownloadService>(sp =>
+      new TorrentDownloadService(path, sp.GetRequiredService<ILogger<TorrentDownloadService>>()));
+  }
 }

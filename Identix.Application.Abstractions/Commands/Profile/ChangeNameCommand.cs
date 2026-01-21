@@ -8,13 +8,13 @@ namespace Identix.Application.Abstractions.Commands.Profile;
 /// </summary>
 public class ChangeNameCommand : IRequest<AppUser>
 {
-    /// <summary>
-    /// Идентификатор пользователя.
-    /// </summary>
-    public required Guid UserId { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя.
+  /// </summary>
+  public required Guid UserId { get; init; }
 
-    /// <summary>
-    /// Новое имя пользователя.
-    /// </summary>
-    public required string Name { get; init; }
+  /// <summary>
+  /// Новое имя пользователя.
+  /// </summary>
+  public required string Name { get; init; }
 }

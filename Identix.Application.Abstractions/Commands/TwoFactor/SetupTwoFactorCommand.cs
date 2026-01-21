@@ -8,8 +8,8 @@ namespace Identix.Application.Abstractions.Commands.TwoFactor;
 /// </summary>
 public class SetupTwoFactorCommand : IRequest<(AppUser user, string token)>
 {
-    /// <summary>
-    /// Идентификатор пользователя
-    /// </summary>
-    public required Guid UserId { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя
+  /// </summary>
+  public required Guid UserId { get; init; }
 }

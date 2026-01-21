@@ -7,8 +7,8 @@ namespace Films.Application.Abstractions.Commands.Films;
 /// </summary>
 public class DeleteFilmCommand : IRequest
 {
-    /// <summary>
-    /// Идентификатор фильма
-    /// </summary>
-    public required Guid Id { get; init; }
+  /// <summary>
+  /// Идентификатор фильма
+  /// </summary>
+  public required Guid Id { get; init; }
 }

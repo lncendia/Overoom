@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />
-      <ProjectReference Include="..\Rooms.Application.Abstractions\Rooms.Application.Abstractions.csproj" />
+        <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Rooms.Application.Abstractions\Rooms.Application.Abstractions.csproj"/>
     </ItemGroup>
 
 </Project>

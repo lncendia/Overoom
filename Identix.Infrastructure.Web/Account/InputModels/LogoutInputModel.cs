@@ -5,8 +5,8 @@
 /// </summary>
 public class LogoutInputModel
 {
-    /// <summary>
-    /// URL для возврата.
-    /// </summary>
-    public string ReturnUrl { get; init; } = "/";
+  /// <summary>
+  /// URL для возврата.
+  /// </summary>
+  public string ReturnUrl { get; init; } = "/";
 }

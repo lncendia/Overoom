@@ -11,18 +11,18 @@ namespace Rooms.Application.Services.EventHandlers.Tags;
 /// <param name="unitOfWork">Единица работы для взаимодействия с репозиториями</param>
 public class NoAvatarEventHandler(IUnitOfWork unitOfWork) : BeforeSaveNotificationHandler<ViewerPhotoChangedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие изменения аватара
-    /// </summary>
-    /// <param name="notification">Событие изменения аватара</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerPhotoChangedEvent notification, CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrEmpty(notification.Viewer.PhotoKey))
-            notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.NoAvatar);
-        else 
-            notification.Room.RemoveTag(notification.Viewer.Id, Constants.ViewerTags.NoAvatar);
+  /// <summary>
+  /// Обрабатывает событие изменения аватара
+  /// </summary>
+  /// <param name="notification">Событие изменения аватара</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerPhotoChangedEvent notification, CancellationToken cancellationToken)
+  {
+    if (string.IsNullOrEmpty(notification.Viewer.PhotoKey))
+      notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.NoAvatar);
+    else
+      notification.Room.RemoveTag(notification.Viewer.Id, Constants.ViewerTags.NoAvatar);
 
-        await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
-    }
+    await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
+  }
 }

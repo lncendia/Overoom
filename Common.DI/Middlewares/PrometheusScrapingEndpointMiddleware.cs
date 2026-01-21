@@ -10,76 +10,76 @@ namespace Common.DI.Middlewares;
 /// </summary>
 public static class PrometheusScrapingEndpointMiddleware
 {
-    /// <summary>
-    /// Добавляет защиту Basic Authentication для эндпоинта Prometheus /metrics.
-    /// </summary>
-    /// <param name="app">Приложение WebApplication</param>
-    public static void MapPrometheusScrapingEndpointWithBasicAuth(this WebApplication app)
+  /// <summary>
+  /// Добавляет защиту Basic Authentication для эндпоинта Prometheus /metrics.
+  /// </summary>
+  /// <param name="app">Приложение WebApplication</param>
+  public static void MapPrometheusScrapingEndpointWithBasicAuth(this WebApplication app)
+  {
+    // Получаем данные аутентификации из конфигурации
+    string username = app.Configuration.GetRequiredValue<string>("OpenTelemetry:Username");
+    string passwordHash = app.Configuration.GetRequiredValue<string>("OpenTelemetry:PasswordHash");
+
+    app.Use(async (context, next) =>
     {
-        // Получаем данные аутентификации из конфигурации
-        var username = app.Configuration.GetRequiredValue<string>("OpenTelemetry:Username");
-        var passwordHash = app.Configuration.GetRequiredValue<string>("OpenTelemetry:PasswordHash");
+      // Пропускаем все запросы, кроме /metrics
+      if (context.Request.Path != "/metrics")
+      {
+        await next();
+        return;
+      }
 
-        app.Use(async (context, next) =>
-        {
-            // Пропускаем все запросы, кроме /metrics
-            if (context.Request.Path != "/metrics")
-            {
-                await next();
-                return;
-            }
+      // Проверяем заголовок Authorization
+      string? authHeader = context.Request.Headers.Authorization.FirstOrDefault();
+      if (!IsAuthorized(authHeader, username, passwordHash))
+      {
+        // Возвращаем 401 с WWW-Authenticate, чтобы браузер показал окно логина
+        context.Response.Headers.WWWAuthenticate = "Basic realm=\"Metrics\"";
+        context.Response.StatusCode = 401;
+        return;
+      }
 
-            // Проверяем заголовок Authorization
-            var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
-            if (!IsAuthorized(authHeader, username, passwordHash))
-            {
-                // Возвращаем 401 с WWW-Authenticate, чтобы браузер показал окно логина
-                context.Response.Headers.WWWAuthenticate = "Basic realm=\"Metrics\"";
-                context.Response.StatusCode = 401;
-                return;
-            }
+      // Всё ок — пропускаем дальше
+      await next();
+    });
 
-            // Всё ок — пропускаем дальше
-            await next();
-        });
+    // Настраиваем эндпоинт Prometheus
+    app.MapPrometheusScrapingEndpoint("/metrics");
+  }
 
-        // Настраиваем эндпоинт Prometheus
-        app.MapPrometheusScrapingEndpoint("/metrics");
-    }
+  /// <summary>
+  /// Проверка Basic Auth заголовка.
+  /// </summary>
+  /// <param name="authHeader">Значение заголовка Authorization из HTTP-запроса</param>
+  /// <param name="username">Ожидаемое имя пользователя для проверки</param>
+  /// <param name="passwordHash">Ожидаемый хеш пароля для проверки</param>
+  /// <returns>true - если авторизация успешна, false - в противном случае</returns>
+  private static bool IsAuthorized(string? authHeader, string username, string passwordHash)
+  {
+    // Проверяем наличие заголовка
+    if (string.IsNullOrEmpty(authHeader)) return false;
 
-    /// <summary>
-    /// Проверка Basic Auth заголовка.
-    /// </summary>
-    /// <param name="authHeader">Значение заголовка Authorization из HTTP-запроса</param>
-    /// <param name="username">Ожидаемое имя пользователя для проверки</param>
-    /// <param name="passwordHash">Ожидаемый хеш пароля для проверки</param>
-    /// <returns>true - если авторизация успешна, false - в противном случае</returns>
-    private static bool IsAuthorized(string? authHeader, string username, string passwordHash)
-    {
-        // Проверяем наличие заголовка
-        if (string.IsNullOrEmpty(authHeader)) return false;
+    // Парсим заголовок авторизации
+    if (!AuthenticationHeaderValue.TryParse(authHeader, out AuthenticationHeaderValue? headerValue)) return false;
 
-        // Парсим заголовок авторизации
-        if (!AuthenticationHeaderValue.TryParse(authHeader, out var headerValue)) return false;
+    // Проверяем что используется схема Basic Auth и есть параметры
+    if (!headerValue.Scheme.Equals("Basic", StringComparison.OrdinalIgnoreCase) ||
+        string.IsNullOrEmpty(headerValue.Parameter)) return false;
 
-        // Проверяем что используется схема Basic Auth и есть параметры
-        if (!headerValue.Scheme.Equals("Basic", StringComparison.OrdinalIgnoreCase) ||
-            string.IsNullOrEmpty(headerValue.Parameter)) return false;
+    // Декодируем credentials в формате username:password
+    // Используем кодировку iso-8859-1 как указано в спецификации Basic Auth
+    string decoded = Encoding.GetEncoding("iso-8859-1")
+      .GetString(Convert.FromBase64String(headerValue.Parameter));
 
-        // Декодируем credentials в формате username:password
-        // Используем кодировку iso-8859-1 как указано в спецификации Basic Auth
-        var decoded = Encoding.GetEncoding("iso-8859-1")
-            .GetString(Convert.FromBase64String(headerValue.Parameter));
+    // Ищем разделитель между именем пользователя и паролем
+    int separatorIndex = decoded.IndexOf(':');
+    if (separatorIndex < 0) return false;
 
-        // Ищем разделитель между именем пользователя и паролем
-        var separatorIndex = decoded.IndexOf(':');
-        if (separatorIndex < 0) return false;
+    // Извлекаем имя пользователя и пароль из decoded строки
+    string providedUsername = decoded[..separatorIndex];
+    string providedPassword = decoded[(separatorIndex + 1)..];
 
-        // Извлекаем имя пользователя и пароль из decoded строки
-        var providedUsername = decoded[..separatorIndex];
-        var providedPassword = decoded[(separatorIndex + 1)..];
-
-        // Сравниваем с ожидаемыми значениями
-        return providedUsername == username && PasswordHasher.Verify(providedPassword, passwordHash);
-    }
+    // Сравниваем с ожидаемыми значениями
+    return providedUsername == username && PasswordHasher.Verify(providedPassword, passwordHash);
+  }
 }

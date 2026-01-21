@@ -5,18 +5,18 @@ namespace Uploader.Application.Abstractions.Events;
 /// </summary>
 public class DownloadFilm
 {
-    /// <summary>
-    /// Magnet-ссылка для скачивания через торрент-клиент
-    /// </summary>
-    public required string MagnetUri { get; init; }
-    
-    /// <summary>
-    /// Имя файла для обработки
-    /// </summary>
-    public string? FileName { get; init; }
+  /// <summary>
+  /// Magnet-ссылка для скачивания через торрент-клиент
+  /// </summary>
+  public required string MagnetUri { get; init; }
 
-    /// <summary>
-    /// Метаданные фильма для обработки и идентификации
-    /// </summary>
-    public required FilmRecord FilmRecord { get; init; }
+  /// <summary>
+  /// Имя файла для обработки
+  /// </summary>
+  public string? FileName { get; init; }
+
+  /// <summary>
+  /// Метаданные фильма для обработки и идентификации
+  /// </summary>
+  public required FilmRecord FilmRecord { get; init; }
 }

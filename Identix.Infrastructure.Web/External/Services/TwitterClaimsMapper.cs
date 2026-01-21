@@ -11,29 +11,29 @@ namespace Identix.Infrastructure.Web.External.Services;
 /// </summary>
 public class TwitterClaimsMapper() : ExternalClaimsMapperBase(OpenIddictClientWebIntegrationConstants.Providers.Twitter)
 {
-    /// <summary>
-    /// Выполняет маппинг claims из результата аутентификации Twitter
-    /// </summary>
-    /// <param name="result">Результат аутентификации Twitter</param>
-    /// <returns>ClaimsIdentity с маппированными claims Twitter</returns>
-    /// <exception cref="Exception">Когда отсутствует обязательный идентификатор пользователя</exception>
-    public override Task<ClaimsIdentity> MapAsync(AuthenticateResult result)
-    {
-        // Получаем обязательный идентификатор пользователя из Twitter
-        var id = result.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+  /// <summary>
+  /// Выполняет маппинг claims из результата аутентификации Twitter
+  /// </summary>
+  /// <param name="result">Результат аутентификации Twitter</param>
+  /// <returns>ClaimsIdentity с маппированными claims Twitter</returns>
+  /// <exception cref="Exception">Когда отсутствует обязательный идентификатор пользователя</exception>
+  public override Task<ClaimsIdentity> MapAsync(AuthenticateResult result)
+  {
+    // Получаем обязательный идентификатор пользователя из Twitter
+    string? id = result.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        // Создаем базовую identity с идентификатором
-        var identity = CreateBaseIdentity(id);
-        
-        // Маппим отображаемое имя пользователя
-        identity.TryAddClaim(ClaimTypes.Name, result.Principal?.FindFirstValue("username"));
-        
-        // Маппим email пользователя
-        identity.TryAddClaim(ClaimTypes.Email, result.Principal?.FindFirstValue("confirmed_email"));
-        
-        // Маппим URL аватара пользователя из claim "picture"
-        identity.TryAddClaim(Constants.Claims.Thumbnail, result.Principal?.FindFirstValue("profile_image_url"));
+    // Создаем базовую identity с идентификатором
+    ClaimsIdentity identity = CreateBaseIdentity(id);
 
-        return Task.FromResult(identity);
-    }
+    // Маппим отображаемое имя пользователя
+    identity.TryAddClaim(ClaimTypes.Name, result.Principal?.FindFirstValue("username"));
+
+    // Маппим email пользователя
+    identity.TryAddClaim(ClaimTypes.Email, result.Principal?.FindFirstValue("confirmed_email"));
+
+    // Маппим URL аватара пользователя из claim "picture"
+    identity.TryAddClaim(Constants.Claims.Thumbnail, result.Principal?.FindFirstValue("profile_image_url"));
+
+    return Task.FromResult(identity);
+  }
 }

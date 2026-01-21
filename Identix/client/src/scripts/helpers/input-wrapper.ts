@@ -9,14 +9,14 @@ export class InputWrapper {
 
             // вызываем blur если элемент уже заполнен
             this.blur(element as HTMLInputElement);
-            
+
             // добавляем обработчик события потери фокуса
             element.addEventListener('blur', ev => this.blur((ev.currentTarget as HTMLInputElement)));
         });
     }
 
     /** Метод реагирует на потерю фокуса */
-    blur(element: HTMLInputElement){
+    blur(element: HTMLInputElement) {
 
         // если значение не пустое
         if (element.value.trim() != "") {

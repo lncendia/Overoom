@@ -8,8 +8,8 @@ namespace Films.Application.Abstractions.Queries.Rooms;
 /// </summary>
 public class GetUserRoomsQuery : IRequest<IReadOnlyList<RoomShortDto>>
 {
-    /// <summary>
-    /// Идентификатор пользователя
-    /// </summary>
-    public required Guid UserId { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя
+  /// </summary>
+  public required Guid UserId { get; init; }
 }

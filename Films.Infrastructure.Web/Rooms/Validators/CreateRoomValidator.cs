@@ -8,13 +8,13 @@ namespace Films.Infrastructure.Web.Rooms.Validators;
 /// </summary>
 public class CreateRoomValidator : AbstractValidator<CreateRoomInputModel>
 {
-    /// <summary>
-    /// Инициализирует правила валидации для создания комнаты
-    /// </summary>
-    public CreateRoomValidator()
-    {
-        RuleFor(x => x.FilmId)
-            .NotEmpty()
-            .WithMessage("Поле не должно быть пустым");
-    }
+  /// <summary>
+  /// Инициализирует правила валидации для создания комнаты
+  /// </summary>
+  public CreateRoomValidator()
+  {
+    RuleFor(x => x.FilmId)
+      .NotEmpty()
+      .WithMessage("Поле не должно быть пустым");
+  }
 }

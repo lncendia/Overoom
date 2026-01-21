@@ -9,18 +9,18 @@ namespace Films.Domain.Rooms.Events;
 /// </summary>
 public class RoomCreatedEvent(Room room, User owner, Film film) : DomainEvent
 {
-    /// <summary>
-    /// Комната.
-    /// </summary>
-    public Room Room { get; } = room;
-    
-    /// <summary>
-    /// Фильм.
-    /// </summary>
-    public Film Film { get; } = film;
+  /// <summary>
+  /// Комната.
+  /// </summary>
+  public Room Room { get; } = room;
 
-    /// <summary>
-    /// Создатель комнаты.
-    /// </summary>
-    public User Owner { get; } = owner;
+  /// <summary>
+  /// Фильм.
+  /// </summary>
+  public Film Film { get; } = film;
+
+  /// <summary>
+  /// Создатель комнаты.
+  /// </summary>
+  public User Owner { get; } = owner;
 }

@@ -7,22 +7,22 @@ namespace Identix.Infrastructure.Web.TwoFactor.InputModels;
 /// </summary>
 public class SetupTwoFactorInputModel
 {
-    /// <summary>
-    /// Ключ аутентификатора
-    /// </summary>
-    [Required]
-    public string? AuthenticatorKey { get; init; }
+  /// <summary>
+  /// Ключ аутентификатора
+  /// </summary>
+  [Required]
+  public string? AuthenticatorKey { get; init; }
 
-    /// <summary>
-    /// Код подтверждения аутентификации
-    /// </summary>
-    [Display(Name = "Code", ResourceType = typeof(Resources.TwoFactor.InputModels.SetupTwoFactorInputModel))]
-    [Required(ErrorMessageResourceName = "Required",
-        ErrorMessageResourceType = typeof(Resources.TwoFactor.InputModels.SetupTwoFactorInputModel))]
-    public string? Code { get; set; }
+  /// <summary>
+  /// Код подтверждения аутентификации
+  /// </summary>
+  [Display(Name = "Code", ResourceType = typeof(Resources.TwoFactor.InputModels.SetupTwoFactorInputModel))]
+  [Required(ErrorMessageResourceName = "Required",
+    ErrorMessageResourceType = typeof(Resources.TwoFactor.InputModels.SetupTwoFactorInputModel))]
+  public string? Code { get; set; }
 
-    /// <summary>
-    /// URL для возврата.
-    /// </summary>
-    public string ReturnUrl { get; init; } = "/";
+  /// <summary>
+  /// URL для возврата.
+  /// </summary>
+  public string ReturnUrl { get; init; } = "/";
 }

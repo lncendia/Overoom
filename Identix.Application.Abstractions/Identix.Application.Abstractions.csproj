@@ -8,13 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AspNetCore.Identity.Mongo" Version="10.1.0" />
-      <PackageReference Include="OpenIddict.Abstractions" Version="7.2.0" />
+        <PackageReference Include="OpenIddict.Abstractions" Version="7.2.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common.Application\Common.Application.csproj" />
-      <ProjectReference Include="..\Common.IntegrationEvents\Common.IntegrationEvents.csproj" />
+        <ProjectReference Include="..\Common.Application\Common.Application.csproj"/>
+        <ProjectReference Include="..\Common.IntegrationEvents\Common.IntegrationEvents.csproj"/>
     </ItemGroup>
 
 </Project>

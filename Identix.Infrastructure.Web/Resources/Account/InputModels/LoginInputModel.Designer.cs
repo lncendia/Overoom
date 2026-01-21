@@ -60,7 +60,7 @@ namespace Identix.Infrastructure.Web.Resources.Account.InputModels {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Email.
+        ///   Looks up a localized string similar to Mail.
         /// </summary>
         public static string Email {
             get {
@@ -78,7 +78,7 @@ namespace Identix.Infrastructure.Web.Resources.Account.InputModels {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remember me.
+        ///   Looks up a localized string similar to Remember.
         /// </summary>
         public static string Remember {
             get {
@@ -87,7 +87,7 @@ namespace Identix.Infrastructure.Web.Resources.Account.InputModels {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This field is required.
+        ///   Looks up a localized string similar to The field cannot be empty.
         /// </summary>
         public static string Required {
             get {

@@ -8,12 +8,12 @@ namespace Films.Infrastructure.Web.Comments.Mappers;
 /// </summary>
 public class CommentsMapperProfile : AutoMapper.Profile
 {
-    /// <summary>
-    /// Маппинг входных моделей в команды
-    /// </summary>
-    public CommentsMapperProfile()
-    {
-        // Карта для GetCommentsInputModel в GetFilmCommentsQuery
-        CreateMap<GetCommentsInputModel, GetFilmCommentsQuery>();
-    }
+  /// <summary>
+  /// Маппинг входных моделей в команды
+  /// </summary>
+  public CommentsMapperProfile()
+  {
+    // Карта для GetCommentsInputModel в GetFilmCommentsQuery
+    CreateMap<GetCommentsInputModel, GetFilmCommentsQuery>();
+  }
 }

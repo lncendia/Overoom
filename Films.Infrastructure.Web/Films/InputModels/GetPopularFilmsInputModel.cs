@@ -5,8 +5,8 @@ namespace Films.Infrastructure.Web.Films.InputModels;
 /// </summary>
 public class GetPopularFilmsInputModel
 {
-    /// <summary>
-    /// Количество возвращаемых фильмов (по умолчанию 15, максимум 30)
-    /// </summary>
-    public int Take { get; init; } = 15;
+  /// <summary>
+  /// Количество возвращаемых фильмов (по умолчанию 15, максимум 30)
+  /// </summary>
+  public int Take { get; init; } = 15;
 }

@@ -7,8 +7,8 @@ namespace Films.Application.Abstractions.Commands.Playlists;
 /// </summary>
 public class DeletePlaylistCommand : IRequest
 {
-    /// <summary>
-    /// Идентификатор плейлиста
-    /// </summary>
-    public required Guid Id { get; init; }
+  /// <summary>
+  /// Идентификатор плейлиста
+  /// </summary>
+  public required Guid Id { get; init; }
 }

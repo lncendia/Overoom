@@ -8,8 +8,8 @@ namespace Films.Application.Abstractions.Queries.Comments;
 /// </summary>
 public class GetLastCommentsQuery : IRequest<IReadOnlyList<CommentDto>>
 {
-    /// <summary>
-    /// Количество получаемых комментариев
-    /// </summary>
-    public required int Take { get; init; }
+  /// <summary>
+  /// Количество получаемых комментариев
+  /// </summary>
+  public required int Take { get; init; }
 }

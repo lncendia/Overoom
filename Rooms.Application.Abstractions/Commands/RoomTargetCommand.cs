@@ -5,5 +5,5 @@ namespace Rooms.Application.Abstractions.Commands;
 /// </summary>
 public abstract class RoomTargetCommand : RoomBaseCommand
 {
-    public required Guid TargetId { get; init; }
+  public required Guid TargetId { get; init; }
 }

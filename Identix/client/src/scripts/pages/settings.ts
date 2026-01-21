@@ -56,7 +56,7 @@ export class Settings {
 
         // если переключатель есть
         if (showPass) new PasswordHide('#show-pass');
-        
+
         // получаем переключатель видимости старого пароля
         const showOldPass = document.querySelector("#show-old-pass")
 

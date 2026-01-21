@@ -8,24 +8,24 @@ namespace Rooms.Application.Abstractions.RoomEvents.Room;
 /// </summary>
 public class UpdateViewerEvent : RoomBaseEvent
 {
-    /// <summary>Идентификатор зрителя</summary>
-    public required Guid Id { get; init; }
+  /// <summary>Идентификатор зрителя</summary>
+  public required Guid Id { get; init; }
 
-    /// <summary>Имя пользователя</summary>
-    public string? UserName { get; set; }
+  /// <summary>Имя пользователя</summary>
+  public string? UserName { get; set; }
 
-    /// <summary>Ключ фотографии</summary>
-    public string? PhotoKey { get; set; }
+  /// <summary>Ключ фотографии</summary>
+  public string? PhotoKey { get; set; }
 
-    /// <summary>Флаг онлайн-статуса</summary>
-    public bool? Online { get; set; }
+  /// <summary>Флаг онлайн-статуса</summary>
+  public bool? Online { get; set; }
 
-    /// <summary>Права пользователя на действия в комнате</summary>
-    public RoomSettings? Settings { get; set; }
-    
-    /// <summary>Список тегов зрителя</summary>
-    public IReadOnlyList<ViewerTagDto>? Tags { get; set; }
-    
-    /// <summary>Список обновленных полей</summary>
-    public required IReadOnlyList<string> UpdatedFields { get; init; }
+  /// <summary>Права пользователя на действия в комнате</summary>
+  public RoomSettings? Settings { get; set; }
+
+  /// <summary>Список тегов зрителя</summary>
+  public IReadOnlyList<ViewerTagDto>? Tags { get; set; }
+
+  /// <summary>Список обновленных полей</summary>
+  public required IReadOnlyList<string> UpdatedFields { get; init; }
 }

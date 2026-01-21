@@ -12,23 +12,23 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <param name="eventSender">Отправитель событий комнаты</param>
 public class NewMessageEventHandler(IRoomEventSender eventSender) : AfterSaveNotificationHandler<NewMessageEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие отправки нового сообщения
-    /// </summary>
-    /// <param name="event">Событие нового сообщения</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(NewMessageEvent @event, CancellationToken cancellationToken)
+  /// <summary>
+  /// Обрабатывает событие отправки нового сообщения
+  /// </summary>
+  /// <param name="event">Событие нового сообщения</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(NewMessageEvent @event, CancellationToken cancellationToken)
+  {
+    // Создаем DTO сообщения
+    var dto = new MessageDto
     {
-        // Создаем DTO сообщения
-        var dto = new MessageDto
-        {
-            Id = @event.Message.Id,
-            UserId = @event.Message.UserId,
-            Text = @event.Message.Text,
-            SentAt = @event.Message.SentAt
-        };
-        
-        // Публикуем событие комнаты
-        await eventSender.SendAsync(new MessageEvent { Message = dto }, @event.Room.Id, null, cancellationToken);
-    }
+      Id = @event.Message.Id,
+      UserId = @event.Message.UserId,
+      Text = @event.Message.Text,
+      SentAt = @event.Message.SentAt
+    };
+
+    // Публикуем событие комнаты
+    await eventSender.SendAsync(new MessageEvent { Message = dto }, @event.Room.Id, null, cancellationToken);
+  }
 }

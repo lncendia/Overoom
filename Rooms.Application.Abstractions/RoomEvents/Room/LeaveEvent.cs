@@ -5,8 +5,8 @@ namespace Rooms.Application.Abstractions.RoomEvents.Room;
 /// </summary>
 public class LeaveEvent : RoomBaseEvent
 {
-    /// <summary>
-    /// Идентификатор пользователя, который вышел
-    /// </summary>
-    public required Guid Viewer { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя, который вышел
+  /// </summary>
+  public required Guid Viewer { get; init; }
 }

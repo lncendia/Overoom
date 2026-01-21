@@ -12,22 +12,22 @@ namespace Rooms.Infrastructure.Bus.Users;
 /// <param name="mediator">Медиатор для отправки внутренних команд приложения</param>
 public class UserSettingsChangedConsumer(ISender mediator) : IConsumer<UserSettingsChangedIntegrationEvent>
 {
-    /// <summary>
-    /// Обрабатывает интеграционное событие изменения настроек пользователя
-    /// </summary>
-    /// <param name="context">Контекст сообщения, содержащий данные события и метаинформацию</param>
-    /// <returns>Задача, представляющая асинхронную обработку события</returns>
-    public async Task Consume(ConsumeContext<UserSettingsChangedIntegrationEvent> context)
-    {
-        // Извлекаем данные события из контекста сообщения
-        var integrationEvent = context.Message;
+  /// <summary>
+  /// Обрабатывает интеграционное событие изменения настроек пользователя
+  /// </summary>
+  /// <param name="context">Контекст сообщения, содержащий данные события и метаинформацию</param>
+  /// <returns>Задача, представляющая асинхронную обработку события</returns>
+  public async Task Consume(ConsumeContext<UserSettingsChangedIntegrationEvent> context)
+  {
+    // Извлекаем данные события из контекста сообщения
+    UserSettingsChangedIntegrationEvent integrationEvent = context.Message;
 
-        // Преобразуем интеграционное событие во внутреннюю команду приложения
-        // и отправляем ее через медиатор для дальнейшей обработки
-        await mediator.Send(new ChangeViewersSettingsCommand
-        {
-            UserId = integrationEvent.Id,
-            Settings = integrationEvent.Settings
-        }, context.CancellationToken);
-    }
+    // Преобразуем интеграционное событие во внутреннюю команду приложения
+    // и отправляем ее через медиатор для дальнейшей обработки
+    await mediator.Send(new ChangeViewersSettingsCommand
+    {
+      UserId = integrationEvent.Id,
+      Settings = integrationEvent.Settings
+    }, context.CancellationToken);
+  }
 }

@@ -7,8 +7,8 @@ namespace Identix.Infrastructure.Web.Settings.ViewModels;
 /// </summary>
 public class ChangeEmailViewModel : RequestChangeEmailInputModel
 {
-    /// <summary>
-    /// Определяет, нужно ли отображать поле для ввода пароля.
-    /// </summary>
-    public required bool ShowPassword { get; init; }
+  /// <summary>
+  /// Определяет, нужно ли отображать поле для ввода пароля.
+  /// </summary>
+  public required bool ShowPassword { get; init; }
 }

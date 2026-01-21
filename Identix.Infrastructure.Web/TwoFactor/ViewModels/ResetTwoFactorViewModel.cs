@@ -7,13 +7,13 @@ namespace Identix.Infrastructure.Web.TwoFactor.ViewModels;
 /// </summary>
 public class ResetTwoFactorViewModel
 {
-    /// <summary>
-    /// Откуда код
-    /// </summary>
-    public CodeType CodeType { get; init; }
-    
-    /// <summary>
-    /// URL для возврата.
-    /// </summary>
-    public string ReturnUrl { get; init; } = "/";
+  /// <summary>
+  /// Откуда код
+  /// </summary>
+  public CodeType CodeType { get; init; }
+
+  /// <summary>
+  /// URL для возврата.
+  /// </summary>
+  public string ReturnUrl { get; init; } = "/";
 }

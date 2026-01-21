@@ -7,25 +7,26 @@ namespace Identix.Infrastructure.Web.Consent.InputModels;
 /// </summary>
 public class ConsentInputModel
 {
-    /// <summary>
-    /// Согласованные области применения
-    /// </summary>
-    public List<string> ScopesConsented { get; set; } =  [];
+  /// <summary>
+  /// Согласованные области применения
+  /// </summary>
+  public List<string> ScopesConsented { get; set; } = [];
 
-    /// <summary>
-    /// Помните о согласии
-    /// </summary>
-    [Display(Name = "Remember", ResourceType = typeof(Resources.Consent.InputModels.ConsentInputModel))]
-    public bool RememberConsent { get; set; }
+  /// <summary>
+  /// Помните о согласии
+  /// </summary>
+  [Display(Name = "Remember", ResourceType = typeof(Resources.Consent.InputModels.ConsentInputModel))]
+  public bool RememberConsent { get; set; }
 
-    /// <summary>
-    /// URL-адрес возврата
-    /// </summary>
-    public string ReturnUrl { get; init; } = "/";
+  /// <summary>
+  /// URL-адрес возврата
+  /// </summary>
+  public string ReturnUrl { get; init; } = "/";
 
-    /// <summary>
-    /// Описание
-    /// </summary>
-    [Display(Name = "Description", Prompt = "DescriptionPrompt", ResourceType = typeof(Resources.Consent.InputModels.ConsentInputModel))]
-    public string? Description { get; set; }
+  /// <summary>
+  /// Описание
+  /// </summary>
+  [Display(Name = "Description", Prompt = "DescriptionPrompt",
+    ResourceType = typeof(Resources.Consent.InputModels.ConsentInputModel))]
+  public string? Description { get; set; }
 }

@@ -5,8 +5,8 @@ namespace Rooms.Application.Abstractions.Commands;
 /// </summary>
 public class SetVolumeCommand : RoomBaseCommand
 {
-    /// <summary>
-    /// Флаг, указывающий включен ли режим без звука (mute)
-    /// </summary>
-    public required bool Muted { get; init; }
+  /// <summary>
+  /// Флаг, указывающий включен ли режим без звука (mute)
+  /// </summary>
+  public required bool Muted { get; init; }
 }

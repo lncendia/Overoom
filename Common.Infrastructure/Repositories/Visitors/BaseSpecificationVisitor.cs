@@ -9,103 +9,103 @@ namespace Common.Infrastructure.Repositories.Visitors;
 /// Реализация посетителя спецификации.
 /// </summary>
 public abstract class BaseSpecificationVisitor<TEntity, TVisitor, TItem>
-    where TVisitor : ISpecificationVisitor<TVisitor, TItem>
+  where TVisitor : ISpecificationVisitor<TVisitor, TItem>
 {
-    /// <summary>
-    /// Выражение для запроса к ef.
-    /// </summary>
-    public Expression<Func<TEntity, bool>>? Expr { get; protected set; }
+  /// <summary>
+  /// Выражение для запроса к ef.
+  /// </summary>
+  public Expression<Func<TEntity, bool>>? Expr { get; protected set; }
 
-    /// <summary>
-    /// Конвертирует спецификацию в Expression.
-    /// </summary>
-    /// <param name="spec">Спецификация</param>
-    protected abstract Expression<Func<TEntity, bool>> ConvertSpecToExpression(ISpecification<TItem, TVisitor> spec);
+  /// <summary>
+  /// Конвертирует спецификацию в Expression.
+  /// </summary>
+  /// <param name="spec">Спецификация</param>
+  protected abstract Expression<Func<TEntity, bool>> ConvertSpecToExpression(ISpecification<TItem, TVisitor> spec);
 
-    /// <inheritdoc cref="ISpecificationVisitor{TVisitor,T}"/>
-    /// <summary>
-    /// Посещает объект с условием "И".
-    /// </summary>
-    public void Visit(AndSpecification<TItem, TVisitor> spec)
-    {
-        // Преобразование левой спецификации (условия) в выражение.
-        // Метод ConvertSpecToExpression принимает правило (или спецификацию),
-        // указанное в левой части, и преобразует его в Expression<Func<TEntity, bool>>.
-        var leftExpr = ConvertSpecToExpression(spec.Left);
-        
-        // Аналогично, правая спецификация преобразуется в выражение.
-        // Это позволяет нам работать с условиями в виде логических выражений.+
-        var rightExpr = ConvertSpecToExpression(spec.Right);
+  /// <inheritdoc cref="ISpecificationVisitor{TVisitor,T}"/>
+  /// <summary>
+  /// Посещает объект с условием "И".
+  /// </summary>
+  public void Visit(AndSpecification<TItem, TVisitor> spec)
+  {
+    // Преобразование левой спецификации (условия) в выражение.
+    // Метод ConvertSpecToExpression принимает правило (или спецификацию),
+    // указанное в левой части, и преобразует его в Expression<Func<TEntity, bool>>.
+    Expression<Func<TEntity, bool>> leftExpr = ConvertSpecToExpression(spec.Left);
 
-        // Создаем общий параметр для объекта TEntity, который будет
-        // использоваться в объединении выражений. Это необходимо, так как
-        // логические выражения требуют общего пространства параметров.
-        var param = Expression.Parameter(typeof(TEntity), "x");
+    // Аналогично, правая спецификация преобразуется в выражение.
+    // Это позволяет нам работать с условиями в виде логических выражений.+
+    Expression<Func<TEntity, bool>> rightExpr = ConvertSpecToExpression(spec.Right);
 
-        // Подменяем параметр в левой части выражения на общий параметр (param).
-        // ReplaceParameterVisitor — это вспомогательный объект, позволяющий заменить
-        // параметры в теле выражения.
-        var leftBody = new ReplaceParameterVisitor(leftExpr.Parameters.Single(), param).Visit(leftExpr.Body);
+    // Создаем общий параметр для объекта TEntity, который будет
+    // использоваться в объединении выражений. Это необходимо, так как
+    // логические выражения требуют общего пространства параметров.
+    ParameterExpression param = Expression.Parameter(typeof(TEntity), "x");
 
-        // Аналогично, заменяем параметры в правой части на общий параметр.
-        var rightBody = new ReplaceParameterVisitor(rightExpr.Parameters.Single(), param).Visit(rightExpr.Body);
+    // Подменяем параметр в левой части выражения на общий параметр (param).
+    // ReplaceParameterVisitor — это вспомогательный объект, позволяющий заменить
+    // параметры в теле выражения.
+    Expression leftBody = new ReplaceParameterVisitor(leftExpr.Parameters.Single(), param).Visit(leftExpr.Body);
 
-        // Создаем новое логическое выражение, объединяя обе части с помощью оператора "И" (AndAlso).
-        // AndAlso — это логическое И, выражающее "выполняется оба условия".
-        var exprBody = Expression.AndAlso(leftBody, rightBody);
+    // Аналогично, заменяем параметры в правой части на общий параметр.
+    Expression rightBody = new ReplaceParameterVisitor(rightExpr.Parameters.Single(), param).Visit(rightExpr.Body);
 
-        // Создаем лямбда-выражение типа Expression<Func<TEntity, bool>>.
-        // Lambda связывает логическое выражение (exprBody) с параметром (param), создавая финальное условие.
-        Expr = Expression.Lambda<Func<TEntity, bool>>(exprBody, param);
-    }
+    // Создаем новое логическое выражение, объединяя обе части с помощью оператора "И" (AndAlso).
+    // AndAlso — это логическое И, выражающее "выполняется оба условия".
+    BinaryExpression exprBody = Expression.AndAlso(leftBody, rightBody);
 
-    /// <inheritdoc cref="ISpecificationVisitor{TVisitor,T}"/>
-    /// <summary>
-    /// Посещает объект с условием "ИЛИ".
-    /// </summary>
-    public void Visit(OrSpecification<TItem, TVisitor> spec)
-    {
-        // Преобразование левой спецификации (условия) в выражение.
-        // Здесь левая часть правила преобразуется в Expression<Func<TEntity, bool>>.
-        var leftExpr = ConvertSpecToExpression(spec.Left);
+    // Создаем лямбда-выражение типа Expression<Func<TEntity, bool>>.
+    // Lambda связывает логическое выражение (exprBody) с параметром (param), создавая финальное условие.
+    Expr = Expression.Lambda<Func<TEntity, bool>>(exprBody, param);
+  }
 
-        // Преобразование правой спецификации (условия) в выражение.
-        // Это аналогично предыдущему процессу, но обрабатываем правую часть логики.
-        var rightExpr = ConvertSpecToExpression(spec.Right);
+  /// <inheritdoc cref="ISpecificationVisitor{TVisitor,T}"/>
+  /// <summary>
+  /// Посещает объект с условием "ИЛИ".
+  /// </summary>
+  public void Visit(OrSpecification<TItem, TVisitor> spec)
+  {
+    // Преобразование левой спецификации (условия) в выражение.
+    // Здесь левая часть правила преобразуется в Expression<Func<TEntity, bool>>.
+    Expression<Func<TEntity, bool>> leftExpr = ConvertSpecToExpression(spec.Left);
 
-        // Создаем общий параметр для объекта TEntity, чтобы обеспечить использование
-        // одного параметра (переменной) в обеих частях выражения.
-        var param = Expression.Parameter(typeof(TEntity), "x");
+    // Преобразование правой спецификации (условия) в выражение.
+    // Это аналогично предыдущему процессу, но обрабатываем правую часть логики.
+    Expression<Func<TEntity, bool>> rightExpr = ConvertSpecToExpression(spec.Right);
 
-        // Заменяем оригинальный параметр в левой части на общий параметр (param).
-        // Это необходимо, чтобы оба выражения могли быть объединены в одно логическое выражение.
-        var leftBody = new ReplaceParameterVisitor(leftExpr.Parameters.Single(), param).Visit(leftExpr.Body);
+    // Создаем общий параметр для объекта TEntity, чтобы обеспечить использование
+    // одного параметра (переменной) в обеих частях выражения.
+    ParameterExpression param = Expression.Parameter(typeof(TEntity), "x");
 
-        // Заменяем параметр в правой части выражения на общий параметр.
-        var rightBody = new ReplaceParameterVisitor(rightExpr.Parameters.Single(), param).Visit(rightExpr.Body);
+    // Заменяем оригинальный параметр в левой части на общий параметр (param).
+    // Это необходимо, чтобы оба выражения могли быть объединены в одно логическое выражение.
+    Expression leftBody = new ReplaceParameterVisitor(leftExpr.Parameters.Single(), param).Visit(leftExpr.Body);
 
-        // Создаем логическое выражение с оператором "ИЛИ" (Or).
-        // Or возвращает true, если выполняется хотя бы одно из указанных условий.
-        var exprBody = Expression.Or(leftBody, rightBody);
+    // Заменяем параметр в правой части выражения на общий параметр.
+    Expression rightBody = new ReplaceParameterVisitor(rightExpr.Parameters.Single(), param).Visit(rightExpr.Body);
 
-        // Создаем лямбда-выражение, связывающее объединенное выражение (exprBody) с параметром (param).
-        // Это финальная форма логического правила.
-        Expr = Expression.Lambda<Func<TEntity, bool>>(exprBody, param);
-    }
+    // Создаем логическое выражение с оператором "ИЛИ" (Or).
+    // Or возвращает true, если выполняется хотя бы одно из указанных условий.
+    BinaryExpression exprBody = Expression.Or(leftBody, rightBody);
 
-    /// <inheritdoc cref="ISpecificationVisitor{TVisitor,T}"/>
-    /// <summary>
-    /// Посещает объект с условием "НЕ".
-    /// </summary>
-    public void Visit(NotSpecification<TItem, TVisitor> spec)
-    {
-        // Преобразование спецификации в выражение
-        var specExpr = ConvertSpecToExpression(spec.Specification);
+    // Создаем лямбда-выражение, связывающее объединенное выражение (exprBody) с параметром (param).
+    // Это финальная форма логического правила.
+    Expr = Expression.Lambda<Func<TEntity, bool>>(exprBody, param);
+  }
 
-        // Создание тела выражения с оператором Not
-        var exprBody = Expression.Not(specExpr.Body);
+  /// <inheritdoc cref="ISpecificationVisitor{TVisitor,T}"/>
+  /// <summary>
+  /// Посещает объект с условием "НЕ".
+  /// </summary>
+  public void Visit(NotSpecification<TItem, TVisitor> spec)
+  {
+    // Преобразование спецификации в выражение
+    Expression<Func<TEntity, bool>> specExpr = ConvertSpecToExpression(spec.Specification);
 
-        // Создание лямбда выражения для типа TEntity
-        Expr = Expression.Lambda<Func<TEntity, bool>>(exprBody, specExpr.Parameters.Single());
-    }
+    // Создание тела выражения с оператором Not
+    UnaryExpression exprBody = Expression.Not(specExpr.Body);
+
+    // Создание лямбда выражения для типа TEntity
+    Expr = Expression.Lambda<Func<TEntity, bool>>(exprBody, specExpr.Parameters.Single());
+  }
 }

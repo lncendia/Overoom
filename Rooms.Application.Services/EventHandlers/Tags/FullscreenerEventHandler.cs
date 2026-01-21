@@ -9,23 +9,24 @@ namespace Rooms.Application.Services.EventHandlers.Tags;
 /// Обработчик события изменения полноэкранного режима зрителем
 /// </summary>
 /// <param name="unitOfWork">Единица работы для взаимодействия с репозиториями</param>
-public class FullscreenerEventHandler(IUnitOfWork unitOfWork) : BeforeSaveNotificationHandler<ViewerFullScreenChangedEvent>
+public class FullscreenerEventHandler(IUnitOfWork unitOfWork)
+  : BeforeSaveNotificationHandler<ViewerFullScreenChangedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие изменения полноэкранного режима
-    /// </summary>
-    /// <param name="notification">Событие изменения полноэкранного режима</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerFullScreenChangedEvent notification, CancellationToken cancellationToken)
-    {
-        // Если это синхронизация - не обрабатываем
-        if (notification.IsSyncEvent) return;
+  /// <summary>
+  /// Обрабатывает событие изменения полноэкранного режима
+  /// </summary>
+  /// <param name="notification">Событие изменения полноэкранного режима</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerFullScreenChangedEvent notification, CancellationToken cancellationToken)
+  {
+    // Если это синхронизация - не обрабатываем
+    if (notification.IsSyncEvent) return;
 
-        if (notification.Viewer.FullScreen)
-            notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.Fullscreener);
-        else
-            notification.Room.RemoveTag(notification.Viewer.Id, Constants.ViewerTags.Fullscreener);
+    if (notification.Viewer.FullScreen)
+      notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.Fullscreener);
+    else
+      notification.Room.RemoveTag(notification.Viewer.Id, Constants.ViewerTags.Fullscreener);
 
-        await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
-    }
+    await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
+  }
 }

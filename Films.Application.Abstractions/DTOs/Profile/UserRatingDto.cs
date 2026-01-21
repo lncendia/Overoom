@@ -7,8 +7,8 @@ namespace Films.Application.Abstractions.DTOs.Profile;
 /// </summary>
 public class UserRatingDto : FilmShortDto
 {
-    /// <summary>
-    /// Оценка, поставленная пользователем
-    /// </summary>
-    public required double Score { get; init; }
+  /// <summary>
+  /// Оценка, поставленная пользователем
+  /// </summary>
+  public required double Score { get; init; }
 }

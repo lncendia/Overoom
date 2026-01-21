@@ -8,8 +8,8 @@ namespace Identix.Application.Abstractions.Commands.Authentication;
 /// </summary>
 public class UpdateSecurityStampCommand : IRequest<AppUser>
 {
-    /// <summary>
-    /// Тдентификатор пользователя.
-    /// </summary>
-    public required Guid UserId { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя.
+  /// </summary>
+  public required Guid UserId { get; init; }
 }

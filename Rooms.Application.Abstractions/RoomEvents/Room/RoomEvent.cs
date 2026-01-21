@@ -7,8 +7,8 @@ namespace Rooms.Application.Abstractions.RoomEvents.Room;
 /// </summary>
 public class RoomEvent : RoomBaseEvent
 {
-    /// <summary>
-    /// Данные комнаты
-    /// </summary>
-    public required RoomDto Room { get; init; }
+  /// <summary>
+  /// Данные комнаты
+  /// </summary>
+  public required RoomDto Room { get; init; }
 }

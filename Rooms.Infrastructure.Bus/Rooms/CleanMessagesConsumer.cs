@@ -9,13 +9,13 @@ namespace Rooms.Infrastructure.Bus.Rooms;
 /// <param name="cleaner">Сервис очистки сообщений</param>
 public class CleanMessagesConsumer(IMessagesCleaner cleaner) : IConsumer<CleanMessages>
 {
-    /// <summary>
-    /// Метод обработчик 
-    /// </summary>
-    /// <param name="context">Контекст сообщения</param>
-    public async Task Consume(ConsumeContext<CleanMessages> context)
-    {
-        // Запускаем отчистку сообщений
-        await cleaner.CleanAsync(context.Message.RoomId, context.CancellationToken);
-    }
+  /// <summary>
+  /// Метод обработчик 
+  /// </summary>
+  /// <param name="context">Контекст сообщения</param>
+  public async Task Consume(ConsumeContext<CleanMessages> context)
+  {
+    // Запускаем отчистку сообщений
+    await cleaner.CleanAsync(context.Message.RoomId, context.CancellationToken);
+  }
 }

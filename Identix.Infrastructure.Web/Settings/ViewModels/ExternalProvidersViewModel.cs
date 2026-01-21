@@ -7,8 +7,8 @@ namespace Identix.Infrastructure.Web.Settings.ViewModels;
 /// </summary>
 public class ExternalProvidersViewModel : RemoveLoginInputModel
 {
-    /// <summary>
-    /// Внешние поставщики
-    /// </summary>
-    public required IEnumerable<ExternalProvider> ExternalProviders { get; init; }
+  /// <summary>
+  /// Внешние поставщики
+  /// </summary>
+  public required IEnumerable<ExternalProvider> ExternalProviders { get; init; }
 }

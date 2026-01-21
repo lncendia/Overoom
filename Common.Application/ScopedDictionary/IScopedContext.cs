@@ -5,18 +5,18 @@ namespace Common.Application.ScopedDictionary;
 /// </summary>
 public interface IScopedContext
 {
-    /// <summary>
-    /// Текущий активный скоп (или null, если скопа нет).
-    /// </summary>
-    IScopedDictionary Current { get; }
-    
-    /// <summary>
-    /// Определяет, находится ли выполнение в области видимости.
-    /// </summary>
-    bool InScope { get; }
+  /// <summary>
+  /// Текущий активный скоп (или null, если скопа нет).
+  /// </summary>
+  IScopedDictionary Current { get; }
 
-    /// <summary>
-    /// Создаёт новый скоп и делает его текущим.
-    /// </summary>
-    IDisposable CreateScope();
+  /// <summary>
+  /// Определяет, находится ли выполнение в области видимости.
+  /// </summary>
+  bool InScope { get; }
+
+  /// <summary>
+  /// Создаёт новый скоп и делает его текущим.
+  /// </summary>
+  IDisposable CreateScope();
 }

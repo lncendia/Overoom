@@ -8,13 +8,13 @@ namespace Films.Application.Abstractions.Queries.Rooms;
 /// </summary>
 public class GetRoomByIdQuery : IRequest<RoomDto>
 {
-    /// <summary>
-    /// Идентификатор комнаты
-    /// </summary>
-    public required Guid Id { get; init; }
-    
-    /// <summary>
-    /// Идентификатор пользователя (опционально) для получения персональных данных
-    /// </summary>
-    public Guid? UserId { get; init; }
+  /// <summary>
+  /// Идентификатор комнаты
+  /// </summary>
+  public required Guid Id { get; init; }
+
+  /// <summary>
+  /// Идентификатор пользователя (опционально) для получения персональных данных
+  /// </summary>
+  public Guid? UserId { get; init; }
 }

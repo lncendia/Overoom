@@ -8,13 +8,13 @@ namespace Films.Application.Abstractions.Commands.Profile;
 /// </summary>
 public class UpdateRoomSettingsCommand : IRequest
 {
-    /// <summary>
-    /// Идентификатор пользователя
-    /// </summary>
-    public required Guid UserId { get; set; }
-    
-    /// <summary>
-    /// Настройки комнаты
-    /// </summary>
-    public required RoomSettings Settings { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя
+  /// </summary>
+  public required Guid UserId { get; set; }
+
+  /// <summary>
+  /// Настройки комнаты
+  /// </summary>
+  public required RoomSettings Settings { get; init; }
 }

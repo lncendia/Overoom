@@ -10,13 +10,13 @@ namespace Films.Domain.Rooms.Events;
 /// <param name="viewerId">Идентификатор зрителя, который покинул комнату</param>
 public class ViewerLeavedEvent(Room room, Guid viewerId) : DomainEvent
 {
-    /// <summary>
-    /// Комната, которую покинул зритель
-    /// </summary>
-    public Room Room { get; } = room;
-    
-    /// <summary>
-    /// Идентификатор зрителя, который покинул комнату
-    /// </summary>
-    public Guid ViewerId { get; } = viewerId;
+  /// <summary>
+  /// Комната, которую покинул зритель
+  /// </summary>
+  public Room Room { get; } = room;
+
+  /// <summary>
+  /// Идентификатор зрителя, который покинул комнату
+  /// </summary>
+  public Guid ViewerId { get; } = viewerId;
 }

@@ -11,21 +11,21 @@ namespace Films.Infrastructure.Bus.Users;
 /// <param name="mediator">Медиатор</param>
 public class UserInfoChangedConsumer(ISender mediator) : IConsumer<UserInfoChangedIntegrationEvent>
 {
-    /// <summary>
-    /// Метод обработчик 
-    /// </summary>
-    /// <param name="context">Контекст сообщения</param>
-    public async Task Consume(ConsumeContext<UserInfoChangedIntegrationEvent> context)
-    {
-        // Получаем данные события
-        var integrationEvent = context.Message;
+  /// <summary>
+  /// Метод обработчик 
+  /// </summary>
+  /// <param name="context">Контекст сообщения</param>
+  public async Task Consume(ConsumeContext<UserInfoChangedIntegrationEvent> context)
+  {
+    // Получаем данные события
+    UserInfoChangedIntegrationEvent integrationEvent = context.Message;
 
-        // Отправляем команду на обработку события
-        await mediator.Send(new ChangeUserCommand
-        {
-            Id = integrationEvent.Id,
-            UserName = integrationEvent.Name,
-            PhotoKey = integrationEvent.PhotoKey
-        }, context.CancellationToken);
-    }
+    // Отправляем команду на обработку события
+    await mediator.Send(new ChangeUserCommand
+    {
+      Id = integrationEvent.Id,
+      UserName = integrationEvent.Name,
+      PhotoKey = integrationEvent.PhotoKey
+    }, context.CancellationToken);
+  }
 }

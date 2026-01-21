@@ -19,308 +19,236 @@ namespace Identix.Tests.UnitTests.Commands.Create;
 /// </summary>
 public class CreateUserExternalCommandHandlerTest
 {
-    /// <summary>
-    /// Поле Mock объекта UserManager.
-    /// </summary>
-    private readonly Mock<UserManager<AppUser>> _userManagerMock;
+  /// <summary>
+  /// Поле Mock объекта UserManager.
+  /// </summary>
+  private readonly Mock<UserManager<AppUser>> _userManagerMock;
 
-    /// <summary>
-    /// Поле Mock объекта, реализующего IThumbnailStore.
-    /// </summary>
-    private readonly Mock<IFileStorage> _thumbnailStore = new();
+  /// <summary>
+  /// Поле Mock объекта, реализующего IThumbnailStore.
+  /// </summary>
+  private readonly Mock<IFileStorage> _thumbnailStore = new();
 
-    /// <summary>
-    /// Поле обработчика.
-    /// </summary>
-    private readonly CreateUserExternalCommandHandler _handler;
+  /// <summary>
+  /// Поле обработчика.
+  /// </summary>
+  private readonly CreateUserExternalCommandHandler _handler;
 
-    /// <summary>
-    /// Поле, представляющее текущего пользователя с его утверждениями (claims).
-    /// </summary>
-    private readonly ClaimsPrincipal _claimsPrincipal;
+  /// <summary>
+  /// Поле, представляющее текущего пользователя с его утверждениями (claims).
+  /// </summary>
+  private readonly ClaimsPrincipal _claimsPrincipal;
 
-    /// <summary>
-    /// Конструктор.
-    /// </summary>
-    public CreateUserExternalCommandHandlerTest()
+  /// <summary>
+  /// Конструктор.
+  /// </summary>
+  public CreateUserExternalCommandHandlerTest()
+  {
+    _userManagerMock = new Mock<UserManager<AppUser>>(
+      new Mock<IUserStore<AppUser>>().Object,
+      new Mock<IOptions<IdentityOptions>>().Object,
+      new Mock<IPasswordHasher<AppUser>>().Object,
+      Array.Empty<IUserValidator<AppUser>>(),
+      Array.Empty<IPasswordValidator<AppUser>>(),
+      new Mock<ILookupNormalizer>().Object,
+      new Mock<IdentityErrorDescriber>().Object,
+      new Mock<IServiceProvider>().Object,
+      new Mock<ILogger<UserManager<AppUser>>>().Object);
+
+    var publishEndpointMock = new Mock<IPublishEndpoint>();
+    var mongoDbContextMock = new Mock<MongoDbContext>();
+
+    // Инициализация обработчика.
+    _handler = new CreateUserExternalCommandHandler(_userManagerMock.Object, _thumbnailStore.Object,
+      publishEndpointMock.Object, mongoDbContextMock.Object,
+      new Mock<ILogger<CreateUserExternalCommandHandler>>().Object);
+
+    // Создание ClaimsPrincipal для представления пользователя с указанным email в виде утверждения (claim).
+    _claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity([
+      new Claim(ClaimTypes.Email, "test@example.com")
+    ]));
+  }
+
+  /// <summary>
+  /// Проверка валидной команды на добавление внешней аутентификации.
+  /// </summary>
+  [Fact]
+  public async Task Handle_ValidCommand_AddExternalLogin()
+  {
+    // Arrange
+    // Настройка mock объекта UserManager для возвращения null при поиске пользователя по внешней аутентификации.
+    _userManagerMock
+      .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+      .ReturnsAsync(() => null);
+
+    // Настройка mock объекта UserManager для успешного создания пользователя.
+    _userManagerMock
+      .Setup(m => m.CreateAsync(It.IsAny<AppUser>()))
+      .ReturnsAsync(IdentityResult.Success);
+
+    // Создаем команду для создания пользователя через внешний провайдер.
+    var command = new CreateUserExternalCommand
     {
-        _userManagerMock = new Mock<UserManager<AppUser>>(
-            new Mock<IUserStore<AppUser>>().Object,
-            new Mock<IOptions<IdentityOptions>>().Object,
-            new Mock<IPasswordHasher<AppUser>>().Object,
-            Array.Empty<IUserValidator<AppUser>>(),
-            Array.Empty<IPasswordValidator<AppUser>>(),
-            new Mock<ILookupNormalizer>().Object,
-            new Mock<IdentityErrorDescriber>().Object,
-            new Mock<IServiceProvider>().Object,
-            new Mock<ILogger<UserManager<AppUser>>>().Object);
+      LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName"),
+      Locale = Localization.En
+    };
 
-        var publishEndpointMock = new Mock<IPublishEndpoint>();
-        var mongoDbContextMock = new Mock<MongoDbContext>();
-
-        // Инициализация обработчика.
-        _handler = new CreateUserExternalCommandHandler(_userManagerMock.Object, _thumbnailStore.Object,
-            publishEndpointMock.Object, mongoDbContextMock.Object, new Mock<ILogger<CreateUserExternalCommandHandler>>().Object);
-
-        // Создание ClaimsPrincipal для представления пользователя с указанным email в виде утверждения (claim).
-        _claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity([
-            new Claim(ClaimTypes.Email, "test@example.com")
-        ]));
-    }
-
-    /// <summary>
-    /// Проверка валидной команды на добавление внешней аутентификации.
-    /// </summary>
-    [Fact]
-    public async Task Handle_ValidCommand_AddExternalLogin()
+    // Act
+    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
+    Exception? exception = await Record.ExceptionAsync(async () =>
     {
-        // Arrange
-        // Настройка mock объекта UserManager для возвращения null при поиске пользователя по внешней аутентификации.
-        _userManagerMock
+      await _handler.Handle(command, CancellationToken.None);
+    });
 
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+    // Assert
+    // Проверка на отсутствие исключения.
+    Assert.Null(exception);
+  }
 
-            // Возвращаем null.
-            .ReturnsAsync(() => null);
-
-        // Настройка mock объекта UserManager для успешного создания пользователя.
-        _userManagerMock
-
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.CreateAsync(It.IsAny<AppUser>()))
-
-            // Возвращаем Success.
-            .ReturnsAsync(IdentityResult.Success);
-
-        // Создаем команду для создания пользователя через внешний провайдер.
-        var command = new CreateUserExternalCommand
+  /// <summary>
+  /// Проверка случая, когда логин уже ассоциирован с пользователем.
+  /// </summary>
+  [Fact]
+  public async Task Handle_WhenLoginAlreadyAssociated_ThrowsLoginAlreadyAssociatedException()
+  {
+    // Arrange
+    // Настройка mock объекта UserManager для возврата пользователя и  при вызове FindByLoginAsync.
+    _userManagerMock
+      .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+      .ReturnsAsync(() =>
+        new AppUser
         {
-            // Задаем "тестовую" информацию о внешней аутентификации.
-            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey",
-                "TestDisplayName"), // Здесь укажите правильные значения
-
-            // Задаем локализацию пользователя.
-            Locale = Localization.En
-        };
-
-        // Act
-        // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
-        var exception = await Record.ExceptionAsync(async () =>
-        {
-            await _handler.Handle(command, CancellationToken.None);
+          UserName = "test",
+          Email = "test@example.com",
+          RegistrationTimeUtc = DateTime.UtcNow,
+          LastAuthTimeUtc = DateTime.UtcNow
         });
 
-        // Assert
-        // Проверка на отсутствие исключения.
-        Assert.Null(exception);
-    }
-
-    /// <summary>
-    /// Проверка случая, когда логин уже ассоциирован с пользователем.
-    /// </summary>
-    [Fact]
-    public async Task Handle_WhenLoginAlreadyAssociated_ThrowsLoginAlreadyAssociatedException()
+    // Создаем команду для создания пользователя через внешний провайдер.
+    var command = new CreateUserExternalCommand
     {
-        // Arrange
-        // Настройка mock объекта UserManager для возврата пользователя и  при вызове FindByLoginAsync.
-        _userManagerMock
+      LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName"),
+      Locale = Localization.En
+    };
 
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+    // Act & Assert
+    // Проверка, что выполнение метода Handle приводит к возникновению исключения LoginAlreadyAssociatedException.
+    await Assert.ThrowsAsync<LoginAlreadyAssociatedException>(() => _handler.Handle(command, CancellationToken.None));
+  }
 
-            // Возвращаем тестового пользователя.
-            .ReturnsAsync(() =>
-                new AppUser
-                {
-                    UserName = "test",
-                    Email = "test@example.com",
-                    RegistrationTimeUtc = DateTime.UtcNow,
-                    LastAuthTimeUtc = DateTime.UtcNow
-                });
+  /// <summary>
+  /// Проверка случая, когда email не существует.
+  /// </summary>
+  [Fact]
+  public async Task Handle_WhenEmailNotExisted_ThrowsEmailFormatException()
+  {
+    // Arrange
+    // Настройка mock объекта UserManager для возврата null при вызове FindByLoginAsync.
+    _userManagerMock
+      .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+      .ReturnsAsync(() => null);
 
-        // Создаем команду для создания пользователя через внешний провайдер.
-        var command = new CreateUserExternalCommand
-        {
-            // Задаем "тестовую" информацию о внешней аутентификации.
-            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey",
-                "TestDisplayName"), // Здесь укажите правильные значения
+    // Настройка mock объекта UserManager для успешного создания пользователя при вызове CreateAsync.
+    _userManagerMock
+      .Setup(m => m.CreateAsync(It.IsAny<AppUser>()))
+      .ReturnsAsync(IdentityResult.Success);
 
-            // Задаем локализацию пользователя.
-            Locale = Localization.En
-        };
-
-        // Act & Assert
-        // Проверка, что выполнение метода Handle приводит к возникновению исключения LoginAlreadyAssociatedException.
-        await Assert.ThrowsAsync<LoginAlreadyAssociatedException>(
-            () => _handler.Handle(command, CancellationToken.None));
-    }
-
-    /// <summary>
-    /// Проверка случая, когда email не существует.
-    /// </summary>
-    [Fact]
-    public async Task Handle_WhenEmailNotExisted_ThrowsEmailFormatException()
+    // Создаем команду для создания пользователя через внешний провайдер.
+    var command = new CreateUserExternalCommand
     {
-        // Arrange
-        // Настройка mock объекта UserManager для возврата null при вызове FindByLoginAsync.
-        _userManagerMock
+      LoginInfo = new ExternalLoginInfo(new ClaimsPrincipal(), "TestProvider", "TestKey", "TestDisplayName"),
+      Locale = Localization.En
+    };
 
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+    // Act & Assert
+    // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailFormatException.
+    await Assert.ThrowsAsync<EmailFormatException>(() => _handler.Handle(command, CancellationToken.None));
+  }
 
-            // Возвращаем null.
-            .ReturnsAsync(() => null);
+  /// <summary>
+  /// Проверка случая, когда email уже занят.
+  /// </summary>
+  [Fact]
+  public async Task Handle_WhenEmailAlreadyTaken_ThrowsEmailAlreadyTakenException()
+  {
+    // Arrange
+    // Настройка mock объекта UserManager для возврата null при вызове FindByLoginAsync.
+    _userManagerMock
+      .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+      .ReturnsAsync(() => null);
 
-        // Настройка mock объекта UserManager для успешного создания пользователя при вызове CreateAsync.
-        _userManagerMock
+    // Настройка mock объекта UserManager для возврата ошибки с кодом DuplicateEmail при вызове CreateAsync.
+    _userManagerMock
+      .Setup(m => m.CreateAsync(It.IsAny<AppUser>()))
+      .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateEmail" }));
 
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.CreateAsync(It.IsAny<AppUser>()))
-
-            // Возвращаем Success.
-            .ReturnsAsync(IdentityResult.Success);
-
-        // Создаем команду для создания пользователя через внешний провайдер.
-        var command = new CreateUserExternalCommand
-        {
-            // Задаем "тестовую" информацию о внешней аутентификации.
-            LoginInfo = new ExternalLoginInfo(new ClaimsPrincipal(), "TestProvider", "TestKey",
-                "TestDisplayName"), // Здесь укажите правильные значения
-
-            // Задаем локализацию пользователя.
-            Locale = Localization.En
-        };
-
-        // Act & Assert
-        // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailFormatException.
-        await Assert.ThrowsAsync<EmailFormatException>(
-            () => _handler.Handle(command, CancellationToken.None));
-    }
-
-    /// <summary>
-    /// Проверка случая, когда email уже занят.
-    /// </summary>
-    [Fact]
-    public async Task Handle_WhenEmailAlreadyTaken_ThrowsEmailAlreadyTakenException()
+    // Создаем команду для создания пользователя через внешний провайдер.
+    var command = new CreateUserExternalCommand
     {
-        // Arrange
-        // Настройка mock объекта UserManager для возврата null при вызове FindByLoginAsync.
-        _userManagerMock
+      LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName"),
+      Locale = Localization.En
+    };
 
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+    // Act & Assert
+    // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailAlreadyTakenException.
+    await Assert.ThrowsAsync<EmailAlreadyTakenException>(() => _handler.Handle(command, CancellationToken.None));
+  }
 
-            // Возвращаем null.
-            .ReturnsAsync(() => null);
+  /// <summary>
+  /// Проверка случая, когда email невалиден.
+  /// </summary>
+  [Fact]
+  public async Task Handle_WhenEmailIsInvalid_ThrowsEmailFormatException()
+  {
+    // Arrange
+    // Настройка mock объекта UserManager для возврата null при вызове FindByLoginAsync.
+    _userManagerMock
+      .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+      .ReturnsAsync(() => null);
 
-        // Настройка mock объекта UserManager для возврата ошибки с кодом DuplicateEmail при вызове CreateAsync.
-        _userManagerMock
+    // Настройка mock объекта UserManager для возврата ошибки с кодом InvalidEmail при вызове CreateAsync.
+    _userManagerMock
+      .Setup(m => m.CreateAsync(It.IsAny<AppUser>()))
+      .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidEmail" }));
 
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.CreateAsync(It.IsAny<AppUser>()))
-
-            // Возвращаем ошибку с кодом InvalidEmail.
-            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateEmail" }));
-
-        // Создаем команду для создания пользователя через внешний провайдер.
-        var command = new CreateUserExternalCommand
-        {
-            // Задаем "тестовую" информацию о внешней аутентификации.
-            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey",
-                "TestDisplayName"), // Здесь укажите правильные значения
-
-            // Задаем локализацию пользователя.
-            Locale = Localization.En
-        };
-
-        // Act & Assert
-        // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailAlreadyTakenException.
-        await Assert.ThrowsAsync<EmailAlreadyTakenException>(
-            () => _handler.Handle(command, CancellationToken.None));
-    }
-
-    /// <summary>
-    /// Проверка случая, когда email невалиден.
-    /// </summary>
-    [Fact]
-    public async Task Handle_WhenEmailIsInvalid_ThrowsEmailFormatException()
+    // Создаем команду для создания пользователя через внешний провайдер.
+    var command = new CreateUserExternalCommand
     {
-        // Arrange
-        // Настройка mock объекта UserManager для возврата null при вызове FindByLoginAsync.
-        _userManagerMock
+      LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName"),
+      Locale = Localization.En
+    };
 
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+    // Act & Assert
+    // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailFormatException.
+    await Assert.ThrowsAsync<EmailFormatException>(() => _handler.Handle(command, CancellationToken.None));
+  }
 
-            // Возвращаем null.
-            .ReturnsAsync(() => null);
+  /// <summary>
+  /// Проверка случая, когда длина имени пользователя не валидна.
+  /// </summary>
+  [Fact]
+  public async Task Handle_WhenUsernameLengthIsInvalid_ThrowsUserNameLengthException()
+  {
+    // Arrange
+    // Настройка mock объекта UserManager для возврата null при вызове FindByLoginAsync.
+    _userManagerMock
+      .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
+      .ReturnsAsync(() => null);
 
-        // Настройка mock объекта UserManager для возврата ошибки с кодом InvalidEmail при вызове CreateAsync.
-        _userManagerMock
+    // Настройка mock объекта UserManager для возврата ошибки с кодом InvalidEmail при вызове CreateAsync.
+    _userManagerMock
+      .Setup(m => m.CreateAsync(It.IsAny<AppUser>()))
+      .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidUserNameLength" }));
 
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.CreateAsync(It.IsAny<AppUser>()))
-
-            // Возвращаем ошибку с кодом InvalidEmail.
-            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidEmail" }));
-
-        // Создаем команду для создания пользователя через внешний провайдер.
-        var command = new CreateUserExternalCommand
-        {
-            // Задаем "тестовую" информацию о внешней аутентификации.
-            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey",
-                "TestDisplayName"), // Здесь укажите правильные значения
-
-            // Задаем локализацию пользователя.
-            Locale = Localization.En
-        };
-
-        // Act & Assert
-        // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailFormatException.
-        await Assert.ThrowsAsync<EmailFormatException>(
-            () => _handler.Handle(command, CancellationToken.None));
-    }
-
-    /// <summary>
-    /// Проверка случая, когда длина имени пользователя не валидна.
-    /// </summary>
-    [Fact]
-    public async Task Handle_WhenUsernameLengthIsInvalid_ThrowsUserNameLengthException()
+    // Создаем команду для создания пользователя через внешний провайдер.
+    var command = new CreateUserExternalCommand
     {
-        // Arrange
-        // Настройка mock объекта UserManager для возврата null при вызове FindByLoginAsync.
-        _userManagerMock
+      LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey", "TestDisplayName"),
+      Locale = Localization.En
+    };
 
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
-
-            // Возвращаем null.
-            .ReturnsAsync(() => null);
-
-        // Настройка mock объекта UserManager для возврата ошибки с кодом InvalidEmail при вызове CreateAsync.
-        _userManagerMock
-
-            // Выбираем метод, к которому делаем заглушку.  
-            .Setup(m => m.CreateAsync(It.IsAny<AppUser>()))
-
-            // Возвращаем ошибку с кодом InvalidEmail.
-            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidUserNameLength" }));
-
-        // Создаем команду для создания пользователя через внешний провайдер.
-        var command = new CreateUserExternalCommand
-        {
-            // Задаем "тестовую" информацию о внешней аутентификации.
-            LoginInfo = new ExternalLoginInfo(_claimsPrincipal, "TestProvider", "TestKey",
-                "TestDisplayName"), // Здесь укажите правильные значения
-
-            // Задаем локализацию пользователя.
-            Locale = Localization.En
-        };
-
-        // Act & Assert
-        // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailFormatException.
-        await Assert.ThrowsAsync<UserNameLengthException>(
-            () => _handler.Handle(command, CancellationToken.None));
-    }
+    // Act & Assert
+    // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailFormatException.
+    await Assert.ThrowsAsync<UserNameLengthException>(() => _handler.Handle(command, CancellationToken.None));
+  }
 }

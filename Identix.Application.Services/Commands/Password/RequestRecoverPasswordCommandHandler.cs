@@ -14,30 +14,30 @@ namespace Identix.Application.Services.Commands.Password;
 /// <param name="userManager">Менеджер пользователей, предоставленный ASP.NET Core Identity.</param>
 /// <param name="publishEndpoint">Сервис для публикации событий.</param>
 public class RequestRecoverPasswordCommandHandler(UserManager<AppUser> userManager, IPublishEndpoint publishEndpoint)
-    : IRequestHandler<RequestRecoverPasswordCommand>
+  : IRequestHandler<RequestRecoverPasswordCommand>
 {
-    /// <summary>
-    /// Метод обработки команды запроса восстановления пароля пользователя.
-    /// </summary>
-    /// <param name="request">Запрос на восстановление пароля.</param>
-    /// <param name="cancellationToken">Токен отмены для асинхронной операции.</param>
-    /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден.</exception>
-    public async Task Handle(RequestRecoverPasswordCommand request, CancellationToken cancellationToken)
-    {
-        // Поиск пользователя по адресу электронной почты.
-        var user = await userManager.FindByEmailAsync(request.Email);
+  /// <summary>
+  /// Метод обработки команды запроса восстановления пароля пользователя.
+  /// </summary>
+  /// <param name="request">Запрос на восстановление пароля.</param>
+  /// <param name="cancellationToken">Токен отмены для асинхронной операции.</param>
+  /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден.</exception>
+  public async Task Handle(RequestRecoverPasswordCommand request, CancellationToken cancellationToken)
+  {
+    // Поиск пользователя по адресу электронной почты.
+    AppUser? user = await userManager.FindByEmailAsync(request.Email);
 
-        // Вызываем исключение если пользователь не найден
-        if (user == null) throw new UserNotFoundException();
-        
-        // Генерация кода сброса пароля.
-        var code = await userManager.GeneratePasswordResetTokenAsync(user);
+    // Вызываем исключение если пользователь не найден
+    if (user == null) throw new UserNotFoundException();
 
-        // Формирование URL для подтверждения сброса пароля.
-        var url = user.GenerateMailConfirmUrl(request.ResetUrl, code, request.ReturnUrl);
+    // Генерация кода сброса пароля.
+    string code = await userManager.GeneratePasswordResetTokenAsync(user);
 
-        // Отправка электронного письма со ссылкой для подтверждения сброса пароля.
-        var message = new ConfirmRecoverPasswordEmail { Recipient = request.Email, ConfirmLink = url };
-        await publishEndpoint.SkipOutbox().Publish(new SendEmail { Message = message }, cancellationToken);
-    }
+    // Формирование URL для подтверждения сброса пароля.
+    string url = user.GenerateMailConfirmUrl(request.ResetUrl, code, request.ReturnUrl);
+
+    // Отправка электронного письма со ссылкой для подтверждения сброса пароля.
+    var message = new ConfirmRecoverPasswordEmail { Recipient = request.Email, ConfirmLink = url };
+    await publishEndpoint.SkipOutbox().Publish(new SendEmail { Message = message }, cancellationToken);
+  }
 }

@@ -5,12 +5,13 @@
 /// </summary>
 public enum Localization
 {
-    /// <summary>
-    /// Русский
-    /// </summary>
-    Ru = 1,
-    /// <summary>
-    /// Английский
-    /// </summary>
-    En = 2
+  /// <summary>
+  /// Русский
+  /// </summary>
+  Ru = 1,
+
+  /// <summary>
+  /// Английский
+  /// </summary>
+  En = 2
 }

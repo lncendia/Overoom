@@ -4,4 +4,4 @@ namespace Identix.Infrastructure.Web.Exceptions;
 /// Исключение, возникающее при отсутствии URL параметра
 /// </summary>
 public class QueryParameterMissingException(string param) : ArgumentException(
-    $@"The string URL parameter {param} is missing", param);
+  $@"The string URL parameter {param} is missing", param);

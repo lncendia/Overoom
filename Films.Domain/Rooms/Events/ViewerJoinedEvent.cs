@@ -11,13 +11,13 @@ namespace Films.Domain.Rooms.Events;
 /// <param name="viewer">Данные зрителя, который подключился к комнате</param>
 public class ViewerJoinedEvent(Room room, User viewer) : DomainEvent
 {
-    /// <summary>
-    /// Комната, к которой подключился зритель
-    /// </summary>
-    public Room Room { get; } = room;
-    
-    /// <summary>
-    /// Данные зрителя, который подключился к комнате
-    /// </summary>
-    public User Viewer { get; } = viewer;
+  /// <summary>
+  /// Комната, к которой подключился зритель
+  /// </summary>
+  public Room Room { get; } = room;
+
+  /// <summary>
+  /// Данные зрителя, который подключился к комнате
+  /// </summary>
+  public User Viewer { get; } = viewer;
 }

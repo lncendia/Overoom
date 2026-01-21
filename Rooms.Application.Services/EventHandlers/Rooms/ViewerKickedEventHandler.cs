@@ -12,21 +12,21 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <param name="eventSender">Отправитель событий комнаты</param>
 public class ViewerKickedEventHandler(IRoomEventSender eventSender) : AfterSaveNotificationHandler<ViewerKickedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие исключения зрителя
-    /// </summary>
-    /// <param name="event">Событие исключения зрителя</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerKickedEvent @event, CancellationToken cancellationToken)
-    {
-        await eventSender.SendAsync(new LeaveEvent { Viewer = @event.Target.Id }, @event.Room.Id, null,
-            cancellationToken);
+  /// <summary>
+  /// Обрабатывает событие исключения зрителя
+  /// </summary>
+  /// <param name="event">Событие исключения зрителя</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerKickedEvent @event, CancellationToken cancellationToken)
+  {
+    await eventSender.SendAsync(new LeaveEvent { Viewer = @event.Target.Id }, @event.Room.Id, null,
+      cancellationToken);
 
-        await eventSender.SendAsync(new KickNotificationEvent
-        {
-            Initiator = @event.Room.Owner.Id,
-            Target = @event.Target.Id,
-            Name = @event.Target.UserName
-        }, @event.Room.Id, null, cancellationToken);
-    }
+    await eventSender.SendAsync(new KickNotificationEvent
+    {
+      Initiator = @event.Room.Owner.Id,
+      Target = @event.Target.Id,
+      Name = @event.Target.UserName
+    }, @event.Room.Id, null, cancellationToken);
+  }
 }

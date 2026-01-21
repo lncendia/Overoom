@@ -9,18 +9,18 @@ namespace Films.Application.Abstractions.Queries.Comments;
 /// </summary>
 public class GetFilmCommentsQuery : IRequest<CountResult<CommentDto>>
 {
-    /// <summary>
-    /// Идентификатор фильма
-    /// </summary>
-    public required Guid FilmId { get; set; }
-    
-    /// <summary>
-    /// Количество пропускаемых комментариев
-    /// </summary>
-    public required int Skip { get; init; }
-    
-    /// <summary>
-    /// Количество получаемых комментариев
-    /// </summary>
-    public required int Take { get; init; }
+  /// <summary>
+  /// Идентификатор фильма
+  /// </summary>
+  public required Guid FilmId { get; set; }
+
+  /// <summary>
+  /// Количество пропускаемых комментариев
+  /// </summary>
+  public required int Skip { get; init; }
+
+  /// <summary>
+  /// Количество получаемых комментариев
+  /// </summary>
+  public required int Take { get; init; }
 }

@@ -10,20 +10,20 @@ namespace Rooms.Application.Services.EventHandlers.Tags;
 /// </summary>
 /// <param name="unitOfWork">Единица работы для взаимодействия с репозиториями</param>
 public class FastWatcherEventHandler(IUnitOfWork unitOfWork)
-    : BeforeSaveNotificationHandler<ViewerSpeedChangedEvent>
+  : BeforeSaveNotificationHandler<ViewerSpeedChangedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие изменения скорости воспроизведения
-    /// </summary>
-    /// <param name="notification">Событие изменения скорости</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerSpeedChangedEvent notification, CancellationToken cancellationToken)
-    {
-        if (notification.Viewer.Speed > 1.0)
-            notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.FastWatcher);
-        else
-            notification.Room.RemoveTag(notification.Viewer.Id, Constants.ViewerTags.FastWatcher);
+  /// <summary>
+  /// Обрабатывает событие изменения скорости воспроизведения
+  /// </summary>
+  /// <param name="notification">Событие изменения скорости</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerSpeedChangedEvent notification, CancellationToken cancellationToken)
+  {
+    if (notification.Viewer.Speed > 1.0)
+      notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.FastWatcher);
+    else
+      notification.Room.RemoveTag(notification.Viewer.Id, Constants.ViewerTags.FastWatcher);
 
-        await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
-    }
+    await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
+  }
 }

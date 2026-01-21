@@ -9,17 +9,17 @@ namespace Common.Application.Events;
 /// </summary>
 /// <typeparam name="T">Тип события</typeparam>
 public abstract class AfterSaveNotificationHandler<T> : INotificationHandler<T>
-    where T : DomainEvent
+  where T : DomainEvent
 {
-    public Task Handle(T notification, CancellationToken cancellationToken)
-    {
-        return notification.BeforeSave
-            ? Task.CompletedTask
-            : Execute(notification, cancellationToken);
-    }
+  public Task Handle(T notification, CancellationToken cancellationToken)
+  {
+    return notification.BeforeSave
+      ? Task.CompletedTask
+      : Execute(notification, cancellationToken);
+  }
 
-    /// <summary>
-    /// Логика, выполняемая только после сохранения в БД.
-    /// </summary>
-    protected abstract Task Execute(T notification, CancellationToken cancellationToken);
+  /// <summary>
+  /// Логика, выполняемая только после сохранения в БД.
+  /// </summary>
+  protected abstract Task Execute(T notification, CancellationToken cancellationToken);
 }

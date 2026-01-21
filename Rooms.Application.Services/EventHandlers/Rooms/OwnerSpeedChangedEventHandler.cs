@@ -13,19 +13,20 @@ namespace Rooms.Application.Services.EventHandlers.Rooms;
 /// <param name="eventSender">Отправитель событий комнаты</param>
 /// <param name="context">Контекст выполняемой области</param>
 public class OwnerSpeedChangedEventHandler(IRoomEventSender eventSender, IScopedContext context)
-    : AfterSaveNotificationHandler<ViewerSpeedChangedEvent>
+  : AfterSaveNotificationHandler<ViewerSpeedChangedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие изменения скорости воспроизведения
-    /// </summary>
-    /// <param name="event">Событие изменения скорости</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerSpeedChangedEvent @event, CancellationToken cancellationToken)
-    {
-        if (@event.Viewer != @event.Room.Owner) return;
+  /// <summary>
+  /// Обрабатывает событие изменения скорости воспроизведения
+  /// </summary>
+  /// <param name="event">Событие изменения скорости</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerSpeedChangedEvent @event, CancellationToken cancellationToken)
+  {
+    if (@event.Viewer != @event.Room.Owner) return;
 
-        var excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
+    string excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
 
-        await eventSender.SendAsync(new SpeedEvent { Speed = @event.Viewer.Speed }, @event.Room.Id, excludedConnectionId, cancellationToken);
-    }
+    await eventSender.SendAsync(new SpeedEvent { Speed = @event.Viewer.Speed }, @event.Room.Id, excludedConnectionId,
+      cancellationToken);
+  }
 }

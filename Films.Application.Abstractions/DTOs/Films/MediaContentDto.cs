@@ -5,8 +5,8 @@ namespace Films.Application.Abstractions.DTOs.Films;
 /// </summary>
 public class MediaContentDto
 {
-    /// <summary>
-    /// Коллекция версий медиаконтента, доступная только для чтения.
-    /// </summary>
-    public required IReadOnlyList<string> Versions { get; init; }
+  /// <summary>
+  /// Коллекция версий медиаконтента, доступная только для чтения.
+  /// </summary>
+  public required IReadOnlyList<string> Versions { get; init; }
 }

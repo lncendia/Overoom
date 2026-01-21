@@ -5,8 +5,8 @@ namespace Films.Domain.Films.ValueObjects;
 /// </summary>
 public class MediaContent
 {
-    /// <summary>
-    /// Коллекция версий медиаконтента, доступная только для чтения.
-    /// </summary>
-    public required IReadOnlySet<string> Versions { get; init; }
+  /// <summary>
+  /// Коллекция версий медиаконтента, доступная только для чтения.
+  /// </summary>
+  public required IReadOnlySet<string> Versions { get; init; }
 }

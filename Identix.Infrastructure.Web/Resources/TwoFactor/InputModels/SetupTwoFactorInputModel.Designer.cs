@@ -38,7 +38,8 @@ namespace Identix.Infrastructure.Web.Resources.TwoFactor.InputModels {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Identix.Infrastructure.Web.Resources.TwoFactor.InputModels.SetupTwoFactorInputModel", typeof(SetupTwoFactorInputModel).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Identix.Infrastructure.Web.Resources.TwoFactor.InputModels.SetupTwoFactorInputMod" +
+                            "el", typeof(SetupTwoFactorInputModel).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

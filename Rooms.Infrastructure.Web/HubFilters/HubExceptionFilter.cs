@@ -16,80 +16,79 @@ namespace Rooms.Infrastructure.Web.HubFilters;
 /// </remarks>
 public class HubExceptionFilter : IHubFilter
 {
-    /// <summary>
-    /// Обрабатывает вызов методов хаба
-    /// </summary>
-    /// <param name="invocationContext">Контекст вызова метода хаба</param>
-    /// <param name="next">Делегат для вызова следующего фильтра или метода хаба</param>
-    public async ValueTask<object?> InvokeMethodAsync(
-        HubInvocationContext invocationContext,
-        Func<HubInvocationContext, ValueTask<object?>> next)
+  /// <summary>
+  /// Обрабатывает вызов методов хаба
+  /// </summary>
+  /// <param name="invocationContext">Контекст вызова метода хаба</param>
+  /// <param name="next">Делегат для вызова следующего фильтра или метода хаба</param>
+  public async ValueTask<object?> InvokeMethodAsync(
+    HubInvocationContext invocationContext,
+    Func<HubInvocationContext, ValueTask<object?>> next)
+  {
+    try
     {
-        try
-        {
-            // Выполняем следующий фильтр или метод хаба
-            return await next(invocationContext);
-        }
-        catch (Exception ex)
-        {
-            // Обрабатываем исключение и отправляем сообщение клиенту
-            await HandleHubException(invocationContext.Hub, ex);
-
-            // Пробрасываем исключение дальше
-            throw;
-        }
+      // Выполняем следующий фильтр или метод хаба
+      return await next(invocationContext);
     }
-
-    /// <summary>
-    /// Преобразует исключение в сообщение об ошибке и отправляет клиенту
-    /// </summary>
-    /// <param name="hub">Экземпляр хаба, где произошло исключение</param>
-    /// <param name="ex">Исключение, которое нужно обработать</param>
-    /// <returns>Task, представляющий асинхронную операцию отправки сообщения</returns>
-    /// <remarks>
-    /// Содержит логику преобразования различных типов исключений в пользовательские сообщения
-    /// </remarks>
-    private static Task HandleHubException(Hub hub, Exception ex)
+    catch (Exception ex)
     {
-        // Преобразуем исключение в сообщение об ошибке
-        var error = ex switch
-        {
-            RoomNotFoundException => "Комната не найдена",
-            ViewerNotFoundException => "Зритель не найден",
-            ActionNotAllowedException => "Действие не разрешено",
-            ChangeFilmSeriesException => "Вы не можете изменить серию у фильма",
-            ActionCooldownException a => $"Действие будет доступно через {FormatActionCooldown(a.Seconds)}",
-            ArgumentException => "Данные указаны некорректно или в неверном формате",
-            _ => "Внутренняя ошибка"
-        };
+      // Обрабатываем исключение и отправляем сообщение клиенту
+      await HandleHubException(invocationContext.Hub, ex);
 
-        // Отправляем сообщение об ошибке вызывающему клиенту
-        return hub.Clients.Caller.SendAsync("Event", new ErrorNotificationEvent { Message = error });
+      // Пробрасываем исключение дальше
+      throw;
     }
-    
-    /// <summary>
-    /// Формирует текст уведомления о задержке действия с корректным склонением слова "секунда".
-    /// </summary>
-    /// <param name="seconds">Количество секунд до доступности действия.</param>
-    /// <returns>Строка вида "Действие будет доступно через N секунду/секунды/секунд".</returns>
-    private static string FormatActionCooldown(int seconds)
+  }
+
+  /// <summary>
+  /// Преобразует исключение в сообщение об ошибке и отправляет клиенту
+  /// </summary>
+  /// <param name="hub">Экземпляр хаба, где произошло исключение</param>
+  /// <param name="ex">Исключение, которое нужно обработать</param>
+  /// <returns>Task, представляющий асинхронную операцию отправки сообщения</returns>
+  /// <remarks>
+  /// Содержит логику преобразования различных типов исключений в пользовательские сообщения
+  /// </remarks>
+  private static Task HandleHubException(Hub hub, Exception ex)
+  {
+    // Преобразуем исключение в сообщение об ошибке
+    string error = ex switch
     {
-        string suffix;
+      RoomNotFoundException => "Комната не найдена",
+      ViewerNotFoundException => "Зритель не найден",
+      ActionNotAllowedException => "Действие не разрешено",
+      ChangeFilmSeriesException => "Вы не можете изменить серию у фильма",
+      ActionCooldownException a => $"Действие будет доступно через {FormatActionCooldown(a.Seconds)}",
+      ArgumentException => "Данные указаны некорректно или в неверном формате",
+      _ => "Внутренняя ошибка"
+    };
 
-        var lastDigit = seconds % 10;
-        var lastTwoDigits = seconds % 100;
+    // Отправляем сообщение об ошибке вызывающему клиенту
+    return hub.Clients.Caller.SendAsync("Event", new ErrorNotificationEvent { Message = error });
+  }
 
-        if (lastTwoDigits is >= 11 and <= 14)
-            suffix = "секунд";
-        else
-            suffix = lastDigit switch
-            {
-                1 => "секунду",
-                >= 2 and <= 4 => "секунды",
-                _ => "секунд"
-            };
+  /// <summary>
+  /// Формирует текст уведомления о задержке действия с корректным склонением слова "секунда".
+  /// </summary>
+  /// <param name="seconds">Количество секунд до доступности действия.</param>
+  /// <returns>Строка вида "Действие будет доступно через N секунду/секунды/секунд".</returns>
+  private static string FormatActionCooldown(int seconds)
+  {
+    string suffix;
 
-        return $"{seconds} {suffix}";
-    }
+    int lastDigit = seconds % 10;
+    int lastTwoDigits = seconds % 100;
 
+    if (lastTwoDigits is >= 11 and <= 14)
+      suffix = "секунд";
+    else
+      suffix = lastDigit switch
+      {
+        1 => "секунду",
+        >= 2 and <= 4 => "секунды",
+        _ => "секунд"
+      };
+
+    return $"{seconds} {suffix}";
+  }
 }

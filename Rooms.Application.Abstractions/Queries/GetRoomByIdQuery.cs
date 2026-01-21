@@ -8,13 +8,13 @@ namespace Rooms.Application.Abstractions.Queries;
 /// </summary>
 public class GetRoomByIdQuery : IRequest<RoomDto>
 {
-    /// <summary>
-    /// Идентификатор пользователя
-    /// </summary>
-    public required Guid ViewerId { get; init; }
+  /// <summary>
+  /// Идентификатор пользователя
+  /// </summary>
+  public required Guid ViewerId { get; init; }
 
-    /// <summary>
-    /// Идентификатор комнаты
-    /// </summary>
-    public required Guid RoomId { get; init; }
+  /// <summary>
+  /// Идентификатор комнаты
+  /// </summary>
+  public required Guid RoomId { get; init; }
 }

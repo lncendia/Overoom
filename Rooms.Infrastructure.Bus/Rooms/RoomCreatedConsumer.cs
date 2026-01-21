@@ -12,28 +12,28 @@ namespace Rooms.Infrastructure.Bus.Rooms;
 /// <param name="mediator">Медиатор</param>
 public class RoomCreatedConsumer(ISender mediator) : IConsumer<RoomCreatedIntegrationEvent>
 {
-    /// <summary>
-    /// Метод обработчик 
-    /// </summary>
-    /// <param name="context">Контекст сообщения</param>
-    public async Task Consume(ConsumeContext<RoomCreatedIntegrationEvent> context)
-    {
-        // Получаем данные события
-        var integrationEvent = context.Message;
+  /// <summary>
+  /// Метод обработчик 
+  /// </summary>
+  /// <param name="context">Контекст сообщения</param>
+  public async Task Consume(ConsumeContext<RoomCreatedIntegrationEvent> context)
+  {
+    // Получаем данные события
+    RoomCreatedIntegrationEvent integrationEvent = context.Message;
 
-        // Отправляем команду на обработку события
-        await mediator.Send(new CreateRoomCommand
-        {
-            Id = integrationEvent.Id,
-            Owner = new ViewerData
-            {
-                Id = integrationEvent.Owner.Id,
-                UserName = integrationEvent.Owner.UserName,
-                PhotoKey = integrationEvent.Owner.PhotoKey,
-                Settings = integrationEvent.Owner.Settings
-            },
-            FilmId = integrationEvent.FilmId,
-            IsSerial = integrationEvent.IsSerial
-        }, context.CancellationToken);
-    }
+    // Отправляем команду на обработку события
+    await mediator.Send(new CreateRoomCommand
+    {
+      Id = integrationEvent.Id,
+      Owner = new ViewerData
+      {
+        Id = integrationEvent.Owner.Id,
+        UserName = integrationEvent.Owner.UserName,
+        PhotoKey = integrationEvent.Owner.PhotoKey,
+        Settings = integrationEvent.Owner.Settings
+      },
+      FilmId = integrationEvent.FilmId,
+      IsSerial = integrationEvent.IsSerial
+    }, context.CancellationToken);
+  }
 }

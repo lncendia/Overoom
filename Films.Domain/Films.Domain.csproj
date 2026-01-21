@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common.Domain\Common.Domain.csproj" />
-      <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />
+        <ProjectReference Include="..\Common.Domain\Common.Domain.csproj"/>
+        <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -19,24 +19,24 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Users\User.Snapshots.cs">
-        <DependentUpon>User.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Rooms\Room.Snapshots.cs">
-        <DependentUpon>Room.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Ratings\Rating.Snapshots.cs">
-        <DependentUpon>Rating.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Playlists\Playlist.Snapshots.cs">
-        <DependentUpon>Playlist.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Films\Film.Snapshots.cs">
-        <DependentUpon>Film.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Comments\Comment.Snapshots.cs">
-        <DependentUpon>Comment.cs</DependentUpon>
-      </Compile>
+        <Compile Update="Users\User.Snapshots.cs">
+            <DependentUpon>User.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Rooms\Room.Snapshots.cs">
+            <DependentUpon>Room.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Ratings\Rating.Snapshots.cs">
+            <DependentUpon>Rating.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Playlists\Playlist.Snapshots.cs">
+            <DependentUpon>Playlist.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Films\Film.Snapshots.cs">
+            <DependentUpon>Film.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Comments\Comment.Snapshots.cs">
+            <DependentUpon>Comment.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

@@ -7,28 +7,28 @@ namespace Films.Infrastructure.Web.Playlists.InputModels;
 /// </summary>
 public class SearchPlaylistsInputModel : IWithInputPagination
 {
-    /// <summary>
-    /// Поисковый запрос (название плейлиста)
-    /// </summary>
-    public string? Query { get; init; }
+  /// <summary>
+  /// Поисковый запрос (название плейлиста)
+  /// </summary>
+  public string? Query { get; init; }
 
-    /// <summary>
-    /// Жанр для фильтрации плейлистов
-    /// </summary>
-    public string? Genre { get; init; }
+  /// <summary>
+  /// Жанр для фильтрации плейлистов
+  /// </summary>
+  public string? Genre { get; init; }
 
-    /// <summary>
-    /// Идентификатор фильма для поиска плейлистов, содержащих этот фильм
-    /// </summary>
-    public Guid? FilmId { get; init; }
+  /// <summary>
+  /// Идентификатор фильма для поиска плейлистов, содержащих этот фильм
+  /// </summary>
+  public Guid? FilmId { get; init; }
 
-    /// <summary>
-    /// Количество элементов на странице (по умолчанию 10, максимум 50)
-    /// </summary>
-    public int Take { get; init; } = 10;
+  /// <summary>
+  /// Количество элементов на странице (по умолчанию 10, максимум 50)
+  /// </summary>
+  public int Take { get; init; } = 10;
 
-    /// <summary>
-    /// Количество пропускаемых элементов
-    /// </summary>
-    public int Skip { get; init; } = 0;
+  /// <summary>
+  /// Количество пропускаемых элементов
+  /// </summary>
+  public int Skip { get; init; } = 0;
 }

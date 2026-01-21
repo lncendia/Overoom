@@ -10,24 +10,25 @@ namespace Rooms.Application.Services.EventHandlers.Tags;
 /// </summary>
 /// <param name="unitOfWork">Единица работы для взаимодействия с репозиториями</param>
 public class WrongEpisodeTagEventHandler(IUnitOfWork unitOfWork)
-    : BeforeSaveNotificationHandler<ViewerEpisodeChangedEvent>
+  : BeforeSaveNotificationHandler<ViewerEpisodeChangedEvent>
 {
-    /// <summary>
-    /// Обрабатывает событие изменения серии зрителем
-    /// </summary>
-    /// <param name="notification">Событие изменения серии зрителем</param>
-    /// <param name="cancellationToken">Токен отмены операции</param>
-    protected override async Task Execute(ViewerEpisodeChangedEvent notification, CancellationToken cancellationToken)
+  /// <summary>
+  /// Обрабатывает событие изменения серии зрителем
+  /// </summary>
+  /// <param name="notification">Событие изменения серии зрителем</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  protected override async Task Execute(ViewerEpisodeChangedEvent notification, CancellationToken cancellationToken)
+  {
+    if (notification.Viewer.Season == notification.Room.Owner.Season &&
+        notification.Viewer.Episode == notification.Room.Owner.Episode)
     {
-        if (notification.Viewer.Season == notification.Room.Owner.Season && notification.Viewer.Episode == notification.Room.Owner.Episode)
-        {
-            notification.Room.RemoveTag(notification.Viewer.Id, Constants.ViewerTags.WrongEpisode);
-        }
-        else
-        {
-            notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.WrongEpisode);
-        }
-
-        await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
+      notification.Room.RemoveTag(notification.Viewer.Id, Constants.ViewerTags.WrongEpisode);
     }
+    else
+    {
+      notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.WrongEpisode);
+    }
+
+    await unitOfWork.RoomRepository.Value.UpdateAsync(notification.Room, cancellationToken);
+  }
 }

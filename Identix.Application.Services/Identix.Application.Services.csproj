@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Identix.Application.Abstractions\Identix.Application.Abstractions.csproj" />
+        <ProjectReference Include="..\Identix.Application.Abstractions\Identix.Application.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MassTransit.MongoDb" Version="8.5.5" />
+        <PackageReference Include="MassTransit.MongoDb" Version="8.5.5"/>
     </ItemGroup>
 
 </Project>

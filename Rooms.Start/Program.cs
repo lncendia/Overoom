@@ -16,7 +16,7 @@ using Rooms.Infrastructure.Web.Metrics;
 using Rooms.Infrastructure.Web.Rooms.Hubs;
 using Rooms.Start.Extensions;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Инициализируем подключение к MongoDB
 builder.InitializeMongoDb();
@@ -45,27 +45,27 @@ builder.Services.AddMediatorServices(typeof(CreateRoomCommandHandler));
 // Регистрация SignalR
 builder.Services.AddSignalR(options =>
 {
-    options.AddFilter<HubMetricsFilter>();
-    options.AddFilter<HubExceptionFilter>();
-    options.AddFilter<HubConnectionIdFilter>();
+  options.AddFilter<HubMetricsFilter>();
+  options.AddFilter<HubExceptionFilter>();
+  options.AddFilter<HubConnectionIdFilter>();
 }).AddJsonProtocol(options =>
 {
-    options.PayloadSerializerOptions.Converters.Add(new TypeNameJsonConverter<RoomBaseEvent>());
-    options.PayloadSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    options.PayloadSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+  options.PayloadSerializerOptions.Converters.Add(new TypeNameJsonConverter<RoomBaseEvent>());
+  options.PayloadSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+  options.PayloadSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
 });
 
 // Настраиваем OpenTelemetry
 builder.Services.AddOpenTelemetryServices(Constants.OpenTelemetry.ServiceName, RoomsConnectionMetrics.MeterName);
 
 // Создаем экземпляр приложения ASP.NET Core
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Создаем область для инициализации баз данных
-using (var scope = app.Services.CreateScope())
+using (IServiceScope scope = app.Services.CreateScope())
 {
-    // Инициализация начальных данных в базу данных
-    await DatabaseInitializer.InitAsync(scope.ServiceProvider);
+  // Инициализация начальных данных в базу данных
+  await DatabaseInitializer.InitAsync(scope.ServiceProvider);
 }
 
 // Включение CORS

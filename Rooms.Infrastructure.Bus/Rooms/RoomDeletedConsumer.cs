@@ -11,19 +11,19 @@ namespace Rooms.Infrastructure.Bus.Rooms;
 /// <param name="mediator">Медиатор</param>
 public class RoomDeletedConsumer(ISender mediator) : IConsumer<RoomDeletedIntegrationEvent>
 {
-    /// <summary>
-    /// Метод обработчик 
-    /// </summary>
-    /// <param name="context">Контекст сообщения</param>
-    public async Task Consume(ConsumeContext<RoomDeletedIntegrationEvent> context)
-    {
-        // Получаем данные события
-        var integrationEvent = context.Message;
+  /// <summary>
+  /// Метод обработчик 
+  /// </summary>
+  /// <param name="context">Контекст сообщения</param>
+  public async Task Consume(ConsumeContext<RoomDeletedIntegrationEvent> context)
+  {
+    // Получаем данные события
+    RoomDeletedIntegrationEvent integrationEvent = context.Message;
 
-        // Отправляем команду на обработку события
-        await mediator.Send(new DeleteRoomCommand
-        {
-            RoomId = integrationEvent.Id
-        }, context.CancellationToken);
-    }
+    // Отправляем команду на обработку события
+    await mediator.Send(new DeleteRoomCommand
+    {
+      RoomId = integrationEvent.Id
+    }, context.CancellationToken);
+  }
 }
