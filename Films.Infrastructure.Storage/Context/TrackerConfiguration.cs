@@ -4,17 +4,18 @@ using Films.Infrastructure.Storage.Models.Playlists;
 using Films.Infrastructure.Storage.Models.Ratings;
 using Films.Infrastructure.Storage.Models.Rooms;
 using Films.Infrastructure.Storage.Models.Users;
-using MongoTracker.Builders;
+
+using Incendia.MongoTracker.Builders;
 
 namespace Films.Infrastructure.Storage.Context;
 
 /// <summary>
-/// 
+///
 /// </summary>
 public class TrackerConfiguration
 {
   /// <summary>
-  /// 
+  ///
   /// </summary>
   /// <returns></returns>
   public static ModelBuilder ConfigureModelBuilder()
@@ -73,7 +74,7 @@ public class TrackerConfiguration
       e.Property(u => u.Genres).IsCollection();
       e.Property(u=>u.ModifiedAt).IsVersion();
     });
-    
+
     return builder;
   }
 }

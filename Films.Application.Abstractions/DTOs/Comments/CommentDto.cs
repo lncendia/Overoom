@@ -31,7 +31,7 @@ public class CommentDto
   public required string UserName { get; init; }
 
   /// <summary>
-  /// Ключ фотографии профиля пользователя (может быть null)
+  /// Ключ фотографии профиля пользователя
   /// </summary>
   public string? PhotoKey { get; init; }
 }

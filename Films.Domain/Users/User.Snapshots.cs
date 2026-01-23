@@ -17,16 +17,19 @@ public partial class User
     return (User)ctor!.Invoke([snapshot]);
   }
 
-  internal UserSnapshot GetSnapshot() => new()
+  internal UserSnapshot GetSnapshot()
   {
-    Id = Id,
-    Username = Username,
-    PhotoKey = PhotoKey,
-    RoomSettings = RoomSettings,
-    Watchlist = _watchlist.ToList(),
-    History = _history.ToList(),
-    Genres = _genres.ToList()
-  };
+    return new UserSnapshot
+    {
+      Id = Id,
+      Username = Username,
+      PhotoKey = PhotoKey,
+      RoomSettings = RoomSettings,
+      Watchlist = _watchlist.ToList(),
+      History = _history.ToList(),
+      Genres = _genres.ToList()
+    };
+  }
 
   // Приватный конструктор для гидратации
   // ReSharper disable once UnusedMember.Local

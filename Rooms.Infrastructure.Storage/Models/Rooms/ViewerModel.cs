@@ -14,19 +14,19 @@ public class ViewerModel
   public required Guid Id { get; init; }
 
   /// <summary>
-  /// Имя пользователя (максимум 40 символов)
+  /// Имя пользователя
   /// </summary>
-  public required string UserName { get; set; }
+  public string UserName { get; set; } = null!;
 
   /// <summary>
-  /// Ключ фото пользователя (может быть null)
+  /// Ключ фото пользователя
   /// </summary>
   public string? PhotoKey { get; set; }
 
   /// <summary>
   /// Права пользователя на действия в комнате
   /// </summary>
-  public required RoomSettings Settings { get; set; }
+  public RoomSettings Settings { get; set; } = null!;
 
   /// <summary>
   /// Состояние: онлайн/оффлайн
@@ -81,27 +81,29 @@ public class ViewerModel
   /// <summary>
   /// Создаёт снапшот текущего состояния модели для хранения или передачи.
   /// </summary>
-  public ViewerSnapshot GetSnapshot() => new()
+  public ViewerSnapshot GetSnapshot()
   {
-    Id = Id,
-    UserName = UserName,
-    PhotoKey = PhotoKey,
-    Settings = Settings,
-    Online = Online,
-    FullScreen = FullScreen,
-    OnPause = OnPause,
-    TimeLine = TimeLine,
-    Season = Season,
-    Episode = Episode,
-    Speed = Speed,
-    Muted = Muted,
-    Tags = Tags.ToHashSet(),
-    Statistic = Statistic.ToDictionary(s => s.Name, s => s.Value)
-  };
+    return new ViewerSnapshot
+    {
+      Id = Id,
+      UserName = UserName,
+      PhotoKey = PhotoKey,
+      Settings = Settings,
+      Online = Online,
+      FullScreen = FullScreen,
+      OnPause = OnPause,
+      TimeLine = TimeLine,
+      Season = Season,
+      Episode = Episode,
+      Speed = Speed,
+      Muted = Muted,
+      Tags = Tags.ToHashSet(),
+      Statistic = Statistic.ToDictionary(s => s.Name, s => s.Value)
+    };
+  }
 
   /// <summary>
   /// Обновляет модель на основе снапшота.
-  /// Поля обновляются с отслеживанием изменений через TrackChange/TrackStructChange/TrackCollection.
   /// </summary>
   public void UpdateFromSnapshot(ViewerSnapshot snapshot)
   {
@@ -118,20 +120,27 @@ public class ViewerModel
     Muted = snapshot.Muted;
     Tags = snapshot.Tags.ToList();
 
-    // Удаляем статистику, которой больше нет в снапшоте
-    Statistic.RemoveAll(statisticModel =>
-      snapshot.Statistic.All(statistic => statisticModel.Name != statistic.Key));
+    // Удаляем отсутствующие
+    Statistic.RemoveAll(s => !snapshot.Statistic.ContainsKey(s.Name));
 
-    // Добавляем новые параметры статистики, которых нет в модели
-    StatisticProperty[] newParameters = snapshot.Statistic
-      .Where(x => Statistic.All(m => x.Key != m.Name))
-      .Select(c => new StatisticProperty { Name = c.Key, Value = c.Value })
-      .ToArray();
+    // Обновляем существующие
+    foreach (StatisticProperty stat in Statistic)
+    {
+      stat.Value = snapshot.Statistic[stat.Name];
+    }
 
-    // Обновляем существующие параметры
-    Statistic.ForEach(v => v.Value = snapshot.Statistic[v.Name]);
+    // Добавляем новые
+    var existingNames = Statistic.Select(s => s.Name).ToHashSet();
 
-    // Добавляем новые параметры в модель
-    Statistic.AddRange(newParameters);
+    foreach ((string name, int value) in snapshot.Statistic)
+    {
+      if (existingNames.Contains(name)) continue;
+
+      Statistic.Add(new StatisticProperty
+      {
+        Name = name,
+        Value = value
+      });
+    }
   }
 }

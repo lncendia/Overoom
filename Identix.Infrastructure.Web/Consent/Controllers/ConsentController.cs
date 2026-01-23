@@ -256,24 +256,27 @@ public class ConsentController : Controller
   /// </summary>
   /// <param name="scope">Scope из базы/сервиса</param>
   /// <returns>ViewModel для конкретного scope</returns>
-  private static ScopeViewModel CreateScopeViewModel(ScopeDto scope) => new()
+  private static ScopeViewModel CreateScopeViewModel(ScopeDto scope)
   {
-    // Уникальное имя scope
-    Value = scope.Name,
+    return new ScopeViewModel
+    {
+      // Уникальное имя scope
+      Value = scope.Name,
 
-    // Отображаемое имя scope
-    DisplayName = scope.DisplayName,
+      // Отображаемое имя scope
+      DisplayName = scope.DisplayName,
 
-    // Описание scope (если есть)
-    Description = scope.Description,
+      // Описание scope (если есть)
+      Description = scope.Description,
 
-    // Подчеркивание в UI (акцент на scope)
-    Emphasize = scope.Emphasize,
+      // Подчеркивание в UI (акцент на scope)
+      Emphasize = scope.Emphasize,
 
-    // Является ли scope обязательным
-    Required = scope.Required,
+      // Является ли scope обязательным
+      Required = scope.Required,
 
-    // Отмечен ли scope пользователем (checked)
-    Checked = scope.Checked
-  };
+      // Отмечен ли scope пользователем (checked)
+      Checked = scope.Checked
+    };
+  }
 }

@@ -5,7 +5,7 @@ namespace Common.Domain.Aggregates;
 /// <summary>
 /// Базовый класс для агрегатов доменной модели
 /// </summary>
-public abstract class AggregateRoot
+public abstract class AggregateRoot<TS>
 {
   private readonly HashSet<DomainEvent> _domainEvents = [];
 
@@ -32,5 +32,14 @@ public abstract class AggregateRoot
   /// Добавляет доменное событие в коллекцию
   /// </summary>
   /// <param name="domainEvent">Доменное событие</param>
-  protected void AddDomainEvent(DomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+  protected void AddDomainEvent(DomainEvent domainEvent)
+  {
+    _domainEvents.Add(domainEvent);
+  }
+
+  /// <summary>
+  ///
+  /// </summary>
+  /// <returns></returns>
+  internal abstract TS GetSnapshot();
 }

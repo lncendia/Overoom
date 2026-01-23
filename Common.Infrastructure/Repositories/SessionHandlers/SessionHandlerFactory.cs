@@ -16,26 +16,38 @@ public class SessionHandlerFactory(IMongoClient client, MongoDbContext dbContext
   /// Использует существующую сессию из контекста базы данных.
   /// </summary>
   /// <returns>Обработчик сессии для inbox операций.</returns>
-  public ISessionHandler CreateInboxHandler() => new InboxSessionHandler(dbContext);
+  public ISessionHandler CreateInboxHandler()
+  {
+    return new InboxSessionHandler(dbContext);
+  }
 
   /// <summary>
   /// Создает обработчик сессии для outbox паттерна MassTransit.
   /// Обеспечивает атомарность сохранения данных и сообщений.
   /// </summary>
   /// <returns>Обработчик сессии для outbox операций.</returns>
-  public ISessionHandler CreateOutboxHandler() => new OutboxSessionHandler(dbContext);
+  public ISessionHandler CreateOutboxHandler()
+  {
+    return new OutboxSessionHandler(dbContext);
+  }
 
   /// <summary>
   /// Создает обработчик сессии для транзакционных операций.
   /// Создает новую транзакцию для каждого вызова.
   /// </summary>
   /// <returns>Обработчик сессии для транзакций.</returns>
-  public ISessionHandler CreateTransactionHandler() => new TransactionSessionHandler(client);
+  public ISessionHandler CreateTransactionHandler()
+  {
+    return new TransactionSessionHandler(client);
+  }
 
   /// <summary>
   /// Создает обработчик сессии по умолчанию.
   /// Используется для нетранзакционных операций.
   /// </summary>
   /// <returns>Обработчик сессии для операций по умолчанию.</returns>
-  public ISessionHandler CreateDefaultHandler() => new DefaultSessionHandler(client);
+  public ISessionHandler CreateDefaultHandler()
+  {
+    return new DefaultSessionHandler(client);
+  }
 }

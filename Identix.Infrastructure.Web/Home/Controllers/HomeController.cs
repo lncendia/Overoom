@@ -47,7 +47,10 @@ public class HomeController : Controller
   /// Действие для отображения домашней страницы.
   /// </summary>
   /// <returns>Результат действия.</returns>
-  public IActionResult Index() => View();
+  public IActionResult Index()
+  {
+    return View();
+  }
 
   /// <summary>
   /// Обрабатывает все ошибки приложения, предоставляя единую точку для отображения страницы ошибок
@@ -144,10 +147,11 @@ public class HomeController : Controller
   /// </summary>
   /// <param name="ex">Исключение для проверки</param>
   /// <returns>true - если исключение безопасно для отображения пользователю</returns>
-  private static bool IsUserFriendlyException(Exception ex) =>
+  private static bool IsUserFriendlyException(Exception ex)
+  {
     // Список исключений, которые можно безопасно показывать пользователю
     // Эти исключения могут быть локализованы без технических деталей
-    ex is OpenIdContextException
+    return ex is OpenIdContextException
       or EmailSendException
       or UserNotFoundException
       or LoginAlreadyAssociatedException
@@ -160,4 +164,5 @@ public class HomeController : Controller
       or UserLockoutException
       or TwoFactorAlreadyEnabledException
       or ExternalAuthenticationFailureException;
+  }
 }

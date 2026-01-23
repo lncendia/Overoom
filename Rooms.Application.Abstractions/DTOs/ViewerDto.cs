@@ -22,7 +22,7 @@ public class ViewerDto
   public required string UserName { get; init; }
 
   /// <summary>
-  /// Ключ аватара в хранилище (может быть null)
+  /// Ключ аватара в хранилище
   /// </summary>
   public string? PhotoKey { get; init; }
 
@@ -79,27 +79,30 @@ public class ViewerDto
   /// </summary>
   /// <param name="viewer">Доменная модель зрителя</param>
   /// <returns>Новый экземпляр DTO</returns>
-  public static ViewerDto Create(Viewer viewer) => new()
+  public static ViewerDto Create(Viewer viewer)
   {
-    Id = viewer.Id,
-    UserName = viewer.UserName,
-    PhotoKey = viewer.PhotoKey,
-    OnPause = viewer.OnPause,
-    FullScreen = viewer.FullScreen,
-    Online = viewer.Online,
-    TimeLine = viewer.TimeLine.Ticks,
-    Speed = viewer.Speed,
-    Season = viewer.Season,
-    Episode = viewer.Episode,
-    Settings = viewer.Settings,
-    Tags = viewer.Tags.Select(t =>
+    return new ViewerDto
     {
-      Constants.ViewerTags.All.TryGetValue(t, out string? description);
-      return new ViewerTagDto
+      Id = viewer.Id,
+      UserName = viewer.UserName,
+      PhotoKey = viewer.PhotoKey,
+      OnPause = viewer.OnPause,
+      FullScreen = viewer.FullScreen,
+      Online = viewer.Online,
+      TimeLine = viewer.TimeLine.Ticks,
+      Speed = viewer.Speed,
+      Season = viewer.Season,
+      Episode = viewer.Episode,
+      Settings = viewer.Settings,
+      Tags = viewer.Tags.Select(t =>
       {
-        Name = t,
-        Description = description
-      };
-    }).ToArray()
-  };
+        Constants.ViewerTags.All.TryGetValue(t, out string? description);
+        return new ViewerTagDto
+        {
+          Name = t,
+          Description = description
+        };
+      }).ToArray()
+    };
+  }
 }

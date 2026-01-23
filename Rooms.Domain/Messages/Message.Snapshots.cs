@@ -23,14 +23,17 @@ public partial class Message
   /// <summary>
   /// Создаёт снапшот текущего состояния агрегата.
   /// </summary>
-  internal MessageSnapshot GetSnapshot() => new()
+  internal MessageSnapshot GetSnapshot()
   {
-    Id = Id,
-    RoomId = RoomId,
-    UserId = UserId,
-    Text = Text,
-    SentAt = SentAt
-  };
+    return new MessageSnapshot
+    {
+      Id = Id,
+      RoomId = RoomId,
+      UserId = UserId,
+      Text = Text,
+      SentAt = SentAt
+    };
+  }
 
   /// <summary>
   /// Воссоздаёт агрегат Message из снапшота.

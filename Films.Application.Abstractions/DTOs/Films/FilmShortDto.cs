@@ -26,12 +26,12 @@ public class FilmShortDto
   public required int Year { get; init; }
 
   /// <summary>
-  /// Рейтинг КиноПоиска (может быть null)
+  /// Рейтинг КиноПоиска
   /// </summary>
   public double? RatingKp { get; init; }
 
   /// <summary>
-  /// Рейтинг IMDb (может быть null)
+  /// Рейтинг IMDb
   /// </summary>
   public double? RatingImdb { get; init; }
 

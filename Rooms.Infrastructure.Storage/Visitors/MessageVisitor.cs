@@ -20,5 +20,8 @@ public class MessageVisitor :
     return visitor.Expr!;
   }
 
-  public void Visit(RoomMessagesSpecification spec) => Expr = m => m.RoomId == spec.RoomId;
+  public void Visit(RoomMessagesSpecification spec)
+  {
+    Expr = m => m.RoomId == spec.RoomId;
+  }
 }

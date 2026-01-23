@@ -14,7 +14,7 @@ public class AddFilmCommand : IRequest<Guid>
   public required string Description { get; init; }
 
   /// <summary>
-  /// Краткое описание фильма (может быть null)
+  /// Краткое описание фильма
   /// </summary>
   public string? ShortDescription { get; init; }
 
@@ -29,12 +29,12 @@ public class AddFilmCommand : IRequest<Guid>
   public required DateOnly Date { get; init; }
 
   /// <summary>
-  /// Рейтинг КиноПоиска (может быть null)
+  /// Рейтинг КиноПоиска
   /// </summary>
   public double? RatingKp { get; init; }
 
   /// <summary>
-  /// Рейтинг IMDb (может быть null)
+  /// Рейтинг IMDb
   /// </summary>
   public double? RatingImdb { get; init; }
 

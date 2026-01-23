@@ -14,5 +14,8 @@ public sealed class AwsS3HttpClientFactory(HttpClient httpClient) : HttpClientFa
   /// </summary>
   /// <param name="clientConfig">Конфигурация клиента, используемая для настройки HttpClient</param>
   /// <returns>Экземпляр HttpClient, настроенный в соответствии с конфигурацией клиента</returns>
-  public override HttpClient CreateHttpClient(IClientConfig clientConfig) => httpClient;
+  public override HttpClient CreateHttpClient(IClientConfig clientConfig)
+  {
+    return httpClient;
+  }
 }

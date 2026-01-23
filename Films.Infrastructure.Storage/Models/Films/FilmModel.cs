@@ -1,5 +1,8 @@
-﻿using Films.Domain.Films.Snapshots;
+﻿using Common.Infrastructure.Repositories.Models;
+
+using Films.Domain.Films.Snapshots;
 using Films.Domain.Films.ValueObjects;
+
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Films.Infrastructure.Storage.Models.Films;
@@ -8,32 +11,29 @@ namespace Films.Infrastructure.Storage.Models.Films;
 /// Модель фильма для работы с базой данных.
 /// </summary>
 [BsonIgnoreExtraElements]
-public class FilmModel
+public class FilmModel : IModel<FilmSnapshot>
 {
-  /// <summary>
-  /// Уникальный идентификатор фильма
-  /// </summary>
-  public required Guid Id { get; init; }
+  #region Поля и свойства
 
   /// <summary>
   /// Название фильма
   /// </summary>
-  public required string Title { get; set; }
+  public string Title { get; set; } = null!;
 
   /// <summary>
   /// Ссылка на постер фильма
   /// </summary>
-  public required string PosterKey { get; set; }
+  public string PosterKey { get; set; } = null!;
 
   /// <summary>
   /// Полное описание фильма
   /// </summary>
-  public required string Description { get; set; }
+  public string Description { get; set; } = null!;
 
   /// <summary>
   /// Краткое описание фильма
   /// </summary>
-  public required string ShortDescription { get; set; }
+  public string ShortDescription { get; set; } = null!;
 
   /// <summary>
   /// Год выпуска фильма
@@ -84,11 +84,20 @@ public class FilmModel
   /// Список сценаристов фильма
   /// </summary>
   public List<string> Screenwriters { get; set; } = [];
-  
+
   /// <summary>
   /// Дата и время изменения модели
   /// </summary>
   public DateTime ModifiedAt { get; set; }
+
+  #endregion
+
+  #region IModel
+
+  /// <summary>
+  /// Уникальный идентификатор фильма
+  /// </summary>
+  public required Guid Id { get; init; }
 
   public FilmSnapshot GetSnapshot()
   {
@@ -153,15 +162,19 @@ public class FilmModel
 
     if (snapshot.Seasons != null)
     {
+      var seasonsByNumber = Seasons?.ToDictionary(s => s.Number);
+
       Seasons = snapshot.Seasons.Select(@as =>
       {
-        SeasonModel season = Seasons?.FirstOrDefault(ms => @as.Number == ms.Number)
-                             ?? new SeasonModel { Number = @as.Number };
+        if (seasonsByNumber == null || !seasonsByNumber.TryGetValue(@as.Number, out SeasonModel? season))
+          season = new SeasonModel { Number = @as.Number };
+
+        var episodesByNumber = season.Episodes.ToDictionary(e => e.Number);
 
         season.Episodes = @as.Episodes.Select(ae =>
         {
-          EpisodeModel episode = season.Episodes.FirstOrDefault(me => ae.Number == me.Number) 
-                                 ?? new EpisodeModel { Number = ae.Number };
+          if (!episodesByNumber.TryGetValue(ae.Number, out EpisodeModel? episode))
+            episode = new EpisodeModel { Number = ae.Number };
 
           episode.Versions = ae.Versions.ToList();
           return episode;
@@ -175,4 +188,6 @@ public class FilmModel
       Seasons = null;
     }
   }
+
+  #endregion
 }

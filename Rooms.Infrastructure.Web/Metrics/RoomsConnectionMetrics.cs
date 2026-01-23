@@ -46,10 +46,16 @@ public static class RoomsConnectionMetrics
   /// <summary>
   /// Увеличивает количество активных подключений на 1
   /// </summary>
-  internal static void Increment() => Interlocked.Increment(ref _activeConnections);
+  internal static void Increment()
+  {
+    Interlocked.Increment(ref _activeConnections);
+  }
 
   /// <summary>
   /// Уменьшает количество активных подключений на 1
   /// </summary>
-  internal static void Decrement() => Interlocked.Decrement(ref _activeConnections);
+  internal static void Decrement()
+  {
+    Interlocked.Decrement(ref _activeConnections);
+  }
 }

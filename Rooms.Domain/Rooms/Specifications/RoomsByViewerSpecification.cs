@@ -7,6 +7,13 @@ public class RoomsByViewerSpecification(Guid userId) : ISpecification<Room, IRoo
 {
   public Guid UserId { get; } = userId;
 
-  public void Accept(IRoomSpecificationVisitor visitor) => visitor.Visit(this);
-  public bool IsSatisfiedBy(Room item) => item.Viewers.Any(u => u.Key == UserId);
+  public void Accept(IRoomSpecificationVisitor visitor)
+  {
+    visitor.Visit(this);
+  }
+
+  public bool IsSatisfiedBy(Room item)
+  {
+    return item.Viewers.Any(u => u.Key == UserId);
+  }
 }

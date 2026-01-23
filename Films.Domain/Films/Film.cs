@@ -1,7 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+
 using Common.Domain.Aggregates;
 using Common.Domain.Extensions;
+
 using Films.Domain.Films.Exceptions;
+using Films.Domain.Films.Snapshots;
 using Films.Domain.Films.ValueObjects;
 
 namespace Films.Domain.Films;
@@ -9,8 +12,10 @@ namespace Films.Domain.Films;
 /// <summary>
 /// Класс, представляющий фильм.
 /// </summary>
-public partial class Film(Guid id) : AggregateRoot(id)
+public partial class Film : AggregateRoot<FilmSnapshot>
 {
+  #region Константы
+
   private const int MaxTitleLength = 200;
   private const int MaxDescriptionLength = 1500;
   private const int MaxShortDescriptionLength = 500;
@@ -18,34 +23,36 @@ public partial class Film(Guid id) : AggregateRoot(id)
   private const int MaxGenresLength = 100;
   private const int MaxPersonLength = 100;
 
-  #region Info
+  #endregion
 
-  /// <summary> 
-  /// Описание фильма. 
-  /// </summary> 
+  #region Поля и свойства
+
+  /// <summary>
+  /// Описание фильма.
+  /// </summary>
   private string _description = null!;
 
-  /// <summary> 
-  /// Заголовок фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Заголовок фильма.
+  /// </summary>
   public required string Title
   {
     get;
     init => field = value.ValidateLength(nameof(Title), MaxTitleLength);
   }
 
-  /// <summary> 
-  /// Описание фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Описание фильма.
+  /// </summary>
   public required string Description
   {
     get => _description;
     set => _description = value.ValidateLength(nameof(Description), MaxDescriptionLength);
   }
 
-  /// <summary> 
-  /// Краткое описание фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Краткое описание фильма.
+  /// </summary>
   [field: AllowNull]
   public string ShortDescription
   {
@@ -58,48 +65,44 @@ public partial class Film(Guid id) : AggregateRoot(id)
     set => field = value.ValidateLength(nameof(ShortDescription), MaxShortDescriptionLength);
   }
 
-  /// <summary> 
-  /// Год выпуска фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Год выпуска фильма.
+  /// </summary>
   public required DateOnly Date { get; init; }
 
-  /// <summary> 
-  /// URL постера фильма. 
-  /// </summary> 
+  /// <summary>
+  /// URL постера фильма.
+  /// </summary>
   public required string PosterKey { get; set; }
 
-  #endregion
-
-  #region Collections
-
-  /// <summary> 
-  /// Список стран, связанных с фильмом. 
-  /// </summary> 
+  /// <summary>
+  /// Список стран, связанных с фильмом.
+  /// </summary>
   private readonly HashSet<string> _countries = null!;
 
-  /// <summary> 
-  /// Список режиссеров фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Список режиссеров фильма.
+  /// </summary>
   private readonly HashSet<string> _directors = null!;
 
-  /// <summary> 
-  /// Список сценаристов фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Список сценаристов фильма.
+  /// </summary>
   private readonly HashSet<string> _screenwriters = null!;
 
-  /// <summary> 
-  /// Список актеров фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Список актеров фильма.
+  /// </summary>
   private readonly HashSet<Actor> _actors = null!;
 
-  /// <summary> 
-  /// Список жанров фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Список жанров фильма.
+  /// </summary>
   private readonly HashSet<string> _genres = null!;
 
-  /// <summary> 
-  /// Жанры фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Жанры фильма.
+  /// </summary>
   public required IReadOnlyCollection<string> Genres
   {
     get => _genres;
@@ -117,9 +120,9 @@ public partial class Film(Guid id) : AggregateRoot(id)
     }
   }
 
-  /// <summary> 
-  /// Страны фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Страны фильма.
+  /// </summary>
   public required IReadOnlyCollection<string> Countries
   {
     get => _countries;
@@ -137,9 +140,9 @@ public partial class Film(Guid id) : AggregateRoot(id)
     }
   }
 
-  /// <summary> 
-  /// Режиссеры фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Режиссеры фильма.
+  /// </summary>
   public required IReadOnlyCollection<string> Directors
   {
     get => _directors;
@@ -157,9 +160,9 @@ public partial class Film(Guid id) : AggregateRoot(id)
     }
   }
 
-  /// <summary> 
-  /// Актеры фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Актеры фильма.
+  /// </summary>
   public required IReadOnlyCollection<Actor> Actors
   {
     get => _actors;
@@ -170,9 +173,9 @@ public partial class Film(Guid id) : AggregateRoot(id)
     }
   }
 
-  /// <summary> 
-  /// Сценаристы фильма. 
-  /// </summary> 
+  /// <summary>
+  /// Сценаристы фильма.
+  /// </summary>
   public required IReadOnlyCollection<string> Screenwriters
   {
     get => _screenwriters;
@@ -190,23 +193,15 @@ public partial class Film(Guid id) : AggregateRoot(id)
     }
   }
 
-  #endregion
-
-  #region Rating
-
-  /// <summary> 
-  /// Рейтинг фильма на КиноПоиске. 
-  /// </summary> 
+  /// <summary>
+  /// Рейтинг фильма на КиноПоиске.
+  /// </summary>
   public Rating? RatingKp { get; set; }
 
-  /// <summary> 
-  /// Рейтинг фильма на IMDb. 
-  /// </summary> 
+  /// <summary>
+  /// Рейтинг фильма на IMDb.
+  /// </summary>
   public Rating? RatingImdb { get; set; }
-
-  #endregion
-
-  #region Type
 
   /// <summary>
   /// Описание фильма или другого неделимого медиаконтента (например, шоу, передача).
@@ -231,6 +226,10 @@ public partial class Film(Guid id) : AggregateRoot(id)
   /// Флаг, может ли быть создана комната с этим фильмом.
   /// </summary>
   public bool CanCreateRoom => Content != null || Seasons is { Count: > 0 };
+
+  #endregion
+
+  #region Методы
 
   /// <summary>
   /// Добавляет новую версию медиаконтента (для фильма или конкретного эпизода сериала)
@@ -343,6 +342,17 @@ public partial class Film(Guid id) : AggregateRoot(id)
       // Устанавливаем обновленный контент
       Content = updatedContent;
     }
+  }
+
+  #endregion
+
+  #region Конструкторы
+
+  /// <summary>
+  /// Конструктор
+  /// </summary>
+  public Film(Guid id) : base(id)
+  {
   }
 
   #endregion

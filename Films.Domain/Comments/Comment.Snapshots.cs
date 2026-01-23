@@ -21,14 +21,17 @@ public partial class Comment
     return (Comment)constructor!.Invoke([snapshot]);
   }
 
-  internal CommentSnapshot GetSnapshot() => new()
+  internal CommentSnapshot GetSnapshot()
   {
-    Id = Id,
-    FilmId = FilmId,
-    UserId = UserId,
-    Text = Text,
-    CreatedAt = CreatedAt
-  };
+    return new CommentSnapshot
+    {
+      Id = Id,
+      FilmId = FilmId,
+      UserId = UserId,
+      Text = Text,
+      CreatedAt = CreatedAt
+    };
+  }
 
   /// <summary>
   /// Внутренний конструктор для гидратации из снапшота или БД.

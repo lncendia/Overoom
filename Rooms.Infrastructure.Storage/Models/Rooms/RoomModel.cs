@@ -1,3 +1,5 @@
+using Common.Infrastructure.Repositories.Models;
+
 using Rooms.Domain.Rooms.Snapshots;
 
 namespace Rooms.Infrastructure.Storage.Models.Rooms;
@@ -5,12 +7,9 @@ namespace Rooms.Infrastructure.Storage.Models.Rooms;
 /// <summary>
 /// Модель комнаты для работы с базой данных.
 /// </summary>
-public class RoomModel
+public class RoomModel : IModel<RoomSnapshot>
 {
-  /// <summary>
-  /// Уникальный идентификатор комнаты
-  /// </summary>
-  public required Guid Id { get; init; }
+  #region Поля и свойства
 
   /// <summary>
   /// Идентификатор фильма
@@ -32,17 +31,29 @@ public class RoomModel
   /// </summary>
   public List<ViewerModel> Viewers { get; set; } = [];
 
+  #endregion
+
+  #region IModel
+
+  /// <summary>
+  /// Уникальный идентификатор комнаты
+  /// </summary>
+  public required Guid Id { get; init; }
+
   /// <summary>
   /// Создаёт снапшот текущей комнаты со всеми зрителями
   /// </summary>
-  public RoomSnapshot GetSnapshot() => new()
+  public RoomSnapshot GetSnapshot()
   {
-    Id = Id,
-    FilmId = FilmId,
-    OwnerId = OwnerId,
-    IsSerial = IsSerial,
-    Viewers = Viewers.Select(v => v.GetSnapshot()).ToList()
-  };
+    return new RoomSnapshot
+    {
+      Id = Id,
+      FilmId = FilmId,
+      OwnerId = OwnerId,
+      IsSerial = IsSerial,
+      Viewers = Viewers.Select(v => v.GetSnapshot()).ToDictionary(s => s.Id, s => s)
+    };
+  }
 
   /// <summary>
   /// Обновляет модель комнаты из снапшота
@@ -54,23 +65,25 @@ public class RoomModel
     IsSerial = snapshot.IsSerial;
 
     // Удаляем зрителей, которых больше нет в снапшоте
-    Viewers.RemoveAll(viewerModel => snapshot.Viewers.All(viewer => viewerModel.Id != viewer.Id));
-
-    // Добавляем новых зрителей, которых нет в модели
-    ViewerModel[] newViewers = snapshot.Viewers
-      .Where(x => Viewers.All(m => x.Id != m.Id))
-      .Select(c =>
-      {
-        var viewerModel = new ViewerModel { Id = c.Id, UserName = null!, Settings = null! };
-        viewerModel.UpdateFromSnapshot(c);
-        return viewerModel;
-      })
-      .ToArray();
+    Viewers.RemoveAll(v => !snapshot.Viewers.ContainsKey(v.Id));
 
     // Обновляем существующих зрителей
-    Viewers.ForEach(v => v.UpdateFromSnapshot(snapshot.Viewers.First(sv => sv.Id == v.Id)));
+    foreach (ViewerModel viewer in Viewers)
+    {
+      viewer.UpdateFromSnapshot(snapshot.Viewers[viewer.Id]);
+    }
 
-    // Добавляем новых зрителей в модель
-    Viewers.AddRange(newViewers);
+    var existingIds = Viewers.Select(v => v.Id).ToHashSet();
+
+    foreach (ViewerSnapshot snapshotViewer in snapshot.Viewers.Values)
+    {
+      if (existingIds.Contains(snapshotViewer.Id)) continue;
+
+      var viewerModel = new ViewerModel { Id = snapshotViewer.Id };
+      viewerModel.UpdateFromSnapshot(snapshotViewer);
+      Viewers.Add(viewerModel);
+    }
   }
+
+  #endregion
 }

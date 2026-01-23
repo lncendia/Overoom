@@ -7,6 +7,13 @@ public class RoomMessagesSpecification(Guid roomId) : ISpecification<Message, IM
 {
   public Guid RoomId { get; } = roomId;
 
-  public void Accept(IMessageSpecificationVisitor visitor) => visitor.Visit(this);
-  public bool IsSatisfiedBy(Message item) => item.RoomId == RoomId;
+  public void Accept(IMessageSpecificationVisitor visitor)
+  {
+    visitor.Visit(this);
+  }
+
+  public bool IsSatisfiedBy(Message item)
+  {
+    return item.RoomId == RoomId;
+  }
 }

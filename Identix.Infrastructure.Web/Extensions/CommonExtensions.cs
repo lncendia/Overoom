@@ -13,16 +13,20 @@ public static class CommonExtensions
   /// </summary>
   /// <param name="principal">Объект ClaimsPrincipal.</param>
   /// <returns>Идентификатор пользователя.</returns>
-  public static Guid Id(this ClaimsPrincipal principal) =>
-    Guid.Parse(principal.FindFirstValue(OpenIddictConstants.Claims.Subject)!);
+  public static Guid Id(this ClaimsPrincipal principal)
+  {
+    return Guid.Parse(principal.FindFirstValue(OpenIddictConstants.Claims.Subject)!);
+  }
 
   /// <summary>
   /// Возвращает идентификатор пользователя из объекта ClaimsPrincipal.
   /// </summary>
   /// <param name="principal">Объект ClaimsPrincipal.</param>
   /// <returns>Идентификатор пользователя.</returns>
-  public static string? GetId(this ClaimsPrincipal? principal) =>
-    principal?.FindFirstValue(OpenIddictConstants.Claims.Subject);
+  public static string? GetId(this ClaimsPrincipal? principal)
+  {
+    return principal?.FindFirstValue(OpenIddictConstants.Claims.Subject);
+  }
 
   /// <summary>
   /// Безопасно добавляет claim в ClaimsIdentity, если значение не пустое

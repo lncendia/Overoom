@@ -1,3 +1,5 @@
+using Common.Infrastructure.Repositories.Models;
+
 using Films.Domain.Ratings.Snapshots;
 
 namespace Films.Infrastructure.Storage.Models.Ratings;
@@ -5,12 +7,9 @@ namespace Films.Infrastructure.Storage.Models.Ratings;
 /// <summary>
 /// Модель рейтинга для работы с базой данных.
 /// </summary>
-public class RatingModel
+public class RatingModel : IModel<RatingSnapshot>
 {
-  /// <summary>
-  /// Уникальный идентификатор рейтинга
-  /// </summary>
-  public required Guid Id { get; init; }
+  #region Поля и свойства
 
   /// <summary>
   /// Идентификатор фильма, к которому относится рейтинг
@@ -18,7 +17,7 @@ public class RatingModel
   public Guid FilmId { get; set; }
 
   /// <summary>
-  /// Идентификатор пользователя, поставившего оценку (может быть null)
+  /// Идентификатор пользователя, поставившего оценку
   /// </summary>
   public Guid UserId { get; set; }
 
@@ -31,11 +30,20 @@ public class RatingModel
   /// Дата и время выставления оценки
   /// </summary>
   public DateTime CreatedAt { get; set; }
-  
+
   /// <summary>
   /// Дата и время изменения модели
   /// </summary>
   public DateTime ModifiedAt { get; set; }
+
+  #endregion
+
+  #region IModel
+
+  /// <summary>
+  /// Уникальный идентификатор рейтинга
+  /// </summary>
+  public required Guid Id { get; init; }
 
   public void UpdateFromSnapshot(RatingSnapshot snapshot)
   {
@@ -45,12 +53,17 @@ public class RatingModel
     CreatedAt = snapshot.CreatedAt;
   }
 
-  public RatingSnapshot GetSnapshot() => new()
+  public RatingSnapshot GetSnapshot()
   {
-    Id = Id,
-    FilmId = FilmId,
-    UserId = UserId,
-    Score = Score,
-    CreatedAt = CreatedAt
-  };
+    return new RatingSnapshot
+    {
+      Id = Id,
+      FilmId = FilmId,
+      UserId = UserId,
+      Score = Score,
+      CreatedAt = CreatedAt
+    };
+  }
+
+  #endregion
 }

@@ -42,7 +42,7 @@ public class GetRoomCodeQueryHandler(MongoDbContext context) : IRequestHandler<G
     if (!room.IsUserIn)
       throw new ActionNotAllowedException(request.RoomId, "GetCode");
 
-    // Возвращаем код доступа комнаты (может быть null)
+    // Возвращаем код доступа комнаты
     return room.Code;
   }
 }

@@ -13,7 +13,7 @@ public class UserProfileDto
   public required string UserName { get; init; }
 
   /// <summary>
-  /// Ключ фотографии профиля в хранилище (может быть null)
+  /// Ключ фотографии профиля в хранилище
   /// </summary>
   public string? PhotoKey { get; init; }
 

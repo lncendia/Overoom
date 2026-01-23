@@ -5,7 +5,7 @@ using Films.Domain.Users;
 namespace Films.Domain.Rooms.Events;
 
 /// <summary>
-/// Класс, представляющий событие создания новой комнаты с фильмом.
+/// Доменное событие, возникающее когда создается новая комната с фильмом.
 /// </summary>
 public class RoomCreatedEvent(Room room, User owner, Film film) : DomainEvent
 {

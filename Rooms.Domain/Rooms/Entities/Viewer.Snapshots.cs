@@ -24,23 +24,26 @@ public partial class Viewer
     return (Viewer)constructor!.Invoke([snapshot]);
   }
 
-  internal ViewerSnapshot GetSnapshot() => new()
+  internal ViewerSnapshot GetSnapshot()
   {
-    Id = Id,
-    UserName = UserName,
-    PhotoKey = PhotoKey,
-    Online = Online,
-    FullScreen = FullScreen,
-    OnPause = OnPause,
-    TimeLine = TimeLine,
-    Season = Season,
-    Episode = Episode,
-    Speed = Speed,
-    Muted = Muted,
-    Tags = Tags,
-    Statistic = Statistic,
-    Settings = Settings
-  };
+    return new ViewerSnapshot
+    {
+      Id = Id,
+      UserName = UserName,
+      PhotoKey = PhotoKey,
+      Online = Online,
+      FullScreen = FullScreen,
+      OnPause = OnPause,
+      TimeLine = TimeLine,
+      Season = Season,
+      Episode = Episode,
+      Speed = Speed,
+      Muted = Muted,
+      Tags = Tags,
+      Statistic = Statistic,
+      Settings = Settings
+    };
+  }
 
   // приватный/internal конструктор
   // ReSharper disable once UnusedMember.Local

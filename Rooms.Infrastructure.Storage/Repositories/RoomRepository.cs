@@ -1,10 +1,13 @@
+using System.Linq.Expressions;
+
 using Common.Domain.Specifications.Abstractions;
 using Common.Infrastructure.Repositories;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
-using MongoTracker.Builders;
+
+using Incendia.MongoTracker.Builders;
+
 using Rooms.Domain.Repositories;
 using Rooms.Domain.Rooms;
+using Rooms.Domain.Rooms.Snapshots;
 using Rooms.Domain.Rooms.Specifications.Visitor;
 using Rooms.Infrastructure.Storage.Context;
 using Rooms.Infrastructure.Storage.Models.Rooms;
@@ -15,251 +18,38 @@ namespace Rooms.Infrastructure.Storage.Repositories;
 /// <summary>
 /// Реализация репозитория для хранения комнат.
 /// </summary>
-public class RoomRepository(MongoDbContext context, ModelBuilder config)
-  : RepositoryBase<RoomModel, Room>(config, context.Rooms), IRoomRepository
+public class RoomRepository : RepositoryBase<RoomModel, Room, RoomSnapshot, IRoomSpecificationVisitor>, IRoomRepository
 {
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно добавляет новый агрегат. 
-  /// </summary> 
-  public Task AddAsync(Room aggregate, CancellationToken cancellationToken = default)
-  {
-    // Преобразуем агрегат в модель данных, которая будет использоваться для хранения данных в базе данных.
-    var model = new RoomModel { Id = aggregate.Id };
-
-    // Заполняем модель из снапшота
-    model.UpdateFromSnapshot(aggregate.GetSnapshot());
-
-    // Начинаем отслеживать добавляемую модель
-    Add(model, aggregate);
-
-    // Возвращаем завершенную задачу.
-    return Task.CompletedTask;
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно добавляет новые агрегаты. 
+  /// <summary>
+  /// Конструктор
   /// </summary>
-  public Task AddRangeAsync(IReadOnlyList<Room> aggregates, CancellationToken cancellationToken = default)
+  /// <param name="context">MongoDB-контекст приложения</param>
+  /// <param name="config">Конфигурация трекера моделей</param>
+  public RoomRepository(MongoDbContext context, ModelBuilder config) : base(config, context.Rooms)
   {
-    // Выполняем код для каждого агрегата
-    foreach (Room aggregate in aggregates)
-    {
-      // Преобразуем агрегат в модель данных, которая будет использоваться для хранения данных в базе данных.
-      var model = new RoomModel { Id = aggregate.Id };
-
-      // Заполняем модель из снапшота
-      model.UpdateFromSnapshot(aggregate.GetSnapshot());
-
-      // Начинаем отслеживать добавляемую модель
-      Add(model, aggregate);
-    }
-
-    // Возвращаем завершенную задачу.
-    return Task.CompletedTask;
   }
 
   /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно обновляет информацию об агрегате. 
-  /// </summary> 
-  public Task UpdateAsync(Room aggregate, CancellationToken cancellationToken = default)
+  protected override Expression<Func<RoomModel, bool>>? SpecificationVisitor(ISpecification<Room, IRoomSpecificationVisitor> spec)
   {
-    // Получаем сущность, уже отслеживается в контексте.
-    RoomModel model = Get(aggregate.Id);
-
-    // Преобразуем изменения из агрегата в модель данных, используя снапшоты.
-    model.UpdateFromSnapshot(aggregate.GetSnapshot());
-
-    // Добавляем события агрегата
-    Update(aggregate);
-
-    // Возвращаем завершенную задачу.
-    return Task.CompletedTask;
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно обновляет информацию об агрегатах. 
-  /// </summary>
-  public Task UpdateRangeAsync(IReadOnlyList<Room> aggregates, CancellationToken cancellationToken = default)
-  {
-    // Выполняем код для каждого агрегата
-    foreach (Room aggregate in aggregates)
-    {
-      // Получаем сущность, уже отслеживается в контексте.
-      RoomModel model = Get(aggregate.Id);
-
-      // Преобразуем изменения из агрегата в модель данных, используя снапшоты.
-      model.UpdateFromSnapshot(aggregate.GetSnapshot());
-
-      // Добавляем события агрегата
-      Update(aggregate);
-    }
-
-    // Возвращаем завершенную задачу.
-    return Task.CompletedTask;
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно удаляет агрегат по ее ключу. 
-  /// </summary> 
-  public Task DeleteAsync(Room aggregate, CancellationToken cancellationToken = default)
-  {
-    // Получаем сущность, уже отслеживается в контексте.
-    RoomModel model = Get(aggregate.Id);
-
-    // Получаем сущность как удаляемую
-    Delete(model, model.Id);
-
-    // Возвращаем завершенную задачу.
-    return Task.CompletedTask;
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно удаляет агрегаты по спецификации. 
-  /// </summary>
-  public async Task<int> DeleteRangeAsync(ISpecification<Room, IRoomSpecificationVisitor> specification,
-    CancellationToken cancellationToken = default)
-  {
-    // Получаем базовый запрос к коллекции Room из контекста.
-    IQueryable<RoomModel>? query = Collection.AsQueryable();
-
-    // Создаем экземпляр посетителя спецификаций (visitor), который будет использоваться для преобразования спецификации в выражение LINQ.
     var visitor = new RoomVisitor();
+    spec.Accept(visitor);
 
-    // Применяем спецификацию через паттерн "Посетитель".
-    specification.Accept(visitor);
+    return visitor.Expr;
+  }
 
-    // Если посетитель сгенерировал выражение фильтрации (visitor.Expr != null),
-    // добавляем его к базовому запросу с помощью метода Where().
-    if (visitor.Expr != null) query = query.Where(visitor.Expr);
-
-    // Выполняем запрос асинхронно и получаем список сущностей, удовлетворяющих спецификации.
-    List<RoomModel>? entities = await query.ToListAsync(cancellationToken: cancellationToken);
-
-    // Получаем каждую сущность как удаляемую
-    foreach (RoomModel trackedEntity in entities.Select(Track))
+  /// <inheritdoc/>
+  protected override RoomModel FactoryMethod(Room aggregate)
+  {
+    return new RoomModel
     {
-      // Получаем сущность как удаляемую
-      Delete(trackedEntity, trackedEntity.Id);
-    }
-
-    // Возвращаем количество удаленных сущностей.
-    return entities.Count;
+      Id = aggregate.Id
+    };
   }
 
   /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно выполняет поиск агрегатов, удовлетворяющих указанной спецификации, с возможностью сортировки, пропуска и взятия определенного количества. 
-  /// </summary> 
-  public async Task<Room?> GetAsync(Guid id, CancellationToken cancellationToken = default)
+  protected override Room FromSnapshot(RoomSnapshot snapshot)
   {
-    // Получение сущности из контекста вместе с зависимым объектом
-    RoomModel? model = await Collection.AsQueryable()
-      .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
-
-    // Проверяем, была ли найдена сущность. Если нет, возвращаем null.
-    if (model == null) return null;
-
-    // Обновляем состояние модели, вызывая метод Track(). Это гарантирует, что модель отслеживается контекстом.
-    model = Track(model);
-
-    // Возвращение объекта, отображенного на агрегат, если он существует
-    return Room.FromSnapshot(model.GetSnapshot());
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно выполняет поиск агрегатов, удовлетворяющих указанной спецификации, с возможностью сортировки, пропуска и взятия определенного количества. 
-  /// </summary> 
-  public async Task<IReadOnlyList<Room>> FindAsync(
-    ISpecification<Room, IRoomSpecificationVisitor>? specification,
-    int? skip = null, int? take = null,
-    CancellationToken cancellationToken = default)
-  {
-    // Получение запроса на выборку из базы данных
-    IQueryable<RoomModel>? query = Collection.AsQueryable();
-
-    // Если задана спецификация
-    if (specification != null)
-    {
-      // Создаем посетитель спецификаций инстанса
-      var visitor = new RoomVisitor();
-
-      // Посещаем спецификацию
-      specification.Accept(visitor);
-
-      // Добавляем к запросу полученную выборку
-      if (visitor.Expr != null) query = query.Where(visitor.Expr);
-    }
-
-    // Сортируем по Id
-    query = query.OrderBy(i => i.Id);
-
-    // Если установлено значение пропускаемых записей - устанавливаем в запрос
-    if (skip.HasValue) query = query.Skip(skip.Value);
-
-    // Если установлено значение получаемых записей - устанавливаем в запрос
-    if (take.HasValue) query = query.Take(take.Value);
-
-    // Выполняем запрос асинхронно и получаем список моделей из базы данных.
-    List<RoomModel>? models = await query.ToListAsync(cancellationToken: cancellationToken);
-
-    // Преобразуем каждую модель в агрегат с помощью цепочки методов:
-    return models
-      .Select(Track)
-      .Select(m =>
-        Room.FromSnapshot(m.GetSnapshot()))
-      .ToArray();
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно возвращает первый агрегат, удовлетворяющих указанной спецификации или значение по умолчанию. 
-  /// </summary>
-  public async Task<Room?> FirstOrDefaultAsync(
-    ISpecification<Room, IRoomSpecificationVisitor>? specification,
-    CancellationToken cancellationToken = default
-  )
-  {
-    // Получаем первую страницу результатов (1 элемент) согласно спецификации
-    IReadOnlyList<Room> results = await FindAsync(
-      specification: specification,
-      skip: 0, // Пропускаем 0 элементов
-      take: 1, // Берем только первый элемент
-      cancellationToken: cancellationToken);
-
-    // Возвращаем первый элемент из результатов или null, если коллекция пуста
-    return results.FirstOrDefault();
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Возвращает количество агрегатов, удовлетворяющих указанной спецификации. 
-  /// </summary> 
-  public async Task<int> CountAsync(ISpecification<Room, IRoomSpecificationVisitor>? specification,
-    CancellationToken cancellationToken = default)
-  {
-    // Получение запроса на выборку из базы данных
-    IQueryable<RoomModel>? query = Collection.AsQueryable();
-
-    // Если спецификация не задана, возврат общего числа записей в запросе
-    if (specification == null) return await query.CountAsync(cancellationToken: cancellationToken);
-
-    // Создаем посетитель спецификаций отчетов
-    var visitor = new RoomVisitor();
-
-    // Посещаем спецификацию
-    specification.Accept(visitor);
-
-    // Добавляем к запросу полученную выборку
-    if (visitor.Expr != null) query = query.Where(visitor.Expr);
-
-    // Выполняем запрос и возвращаем результат
-    return await query.CountAsync(cancellationToken: cancellationToken);
+    return Room.FromSnapshot(snapshot);
   }
 }

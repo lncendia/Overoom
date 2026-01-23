@@ -233,5 +233,8 @@ public class FfmpegHlsTranscodingService(ILogger<FfmpegHlsTranscodingService> lo
   /// Возвращает имя исполняемого файла FFmpeg в зависимости от ОС
   /// </summary>
   /// <returns>"ffmpeg.exe" для Windows, "ffmpeg" для других ОС</returns>
-  private static string GetFfmpegFileName() => OperatingSystem.IsWindows() ? "ffmpeg.exe" : "ffmpeg";
+  private static string GetFfmpegFileName()
+  {
+    return OperatingSystem.IsWindows() ? "ffmpeg.exe" : "ffmpeg";
+  }
 }

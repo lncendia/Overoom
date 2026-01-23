@@ -17,16 +17,19 @@ public partial class Room
     return (Room)ctor!.Invoke([snapshot]);
   }
 
-  internal RoomSnapshot GetSnapshot() => new()
+  internal RoomSnapshot GetSnapshot()
   {
-    Id = Id,
-    FilmId = FilmId,
-    Code = Code,
-    OwnerId = OwnerId,
-    CreatedAt = CreatedAt,
-    Viewers = _viewers.ToList(),
-    BannedUsers = _bannedUsers.ToList()
-  };
+    return new RoomSnapshot
+    {
+      Id = Id,
+      FilmId = FilmId,
+      Code = Code,
+      OwnerId = OwnerId,
+      CreatedAt = CreatedAt,
+      Viewers = _viewers.ToList(),
+      BannedUsers = _bannedUsers.ToList()
+    };
+  }
 
   // Приватный конструктор для гидратации
   // ReSharper disable once UnusedMember.Local

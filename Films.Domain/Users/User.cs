@@ -1,8 +1,10 @@
 ﻿using Common.Domain.Aggregates;
 using Common.Domain.Extensions;
 using Common.Domain.Rooms;
+
 using Films.Domain.Films;
 using Films.Domain.Users.Events;
+using Films.Domain.Users.Snapshots;
 using Films.Domain.Users.ValueObjects;
 
 namespace Films.Domain.Users;
@@ -10,13 +12,18 @@ namespace Films.Domain.Users;
 /// <summary>
 /// Класс, представляющий пользователя системы
 /// </summary>
-/// <param name="id">Уникальный идентификатор пользователя</param>
-public partial class User(Guid id) : AggregateRoot(id)
+public partial class User : AggregateRoot<UserSnapshot>
 {
+  #region Константы
+
   /// <summary>
   /// Максимальная длина имени пользователя
   /// </summary>
   private const int MaxUsernameLength = 200;
+
+  #endregion
+
+  #region Поля и свойства
 
   /// <summary>
   /// Имя пользователя
@@ -83,6 +90,10 @@ public partial class User(Guid id) : AggregateRoot(id)
   /// </summary>
   public IReadOnlyCollection<string> Genres => _genres;
 
+  #endregion
+
+  #region Методы
+
   /// <summary>
   /// Добавляет или удаляет фильм из списка желаемого
   /// </summary>
@@ -93,14 +104,11 @@ public partial class User(Guid id) : AggregateRoot(id)
   /// </remarks>
   public void ToggleWatchlist(Film film)
   {
-    // Удаляем фильм, если он уже есть в списке
     _watchlist.RemoveWhere(x => x.FilmId == film.Id);
 
-    // Если список переполнен - удаляем самый старый элемент
     if (_watchlist.Count > 14)
       _watchlist.Remove(_watchlist.OrderBy(x => x.Date).First());
 
-    // Добавляем новый фильм
     _watchlist.Add(new FilmNote
     {
       FilmId = film.Id
@@ -116,14 +124,11 @@ public partial class User(Guid id) : AggregateRoot(id)
   /// </remarks>
   public void AddFilmToHistory(Film film)
   {
-    // Удаляем фильм, если он уже есть в истории
     _history.RemoveWhere(x => x.FilmId == film.Id);
 
-    // Если история переполнена - удаляем самый старый просмотр
     if (_history.Count > 5)
       _history.Remove(_history.OrderBy(x => x.Date).First());
 
-    // Добавляем новый просмотр
     _history.Add(new FilmNote
     {
       FilmId = film.Id
@@ -140,28 +145,31 @@ public partial class User(Guid id) : AggregateRoot(id)
   public void UpdateGenres(IReadOnlyList<FilmToUpdate> films)
   {
     _genres = films
-      // Получаем все жанры из всех фильмов
       .SelectMany(x => x.Genres)
-
-      // Группируем жанры по названию
       .GroupBy(g => g)
-
-      // Сортируем по частоте встречаемости (убывание)
       .OrderByDescending(genre => genre.Count())
-
-      // Берем только названия жанров
       .Select(x => x.Key)
-
-      // Ограничиваем топ-5 жанров
       .Take(5)
-
-      // Преобразуем в HashSet
       .ToHashSet();
   }
+
+  #endregion
 
   /// <summary>
   /// Вспомогательная запись для обновления жанров
   /// </summary>
   /// <param name="Genres">Массив жанров фильма</param>
   public record FilmToUpdate(string[] Genres);
+
+  #region Конструкторы
+
+  /// <summary>
+  /// Конструктор
+  /// </summary>
+  /// <param name="id">Уникальный идентификатор пользователя</param>
+  public User(Guid id) : base(id)
+  {
+  }
+
+  #endregion
 }

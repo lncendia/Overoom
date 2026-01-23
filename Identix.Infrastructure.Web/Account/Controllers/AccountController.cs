@@ -266,15 +266,19 @@ public class AccountController : Controller
   /// Возвращает представление для страницы "MailSent".
   /// </summary>
   /// <returns>Результат действия для страницы "MailSent".</returns>
-  public IActionResult ConfirmEmailMailSent(string returnUrl = "/") =>
-    View("MailSent", new MailSentViewModel(_localizer.GetString("MailSent_ConfirmEmail"), returnUrl));
+  public IActionResult ConfirmEmailMailSent(string returnUrl = "/")
+  {
+    return View("MailSent", new MailSentViewModel(_localizer.GetString("MailSent_ConfirmEmail"), returnUrl));
+  }
 
   /// <summary>
   /// Возвращает представление для страницы "ResetPasswordMailSent".
   /// </summary>
   /// <returns>Результат действия для страницы "MailSent".</returns>
-  public IActionResult ResetPasswordMailSent(string returnUrl = "/") =>
-    View("MailSent", new MailSentViewModel(_localizer.GetString("MailSent_ResetPassword"), returnUrl));
+  public IActionResult ResetPasswordMailSent(string returnUrl = "/")
+  {
+    return View("MailSent", new MailSentViewModel(_localizer.GetString("MailSent_ResetPassword"), returnUrl));
+  }
 
   /// <summary>
   /// Обрабатывает HTTP GET запрос для установки нового пароля.

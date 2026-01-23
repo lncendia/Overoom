@@ -19,6 +19,8 @@ public class PlaylistVisitor : BaseSpecificationVisitor<PlaylistModel, IPlaylist
     return visitor.Expr!;
   }
 
-  public void Visit(DuplicatePlaylistsSpecification specification) =>
+  public void Visit(DuplicatePlaylistsSpecification specification)
+  {
     Expr = model => model.Name.Contains(specification.Name);
+  }
 }

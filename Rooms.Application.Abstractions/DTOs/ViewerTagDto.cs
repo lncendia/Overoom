@@ -11,7 +11,7 @@ public class ViewerTagDto
   public required string Name { get; init; }
 
   /// <summary>
-  /// Описание тега (может быть null)
+  /// Описание тега
   /// </summary>
   public string? Description { get; init; }
 }

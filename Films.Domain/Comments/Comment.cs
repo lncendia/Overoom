@@ -1,36 +1,22 @@
 ﻿using Common.Domain.Aggregates;
 using Common.Domain.Extensions;
+
+using Films.Domain.Comments.Snapshots;
 using Films.Domain.Films;
 using Films.Domain.Users;
 
 namespace Films.Domain.Comments;
 
 /// <summary>
-/// Класс Comment представляет сущность комментария и наследуется от AggregateRoot. 
-/// Он содержит информацию о комментарии, относящемся к фильму.
+/// Класс, представляющий комментарий к фильму.
 /// </summary>
-public partial class Comment : AggregateRoot
+public partial class Comment : AggregateRoot<CommentSnapshot>
 {
+  #region Константы
+
   private const int MaxTextLength = 100;
 
-  /// <summary>
-  /// Конструктор класса Comment, создающий новый комментарий.
-  /// </summary>
-  /// <param name="id">Идентификатор фильма.</param>
-  /// <param name="film">Экземпляр фильма, к которому относится комментарий.</param>
-  /// <param name="user">Идентификатор пользователя, создавшего комментарий.</param>
-  /// <param name="text">Текст комментария.</param>
-  public Comment(Guid id, Film film, User user, string text) : base(id)
-  {
-    // Запоминаем идентификатор фильма
-    FilmId = film.Id;
-
-    // Запоминаем идентификатор пользователя
-    UserId = user.Id;
-
-    // Сохраняем отфильтрованный текст комментария
-    Text = text.ValidateLength(nameof(Text), MaxTextLength);
-  }
+  #endregion
 
   /// <summary>
   /// Идентификатор фильма, к которому относится комментарий.
@@ -51,4 +37,22 @@ public partial class Comment : AggregateRoot
   /// Время создания комментария.
   /// </summary>
   public DateTime CreatedAt { get; } = DateTime.UtcNow;
+
+  #region Конструкторы
+
+  /// <summary>
+  /// Конструктор.
+  /// </summary>
+  /// <param name="id">Идентификатор фильма.</param>
+  /// <param name="film">Экземпляр фильма, к которому относится комментарий.</param>
+  /// <param name="user">Идентификатор пользователя, создавшего комментарий.</param>
+  /// <param name="text">Текст комментария.</param>
+  public Comment(Guid id, Film film, User user, string text) : base(id)
+  {
+    FilmId = film.Id;
+    UserId = user.Id;
+    Text = text.ValidateLength(nameof(Text), MaxTextLength);
+  }
+
+  #endregion
 }

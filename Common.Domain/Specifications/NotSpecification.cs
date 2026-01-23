@@ -19,12 +19,18 @@ public class NotSpecification<T, TVisitor>(ISpecification<T, TVisitor> specifica
   /// Принимает посетителя для обработки спецификации
   /// </summary>
   /// <param name="visitor">Посетитель спецификации</param>
-  public void Accept(TVisitor visitor) => visitor.Visit(this);
+  public void Accept(TVisitor visitor)
+  {
+    visitor.Visit(this);
+  }
 
   /// <summary>
   /// Проверяет удовлетворяет ли объект условиям спецификации
   /// </summary>
   /// <param name="obj">Проверяемый объект</param>
   /// <returns>True если объект не удовлетворяет условиям исходной спецификации, иначе False</returns>
-  public bool IsSatisfiedBy(T obj) => !Specification.IsSatisfiedBy(obj);
+  public bool IsSatisfiedBy(T obj)
+  {
+    return !Specification.IsSatisfiedBy(obj);
+  }
 }

@@ -18,7 +18,7 @@ public class ViewerData
   public required string UserName { get; init; }
 
   /// <summary>
-  /// Ключ фотографии профиля зрителя (может быть null)
+  /// Ключ фотографии профиля зрителя
   /// </summary>
   public string? PhotoKey { get; init; }
 

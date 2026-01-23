@@ -19,6 +19,9 @@ public class RatingVisitor : BaseSpecificationVisitor<RatingModel, IRatingSpecif
     return visitor.Expr!;
   }
 
-  public void Visit(DuplicateRatingsSpecification specification) => Expr = x => x.FilmId == specification.FilmId
-    && x.UserId == specification.UserId;
+  public void Visit(DuplicateRatingsSpecification specification)
+  {
+    Expr = x => x.FilmId == specification.FilmId
+                && x.UserId == specification.UserId;
+  }
 }

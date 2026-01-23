@@ -1,3 +1,5 @@
+using Common.Infrastructure.Repositories.Models;
+
 using Films.Domain.Rooms.Snapshots;
 
 namespace Films.Infrastructure.Storage.Models.Rooms;
@@ -5,15 +7,12 @@ namespace Films.Infrastructure.Storage.Models.Rooms;
 /// <summary>
 /// Модель комнаты для совместного просмотра фильмов.
 /// </summary>
-public class RoomModel
+public class RoomModel : IModel<RoomSnapshot>
 {
-  /// <summary>
-  /// Уникальный идентификатор комнаты
-  /// </summary>
-  public required Guid Id { get; init; }
+  #region Полся и свойства
 
   /// <summary>
-  /// Секретный код комнаты для подключения (может быть null)
+  /// Секретный код комнаты для подключения
   /// </summary>
   public string? Code { get; set; }
 
@@ -46,7 +45,16 @@ public class RoomModel
   /// Дата и время изменения модели
   /// </summary>
   public DateTime ModifiedAt { get; set; }
-  
+
+  #endregion
+
+  #region IModel
+
+  /// <summary>
+  /// Уникальный идентификатор комнаты
+  /// </summary>
+  public required Guid Id { get; init; }
+
   public void UpdateFromSnapshot(RoomSnapshot snapshot)
   {
     FilmId = snapshot.FilmId;
@@ -57,14 +65,19 @@ public class RoomModel
     BannedUsers = snapshot.BannedUsers.ToList();
   }
 
-  public RoomSnapshot GetSnapshot() => new()
+  public RoomSnapshot GetSnapshot()
   {
-    Id = Id,
-    FilmId = FilmId,
-    Code = Code,
-    OwnerId = OwnerId,
-    CreatedAt = CreatedAt,
-    Viewers = Viewers.AsReadOnly(),
-    BannedUsers = BannedUsers.AsReadOnly()
-  };
+    return new RoomSnapshot
+    {
+      Id = Id,
+      FilmId = FilmId,
+      Code = Code,
+      OwnerId = OwnerId,
+      CreatedAt = CreatedAt,
+      Viewers = Viewers.AsReadOnly(),
+      BannedUsers = BannedUsers.AsReadOnly()
+    };
+  }
+
+  #endregion
 }

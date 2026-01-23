@@ -1,9 +1,12 @@
+using System.Linq.Expressions;
+
 using Common.Domain.Specifications.Abstractions;
 using Common.Infrastructure.Repositories;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
-using MongoTracker.Builders;
+
+using Incendia.MongoTracker.Builders;
+
 using Rooms.Domain.Messages;
+using Rooms.Domain.Messages.Snapshots;
 using Rooms.Domain.Messages.Specifications.Visitor;
 using Rooms.Domain.Repositories;
 using Rooms.Infrastructure.Storage.Context;
@@ -15,252 +18,38 @@ namespace Rooms.Infrastructure.Storage.Repositories;
 /// <summary>
 /// Реализация репозитория для хранения сообщений.
 /// </summary>
-public class MessageRepository(MongoDbContext context, ModelBuilder config)
-  : RepositoryBase<MessageModel, Message>(config, context.Messages), IMessageRepository
+public class MessageRepository : RepositoryBase<MessageModel, Message, MessageSnapshot, IMessageSpecificationVisitor>, IMessageRepository
 {
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно добавляет новый агрегат. 
-  /// </summary> 
-  public Task AddAsync(Message aggregate, CancellationToken cancellationToken = default)
-  {
-    // Преобразуем агрегат в модель данных, которая будет использоваться для хранения данных в базе данных.
-    var model = new MessageModel { Id = aggregate.Id, Text = null! };
-
-    // Заполняем модель из снапшота
-    model.UpdateFromSnapshot(aggregate.GetSnapshot());
-
-    // Начинаем отслеживать добавляемую модель
-    Add(model, aggregate);
-
-    // Возвращаем завершенную задачу.
-    return Task.CompletedTask;
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно добавляет новые агрегаты. 
+  /// <summary>
+  /// Конструктор
   /// </summary>
-  public Task AddRangeAsync(IReadOnlyList<Message> aggregates, CancellationToken cancellationToken = default)
+  /// <param name="context">MongoDB-контекст приложения</param>
+  /// <param name="config">Конфигурация трекера моделей</param>
+  public MessageRepository(MongoDbContext context, ModelBuilder config) : base(config, context.Messages)
   {
-    // Выполняем код для каждого агрегата
-    foreach (Message aggregate in aggregates)
-    {
-      // Преобразуем агрегат в модель данных, которая будет использоваться для хранения данных в базе данных.
-      var model = new MessageModel { Id = aggregate.Id, Text = null! };
-
-      // Заполняем модель из снапшота
-      model.UpdateFromSnapshot(aggregate.GetSnapshot());
-
-      // Начинаем отслеживать добавляемую модель
-      Add(model, aggregate);
-    }
-
-    // Возвращаем завершенную задачу.
-    return Task.CompletedTask;
   }
 
   /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно обновляет информацию об агрегате. 
-  /// </summary> 
-  public Task UpdateAsync(Message aggregate, CancellationToken cancellationToken = default)
+  protected override Expression<Func<MessageModel, bool>>? SpecificationVisitor(ISpecification<Message, IMessageSpecificationVisitor> spec)
   {
-    // Получаем сущность, уже отслеживается в контексте.
-    MessageModel model = Get(aggregate.Id);
-
-    // Преобразуем изменения из агрегата в модель данных, используя снапшоты.
-    model.UpdateFromSnapshot(aggregate.GetSnapshot());
-
-    // Добавляем события агрегата
-    Update(aggregate);
-
-    // Возвращаем завершенную задачу.
-    return Task.CompletedTask;
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно обновляет информацию об агрегатах. 
-  /// </summary>
-  public Task UpdateRangeAsync(IReadOnlyList<Message> aggregates, CancellationToken cancellationToken = default)
-  {
-    // Выполняем код для каждого агрегата
-    foreach (Message aggregate in aggregates)
-    {
-      // Получаем сущность, уже отслеживается в контексте.
-      MessageModel model = Get(aggregate.Id);
-
-      // Преобразуем изменения из агрегата в модель данных, используя снапшоты.
-      model.UpdateFromSnapshot(aggregate.GetSnapshot());
-
-      // Добавляем события агрегата
-      Update(aggregate);
-    }
-
-    // Возвращаем завершенную задачу.
-    return Task.CompletedTask;
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно удаляет агрегат по ее ключу. 
-  /// </summary> 
-  public Task DeleteAsync(Message aggregate, CancellationToken cancellationToken = default)
-  {
-    // Получаем сущность, уже отслеживается в контексте.
-    MessageModel model = Get(aggregate.Id);
-
-    // Получаем сущность как удаляемую
-    Delete(model, model.Id);
-
-    // Возвращаем завершенную задачу.
-    return Task.CompletedTask;
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно удаляет агрегаты по спецификации. 
-  /// </summary>
-  public async Task<int> DeleteRangeAsync(ISpecification<Message, IMessageSpecificationVisitor> specification,
-    CancellationToken cancellationToken = default)
-  {
-    // Получаем базовый запрос к коллекции Message из контекста.
-    IQueryable<MessageModel>? query = Collection.AsQueryable();
-
-    // Создаем экземпляр посетителя спецификаций (visitor), который будет использоваться для преобразования спецификации в выражение LINQ.
     var visitor = new MessageVisitor();
+    spec.Accept(visitor);
 
-    // Применяем спецификацию через паттерн "Посетитель".
-    specification.Accept(visitor);
+    return visitor.Expr;
+  }
 
-    // Если посетитель сгенерировал выражение фильтрации (visitor.Expr != null),
-    // добавляем его к базовому запросу с помощью метода Where().
-    if (visitor.Expr != null) query = query.Where(visitor.Expr);
-
-    // Выполняем запрос асинхронно и получаем список сущностей, удовлетворяющих спецификации.
-    List<MessageModel>? entities = await query.ToListAsync(cancellationToken: cancellationToken);
-
-    // Получаем каждую сущность как удаляемую
-    foreach (MessageModel trackedEntity in entities.Select(Track))
+  /// <inheritdoc/>
+  protected override MessageModel FactoryMethod(Message aggregate)
+  {
+    return new MessageModel
     {
-      // Получаем сущность как удаляемую
-      Delete(trackedEntity, trackedEntity.Id);
-    }
-
-    // Возвращаем количество удаленных сущностей.
-    return entities.Count;
+      Id = aggregate.Id
+    };
   }
 
   /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно выполняет поиск агрегатов, удовлетворяющих указанной спецификации, с возможностью сортировки, пропуска и взятия определенного количества. 
-  /// </summary> 
-  public async Task<Message?> GetAsync(Guid id, CancellationToken cancellationToken = default)
+  protected override Message FromSnapshot(MessageSnapshot snapshot)
   {
-    // Получение сущности из контекста вместе с зависимым объектом
-    MessageModel? model = await Collection.AsQueryable()
-      .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
-
-    // Проверяем, была ли найдена сущность. Если нет, возвращаем null.
-    if (model == null) return null;
-
-    // Обновляем состояние модели, вызывая метод Track(). Это гарантирует, что модель отслеживается контекстом.
-    model = Track(model);
-
-    // Возвращение объекта, отображенного на агрегат, если он существует
-    return Message.FromSnapshot(model.GetSnapshot());
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно выполняет поиск агрегатов, удовлетворяющих указанной спецификации, с возможностью сортировки, пропуска и взятия определенного количества. 
-  /// </summary> 
-  public async Task<IReadOnlyList<Message>> FindAsync(
-    ISpecification<Message, IMessageSpecificationVisitor>? specification,
-    int? skip = null, int? take = null,
-    CancellationToken cancellationToken = default)
-  {
-    // Получение запроса на выборку из базы данных
-    IQueryable<MessageModel>? query = Collection.AsQueryable();
-
-    // Если задана спецификация
-    if (specification != null)
-    {
-      // Создаем посетитель спецификаций инстанса
-      var visitor = new MessageVisitor();
-
-      // Посещаем спецификацию
-      specification.Accept(visitor);
-
-      // Добавляем к запросу полученную выборку
-      if (visitor.Expr != null) query = query.Where(visitor.Expr);
-    }
-
-    // Сортируем по Id
-    query = query.OrderBy(i => i.Id);
-
-    // Если установлено значение пропускаемых записей - устанавливаем в запрос
-    if (skip.HasValue) query = query.Skip(skip.Value);
-
-    // Если установлено значение получаемых записей - устанавливаем в запрос
-    if (take.HasValue) query = query.Take(take.Value);
-
-    // Выполняем запрос асинхронно и получаем список моделей из базы данных.
-    List<MessageModel>? models = await query.ToListAsync(cancellationToken: cancellationToken);
-
-    // Преобразуем каждую модель в агрегат с помощью цепочки методов:
-    return models
-      .Select(Track)
-      .Select(m =>
-        Message.FromSnapshot(m
-          .GetSnapshot()))
-      .ToArray();
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Асинхронно возвращает первый агрегат, удовлетворяющих указанной спецификации или значение по умолчанию. 
-  /// </summary>
-  public async Task<Message?> FirstOrDefaultAsync(
-    ISpecification<Message, IMessageSpecificationVisitor>? specification,
-    CancellationToken cancellationToken = default
-  )
-  {
-    // Получаем первую страницу результатов (1 элемент) согласно спецификации
-    IReadOnlyList<Message> results = await FindAsync(
-      specification: specification,
-      skip: 0, // Пропускаем 0 элементов
-      take: 1, // Берем только первый элемент
-      cancellationToken: cancellationToken);
-
-    // Возвращаем первый элемент из результатов или null, если коллекция пуста
-    return results.FirstOrDefault();
-  }
-
-  /// <inheritdoc/>
-  /// <summary> 
-  /// Возвращает количество агрегатов, удовлетворяющих указанной спецификации. 
-  /// </summary> 
-  public async Task<int> CountAsync(ISpecification<Message, IMessageSpecificationVisitor>? specification,
-    CancellationToken cancellationToken = default)
-  {
-    // Получение запроса на выборку из базы данных
-    IQueryable<MessageModel>? query = Collection.AsQueryable();
-
-    // Если спецификация не задана, возврат общего числа записей в запросе
-    if (specification == null) return await query.CountAsync(cancellationToken: cancellationToken);
-
-    // Создаем посетитель спецификаций отчетов
-    var visitor = new MessageVisitor();
-
-    // Посещаем спецификацию
-    specification.Accept(visitor);
-
-    // Добавляем к запросу полученную выборку
-    if (visitor.Expr != null) query = query.Where(visitor.Expr);
-
-    // Выполняем запрос и возвращаем результат
-    return await query.CountAsync(cancellationToken: cancellationToken);
+    return Message.FromSnapshot(snapshot);
   }
 }

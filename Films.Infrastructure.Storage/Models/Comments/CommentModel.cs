@@ -1,21 +1,20 @@
-﻿using Films.Domain.Comments.Snapshots;
+﻿using Common.Infrastructure.Repositories.Models;
+
+using Films.Domain.Comments.Snapshots;
 
 namespace Films.Infrastructure.Storage.Models.Comments;
 
 /// <summary>
 /// Модель комментария для работы с базой данных.
 /// </summary>
-public class CommentModel
+public class CommentModel : IModel<CommentSnapshot>
 {
-  /// <summary>
-  /// Уникальный идентификатор комментария
-  /// </summary>
-  public required Guid Id { get; init; }
+  #region Поля и свойства
 
   /// <summary>
-  /// Текст комментария (максимальная длина - 1000 символов)
+  /// Текст комментария
   /// </summary>
-  public required string Text { get; set; }
+  public string Text { get; set; } = null!;
 
   /// <summary>
   /// Дата и время создания комментария
@@ -23,7 +22,7 @@ public class CommentModel
   public DateTime CreatedAt { get; set; }
 
   /// <summary>
-  /// Идентификатор пользователя, оставившего комментарий (может быть null)
+  /// Идентификатор пользователя, оставившего комментарий
   /// </summary>
   public Guid UserId { get; set; }
 
@@ -31,20 +30,32 @@ public class CommentModel
   /// Идентификатор фильма, к которому относится комментарий
   /// </summary>
   public Guid FilmId { get; set; }
-  
+
   /// <summary>
   /// Дата и время изменения модели
   /// </summary>
   public DateTime ModifiedAt { get; set; }
 
-  public CommentSnapshot GetSnapshot() => new()
+  #endregion
+
+  #region IModel
+
+  /// <summary>
+  /// Уникальный идентификатор комментария
+  /// </summary>
+  public required Guid Id { get; init; }
+
+  public CommentSnapshot GetSnapshot()
   {
-    Id = Id,
-    FilmId = FilmId,
-    UserId = UserId,
-    Text = Text,
-    CreatedAt = CreatedAt
-  };
+    return new CommentSnapshot
+    {
+      Id = Id,
+      FilmId = FilmId,
+      UserId = UserId,
+      Text = Text,
+      CreatedAt = CreatedAt
+    };
+  }
 
   public void UpdateFromSnapshot(CommentSnapshot snapshot)
   {
@@ -53,4 +64,6 @@ public class CommentModel
     Text = snapshot.Text;
     CreatedAt = snapshot.CreatedAt;
   }
+
+  #endregion
 }

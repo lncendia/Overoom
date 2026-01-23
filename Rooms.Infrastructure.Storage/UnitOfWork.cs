@@ -1,7 +1,9 @@
 ﻿using Common.Infrastructure.Repositories;
+
+using Incendia.MongoTracker.Builders;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
-using MongoTracker.Builders;
 using Rooms.Domain.Repositories;
 using Rooms.Infrastructure.Storage.Context;
 using Rooms.Infrastructure.Storage.Repositories;

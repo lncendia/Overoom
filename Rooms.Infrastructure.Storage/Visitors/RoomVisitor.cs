@@ -19,5 +19,8 @@ public class RoomVisitor : BaseSpecificationVisitor<RoomModel, IRoomSpecificatio
     return visitor.Expr!;
   }
 
-  public void Visit(RoomsByViewerSpecification spec) => Expr = x => x.Viewers.Any(v => v.Id == spec.UserId);
+  public void Visit(RoomsByViewerSpecification spec)
+  {
+    Expr = x => x.Viewers.Any(v => v.Id == spec.UserId);
+  }
 }

@@ -1,37 +1,25 @@
 ﻿using Common.Domain.Aggregates;
 using Common.Domain.Rooms;
+
 using Rooms.Domain.Rooms.Entities;
 using Rooms.Domain.Rooms.Events;
 using Rooms.Domain.Rooms.Exceptions;
+using Rooms.Domain.Rooms.Snapshots;
 
 namespace Rooms.Domain.Rooms;
 
 /// <summary>
 /// Представляет комнату совместного просмотра фильма или сериала.
-/// Содержит участников, настройки воспроизведения и методы взаимодействия между зрителями.
 /// </summary>
 /// <remarks>
 /// Класс реализует логику синхронизации просмотра между участниками,
 /// управление состоянием комнаты и генерацию соответствующих доменных событий.
 /// </remarks>
-public partial class Room : AggregateRoot
+public partial class Room : AggregateRoot<RoomSnapshot>
 {
-  private readonly Dictionary<Guid, Viewer> _viewersList = [];
+  #region Поля и свойства
 
-  /// <summary>
-  /// Создает новый экземпляр комнаты для совместного просмотра
-  /// </summary>
-  /// <param name="id">Уникальный идентификатор комнаты</param>
-  /// <param name="filmId">Идентификатор фильма или сериала для просмотра</param>
-  /// <param name="isSerial">Флаг, указывающий является ли контент сериалом</param>
-  /// <param name="owner">Владелец комнаты (создатель)</param>
-  public Room(Guid id, Guid filmId, bool isSerial, Viewer owner) : base(id)
-  {
-    FilmId = filmId;
-    IsSerial = isSerial;
-    Owner = owner;
-    Join(owner);
-  }
+  private readonly Dictionary<Guid, Viewer> _viewersList = [];
 
   /// <summary>
   /// Идентификатор фильма или сериала, который просматривается в комнате
@@ -52,6 +40,10 @@ public partial class Room : AggregateRoot
   /// Список всех зрителей в комнате (включая владельца)
   /// </summary>
   public IReadOnlyDictionary<Guid, Viewer> Viewers => _viewersList;
+
+  #endregion
+
+  #region Методы
 
   /// <summary>
   /// Добавляет тег к зрителю для категоризации или поиска
@@ -525,4 +517,25 @@ public partial class Room : AggregateRoot
 
     return viewer;
   }
+
+  #endregion
+
+  #region Конструкторы
+
+  /// <summary>
+  /// Создает новый экземпляр комнаты для совместного просмотра
+  /// </summary>
+  /// <param name="id">Уникальный идентификатор комнаты</param>
+  /// <param name="filmId">Идентификатор фильма или сериала для просмотра</param>
+  /// <param name="isSerial">Флаг, указывающий является ли контент сериалом</param>
+  /// <param name="owner">Владелец комнаты (создатель)</param>
+  public Room(Guid id, Guid filmId, bool isSerial, Viewer owner) : base(id)
+  {
+    FilmId = filmId;
+    IsSerial = isSerial;
+    Owner = owner;
+    Join(owner);
+  }
+
+  #endregion
 }

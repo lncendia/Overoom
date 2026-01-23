@@ -1,13 +1,17 @@
 ﻿using Common.Domain.Aggregates;
 using Common.Domain.Extensions;
 
+using Films.Domain.Playlists.Snapshots;
+
 namespace Films.Domain.Playlists;
 
 /// <summary>
 /// Плейлист фильмов.
 /// </summary>
-public partial class Playlist(Guid id) : AggregateRoot(id)
+public partial class Playlist : AggregateRoot<PlaylistSnapshot>
 {
+  #region Поля и свойства
+
   private HashSet<Guid> _films = [];
   private HashSet<string> _genres = [];
 
@@ -57,6 +61,10 @@ public partial class Playlist(Guid id) : AggregateRoot(id)
   /// </summary>
   public IReadOnlyCollection<string> Genres => _genres;
 
+  #endregion
+
+  #region Методы
+
   /// <summary>
   /// Обновляет список фильмов в плейлисте.
   /// </summary>
@@ -74,10 +82,23 @@ public partial class Playlist(Guid id) : AggregateRoot(id)
       .ToHashSet();
   }
 
+  #endregion
+
   /// <summary>
-  /// 
+  ///
   /// </summary>
   /// <param name="Id"></param>
   /// <param name="Genres"></param>
   public record FilmToUpdate(Guid Id, string[] Genres);
+
+  #region Конструкторы
+
+  /// <summary>
+  /// Конструктор
+  /// </summary>
+  public Playlist(Guid id) : base(id)
+  {
+  }
+
+  #endregion
 }

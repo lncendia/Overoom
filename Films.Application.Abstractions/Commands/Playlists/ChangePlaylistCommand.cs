@@ -18,7 +18,7 @@ public class ChangePlaylistCommand : IRequest
   public required string Description { get; init; }
 
   /// <summary>
-  /// Список идентификаторов фильмов в плейлисте (может быть null)
+  /// Список идентификаторов фильмов в плейлисте
   /// </summary>
   public IReadOnlyCollection<Guid>? Films { get; init; }
 }

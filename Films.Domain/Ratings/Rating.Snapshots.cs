@@ -17,14 +17,17 @@ public partial class Rating
     return (Rating)ctor!.Invoke([snapshot]);
   }
 
-  internal RatingSnapshot GetSnapshot() => new()
+  internal RatingSnapshot GetSnapshot()
   {
-    Id = Id,
-    FilmId = FilmId,
-    UserId = UserId,
-    Score = Score,
-    CreatedAt = CreatedAt
-  };
+    return new RatingSnapshot
+    {
+      Id = Id,
+      FilmId = FilmId,
+      UserId = UserId,
+      Score = Score,
+      CreatedAt = CreatedAt
+    };
+  }
 
   // Приватный конструктор для гидратации
   // ReSharper disable once UnusedMember.Local

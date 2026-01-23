@@ -252,13 +252,4 @@
             <Link>.dockerignore</Link>
         </Content>
     </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Incendia.Identity.Mongo">
-        <HintPath>..\..\Identity.Mongo\Incendia.Identity.Mongo\bin\Release\net10.0\Incendia.Identity.Mongo.dll</HintPath>
-      </Reference>
-      <Reference Include="Incendia.MongoTracker">
-        <HintPath>..\..\MongoTracker\Incendia.MongoTracker\bin\Release\netstandard2.1\Incendia.MongoTracker.dll</HintPath>
-      </Reference>
-    </ItemGroup>
 </Project>

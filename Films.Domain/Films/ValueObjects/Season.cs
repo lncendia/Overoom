@@ -45,7 +45,10 @@ public class Season : IEquatable<Season>, IComparable<Season>
   /// Возвращает хэш-код, основанный на номере сезона.
   /// </summary>
   /// <returns>Хэш-код объекта.</returns>
-  public override int GetHashCode() => Number;
+  public override int GetHashCode()
+  {
+    return Number;
+  }
 
   /// <summary>
   /// Сравнивает текущий сезон с другим сезоном по номеру.

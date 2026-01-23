@@ -40,7 +40,10 @@ public class Episode : MediaContent, IEquatable<Episode>, IComparable<Episode>
   /// Возвращает хэш-код, основанный на номере эпизода.
   /// </summary>
   /// <returns>Хэш-код объекта.</returns>
-  public override int GetHashCode() => Number;
+  public override int GetHashCode()
+  {
+    return Number;
+  }
 
   /// <summary>
   /// Сравнивает текущий эпизод с другим эпизодом по номеру.

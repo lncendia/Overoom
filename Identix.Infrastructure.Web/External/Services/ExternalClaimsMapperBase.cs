@@ -20,8 +20,10 @@ public abstract class ExternalClaimsMapperBase(string provider) : IExternalClaim
   /// </summary>
   /// <param name="provider1">Название провайдера для проверки</param>
   /// <returns>True если провайдер поддерживается</returns>
-  public bool SupportsProvider(string provider1) =>
-    string.Equals(provider1, provider, StringComparison.OrdinalIgnoreCase);
+  public bool SupportsProvider(string provider1)
+  {
+    return string.Equals(provider1, provider, StringComparison.OrdinalIgnoreCase);
+  }
 
   /// <summary>
   /// Маппит claims из результата внешней аутентификации

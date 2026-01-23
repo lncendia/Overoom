@@ -1,3 +1,5 @@
+using Common.Infrastructure.Repositories.Models;
+
 using Rooms.Domain.Messages.Snapshots;
 
 namespace Rooms.Infrastructure.Storage.Models.Messages;
@@ -5,17 +7,14 @@ namespace Rooms.Infrastructure.Storage.Models.Messages;
 /// <summary>
 /// Модель комментария для работы с базой данных.
 /// </summary>
-public class MessageModel
+public class MessageModel : IModel<MessageSnapshot>
 {
-  /// <summary>
-  /// Уникальный идентификатор комментария
-  /// </summary>
-  public required Guid Id { get; init; }
+  #region Поля и свойства
 
   /// <summary>
   /// Текст комментария
   /// </summary>
-  public required string Text { get; set; }
+  public string Text { get; set; } = null!;
 
   /// <summary>
   /// Дата и время создания комментария
@@ -23,7 +22,7 @@ public class MessageModel
   public DateTime SentAt { get; set; }
 
   /// <summary>
-  /// Идентификатор пользователя, оставившего комментарий (может быть null)
+  /// Идентификатор пользователя, оставившего комментарий
   /// </summary>
   public Guid UserId { get; set; }
 
@@ -32,21 +31,32 @@ public class MessageModel
   /// </summary>
   public Guid RoomId { get; set; }
 
+  #endregion
+
+  #region IModel
+
+  /// <summary>
+  /// Уникальный идентификатор комментария
+  /// </summary>
+  public required Guid Id { get; init; }
+
   /// <summary>
   /// Создаёт снапшот текущего состояния модели для хранения или передачи.
   /// </summary>
-  public MessageSnapshot GetSnapshot() => new()
+  public MessageSnapshot GetSnapshot()
   {
-    Id = Id,
-    RoomId = RoomId,
-    UserId = UserId,
-    Text = Text,
-    SentAt = SentAt
-  };
+    return new MessageSnapshot
+    {
+      Id = Id,
+      RoomId = RoomId,
+      UserId = UserId,
+      Text = Text,
+      SentAt = SentAt
+    };
+  }
 
   /// <summary>
   /// Обновляет модель на основе снапшота.
-  /// Поля обновляются с отслеживанием изменений через TrackChange/TrackStructChange.
   /// </summary>
   public void UpdateFromSnapshot(MessageSnapshot snapshot)
   {
@@ -55,4 +65,6 @@ public class MessageModel
     Text = snapshot.Text;
     SentAt = snapshot.SentAt;
   }
+
+  #endregion
 }

@@ -6,6 +6,7 @@ using Identix.Application.Abstractions.Entities;
 
 using Incendia.Identity.Mongo;
 using Incendia.Identity.Mongo.Model;
+using Incendia.Identity.Mongo.Stores;
 
 using MassTransit.MongoDbIntegration;
 
@@ -18,7 +19,7 @@ namespace Identix.Infrastructure.Common.Identity.Stores;
 /// <summary>
 ///
 /// </summary>
-public class UserStore : Incendia.Identity.Mongo.Stores.UserStore<AppUser, AppRole, Guid>
+public class UserStore : UserStore<AppUser, AppRole, Guid>
 {
   /// <summary>
   ///

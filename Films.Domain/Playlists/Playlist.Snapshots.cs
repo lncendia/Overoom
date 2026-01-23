@@ -17,16 +17,19 @@ public partial class Playlist
     return (Playlist)ctor!.Invoke([snapshot]);
   }
 
-  internal PlaylistSnapshot GetSnapshot() => new()
+  internal PlaylistSnapshot GetSnapshot()
   {
-    Id = Id,
-    Name = Name,
-    Description = Description,
-    PosterKey = PosterKey,
-    UpdatedAt = UpdatedAt,
-    Films = _films.ToList(),
-    Genres = _genres.ToList()
-  };
+    return new PlaylistSnapshot
+    {
+      Id = Id,
+      Name = Name,
+      Description = Description,
+      PosterKey = PosterKey,
+      UpdatedAt = UpdatedAt,
+      Films = _films.ToList(),
+      Genres = _genres.ToList()
+    };
+  }
 
   // Приватный конструктор для гидратации
   // ReSharper disable once UnusedMember.Local

@@ -1,4 +1,5 @@
 using System.Reflection;
+
 using Rooms.Domain.Rooms.Entities;
 using Rooms.Domain.Rooms.Snapshots;
 
@@ -25,14 +26,17 @@ public partial class Room
     return (Room)constructor!.Invoke([snapshot]);
   }
 
-  internal RoomSnapshot GetSnapshot() => new()
+  internal RoomSnapshot GetSnapshot()
   {
-    Id = Id,
-    FilmId = FilmId,
-    IsSerial = IsSerial,
-    OwnerId = Owner.Id,
-    Viewers = Viewers.Values.Select(v => v.GetSnapshot()).ToArray()
-  };
+    return new RoomSnapshot
+    {
+      Id = Id,
+      FilmId = FilmId,
+      IsSerial = IsSerial,
+      OwnerId = Owner.Id,
+      Viewers = Viewers.Values.Select(v => v.GetSnapshot()).ToDictionary(v => v.Id, v => v)
+    };
+  }
 
   /// <summary>
   /// Внутренний конструктор для гидратации из инфраструктуры
@@ -40,7 +44,7 @@ public partial class Room
   // ReSharper disable once UnusedMember.Local
   private Room(RoomSnapshot snapshot) : base(snapshot.Id)
   {
-    var viewers = snapshot.Viewers
+    var viewers = snapshot.Viewers.Values
       .Select(Viewer.FromSnapshot)
       .ToDictionary(v => v.Id);
 

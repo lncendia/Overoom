@@ -3,14 +3,15 @@ using Common.Domain.Aggregates;
 using Films.Domain.Films;
 using Films.Domain.Rooms.Events;
 using Films.Domain.Rooms.Exceptions;
+using Films.Domain.Rooms.Snapshots;
 using Films.Domain.Users;
 
 namespace Films.Domain.Rooms;
 
-/// <summary> 
+/// <summary>
 /// Класс, представляющий комнату для совместного просмотра фильмов.
-/// </summary> 
-public partial class Room : AggregateRoot
+/// </summary>
+public partial class Room : AggregateRoot<RoomSnapshot>
 {
   /// <summary>
   /// Максимально допустимое число зрителей в комнате
@@ -18,39 +19,8 @@ public partial class Room : AggregateRoot
   private const int MaxViewersCount = 10;
 
   /// <summary>
-  /// Инициализирует новый экземпляр класса Room.
-  /// </summary>
-  /// <param name="id">Уникальный идентификатор комнаты.</param>
-  /// <param name="user">Пользователь, создающий комнату.</param>
-  /// <param name="film">Фильм для просмотра в комнате.</param>
-  /// <param name="isOpen">Флаг, указывающий является ли комната открытой.</param>
-  public Room(Guid id, User user, Film film, bool isOpen) : base(id)
-  {
-    // Если комната закрытая, генерируем секретный код
-    if (!isOpen) Code = GenerateRandomCode(5);
-
-    // Устанавливаем идентификатор фильма
-    FilmId = film.Id;
-
-    // Добавляем создателя комнаты в список зрителей
-    _viewers.Add(user.Id);
-
-    // Устанавливаем владельца комнаты
-    OwnerId = user.Id;
-
-    // Устанавливаем дату создания комнаты
-    CreatedAt = DateTime.UtcNow;
-
-    // Если нельзя создать комнату с этим фильмом
-    if (!film.CanCreateRoom) throw new FilmNotAvailableException(film.Id);
-
-    // Добавляем событие
-    AddDomainEvent(new RoomCreatedEvent(this, user, film));
-  }
-
-  /// <summary> 
   /// Получает идентификатор фильма, который транслируется в комнате.
-  /// </summary> 
+  /// </summary>
   /// <value>Guid идентификатор фильма.</value>
   public Guid FilmId { get; }
 
@@ -81,15 +51,15 @@ public partial class Room : AggregateRoot
   /// </summary>
   private readonly HashSet<Guid> _bannedUsers = [];
 
-  /// <summary> 
+  /// <summary>
   /// Получает коллекцию идентификаторов пользователей в комнате.
-  /// </summary> 
+  /// </summary>
   /// <value>Доступная только для чтения коллекция Guid.</value>
   public IReadOnlySet<Guid> Viewers => _viewers;
 
-  /// <summary> 
+  /// <summary>
   /// Получает коллекцию идентификаторов заблокированных пользователей.
-  /// </summary> 
+  /// </summary>
   /// <value>Доступная только для чтения коллекция Guid.</value>
   public IReadOnlySet<Guid> BannedUsers => _bannedUsers;
 
@@ -199,5 +169,36 @@ public partial class Room : AggregateRoot
 
     // Возвращаем сгенерированный код
     return sb.ToString();
+  }
+
+  /// <summary>
+  /// Инициализирует новый экземпляр класса Room.
+  /// </summary>
+  /// <param name="id">Уникальный идентификатор комнаты.</param>
+  /// <param name="user">Пользователь, создающий комнату.</param>
+  /// <param name="film">Фильм для просмотра в комнате.</param>
+  /// <param name="isOpen">Флаг, указывающий является ли комната открытой.</param>
+  public Room(Guid id, User user, Film film, bool isOpen) : base(id)
+  {
+    // Если комната закрытая, генерируем секретный код
+    if (!isOpen) Code = GenerateRandomCode(5);
+
+    // Устанавливаем идентификатор фильма
+    FilmId = film.Id;
+
+    // Добавляем создателя комнаты в список зрителей
+    _viewers.Add(user.Id);
+
+    // Устанавливаем владельца комнаты
+    OwnerId = user.Id;
+
+    // Устанавливаем дату создания комнаты
+    CreatedAt = DateTime.UtcNow;
+
+    // Если нельзя создать комнату с этим фильмом
+    if (!film.CanCreateRoom) throw new FilmNotAvailableException(film.Id);
+
+    // Добавляем событие
+    AddDomainEvent(new RoomCreatedEvent(this, user, film));
   }
 }

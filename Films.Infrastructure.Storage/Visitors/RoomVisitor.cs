@@ -19,5 +19,8 @@ public class RoomVisitor : BaseSpecificationVisitor<RoomModel, IRoomSpecificatio
     return visitor.Expr!;
   }
 
-  public void Visit(RoomByUserSpecification spec) => Expr = x => x.Viewers.Contains(spec.UserId);
+  public void Visit(RoomByUserSpecification spec)
+  {
+    Expr = x => x.Viewers.Contains(spec.UserId);
+  }
 }

@@ -9,6 +9,13 @@ public class DuplicateRatingsSpecification(Guid filmId, Guid userId) : ISpecific
   
   public Guid UserId { get; } = userId;
 
-  public void Accept(IRatingSpecificationVisitor visitor) => visitor.Visit(this);
-  public bool IsSatisfiedBy(Rating item) => item.FilmId == FilmId && item.UserId == UserId;
+  public void Accept(IRatingSpecificationVisitor visitor)
+  {
+    visitor.Visit(this);
+  }
+
+  public bool IsSatisfiedBy(Rating item)
+  {
+    return item.FilmId == FilmId && item.UserId == UserId;
+  }
 }

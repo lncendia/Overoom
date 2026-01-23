@@ -1,26 +1,25 @@
-﻿using Films.Domain.Playlists.Snapshots;
+﻿using Common.Infrastructure.Repositories.Models;
+
+using Films.Domain.Playlists.Snapshots;
 
 namespace Films.Infrastructure.Storage.Models.Playlists;
 
 /// <summary>
 /// Модель плейлиста для работы с базой данных.
 /// </summary>
-public class PlaylistModel
+public class PlaylistModel : IModel<PlaylistSnapshot>
 {
-  /// <summary>
-  /// Уникальный идентификатор плейлиста
-  /// </summary>
-  public required Guid Id { get; init; }
+  #region Поля и свойства
 
   /// <summary>
-  /// Название плейлиста (максимальная длина - 200 символов)
+  /// Название плейлиста
   /// </summary>
-  public required string Name { get; set; }
+  public string Name { get; set; } = null!;
 
   /// <summary>
-  /// Описание плейлиста (максимальная длина - 500 символов)
+  /// Описание плейлиста
   /// </summary>
-  public required string Description { get; set; }
+  public string Description { get; set; } = null!;
 
   /// <summary>
   /// Список идентификаторов фильмов в плейлисте
@@ -40,7 +39,16 @@ public class PlaylistModel
   /// <summary>
   /// Ссылка на постер плейлиста
   /// </summary>
-  public required string PosterKey { get; set; }
+  public string PosterKey { get; set; } = null!;
+
+  #endregion
+
+  #region IModel
+
+  /// <summary>
+  /// Уникальный идентификатор плейлиста
+  /// </summary>
+  public required Guid Id { get; init; }
 
   public void UpdateFromSnapshot(PlaylistSnapshot snapshot)
   {
@@ -52,14 +60,19 @@ public class PlaylistModel
     Genres = snapshot.Genres.ToList();
   }
 
-  public PlaylistSnapshot GetSnapshot() => new()
+  public PlaylistSnapshot GetSnapshot()
   {
-    Id = Id,
-    Name = Name,
-    Description = Description,
-    PosterKey = PosterKey,
-    UpdatedAt = UpdatedAt,
-    Films = Films,
-    Genres = Genres
-  };
+    return new PlaylistSnapshot
+    {
+      Id = Id,
+      Name = Name,
+      Description = Description,
+      PosterKey = PosterKey,
+      UpdatedAt = UpdatedAt,
+      Films = Films,
+      Genres = Genres
+    };
+  }
+
+  #endregion
 }

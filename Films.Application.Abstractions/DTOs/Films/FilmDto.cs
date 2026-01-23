@@ -13,7 +13,7 @@ public class FilmDto : FilmShortDto
   public bool CanCreateRoom { get; init; }
 
   /// <summary>
-  /// Рейтинг пользователя (может быть null)
+  /// Рейтинг пользователя
   /// </summary>
   public double? UserRating { get; init; }
 
@@ -23,17 +23,17 @@ public class FilmDto : FilmShortDto
   public required int UserRatingsCount { get; init; }
 
   /// <summary>
-  /// Общий пользовательский счет (может быть null)
+  /// Общий пользовательский счет
   /// </summary>
   public double? UserScore { get; init; }
 
   /// <summary>
-  /// Флаг наличия в списке ожидания пользователя (может быть null)
+  /// Флаг наличия в списке ожидания пользователя
   /// </summary>
   public bool? InWatchlist { get; init; }
 
   /// <summary>
-  /// Медиа контент фильма (может быть null)
+  /// Медиа контент фильма
   /// </summary>
   public MediaContentDto? Content { get; init; }
 

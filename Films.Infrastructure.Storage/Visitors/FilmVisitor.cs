@@ -22,8 +22,8 @@ public class FilmVisitor : BaseSpecificationVisitor<FilmModel, IFilmSpecificatio
   public void Visit(DuplicateFilmsSpecification specification)
   {
     Expr = model => model.Title == specification.Title
-                    && model.Date.Year == specification.Date.Year
-                    && model.Date.Month == specification.Date.Month
-                    && model.Date.Day == specification.Date.Day;
+      && model.Date.Year == specification.Date.Year
+      && model.Date.Month == specification.Date.Month
+      && model.Date.Day == specification.Date.Day;
   }
 }

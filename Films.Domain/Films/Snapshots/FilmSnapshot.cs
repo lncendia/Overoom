@@ -13,7 +13,7 @@ public record FilmSnapshot
   public Rating? RatingKp { get; init; }
   public Rating? RatingImdb { get; init; }
   public MediaContent? Content { get; init; }
-  public IReadOnlySet<Season>? Seasons { get; init; }
+  public IReadOnlyCollection<Season>? Seasons { get; init; }
   public IReadOnlyCollection<string> Genres { get; init; } = null!;
   public IReadOnlyCollection<string> Countries { get; init; } = null!;
   public IReadOnlyCollection<Actor> Actors { get; init; } = null!;

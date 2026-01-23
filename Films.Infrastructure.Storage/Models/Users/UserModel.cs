@@ -1,4 +1,6 @@
 ﻿using Common.Domain.Rooms;
+using Common.Infrastructure.Repositories.Models;
+
 using Films.Domain.Users.Snapshots;
 using Films.Domain.Users.ValueObjects;
 
@@ -7,20 +9,17 @@ namespace Films.Infrastructure.Storage.Models.Users;
 /// <summary>
 /// Модель пользователя для работы с базой данных.
 /// </summary>
-public class UserModel
+public class UserModel : IModel<UserSnapshot>
 {
-  /// <summary>
-  /// Уникальный идентификатор пользователя
-  /// </summary>
-  public required Guid Id { get; init; }
+  #region Поля и свойства
 
   /// <summary>
   /// Имя пользователя
   /// </summary>
-  public required string Username { get; set; }
+  public string Username { get; set; } = null!;
 
   /// <summary>
-  /// Ссылка на фото пользователя (может быть null)
+  /// Ссылка на фото пользователя
   /// </summary>
   public string? PhotoKey { get; set; }
 
@@ -42,12 +41,21 @@ public class UserModel
   /// <summary>
   /// Настройка комнат
   /// </summary>
-  public required RoomSettings RoomSettings { get; set; }
-  
+  public RoomSettings RoomSettings { get; set; } = null!;
+
   /// <summary>
   /// Дата и время изменения модели
   /// </summary>
   public DateTime ModifiedAt { get; set; }
+
+  #endregion
+
+  #region IModel
+
+  /// <summary>
+  /// Уникальный идентификатор пользователя
+  /// </summary>
+  public Guid Id { get; init; }
 
   public void UpdateFromSnapshot(UserSnapshot snapshot)
   {
@@ -59,14 +67,19 @@ public class UserModel
     Genres = snapshot.Genres.ToList();
   }
 
-  public UserSnapshot GetSnapshot() => new()
+  public UserSnapshot GetSnapshot()
   {
-    Id = Id,
-    Username = Username,
-    PhotoKey = PhotoKey,
-    RoomSettings = RoomSettings,
-    Watchlist = Watchlist,
-    History = History,
-    Genres = Genres
-  };
+    return new UserSnapshot
+    {
+      Id = Id,
+      Username = Username,
+      PhotoKey = PhotoKey,
+      RoomSettings = RoomSettings,
+      Watchlist = Watchlist,
+      History = History,
+      Genres = Genres
+    };
+  }
+
+  #endregion
 }

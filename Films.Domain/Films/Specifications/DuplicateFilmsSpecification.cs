@@ -7,7 +7,13 @@ public class DuplicateFilmsSpecification(string title, DateOnly date) : ISpecifi
 {
   public string Title { get; } = title;
   public DateOnly Date { get; } = date;
-  public bool IsSatisfiedBy(Film item) => string.Equals(item.Title, Title) && item.Date == Date;
+  public bool IsSatisfiedBy(Film item)
+  {
+    return string.Equals(item.Title, Title) && item.Date == Date;
+  }
 
-  public void Accept(IFilmSpecificationVisitor visitor) => visitor.Visit(this);
+  public void Accept(IFilmSpecificationVisitor visitor)
+  {
+    visitor.Visit(this);
+  }
 }
