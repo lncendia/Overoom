@@ -38,7 +38,6 @@ export class RoomHub {
    * @returns Promise, который разрешается после успешного подключения
    */
   async start(): Promise<void> {
-    // Создаем и настраиваем подключение к хабу
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl(this.url, {
         accessTokenFactory: this.tokenFactory,
@@ -46,10 +45,7 @@ export class RoomHub {
       .configureLogging(signalR.LogLevel.Information)
       .build();
 
-    // Подписываемся на поток событий от сервера
     this.connection.on('Event', this.pushEvent.bind(this));
-
-    // Запускаем подключение
     await this.connection.start();
   }
 
@@ -58,20 +54,17 @@ export class RoomHub {
    * @param ev - Контейнер с данными события
    */
   private pushEvent(ev: RoomEventContainer): void {
-    // Обрабатываем событие подключения - формируем URL аватарки
     if (ev.joinEvent) {
       if (ev.joinEvent.viewer.photoKey) {
         ev.joinEvent.viewer.photoUrl = this.thumbnailUrlFormat + ev.joinEvent.viewer.photoKey;
       }
     }
-    // Обрабатываем событие комнаты - формируем URL аватарок всех пользователей
     else if (ev.roomEvent) {
       ev.roomEvent.room.viewers.forEach((v) => {
         if (v.photoKey) v.photoUrl = this.thumbnailUrlFormat + v.photoKey;
       });
     }
 
-    // Передаем событие всем зарегистрированным обработчикам
     this.handlers.forEach((h) => h(ev));
   }
 
@@ -91,8 +84,6 @@ export class RoomHub {
     const index = this.handlers.indexOf(handler);
     if (index >= 0) this.handlers.splice(index, 1);
   }
-
-  // Методы для отправки команд на сервер:
 
   /**
    * Подключается к комнате по идентификатору.

@@ -14,7 +14,6 @@ const RandomVideoModule = ({ children }: { children: ReactNode }): ReactElement 
 
   /** Выбор случайного видео при монтировании компонента */
   useEffect(() => {
-    // Массив ссылок на видео
     const videoList = [
       'video/trailer1.mp4',
       'video/trailer2.mp4',
@@ -23,17 +22,12 @@ const RandomVideoModule = ({ children }: { children: ReactNode }): ReactElement 
       'video/trailer5.mp4',
     ];
 
-    // Выбираем случайное видео
     const randomVideo = videoList[Math.floor(Math.random() * videoList.length)];
-
-    // Устанавливаем выбранное видео в состояние
     setRandomVideo(randomVideo);
   }, []);
 
-  // Если видео еще не выбрано, не рендерим компонент
   if (!randomVideo) return null;
 
-  // Рендер видео с оберткой VideoWrapper и дочерними элементами
   return <VideoWrapper src={randomVideo}>{children}</VideoWrapper>;
 };
 

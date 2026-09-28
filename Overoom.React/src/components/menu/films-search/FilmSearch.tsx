@@ -94,7 +94,6 @@ const FilmSearch = ({ onFilmSearch, films, onClick }: FilmSearchProps): ReactEle
 
   return (
     <>
-      {/* Контейнер поиска с иконкой и полем ввода */}
       <Search ref={anchorRef}>
         <SearchIconWrapper>
           <SearchIcon />
@@ -107,7 +106,6 @@ const FilmSearch = ({ onFilmSearch, films, onClick }: FilmSearchProps): ReactEle
         />
       </Search>
 
-      {/* Выпадающий список найденных фильмов */}
       <Popper
         open={open && films.length > 0}
         anchorEl={anchorRef.current}

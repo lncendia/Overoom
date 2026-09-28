@@ -23,29 +23,18 @@ public static class StorageServices
   /// <param name="builder">Построитель веб-приложения.</param>
   public static void AddStorageServices(this IHostApplicationBuilder builder)
   {
-    // Получаем секцию конфигурации, содержащую параметры подключения к базе данных.
     IConfigurationSection database = builder.Configuration.GetSection("MongoDB");
-
-    // Извлекаем имя базы данных для приложения из конфигурации.
     string applicationDatabaseName = database.GetRequiredValue<string>("ApplicationDB");
 
-    // Регистрируем MongoDbContext как синглтон.
     builder.Services.AddSingleton<MongoDbContext>(sp =>
     {
-      // Получаем IMongoClient из контейнера зависимостей.
       IMongoClient client = sp.GetRequiredService<IMongoClient>();
 
-      // Создаем и возвращаем контекст MongoDB.
       return new MongoDbContext(client, applicationDatabaseName);
     });
 
-    // Регистрируем фабрику обработчиков сессий как Singleton
     builder.Services.AddScoped<ISessionHandlerFactory, SessionHandlerFactory>();
-
-    // Регистрируем UnitOfWork как реализацию интерфейса IUnitOfWork с областью видимости Scoped.
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-    // Регистрирует сериализатор для типа Guid с использованием стандартного представления
     BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
   }
 }

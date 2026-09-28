@@ -22,20 +22,16 @@ const ErrorPage = (): ReactElement => {
   /** Компонент, который будет отображён (NotFound или Error) */
   let page: ReactElement;
 
-  // Если ошибка связана с маршрутом (например, 404)
   if (isRouteErrorResponse(error)) {
     page = <NotFound action={() => navigate('/')} />;
   } else {
-    // Если произошла иная ошибка — предлагаем перезагрузить страницу
     page = <Error action={() => window.location.reload()} />;
   }
 
   return (
     <>
-      {/* Верхняя панель навигации */}
       <NavbarModule />
 
-      {/* Контейнер основной области страницы */}
       <Container
         sx={{ paddingTop: '5.5rem !important' }}
         className="background-container"
@@ -44,7 +40,6 @@ const ErrorPage = (): ReactElement => {
         {page}
       </Container>
 
-      {/* Нижний колонтитул */}
       <FooterModule />
     </>
   );

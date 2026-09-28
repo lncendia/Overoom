@@ -175,8 +175,6 @@ public partial class Viewer(Guid id)
     }
   }
 
-  // ---------- Коллекции с обёртками для отслеживания изменений ----------
-
   private readonly HashSet<string> _tagsSet = [];
   private readonly Dictionary<string, int> _statisticDictionary = [];
 

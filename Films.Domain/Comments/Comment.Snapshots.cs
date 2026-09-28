@@ -1,27 +1,18 @@
-using System.Reflection;
+using Common.Domain.Aggregates;
 using Films.Domain.Comments.Snapshots;
 
 namespace Films.Domain.Comments;
 
-public partial class Comment
+public partial class Comment : ISnapshotable<Comment, CommentSnapshot>
 {
-  internal static Comment FromSnapshot(CommentSnapshot snapshot)
+  /// <inheritdoc/>
+  static Comment ISnapshotable<Comment, CommentSnapshot>.Restore(CommentSnapshot snapshot)
   {
-    // Получаем тип Comment
-    Type filmType = typeof(Comment);
-
-    // Получаем внутренний конструктор, который принимает CommentSnapshot
-    ConstructorInfo? constructor = filmType.GetConstructor(
-      BindingFlags.NonPublic | BindingFlags.Instance,
-      null,
-      [typeof(CommentSnapshot)],
-      null);
-
-    // Вызываем конструктор и возвращаем результат
-    return (Comment)constructor!.Invoke([snapshot]);
+    return new Comment(snapshot);
   }
 
-  internal CommentSnapshot GetSnapshot()
+  /// <inheritdoc/>
+  CommentSnapshot ISnapshotable<Comment, CommentSnapshot>.ToSnapshot()
   {
     return new CommentSnapshot
     {
@@ -34,9 +25,8 @@ public partial class Comment
   }
 
   /// <summary>
-  /// Внутренний конструктор для гидратации из снапшота или БД.
+  /// Конструктор для восстановления из снапшота.
   /// </summary>
-  // ReSharper disable once UnusedMember.Local
   private Comment(CommentSnapshot snapshot) : base(snapshot.Id)
   {
     FilmId = snapshot.FilmId;

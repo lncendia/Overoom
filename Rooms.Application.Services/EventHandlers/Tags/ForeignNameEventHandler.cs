@@ -19,7 +19,6 @@ public class ForeignNameEventHandler(IUnitOfWork unitOfWork)
   /// <param name="cancellationToken">Токен отмены операции</param>
   protected override async Task Execute(ViewerNameChangedEvent notification, CancellationToken cancellationToken)
   {
-    // Проверка на иноагента: все буквы латинские (пробелы, спецсимволы игнорируются)
     bool isForeignAgent = notification.Viewer.UserName
       .Where(char.IsLetter)
       .All(c => c is >= 'A' and <= 'Z' or >= 'a' and <= 'z');

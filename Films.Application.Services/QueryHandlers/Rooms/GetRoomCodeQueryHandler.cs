@@ -24,7 +24,6 @@ public class GetRoomCodeQueryHandler(MongoDbContext context) : IRequestHandler<G
   /// <exception cref="ActionNotAllowedException">Выбрасывается если пользователь не является участником комнаты</exception>
   public async Task<string?> Handle(GetRoomCodeQuery request, CancellationToken cancellationToken)
   {
-    // Получаем комнату из базы данных с проверкой кода доступа и членства пользователя
     var room = await context.Rooms.AsQueryable()
       .Where(r => r.Id == request.RoomId)
       .Select(x => new
@@ -34,15 +33,12 @@ public class GetRoomCodeQueryHandler(MongoDbContext context) : IRequestHandler<G
       })
       .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-    // Проверяем существование комнаты
     if (room is null)
       throw new RoomNotFoundException(request.RoomId);
 
-    // Проверяем, что пользователь является участником комнаты
     if (!room.IsUserIn)
       throw new ActionNotAllowedException(request.RoomId, "GetCode");
 
-    // Возвращаем код доступа комнаты
     return room.Code;
   }
 }

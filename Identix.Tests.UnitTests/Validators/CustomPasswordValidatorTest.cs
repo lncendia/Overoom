@@ -54,11 +54,9 @@ public class CustomPasswordValidatorTest
   public async Task ValidateAsync_ValidPassword(string password)
   {
     // Act
-    // Валидация пароля
     IdentityResult result = await _customPasswordValidator.ValidateAsync(_userManagerMock.Object, _appUser, password);
 
     // Assert
-    // Проверяем является ли тип результата нашим ожиданием.
     Assert.Equal(IdentityResult.Success, result);
   }
 
@@ -75,11 +73,9 @@ public class CustomPasswordValidatorTest
   public async Task ValidateAsync_InvalidLengthPassword(string password)
   {
     // Act
-    // Валидация пароля
     IdentityResult result = await _customPasswordValidator.ValidateAsync(_userManagerMock.Object, _appUser, password);
 
     // Assert
-    // Проверяем является ли код ошибки тем, который мы ожидали
     Assert.Equal("PasswordLengthInvalid", result.Errors.FirstOrDefault()?.Code);
   }
 
@@ -95,11 +91,9 @@ public class CustomPasswordValidatorTest
   public async Task ValidateAsync_WithoutUppersPassword(string password)
   {
     // Act
-    // Валидация пароля
     IdentityResult result = await _customPasswordValidator.ValidateAsync(_userManagerMock.Object, _appUser, password);
 
     // Assert
-    // Проверяем является ли код ошибки тем, который мы ожидали
     Assert.Equal("PasswordRequiresUpper", result.Errors.FirstOrDefault()?.Code);
   }
 
@@ -115,11 +109,9 @@ public class CustomPasswordValidatorTest
   public async Task ValidateAsync_WithoutLowersPassword(string password)
   {
     // Act
-    // Валидация пароля
     IdentityResult result = await _customPasswordValidator.ValidateAsync(_userManagerMock.Object, _appUser, password);
 
     // Assert
-    // Проверяем является ли код ошибки тем, который мы ожидали
     Assert.Equal("PasswordRequiresLower", result.Errors.FirstOrDefault()?.Code);
   }
 
@@ -135,11 +127,9 @@ public class CustomPasswordValidatorTest
   public async Task ValidateAsync_WithoutDigitsPassword(string password)
   {
     // Act
-    // Валидация пароля
     IdentityResult result = await _customPasswordValidator.ValidateAsync(_userManagerMock.Object, _appUser, password);
 
     // Assert
-    // Проверяем является ли код ошибки тем, который мы ожидали
     Assert.Equal("PasswordRequiresDigit", result.Errors.FirstOrDefault()?.Code);
   }
 
@@ -155,11 +145,9 @@ public class CustomPasswordValidatorTest
   public async Task ValidateAsync_WithoutSpecialCharsPassword(string password)
   {
     // Act
-    // Валидация пароля
     IdentityResult result = await _customPasswordValidator.ValidateAsync(_userManagerMock.Object, _appUser, password);
 
     // Assert
-    // Проверяем является ли код ошибки тем, который мы ожидали
     Assert.Equal("PasswordRequiresNonAlphanumeric", result.Errors.FirstOrDefault()?.Code);
   }
 }

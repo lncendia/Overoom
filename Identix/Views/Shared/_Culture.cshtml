@@ -3,12 +3,8 @@
 @using Microsoft.Extensions.Options
 @inject IOptions<RequestLocalizationOptions> LocOptions
 @{
-    // Получаем сервис IRequestCultureFeature
-    // Features - Получает набор функций HTTP, предоставляемых сервером и
-    // промежуточным ПО, доступным по этому запросу.
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
 
-    // получаем список поддерживаемых культур
     var cultureItems = LocOptions.Value.SupportedUICultures!
         .Select(c => new SelectListItem
         {

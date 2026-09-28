@@ -49,7 +49,6 @@ public sealed class AwsS3ApiClient : IFileStorage
     string? bucket = null,
     CancellationToken token = default)
   {
-    // Используем TransferUtility для эффективной загрузки файлов
     var fileTransferUtility = new TransferUtility(_client);
     var request = new TransferUtilityUploadRequest
     {
@@ -76,14 +75,9 @@ public sealed class AwsS3ApiClient : IFileStorage
     string? bucket = null,
     CancellationToken token = default)
   {
-    // Создаем HTTP-клиент для скачивания файла
     HttpClient httpClient = _httpClientFactory.CreateClient(HttpClientName);
-
-    // Скачиваем файл по URL
     HttpResponseMessage response = await httpClient.GetAsync(url, token);
     response.EnsureSuccessStatusCode();
-
-    // Загружаем скачанный файл в S3
     await using Stream stream = await response.Content.ReadAsStreamAsync(token);
     await UploadAsync(key, stream, contentType, bucket, token);
   }
@@ -107,13 +101,11 @@ public sealed class AwsS3ApiClient : IFileStorage
 
     try
     {
-      // Получаем объект из S3
       GetObjectResponse? response = await _client.GetObjectAsync(request, token);
       return (response.ResponseStream, response.Headers.ContentType);
     }
     catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
     {
-      // Преобразуем S3 исключение в стандартное FileNotFoundException
       throw new FileNotFoundException(
         $"The file with the key '{key}' was not found in the bucket '{request.BucketName}'.", ex);
     }

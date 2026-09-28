@@ -27,25 +27,21 @@ public class SearchRoomsQueryHandler(MongoDbContext context)
     SearchRoomsQuery request,
     CancellationToken cancellationToken)
   {
-    // Базовый запрос к коллекции комнат
     IQueryable<RoomModel>? baseQuery = context.Rooms.AsQueryable();
 
-    // Фильтр по ID фильма (если указан)
     if (request.FilmId.HasValue)
       baseQuery = baseQuery.Where(x => x.FilmId == request.FilmId.Value);
 
-    // Фильтр только публичных комнат (без кода доступа)
     if (request.OnlyPublic)
       baseQuery = baseQuery.Where(r => r.Code == null);
 
-    // Получаем общее количество комнат (до пагинации)
     int count = await baseQuery.CountAsync(cancellationToken: cancellationToken);
-
-    // Если комнат не найдено - возвращаем пустой результат
     if (count == 0) return CountResult<RoomShortDto>.NoValues();
 
-    // Получаем список комнат с информацией о фильмах
     List<RoomShortDto>? list = await baseQuery
+      .OrderByDescending(r => r.CreatedAt)
+      .Skip(request.Skip)
+      .Take(request.Take)
       .GroupJoin(
         context.Films.AsQueryable(),
         room => room.FilmId,
@@ -60,7 +56,6 @@ public class SearchRoomsQueryHandler(MongoDbContext context)
       )
       .Select(x => new RoomShortDto
       {
-        // Информация о фильме
         Title = x.Film.Title,
         PosterKey = x.Film.PosterKey,
         Year = x.Film.Date.Year,
@@ -71,18 +66,15 @@ public class SearchRoomsQueryHandler(MongoDbContext context)
         FilmId = x.Film.Id,
         Genres = x.Film.Genres,
 
-        // Информация о комнате
         Id = x.Room.Id,
         ViewersCount = x.Room.Viewers.Count,
         IsPrivate = !string.IsNullOrEmpty(x.Room.Code),
 
-        // Информация о создателе
         UserName = x.User.Username,
         PhotoKey = x.User.PhotoKey
       })
       .ToListAsync(cancellationToken: cancellationToken);
 
-    // Возвращаем результат с данными и общим количеством
     return new CountResult<RoomShortDto>
     {
       List = list,

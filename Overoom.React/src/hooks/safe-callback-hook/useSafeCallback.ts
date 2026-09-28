@@ -23,10 +23,8 @@ export function useSafeCallback<T extends (...args: any[]) => Promise<any>>(
   return useCallback(
     async (...args: Parameters<T>) => {
       try {
-        // Выполняем исходный callback
         return await callback(...args);
       } catch (error) {
-        // В случае ошибки показываем уведомление
         setError(error instanceof Error ? error : new Error(String(error)));
       }
     },

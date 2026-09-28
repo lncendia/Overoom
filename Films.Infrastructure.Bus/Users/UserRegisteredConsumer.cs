@@ -17,10 +17,8 @@ public class UserRegisteredConsumer(ISender mediator) : IConsumer<UserRegistered
   /// <param name="context">Контекст сообщения</param>
   public async Task Consume(ConsumeContext<UserRegisteredIntegrationEvent> context)
   {
-    // Получаем данные события
     UserRegisteredIntegrationEvent integrationEvent = context.Message;
 
-    // Отправляем команду на обработку события
     await mediator.Send(new AddUserCommand
     {
       Id = integrationEvent.Id,

@@ -37,7 +37,6 @@ const PlaylistInfoModule = ({ id }: { id: string }): ReactElement => {
   useEffect(() => {
     fetchPlaylist().then();
 
-    // Функция очистки эффекта
     return (): void => {
       setPlaylist(undefined);
     };
@@ -54,10 +53,8 @@ const PlaylistInfoModule = ({ id }: { id: string }): ReactElement => {
     [navigate]
   );
 
-  // Отображает скелетон пока данные плейлиста не получены
   if (!playlist) return <FilmInfoSkeleton />;
 
-  // Возвращает компонент информации о плейлисте с загруженными данными
   return (
     <PlaylistInfo
       {...playlist}

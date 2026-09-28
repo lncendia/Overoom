@@ -24,41 +24,28 @@ public class ChangePasswordCommandHandler(UserManager<AppUser> userManager)
   /// <exception cref="PasswordValidationException">Вызывается, если валидация пароля не прошла.</exception>
   public async Task<AppUser> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
   {
-    // Получаем пользователя по id
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Вызываем исключение если пользователь не найден
     if (user == null) throw new UserNotFoundException();
 
-    // Создаем объект result для дальнейшего сохранения в него результата смены пароля
     IdentityResult result;
 
-    // Проверяем есть ли хэш пароля у пользователя
     if (user.PasswordHash == null)
     {
-      // Меняем пароль
       result = await userManager.AddPasswordAsync(user, request.NewPassword);
     }
     else
     {
-      // Если нет старого пароля, то выкидваем исключение
       if (request.OldPassword == null) throw new PasswordNeededException();
 
-      // Меняем пароль
       result = await userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
     }
 
-    // Проверка успешности операции смены пароля у пользователя
     if (!result.Succeeded)
     {
-      // Создаем словарь для хранения ошибок
       var passwordValidationErrors = result.Errors.ToDictionary(e => e.Code, e => e.Description);
-
-      // Вызываем исключение, содержащие в себе словарь ошибок валидации пароля
       throw new PasswordValidationException { ValidationErrors = passwordValidationErrors };
     }
 
-    // Возвращаем пользователя
     return user;
   }
 }

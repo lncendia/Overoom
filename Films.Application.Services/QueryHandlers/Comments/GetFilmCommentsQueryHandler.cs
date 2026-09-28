@@ -25,17 +25,12 @@ public class GetFilmCommentsQueryHandler(MongoDbContext context)
   /// <returns>Результат с коллекцией комментариев и общим количеством</returns>
   public async Task<CountResult<CommentDto>> Handle(GetFilmCommentsQuery request, CancellationToken cancellationToken)
   {
-    // Создаем базовый запрос для комментариев
     IQueryable<CommentModel> baseQuery = context.Comments.AsQueryable()
       .Where(x => x.FilmId == request.FilmId);
 
-    // Получаем общее количество комментариев для фильма
     int count = await baseQuery.CountAsync(cancellationToken: cancellationToken);
-
-    // Если комментариев нет, возвращаем пустой результат
     if (count == 0) return CountResult<CommentDto>.NoValues();
 
-    // Выполняем запрос и получаем список
     List<CommentDto>? list = await baseQuery
       .OrderByDescending(c => c.CreatedAt)
       .Skip(request.Skip)
@@ -58,7 +53,6 @@ public class GetFilmCommentsQueryHandler(MongoDbContext context)
       )
       .ToListAsync(cancellationToken);
 
-    // Возвращаем результат с данными и общим количеством
     return new CountResult<CommentDto>
     {
       List = list,

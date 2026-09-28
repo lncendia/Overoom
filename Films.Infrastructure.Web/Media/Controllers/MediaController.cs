@@ -31,20 +31,16 @@ public class MediaController(ISender mediator) : ControllerBase
   {
     try
     {
-      // Отправляем запрос на получение фото через медиатор
       FileResult result = await mediator.Send(new GetPhotoQuery(key), cancellationToken);
 
-      // Возвращаем файл как результат
       return File(result.Stream, result.ContentType, result.FileName);
     }
     catch (FileNotFoundException)
     {
-      // Файл не найден в S3
       return NotFound();
     }
     catch (ArgumentException ex)
     {
-      // Некорректный формат ключа или другие ошибки валидации
       return BadRequest(ex.Message);
     }
   }
@@ -78,7 +74,6 @@ public class MediaController(ISender mediator) : ControllerBase
   {
     try
     {
-      // Преобразуем входную модель в CQRS запрос
       var query = new GetFilmPartQuery
       {
         Id = filmId,
@@ -93,15 +88,12 @@ public class MediaController(ISender mediator) : ControllerBase
         query.Resolution = resolutionEnum;
       }
 
-      // Отправляем запрос на получение фото через медиатор
       FileResult result = await mediator.Send(query, cancellationToken);
 
-      // Возвращаем файл как результат
       return File(result.Stream, result.ContentType, result.FileName);
     }
     catch (FileNotFoundException)
     {
-      // Файл не найден в S3
       return NotFound();
     }
   }

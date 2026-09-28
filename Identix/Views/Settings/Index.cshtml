@@ -4,20 +4,15 @@
 @model Identix.Infrastructure.Web.Settings.ViewModels.SettingsViewModel
 @inject IViewLocalizer Localizer
 @{
-    // Устанавливаем значение в ViewData с ключом "Title" равным переводу строки "SettingsTitle"
     ViewData["Title"] = Localizer["SettingsTitle"];
 
     var elements = new (string collapsed, string expanded, string show)[5];
 
     Array.Fill(elements, ("collapsed", "false", ""), 0, 5);
 
-    // Проверяем, что значение Model.ExpandElement не превышает длину массива elements
     if (Model.ExpandElement <= elements.Length)
     {
-        // Вычисляем индекс элемента, который нужно раскрыть
         var element = Model.ExpandElement - 1;
-
-        // Устанавливаем значения свойств элемента, чтобы раскрыть его
         elements[element].collapsed = "";
         elements[element].expanded = "true";
         elements[element].show = "show";

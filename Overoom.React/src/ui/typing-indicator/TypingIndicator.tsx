@@ -50,10 +50,8 @@ const TypingIndicator = ({ message }: TypingIndicatorProps): ReactElement => {
         transition: 'opacity 0.2s',
       }}
     >
-      {/* Иконка пузыря чата */}
       <ChatBubbleIcon fontSize="small" sx={{ color: (theme) => theme.palette.text.disabled }} />
 
-      {/* Текст сообщения с анимированными точками */}
       <Typography
         component="div"
         variant="body2"
@@ -62,7 +60,6 @@ const TypingIndicator = ({ message }: TypingIndicatorProps): ReactElement => {
       >
         {message}
         <Box sx={{ display: 'flex', ml: 0.5 }}>
-          {/* Три анимированные точки */}
           <Box
             sx={{
               width: 4,

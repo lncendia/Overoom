@@ -21,31 +21,21 @@ public class ChangeFilmCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
   /// <exception cref="FilmNotFoundException">Если фильм с указанным ID не найден</exception>
   public async Task Handle(ChangeFilmCommand request, CancellationToken cancellationToken)
   {
-    // Получаем фильм по ID из репозитория
     Film? film = await unitOfWork.FilmRepository.Value.GetAsync(request.Id, cancellationToken);
-
-    // Проверяем существование фильма
     if (film == null) throw new FilmNotFoundException(request.Id);
 
-    // Обновляем описание фильма, если оно предоставлено
     film.Description = request.Description;
 
-    // Обновляем краткое описание, если оно предоставлено
     if (!string.IsNullOrEmpty(request.ShortDescription))
       film.ShortDescription = request.ShortDescription;
 
-    // Обновляем рейтинг Кинопоиска, если он предоставлен
     if (request.RatingKp.HasValue)
       film.RatingKp = new Rating(request.RatingKp.Value);
 
-    // Обновляем рейтинг IMDB, если он предоставлен
     if (request.RatingImdb.HasValue)
       film.RatingImdb = new Rating(request.RatingImdb.Value);
 
-    // Сохраняем изменения в репозитории
     await unitOfWork.FilmRepository.Value.UpdateAsync(film, cancellationToken);
-
-    // Фиксируем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

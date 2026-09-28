@@ -29,7 +29,6 @@ public class UserLoginsQueryHandlerTest
   /// </summary>
   public UserLoginsQueryHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -41,7 +40,6 @@ public class UserLoginsQueryHandlerTest
       new Mock<IServiceProvider>().Object,
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    // Инициализация обработчика.
     _handler = new UserLoginsQueryHandler(_userManagerMock.Object);
   }
 
@@ -52,7 +50,6 @@ public class UserLoginsQueryHandlerTest
   public async Task Handle_ValidQuery_GetLogins()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -63,23 +60,19 @@ public class UserLoginsQueryHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возврата списка уже существующих провайдеров.
     _userManagerMock
       .Setup(m => m.GetLoginsAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => new List<UserLoginInfo>());
 
-    // Создаем запрос для получения списка внешних аутентификаций пользователя и задаем Id пользователя..
     var command = new UserLoginsQuery { Id = Guid.NewGuid() };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -90,16 +83,13 @@ public class UserLoginsQueryHandlerTest
   public async Task Handle_WhenUserNotFoundById_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения null при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем запрос для получения списка внешних аутентификаций пользователя и задаем Id пользователя..
     var command = new UserLoginsQuery { Id = Guid.NewGuid() };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

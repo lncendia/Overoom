@@ -11,7 +11,6 @@ const MessagesListSkeleton = (): ReactElement => {
   /** Используем хук useTheme из Material-UI для получения текущей темы */
   const theme = useTheme();
 
-  // Массив для генерации заглушек сообщений
   const skeletonMessages = Array.from({ length: 15 }, (_, i) => ({
     id: i,
     isOutgoing: i % 2 === 0,
@@ -29,7 +28,6 @@ const MessagesListSkeleton = (): ReactElement => {
       }}
     >
       {skeletonMessages.map((m) => (
-        // Скелетон сообщения
         <MessageSkeleton key={m.id} isOutgoing={m.isOutgoing} />
       ))}
     </Box>

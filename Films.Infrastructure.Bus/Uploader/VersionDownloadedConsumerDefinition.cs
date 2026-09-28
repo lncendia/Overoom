@@ -17,14 +17,12 @@ public class VersionDownloadedConsumerDefinition : ConsumerDefinition<VersionDow
   protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
     IConsumerConfigurator<VersionDownloadedConsumer> consumerConfigurator, IRegistrationContext context)
   {
-    // Настройка повторной обработки
     consumerConfigurator.UseMessageRetry(cfg =>
     {
       cfg.Interval(5, TimeSpan.FromSeconds(5));
       cfg.Ignore<FilmNotFoundException>();
     });
 
-    // Настройка отложенной повторной доставки с экспоненциальной политикой
     endpointConfigurator.UseScheduledRedelivery(cfg =>
     {
       cfg.Exponential(10, TimeSpan.FromMinutes(1), TimeSpan.FromDays(1), TimeSpan.FromSeconds(30));

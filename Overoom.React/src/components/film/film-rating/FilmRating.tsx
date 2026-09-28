@@ -35,22 +35,17 @@ const FilmRating = ({
   sx,
   onScoreChanged,
 }: FilmRatingProps): ReactElement => {
-  // Определяем тип контента для отображения в тексте (фильм или сериал)
   const mediaType = isSerial ? 'сериал' : 'фильм';
-
-  // Формируем персонализированное приветствие для пользователя
   const userPrefix = userName ? `${userName.split(' ')[0]}, к` : 'К';
 
   return (
     <Paper sx={sx}>
-      {/* Заголовок с вопросом о рейтинге */}
       <Typography variant="h6" component="span">
         {userPrefix}
         ак вам&nbsp;
         {mediaType}?
       </Typography>
 
-      {/* Компонент рейтинга с передачей данных и коллбэка */}
       <Rating rating={rating} scoreChanged={onScoreChanged} />
     </Paper>
   );

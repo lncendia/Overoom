@@ -22,7 +22,6 @@ public class GetLastCommentsQueryHandler(MongoDbContext context)
   /// <returns>Коллекция DTO комментариев.</returns>
   public async Task<IReadOnlyList<CommentDto>> Handle(GetLastCommentsQuery request, CancellationToken cancellationToken)
   {
-    // Выполняем запрос и получаем список
     return await context.Comments.AsQueryable()
       .OrderByDescending(c => c.CreatedAt)
       .Take(request.Take)

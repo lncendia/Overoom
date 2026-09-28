@@ -26,25 +26,14 @@ public class JoinRoomCommandHandler(ISessionHandlerFactory sessionHandlerFactory
   /// <exception cref="UserNotFoundException">Если пользователь не найден</exception>
   public async Task Handle(JoinRoomCommand request, CancellationToken cancellationToken)
   {
-    // Получаем комнату по идентификатору из запроса
     Room? room = await unitOfWork.RoomRepository.Value.GetAsync(request.RoomId, cancellationToken);
-
-    // Проверяем существование комнаты
     if (room == null) throw new RoomNotFoundException(request.RoomId);
 
-    // Получаем данные пользователя
     User? user = await unitOfWork.UserRepository.Value.GetAsync(request.UserId, cancellationToken);
-
-    // Проверяем существование пользователя
     if (user == null) throw new UserNotFoundException(request.UserId);
 
-    // Выполняем подключение пользователя к комнате с проверкой кода доступа
     room.Join(user, request.Code);
-
-    // Обновляем данные комнаты в репозитории
     await unitOfWork.RoomRepository.Value.UpdateAsync(room, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(sessionHandlerFactory.CreateOutboxHandler(), cancellationToken);
   }
 }

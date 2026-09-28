@@ -13,7 +13,6 @@ public class PlaylistsSearchValidator : AbstractValidator<SearchPlaylistsInputMo
   /// </summary>
   public PlaylistsSearchValidator()
   {
-    // Валидация пагинации
     RuleFor(x => x.Take)
       .InclusiveBetween(1, 50)
       .WithMessage("Количество элементов должно быть от 1 до 50");
@@ -22,7 +21,6 @@ public class PlaylistsSearchValidator : AbstractValidator<SearchPlaylistsInputMo
       .GreaterThanOrEqualTo(0)
       .WithMessage("Количество пропускаемых элементов не может быть отрицательным");
 
-    // Валидация строковых параметров
     RuleFor(x => x.Query)
       .MaximumLength(100)
       .WithMessage("Поисковый запрос не должен превышать 100 символов");
@@ -31,7 +29,6 @@ public class PlaylistsSearchValidator : AbstractValidator<SearchPlaylistsInputMo
       .MaximumLength(50)
       .WithMessage("Название жанра не должно превышать 50 символов");
 
-    // Валидация FilmId при наличии значения
     RuleFor(x => x.FilmId)
       .NotEmpty()
       .When(x => x.FilmId.HasValue)

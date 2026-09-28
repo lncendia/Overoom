@@ -18,7 +18,6 @@ public class RoomViewerKickedConsumerDefinition : ConsumerDefinition<RoomViewerK
   protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
     IConsumerConfigurator<RoomViewerKickedConsumer> consumerConfigurator, IRegistrationContext context)
   {
-    // Настройка повторной обработки
     consumerConfigurator.UseMessageRetry(cfg =>
     {
       cfg.Interval(5, TimeSpan.FromSeconds(5));

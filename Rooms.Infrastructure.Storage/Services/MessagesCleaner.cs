@@ -23,10 +23,7 @@ public class MessagesCleaner(MongoDbContext context) : IMessagesCleaner
   /// <returns>Задача, представляющая асинхронную операцию очистки</returns>
   public async Task CleanAsync(Guid roomId, CancellationToken cancellationToken = default)
   {
-    // Создаем фильтр для поиска всех сообщений в указанной комнате
     FilterDefinition<MessageModel>? filter = Builders<MessageModel>.Filter.Eq(x => x.RoomId, roomId);
-
-    // Выполняем массовое удаление всех сообщений, соответствующих фильтру
     await _messages.DeleteManyAsync(filter, cancellationToken);
   }
 }

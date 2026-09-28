@@ -46,10 +46,4 @@ public class UserRepository : RepositoryBase<UserModel, User, UserSnapshot, IUse
       Id = aggregate.Id
     };
   }
-
-  /// <inheritdoc/>
-  protected override User FromSnapshot(UserSnapshot snapshot)
-  {
-    return User.FromSnapshot(snapshot);
-  }
 }

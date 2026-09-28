@@ -25,7 +25,6 @@ public class UserByIdQueryHandler(UserManager<AppUser> userManager) : IRequestHa
   /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден.</exception>
   public async Task<(AppUser user, ICollection<Claim> claims)> Handle(UserByIdQuery request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору; если не найден, вызываем исключение UserNotFoundException.
     AppUser user = await userManager.FindByIdAsync(request.Id.ToString()) ?? throw new UserNotFoundException();
 
     IList<Claim> claims = await userManager.GetClaimsAsync(user);

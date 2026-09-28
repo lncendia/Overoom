@@ -150,10 +150,8 @@ const Navbar = (props: NavbarProps): ReactElement => {
       <Slide appear={false} direction="down" in={!trigger}>
         <AppBar>
           <Toolbar>
-            {/* Логотип для десктопной версии */}
             <NavLogo onClick={props.onHome} sx={{ display: { xs: 'none', md: 'flex' }, mr: 2 }} />
 
-            {/* Мобильное меню */}
             <Box sx={{ display: { xs: 'block', md: 'none' } }}>
               <IconButton
                 size="large"
@@ -196,7 +194,6 @@ const Navbar = (props: NavbarProps): ReactElement => {
               </Menu>
             </Box>
 
-            {/* Десктопное меню */}
             <Box sx={{ flexGrow: 1, gap: 2, display: { xs: 'none', md: 'block' } }}>
               {pages.map((page) => (
                 <Button onClick={page.onClick} key={page.name} size="small" color="inherit">
@@ -206,14 +203,12 @@ const Navbar = (props: NavbarProps): ReactElement => {
               ))}
             </Box>
 
-            {/* Компонент поиска фильмов */}
             <FilmSearch
               films={props.films}
               onFilmSearch={props.onFilmSearch}
               onClick={props.onFilm}
             />
 
-            {/* Переключатель темы для десктопной версии */}
             <Box sx={{ display: { xs: 'none', md: 'block' } }}>
               <ThemeSwitch
                 checked={props.darkMode}
@@ -221,7 +216,6 @@ const Navbar = (props: NavbarProps): ReactElement => {
               />
             </Box>
 
-            {/* Компонент пользователя */}
             {userInfo}
           </Toolbar>
         </AppBar>

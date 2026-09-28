@@ -34,24 +34,19 @@ public class SvgTagHelper(IWebHostEnvironment env) : TagHelper
     }
 
     string svgContent = await File.ReadAllTextAsync(fullPath);
-
-    // Находим открывающий тег <svg ...>
     Match match = Regex.Match(svgContent, @"<svg\b[^>]*>", RegexOptions.IgnoreCase);
     if (match.Success)
     {
       string originalTag = match.Value;
 
-      // Собираем все атрибуты из <svg-icon>
       var newAttributes = context.AllAttributes
         .Where(a => a.Name != "src")
         .ToDictionary(a => a.Name.ToLower(), a => a.Value?.ToString() ?? "");
 
-      // Обновляем/добавляем атрибуты в <svg ...>
       string updatedTag = originalTag;
 
       foreach (KeyValuePair<string, string> attr in newAttributes)
       {
-        // Есть ли уже атрибут?
         var attrRegex = new Regex($"""
                                    \s{attr.Key}="[^"]*"
                                    """, RegexOptions.IgnoreCase);
@@ -65,7 +60,6 @@ public class SvgTagHelper(IWebHostEnvironment env) : TagHelper
         }
       }
 
-      // Подменяем вхождение <svg ...> на обновлённое
       svgContent = svgContent.Replace(originalTag, updatedTag);
     }
 

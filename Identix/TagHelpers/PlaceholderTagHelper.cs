@@ -27,13 +27,9 @@ public class PlaceholderTagHelper : TagHelper
   /// <param name="output">Выходные данные Tag Helper.</param> 
   public override void Process(TagHelperContext context, TagHelperOutput output)
   {
-    // Вызываем базовую реализацию
     base.Process(context, output);
-
-    // Получаем значение заполнителя из Placeholder.ModelExplorer
     string placeholder = GetPlaceholder(Placeholder.ModelExplorer);
 
-    // Если атрибут data-placeholder отсутствует, добавляем его
     if (!output.Attributes.TryGetAttribute("data-placeholder", out _))
     {
       output.Attributes.Add(new TagHelperAttribute("data-placeholder", placeholder));
@@ -47,10 +43,8 @@ public class PlaceholderTagHelper : TagHelper
   /// <returns>Заполнитель для модели.</returns>
   private static string GetPlaceholder(ModelExplorer modelExplorer)
   {
-    // Получаем значение заполнителя из ModelExplorer.Metadata.Placeholder
     string? placeholder = modelExplorer.Metadata.Placeholder;
 
-    // Если значение заполнителя пустое или состоит только из пробелов, получаем отображаемое имя модели
     if (string.IsNullOrWhiteSpace(placeholder))
     {
       placeholder = modelExplorer.Metadata.GetDisplayName();

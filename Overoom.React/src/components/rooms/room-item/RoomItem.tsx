@@ -24,7 +24,6 @@ interface RoomItemProps {
 const RoomItem = ({ room, onClick }: RoomItemProps): ReactElement => {
   return (
     <FilmCard {...room} onClick={onClick} header={room.title}>
-      {/* Описание комнаты */}
       <Typography
         variant="body2"
         color="text.secondary"
@@ -39,12 +38,10 @@ const RoomItem = ({ room, onClick }: RoomItemProps): ReactElement => {
         {room.description}
       </Typography>
 
-      {/* Список жанров */}
       <Box sx={{ mb: 4 }}>
         <GenresList genres={room.genres} />
       </Box>
 
-      {/* Информация о приватности и числе зрителей */}
       <Stack
         direction="row"
         spacing={1}
@@ -67,14 +64,12 @@ const RoomItem = ({ room, onClick }: RoomItemProps): ReactElement => {
           </Stack>
         </Stack>
 
-        {/* Имя создателя комнаты */}
         <Chip
           avatar={<Avatar alt={room.userName} src={room.photoUrl ?? undefined} />}
           label={room.userName}
           size="small"
         />
 
-        {/* Индикатор типа контента (фильм/сериал) */}
         <Chip label={room.isSerial ? 'Сериал' : 'Фильм'} size="small" />
       </Stack>
     </FilmCard>

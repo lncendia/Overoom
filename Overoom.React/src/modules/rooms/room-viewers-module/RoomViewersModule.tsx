@@ -67,10 +67,7 @@ const RoomViewersModule = (): ReactElement => {
     [room?.id, roomsApi]
   );
 
-  // 1. Мемоизированная базовая информация о зрителях (стабильные поля + теги)
   const baseViewers = useMappedViewers(currentViewerId, room?.viewers, room?.ownerId);
-
-  // 2. Мемоизированное наложение динамических данных плеера
   const enrichedViewers = useEnrichViewersWithStateInfo(baseViewers, room?.viewerStates);
 
   if (enrichedViewers.length === 0) return <ViewerSkeleton />;
@@ -106,7 +103,6 @@ function useMappedViewers(
     return Array.from(viewers.entries()).map<ComponentViewerDto>(([id, viewer]) => {
       const isCurrent = id === currentViewerId;
 
-      // Формируем теги зрителя
       const tags: ViewerTagDto[] = viewer.tags.map((t) => {
         return {
           name: t.name,
@@ -137,17 +133,14 @@ function useMappedViewers(
         tags,
         online: viewer.online,
 
-        // Статусные флаги
         isOwner: id === ownerId,
         isCurrent,
 
-        // Разрешения / действия
         canBeep: canBeep,
         canScream: canScream,
         canKick: canKick,
         canSync: canSync,
 
-        // Дефолтные поля плеера (будут наложены вторым этапом)
         typing: false,
         fullScreen: false,
         onPause: false,
@@ -173,8 +166,6 @@ function useEnrichViewersWithStateInfo(
     if (!viewerStates) return baseViewers;
     return baseViewers.map((v) => {
       const state = viewerStates.get(v.id);
-
-      // Если нет информации о плеере — возвращаем как есть
       if (!state) return v;
 
       return {

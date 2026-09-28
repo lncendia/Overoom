@@ -57,16 +57,11 @@ public class ConsentController : Controller
   [HttpGet]
   public async Task<IActionResult> Index(string returnUrl = "/")
   {
-    // Получаем сохраненный OIDC-запрос из сессии по returnUrl
     OpenIddictRequest? context = HttpContext.Session.GetOpenIdRequest(returnUrl);
-
-    // Если контекст не найден — выбрасываем исключение
     if (context == null) throw new OpenIdContextException();
 
-    // Строим ViewModel для страницы согласия
     ConsentViewModel vm = await CreateConsentViewModelAsync(returnUrl, context);
 
-    // Передаем ViewModel в представление
     return View(vm);
   }
 
@@ -77,32 +72,21 @@ public class ConsentController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> Index(ConsentInputModel model)
   {
-    // Проверяем, находимся ли мы в контексте запроса авторизации
     OpenIddictRequest? context = HttpContext.Session.GetOpenIdRequest(model.ReturnUrl);
-
-    // Если у нас нет действительного контекста - вызываем исключение
     if (context == null) throw new OpenIdContextException();
 
-    // Устанавливаем в строку запроса закодированную returnUrl, чтоб при изменении локали открылась корректная ссылка (смотреть _Culture.cshtml)
     HttpContext.Request.QueryString = new QueryString("?ReturnUrl=" + HttpUtility.UrlEncode(model.ReturnUrl));
 
-    // Если пользователь не согласовал ни одну область
     if (model.ScopesConsented.Count == 0)
     {
-      // Добавляем ошибку в состояние модели
       ModelState.AddModelError("", _stringLocalizer["NoOneConsented"]);
-
-      // Строим модель
       ConsentViewModel vm = await BuildViewModelAsync(model, context);
 
-      // Возвращаем представление
       return View(vm);
     }
 
-    // Обрабатываем согласие
     ProcessConsent(model, context);
 
-    // Перенаправляем назад в клиента
     return Redirect(model.ReturnUrl);
   }
 
@@ -113,16 +97,11 @@ public class ConsentController : Controller
   [ValidateAntiForgeryToken]
   public IActionResult DenyConsent(string returnUrl = "/")
   {
-    // Получаем сохраненный контекст OIDC-запроса из сессии по returnUrl
     OpenIddictRequest? context = HttpContext.Session.GetOpenIdRequest(returnUrl);
-
-    // Если контекст не найден — выбрасываем исключение
     if (context == null) throw new OpenIdContextException();
 
-    // Создаем объект ConsentResponse, фиксируя, что пользователь отклонил согласие
     HttpContext.Session.DenyConsent(context, User.GetId());
 
-    // Логируем событие отказа от согласия
     _logger.LogInformation(
       "User {UserId} denied consent to client {ClientId}. " +
       "Requested scopes: {RequestedScopes}",
@@ -130,7 +109,6 @@ public class ConsentController : Controller
       context.ClientId,
       string.Join(", ", context.GetScopes()));
 
-    // Перенаправляем пользователя на исходный URL возврата
     return Redirect(returnUrl);
   }
 
@@ -160,7 +138,6 @@ public class ConsentController : Controller
       grantedConsent.RememberConsent);
 
 
-    // Отправляем результат согласия в сессию
     HttpContext.Session.GrantConsent(context, User.GetId(), grantedConsent);
   }
 
@@ -172,30 +149,22 @@ public class ConsentController : Controller
   /// <returns>Заполненная модель представления для страницы согласия</returns>
   private async Task<ConsentViewModel> BuildViewModelAsync(ConsentInputModel model, OpenIddictRequest context)
   {
-    // Создаем базовую ViewModel согласия с клиентом и scope'ами
     ConsentViewModel consent = await CreateConsentViewModelAsync(model.ReturnUrl, context);
-
-    // Устанавливаем флаг "запомнить согласие", если пользователь его отметил
     consent.RememberConsent = model.RememberConsent;
-
-    // Устанавливаем дополнительное описание, введенное пользователем
     consent.Description = model.Description;
 
-    // Снимаем отметки с Identity scope'ов, которые пользователь убрал
     foreach (ScopeViewModel consentIdentityScope in consent.IdentityScopes
                .Where(consentIdentityScope => !model.ScopesConsented.Contains(consentIdentityScope.Value)))
     {
       consentIdentityScope.Checked = false;
     }
 
-    // Снимаем отметки с API scope'ов, которые пользователь убрал
     foreach (ScopeViewModel consentApiScope in consent.ApiScopes
                .Where(consentApiScope => !model.ScopesConsented.Contains(consentApiScope.Value)))
     {
       consentApiScope.Checked = false;
     }
 
-    // Возвращаем полностью подготовленную модель для отображения в UI
     return consent;
   }
 
@@ -207,14 +176,10 @@ public class ConsentController : Controller
   /// <returns>Модель представления для страницы согласия</returns>
   private async Task<ConsentViewModel> CreateConsentViewModelAsync(string returnUrl, OpenIddictRequest request)
   {
-    // Получаем данные клиента по ClientId
     var clientQuery = new ClientQuery { ClientId = request.ClientId! };
     ClientDto client = await _mediator.Send(clientQuery);
-
-    // Утилита локализации запроса
     IRequestCultureFeature? requestCultureFeature = HttpContext.Features.Get<IRequestCultureFeature>();
 
-    // Получаем список scope'ов (Identity и API) с учетом текущей UI-культуры
     var scopesQuery = new ScopesQuery
     {
       RequestedScopes = request.GetScopes(),
@@ -222,29 +187,22 @@ public class ConsentController : Controller
     };
     IReadOnlyList<ScopeDto> scopes = await _mediator.Send(scopesQuery);
 
-    // Формируем модель представления для страницы согласия
     return new ConsentViewModel
     {
-      // URL возврата после согласия/отказа
       ReturnUrl = returnUrl,
 
-      // Отображаемое имя клиента (или ClientId, если имя отсутствует)
       ClientName = client.ClientName,
 
-      // Ссылка на сайт клиента (если указана)
       ClientUrl = client.ClientUrl,
 
-      // Ссылка на логотип клиента (если указана)
       ClientLogoUrl = client.ClientLogoKey != null
         ? Url.Action("GetFile", "Photos", new { key = client.ClientLogoKey })
         : null,
 
-      // Identity scopes
       IdentityScopes = scopes
         .Where(s => s.IdentityScope)
         .Select(CreateScopeViewModel),
 
-      // API scopes
       ApiScopes = scopes
         .Where(s => !s.IdentityScope)
         .Select(CreateScopeViewModel)
@@ -260,22 +218,16 @@ public class ConsentController : Controller
   {
     return new ScopeViewModel
     {
-      // Уникальное имя scope
       Value = scope.Name,
 
-      // Отображаемое имя scope
       DisplayName = scope.DisplayName,
 
-      // Описание scope (если есть)
       Description = scope.Description,
 
-      // Подчеркивание в UI (акцент на scope)
       Emphasize = scope.Emphasize,
 
-      // Является ли scope обязательным
       Required = scope.Required,
 
-      // Отмечен ли scope пользователем (checked)
       Checked = scope.Checked
     };
   }

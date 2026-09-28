@@ -43,10 +43,8 @@ export const AuthenticationContextProvider: React.FC<AuthenticationContextProvid
       setAuthorizedUser(mapUser(user, configuration));
     };
 
-    // Подписка на событие UserManager
     userManager.events.addUserLoaded(onUserLoaded);
 
-    // Получаем текущего пользователя и проверяем его сессию
     userManager.getUser().then((user) => {
       if (!user) {
         return;
@@ -57,13 +55,11 @@ export const AuthenticationContextProvider: React.FC<AuthenticationContextProvid
       }
     });
 
-    // Очистка подписки при размонтировании
     return () => {
       userManager.events.removeUserLoaded(onUserLoaded);
     };
   }, [userManager, configuration]);
 
-  // Возвращаем провайдер контекста с текущим авторизованным пользователем
   return (
     <AuthenticationContext.Provider value={{ authorizedUser }}>
       {children}

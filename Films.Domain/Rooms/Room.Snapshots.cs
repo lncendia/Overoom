@@ -1,23 +1,18 @@
-using System.Reflection;
+using Common.Domain.Aggregates;
 using Films.Domain.Rooms.Snapshots;
 
 namespace Films.Domain.Rooms;
 
-public partial class Room
+public partial class Room : ISnapshotable<Room, RoomSnapshot>
 {
-  internal static Room FromSnapshot(RoomSnapshot snapshot)
+  /// <inheritdoc/>
+  static Room ISnapshotable<Room, RoomSnapshot>.Restore(RoomSnapshot snapshot)
   {
-    Type type = typeof(Room);
-    ConstructorInfo? ctor = type.GetConstructor(
-      BindingFlags.NonPublic | BindingFlags.Instance,
-      null,
-      [typeof(RoomSnapshot)],
-      null);
-
-    return (Room)ctor!.Invoke([snapshot]);
+    return new Room(snapshot);
   }
 
-  internal RoomSnapshot GetSnapshot()
+  /// <inheritdoc/>
+  RoomSnapshot ISnapshotable<Room, RoomSnapshot>.ToSnapshot()
   {
     return new RoomSnapshot
     {
@@ -26,20 +21,21 @@ public partial class Room
       Code = Code,
       OwnerId = OwnerId,
       CreatedAt = CreatedAt,
-      Viewers = _viewers.ToList(),
-      BannedUsers = _bannedUsers.ToList()
+      Viewers = [.. _viewers],
+      BannedUsers = [.. _bannedUsers]
     };
   }
 
-  // Приватный конструктор для гидратации
-  // ReSharper disable once UnusedMember.Local
+  /// <summary>
+  /// Конструктор для восстановления из снапшота.
+  /// </summary>
   private Room(RoomSnapshot snapshot) : base(snapshot.Id)
   {
     FilmId = snapshot.FilmId;
     Code = snapshot.Code;
     OwnerId = snapshot.OwnerId;
     CreatedAt = snapshot.CreatedAt;
-    _viewers = snapshot.Viewers.ToHashSet();
-    _bannedUsers = snapshot.BannedUsers.ToHashSet();
+    _viewers = [.. snapshot.Viewers];
+    _bannedUsers = [.. snapshot.BannedUsers];
   }
 }

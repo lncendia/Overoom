@@ -21,11 +21,9 @@ public static class DataProtection
   /// <param name="applicationName">Уникальное имя этого приложения в системе защиты данных</param>
   public static void AddSecureDataProtection(this IHostApplicationBuilder builder, string applicationName)
   {
-    // Загрузка сертификата из PEM-файлов
     string certificatePath = builder.Configuration.GetRequiredValue<string>("DataProtection:Certificate:Path");
     string certificatePassword = builder.Configuration.GetRequiredValue<string>("DataProtection:Certificate:Password");
 
-    // Загружаем сертификат для подписи и шифрования токенов
     X509Certificate2 certificate = X509CertificateLoader.LoadPkcs12FromFile(
       certificatePath,
       certificatePassword,
@@ -34,15 +32,12 @@ public static class DataProtection
       X509KeyStorageFlags.PersistKeySet
     );
 
-    // Извлекаем имя базы данных из конфигурации.
     string databaseName = builder.Configuration.GetRequiredValue<string>("MongoDB:DataProtectionDB");
 
-    // Настройка DataProtection с защитой ключей сертификатом
     builder.Services.AddDataProtection()
       .ProtectKeysWithCertificate(certificate)
       .SetApplicationName(applicationName);
 
-    // Регистрация MongoDB в качестве хранилища ключей
     builder.Services.AddSingleton<IConfigureOptions<KeyManagementOptions>>(services =>
     {
       IMongoClient mongoClient = services.GetRequiredService<IMongoClient>();

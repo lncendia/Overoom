@@ -36,11 +36,9 @@ public class CommentsController(ISender mediator, IMapper mapper) : ControllerBa
     [FromQuery] GetCommentsInputModel model,
     CancellationToken token = default)
   {
-    // Создаем запрос, добавляя ID фильма из URL
     GetFilmCommentsQuery? query = mapper.Map<GetFilmCommentsQuery>(model);
     query.FilmId = filmId;
 
-    // Отправляем запрос через медиатор и возвращаем результат
     return await mediator.Send(query, token);
   }
 
@@ -65,10 +63,8 @@ public class CommentsController(ISender mediator, IMapper mapper) : ControllerBa
       UserId = User.GetId()
     };
 
-    // Отправляем команду через медиатор
     await mediator.Send(command, token);
 
-    // Возвращаем статус 204 No Content
     return NoContent();
   }
 
@@ -89,7 +85,6 @@ public class CommentsController(ISender mediator, IMapper mapper) : ControllerBa
     [FromBody] AddCommentInputModel model,
     CancellationToken token = default)
   {
-    // Создаем команду, передавая ID пользователя и фильма
     var command = new AddCommentCommand
     {
       UserId = User.GetId(),
@@ -97,10 +92,8 @@ public class CommentsController(ISender mediator, IMapper mapper) : ControllerBa
       Text = model.Text!
     };
 
-    // Отправляем команду через медиатор
     Guid result = await mediator.Send(command, token);
 
-    // Возвращаем статус 201 Created с созданным комментарием
     return Created((string?)null, value: new { id = result });
   }
 }

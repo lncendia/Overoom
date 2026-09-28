@@ -69,7 +69,6 @@ export interface ToggleThemeSwitchProps {
  * @returns {ReactElement} JSX элемент свитча
  */
 const ToggleThemeSwitch = ({ checked, onChange, sx }: ToggleThemeSwitchProps): ReactElement => {
-  // Возвращаем JSX элемент свитча с кастомной стилизацией
   return (
     <FormControlLabel
       sx={{ m: 0, ...sx }}

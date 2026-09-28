@@ -13,10 +13,8 @@
 
     var element = (int)Model.CodeType;
 
-    // Проверяем, что значение Model.ExpandElement не превышает длину массива elements
     if (element <= elements.Length)
     {
-        // Устанавливаем значения свойств элемента, чтобы раскрыть его
         elements[element].collapsed = "";
         elements[element].expanded = "true";
         elements[element].show = "show";

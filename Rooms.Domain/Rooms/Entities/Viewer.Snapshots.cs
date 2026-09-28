@@ -1,4 +1,3 @@
-using System.Reflection;
 using Rooms.Domain.Rooms.Snapshots;
 
 namespace Rooms.Domain.Rooms.Entities;
@@ -6,22 +5,11 @@ namespace Rooms.Domain.Rooms.Entities;
 public partial class Viewer
 {
   /// <summary>
-  /// Воссоздаёт агрегат Viewer из снапшота.
+  /// Восстанавливает сущность из снапшота.
   /// </summary>
   internal static Viewer FromSnapshot(ViewerSnapshot snapshot)
   {
-    // Получаем тип Viewer
-    Type filmType = typeof(Viewer);
-
-    // Получаем внутренний конструктор, который принимает RoomSnapshot
-    ConstructorInfo? constructor = filmType.GetConstructor(
-      BindingFlags.NonPublic | BindingFlags.Instance,
-      null,
-      [typeof(ViewerSnapshot)],
-      null);
-
-    // Вызываем конструктор и возвращаем результат
-    return (Viewer)constructor!.Invoke([snapshot]);
+    return new Viewer(snapshot);
   }
 
   internal ViewerSnapshot GetSnapshot()
@@ -45,8 +33,9 @@ public partial class Viewer
     };
   }
 
-  // приватный/internal конструктор
-  // ReSharper disable once UnusedMember.Local
+  /// <summary>
+  /// Конструктор для восстановления из снапшота.
+  /// </summary>
   private Viewer(ViewerSnapshot snapshot) : this(snapshot.Id)
   {
     UserName = snapshot.UserName;
@@ -59,7 +48,7 @@ public partial class Viewer
     Episode = snapshot.Episode;
     Speed = snapshot.Speed;
     Muted = snapshot.Muted;
-    _tagsSet = snapshot.Tags.ToHashSet();
+    _tagsSet = [.. snapshot.Tags];
     _statisticDictionary = snapshot.Statistic.ToDictionary(p => p.Key, p => p.Value);
     Settings = snapshot.Settings;
   }

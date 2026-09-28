@@ -28,45 +28,33 @@ public class GetRoomMessagesQueryHandler(MongoDbContext context)
   /// <returns>Результат, содержащий список сообщений и общее количество</returns>
   public async Task<CountResult<MessageDto>> Handle(GetRoomMessagesQuery request, CancellationToken cancellationToken)
   {
-    // Получаем комнату и проверяем наличие доступа у пользователя
     var room = await context.Rooms
       .AsQueryable()
       .Where(r => r.Id == request.RoomId)
       .Select(r => new { hasAccess = r.Viewers.Any(v => v.Id == request.ViewerId) })
       .FirstOrDefaultAsync(cancellationToken);
 
-    // Если комната не найдена — выбрасываем исключение
     if (room == null) throw new RoomNotFoundException(request.RoomId);
-
-    // Если у зрителя нет доступа — запрещаем действие
     if (!room.hasAccess) throw new ActionNotAllowedException("GetMessages");
 
-    // Строим базовый запрос к коллекции сообщений
     IQueryable<MessageModel> query = context.Messages.AsQueryable()
       .Where(m => m.RoomId == request.RoomId);
 
-    // Считаем общее количество сообщений, соответствующих фильтру
     int count = await query.CountAsync(cancellationToken);
-
-    // Если сообщений нет — возвращаем пустой результат
     if (count == 0) return CountResult<MessageDto>.NoValues();
 
-    // Если указан курсор (ID последнего сообщения), нужно его обработать
     if (request.FromMessageId.HasValue)
     {
-      // Получаем дату создания сообщения, с которого начинается пагинация
       DateTime fromMessageCreatedAt = await context.Messages.AsQueryable()
         .Where(m => m.Id == request.FromMessageId.Value)
         .Where(m => m.RoomId == request.RoomId)
         .Select(m => m.SentAt)
         .FirstOrDefaultAsync(cancellationToken);
 
-      // Добавляем в запрос фильтрацию — только более новые сообщения
       if (fromMessageCreatedAt != default)
         query = query.Where(m => m.SentAt < fromMessageCreatedAt);
     }
 
-    // Загружаем сообщения, отсортированные по убыванию времени создания
     List<MessageDto>? list = await query
       .OrderByDescending(m => m.SentAt)
       .Take(request.Count)
@@ -79,7 +67,6 @@ public class GetRoomMessagesQueryHandler(MongoDbContext context)
       })
       .ToListAsync(cancellationToken);
 
-    // Возвращаем результат с сообщениями и общим количеством
     return new CountResult<MessageDto>
     {
       List = list,

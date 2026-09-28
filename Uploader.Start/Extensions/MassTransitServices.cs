@@ -17,19 +17,13 @@ public static class MassTransitServices
   /// <param name="builder">Построитель веб-приложения.</param>
   public static void AddMassTransitServices(this IHostApplicationBuilder builder)
   {
-    // Получаем строку подключения к RabbitMq из конфигурации
     string rmq = builder.Configuration.GetRequiredValue<string>("RabbitMQ:ConnectionString");
-
-    // Получаем имя базы данных MongoDB для MassTransit из конфигурации
     string massTransitDatabaseName = builder.Configuration.GetRequiredValue<string>("MongoDB:MassTransitDB");
 
-    // Регистрируем и конфигурируем MassTransit в DI-контейнере
     builder.Services.AddMassTransit(busConfigurator =>
     {
-      // Добавляем потребителя (consumer) для обработки сообщений DownloadFilm
       busConfigurator.AddConsumer<DownloadFilmConsumer>(cfg =>
       {
-        // Устанавливаем лимит одновременных задач для джобов
         cfg.Options<JobOptions<DownloadFilm>>(options =>
         {
           options.SetJobTimeout(TimeSpan.FromHours(5));
@@ -37,33 +31,22 @@ public static class MassTransitServices
         });
       });
 
-      // Добавляем планировщик отложенных сообщений
       busConfigurator.AddDelayedMessageScheduler();
 
-      // Настраиваем провайдер репозитория саг MongoDB
       busConfigurator.SetMongoDbSagaRepositoryProvider(cfg =>
       {
-        // Настраиваем фабрику для создания MongoDB клиента
         cfg.ClientFactory(provider => provider.GetRequiredService<IMongoClient>());
 
-        // Настраиваем фабрику для создания базы данных MongoDB
         cfg.DatabaseFactory(provider =>
           provider.GetRequiredService<IMongoClient>().GetDatabase(massTransitDatabaseName));
       });
 
-      // Добавляем автоматы состояний для джоб-саг
       busConfigurator.AddJobSagaStateMachines();
 
-      // Настраиваем использование RabbitMQ в качестве брокера сообщений
       busConfigurator.UsingRabbitMq((ctx, cfg) =>
       {
-        // Указываем хост RabbitMQ для подключения
         cfg.Host(rmq);
-
-        // Использовать планировщик отложенных сообщений
         cfg.UseDelayedMessageScheduler();
-
-        // Конфигурируем точки входа для обработки сообщений.
         cfg.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter("uploader", false));
       });
     });

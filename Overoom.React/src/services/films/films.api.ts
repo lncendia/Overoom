@@ -33,7 +33,6 @@ export class FilmsApi {
       params: query,
     });
 
-    // Добавляем URL постеров к фильмам
     for (const film of response.data.list) {
       film.posterUrl = this.posterUrlFormat + film.posterKey;
     }
@@ -51,7 +50,6 @@ export class FilmsApi {
       params: { take: take },
     });
 
-    // Добавляем URL постеров к фильмам
     for (const film of response.data) {
       film.posterUrl = this.posterUrlFormat + film.posterKey;
     }

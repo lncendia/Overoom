@@ -17,32 +17,15 @@ using Rooms.Infrastructure.Web.Rooms.Hubs;
 using Rooms.Start.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-// Инициализируем подключение к MongoDB
 builder.InitializeMongoDb();
-
-// Регистрируем сервисы логгирования
 builder.AddLoggingServices();
-
-// Добавление служб авторизации
 builder.AddJwtAuthentication();
-
-// Добавляем сервисы CORS
 builder.AddCorsServices();
-
-// Добавляем словарь области
 builder.Services.AddScoped<IScopedContext, ScopedContext>();
-
-// Добавляем в приложение сервисы для работы с хранилищами
 builder.AddStorageServices();
-
-// Добавляем в приложение сервисы для работы с сообщениями MassTransit
 builder.AddMassTransitServices();
-
-// Добавляем в приложение сервисы для работы с медиатором
 builder.Services.AddMediatorServices(typeof(CreateRoomCommandHandler));
 
-// Регистрация SignalR
 builder.Services.AddSignalR(options =>
 {
   options.AddFilter<HubMetricsFilter>();
@@ -55,33 +38,17 @@ builder.Services.AddSignalR(options =>
   options.PayloadSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
 });
 
-// Настраиваем OpenTelemetry
 builder.Services.AddOpenTelemetryServices(Constants.OpenTelemetry.ServiceName, RoomsConnectionMetrics.MeterName);
-
-// Создаем экземпляр приложения ASP.NET Core
 WebApplication app = builder.Build();
 
-// Создаем область для инициализации баз данных
 using (IServiceScope scope = app.Services.CreateScope())
 {
-  // Инициализация начальных данных в базу данных
   await DatabaseInitializer.InitAsync(scope.ServiceProvider);
 }
 
-// Включение CORS
 app.UseCors(CorsServices.CorsPolicy);
-
-// Добавляем в приложение middleware для аутентификации
 app.UseAuthentication();
-
-// Добавляем в приложение middleware для авторизации
 app.UseAuthorization();
-
-// Добавляем в приложение хаб SignalR
 app.MapHub<RoomHub>("/room");
-
-// Эндпоинт для Prometheus
 app.MapPrometheusScrapingEndpointWithBasicAuth();
-
-// Запускаем приложение ASP.NET Core
 await app.RunAsync();

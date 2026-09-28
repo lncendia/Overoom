@@ -31,7 +31,6 @@ public class VerifyUserEmailCommandHandlerTest
   /// </summary>
   public VerifyUserEmailCommandHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -43,7 +42,6 @@ public class VerifyUserEmailCommandHandlerTest
       new Mock<IServiceProvider>().Object,
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    // Инициализация обработчика.
     _handler = new VerifyEmailCommandHandler(_userManagerMock.Object, new Mock<IPublishEndpoint>().Object,
       new Mock<MongoDbContext>().Object);
   }
@@ -55,7 +53,6 @@ public class VerifyUserEmailCommandHandlerTest
   public async Task Handle_ValidCommand_ConfirmEmail()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -66,7 +63,6 @@ public class VerifyUserEmailCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для успешного подтверждения почты при вызове ConfirmEmailAsync.
     _userManagerMock
       .Setup(m => m.ConfirmEmailAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Success);
@@ -75,7 +71,6 @@ public class VerifyUserEmailCommandHandlerTest
       .Setup(m => m.GetClaimsAsync(It.IsAny<AppUser>()))
       .ReturnsAsync([]);
 
-    // Создаем команду для проверки эл. почты пользователя.
     var command = new VerifyEmailCommand
     {
       UserId = Guid.NewGuid(),
@@ -83,14 +78,12 @@ public class VerifyUserEmailCommandHandlerTest
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -101,12 +94,10 @@ public class VerifyUserEmailCommandHandlerTest
   public async Task Handle_WhenUserNotFoundById_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения null при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем команду для проверки эл. почты пользователя.
     var command = new VerifyEmailCommand
     {
       UserId = Guid.NewGuid(),
@@ -114,7 +105,6 @@ public class VerifyUserEmailCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -125,7 +115,6 @@ public class VerifyUserEmailCommandHandlerTest
   public async Task Handle_WhenInvalidCode_ThrowsInvalidCodeException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -136,12 +125,10 @@ public class VerifyUserEmailCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для неудачного результата при вызове ConfirmEmailAsync.
     _userManagerMock
       .Setup(m => m.ConfirmEmailAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Failed());
 
-    // Создаем команду для проверки эл. почты пользователя.
     var command = new VerifyEmailCommand
     {
       UserId = Guid.NewGuid(),
@@ -149,7 +136,6 @@ public class VerifyUserEmailCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения InvalidCodeException.
     await Assert.ThrowsAsync<InvalidCodeException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

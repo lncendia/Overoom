@@ -60,17 +60,14 @@ public class HomeController : Controller
   [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
   public IActionResult Error(int? code)
   {
-    // Обработка исключений
     ViewResult? exceptionResult = HandleException();
     if (exceptionResult != null)
       return exceptionResult;
 
-    // Обработка ошибок OpenIddict (OAuth/OpenID Connect)
     ViewResult? oidcResult = HandleOpenIddict();
     if (oidcResult != null)
       return oidcResult;
 
-    // Обработка HTTP кодов (404, 403 и т.д.)
     return HandleStatusCode(code);
   }
 
@@ -80,15 +77,12 @@ public class HomeController : Controller
   /// <returns>Представление ошибки для пользовательских исключений, null для системных</returns>
   private ViewResult? HandleException()
   {
-    // Получаем информацию об исключении из контекста HTTP
     IExceptionHandlerFeature? context = HttpContext.Features.Get<IExceptionHandlerFeature>();
     if (context?.Error is not { } ex)
       return null;
 
-    // Логируем ошибку для отладки
     _logger.LogError(ex, "Request processing error");
 
-    // Показываем пользователю только "безопасные" исключения
     if (IsUserFriendlyException(ex))
     {
       return View(new ErrorViewModel
@@ -98,7 +92,6 @@ public class HomeController : Controller
       });
     }
 
-    // Системные исключения не показываем пользователю
     return null;
   }
 
@@ -108,12 +101,10 @@ public class HomeController : Controller
   /// <returns>Представление с описанием ошибки авторизации, null если ошибка не от OpenIddict</returns>
   private ViewResult? HandleOpenIddict()
   {
-    // Получаем ответ OpenIddict (ошибки аутентификации/авторизации)
     OpenIddictResponse? response = HttpContext.GetOpenIddictServerResponse();
     if (response is null)
       return null;
 
-    // Показываем пользователю описание ошибки OAuth/OpenID Connect
     return View(new ErrorViewModel
     {
       Message = response.ErrorDescription ?? response.Error!,
@@ -128,10 +119,8 @@ public class HomeController : Controller
   /// <returns>Представление с соответствующим сообщением об ошибке</returns>
   private ViewResult HandleStatusCode(int? code)
   {
-    // Сообщение по умолчанию для неизвестных ошибок
     LocalizedString message = _stringLocalizer["DefaultMessage"];
 
-    // Специальное сообщение для 404 ошибки
     if (code == (int)HttpStatusCode.NotFound)
       message = _stringLocalizer["NotFoundMessage"];
 
@@ -150,7 +139,6 @@ public class HomeController : Controller
   private static bool IsUserFriendlyException(Exception ex)
   {
     // Список исключений, которые можно безопасно показывать пользователю
-    // Эти исключения могут быть локализованы без технических деталей
     return ex is OpenIdContextException
       or EmailSendException
       or UserNotFoundException

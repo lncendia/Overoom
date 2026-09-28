@@ -11,7 +11,7 @@ namespace Rooms.Domain.Messages;
 /// <summary>
 /// Представляет текстовое сообщение, отправленное пользователем в комнате.
 /// </summary>
-public partial class Message : AggregateRoot<MessageSnapshot>
+public partial class Message : AggregateRoot
 {
   #region Константы
 

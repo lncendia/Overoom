@@ -46,10 +46,4 @@ public class MessageRepository : RepositoryBase<MessageModel, Message, MessageSn
       Id = aggregate.Id
     };
   }
-
-  /// <inheritdoc/>
-  protected override Message FromSnapshot(MessageSnapshot snapshot)
-  {
-    return Message.FromSnapshot(snapshot);
-  }
 }

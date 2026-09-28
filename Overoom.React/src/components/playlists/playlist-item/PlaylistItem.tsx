@@ -32,7 +32,6 @@ const PlaylistItem = ({ playlist, selectedGenre, onClick }: PlaylistItemProps): 
       ratingKp={null}
       ratingImdb={null}
     >
-      {/* Описание плейлиста */}
       <Typography
         variant="body2"
         color="text.secondary"
@@ -47,7 +46,6 @@ const PlaylistItem = ({ playlist, selectedGenre, onClick }: PlaylistItemProps): 
         {playlist.description}
       </Typography>
 
-      {/* Список жанров плейлиста */}
       <Box sx={{ mb: 4 }}>
         <GenresList genres={playlist.genres} selected={selectedGenre} />
       </Box>

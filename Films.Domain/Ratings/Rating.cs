@@ -9,7 +9,7 @@ namespace Films.Domain.Ratings;
 /// <summary>
 /// Класс, представляющий оценку фильма от пользователя.
 /// </summary>
-public partial class Rating : AggregateRoot<RatingSnapshot>
+public partial class Rating : AggregateRoot
 {
   #region Поля и свойства
 

@@ -21,19 +21,11 @@ public class RemoveCommentCommandHandler(IUnitOfWork unitOfWork) : IRequestHandl
   /// <exception cref="CommentNotBelongToUserException">Выбрасывается, если комментарий не принадлежит пользователю</exception>
   public async Task Handle(RemoveCommentCommand request, CancellationToken cancellationToken)
   {
-    // Получаем комментарий по ID
     Comment? comment = await unitOfWork.CommentRepository.Value.GetAsync(request.CommentId, cancellationToken);
-
-    // Проверяем, что комментарий существует
     if (comment == null) throw new CommentNotFoundException(request.CommentId);
-
-    // Проверяем, что комментарий принадлежит пользователю, который пытается его удалить
     if (comment.UserId != request.UserId) throw new CommentNotBelongToUserException(request.UserId, request.CommentId);
 
-    // Удаляем комментарий из репозитория
     await unitOfWork.CommentRepository.Value.DeleteAsync(comment, cancellationToken);
-
-    // Сохраняем изменения в БД
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

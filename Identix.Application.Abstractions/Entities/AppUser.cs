@@ -37,10 +37,8 @@ public sealed class AppUser : IdentityUser<Guid>
   /// </summary>
   public static Localization GetLocale(IEnumerable<Claim> claims)
   {
-    // Ищем claim, соответствующий типу JwtClaimTypes.Locale.
     string? claim = claims.FirstOrDefault(c => c.Type == OpenIddictConstants.Claims.Locale)?.Value;
 
-    // Преобразуем значение claim в тип Localization.
     return claim.GetLocalization();
   }
 

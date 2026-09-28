@@ -65,16 +65,11 @@ public class SettingsController : Controller
   [HttpGet]
   public async Task<IActionResult> Index([FromQuery] SettingsInputModel model)
   {
-    // Получаем аутентифицированного пользователя
     (AppUser user, ICollection<Claim> claims) = await _mediator.Send(new UserByIdQuery { Id = User.Id() });
-
-    // Добавляем сообщение об ошибке, если оно есть
     if (!string.IsNullOrEmpty(model.ErrorMessage)) ModelState.AddModelError("", model.ErrorMessage);
 
-    // Создаем модель представления
     SettingsViewModel settingsModel = await BuildViewModelAsync(user, claims, model);
 
-    // Возвращаем представление с моделью настроек
     return View(settingsModel);
   }
 
@@ -87,16 +82,11 @@ public class SettingsController : Controller
   [HttpGet]
   public IActionResult Challenge(string? provider, string returnUrl = "/")
   {
-    // Проверяем, что имя провайдера не пустое или null
     if (string.IsNullOrEmpty(provider)) throw new QueryParameterMissingException(nameof(provider));
 
-    // Создаем URL для обратного вызова после аутентификации
     string? redirectUrl = Url.Action("ExternalLoginCallback", "Settings", new { ReturnUrl = returnUrl });
-
-    // Конфигурируем свойства аутентификации для внешнего провайдера
     AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
 
-    // Возвращаем вызов аутентификации с указанным провайдером и свойствами
     return new ChallengeResult(provider, properties);
   }
 
@@ -108,24 +98,18 @@ public class SettingsController : Controller
   [HttpGet]
   public async Task<IActionResult> ExternalLoginCallback(string returnUrl = "/")
   {
-    // Получаем информацию о внешней аутентификации.
     ExternalLoginInfo? info = await _signInManager.GetExternalLoginInfoAsync();
 
-    // Если информация о внешнем провайдере недоступна, прерываем процесс аутентификации
     if (info == null)
       throw new ExternalAuthenticationFailureException(
         "Couldn't get information about an external authentication");
 
-    // Отправляем команду на добавление внешнего входа и получаем пользователя с обновленными данными
     AppUser user = await _mediator.Send(new AddUserExternalLoginCommand { UserId = User.Id(), LoginInfo = info });
-
-    // Отчищаем куки данных от внешнего провайдера
     await HttpContext.SignOutAsync(info.AuthenticationProperties);
 
     // Так как Security Stamp у пользователя обновился, то переавторизуем его, чтобы обновить куки
     await _signInManager.RefreshSignInAsync(user);
 
-    // Перенаправляем пользователя на указанный URL
     return RedirectToAction("Index", new SettingsInputModel
     {
       ExpandElement = 1,
@@ -143,21 +127,16 @@ public class SettingsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> RemoveLogin(RemoveLoginInputModel model)
   {
-    // Объявление переменной message и errorMessage типа string
     string? message = null, errorMessage = null;
-
-    // Присвоение описания первой ошибки валидации переменной message, если модель не валидна
     if (!ModelState.IsValid) errorMessage = GetFirstError();
     else
     {
-      // Отправляем команду на удаление внешнего логина и получаем пользователя с обновленными данными
       AppUser user = await _mediator.Send(
         new RemoveUserExternalLoginCommand { UserId = User.Id(), Provider = model.Provider! });
 
       // Так как Security Stamp у пользователя обновился, то переавторизуем его, чтобы обновить куки
       await _signInManager.RefreshSignInAsync(user);
 
-      // Получаем отображаемое имя провайдера
       string? providerDisplayName = (await _signInManager.GetExternalAuthenticationSchemesAsync())
                                     .FirstOrDefault(p => p.Name == model.Provider)?.DisplayName
                                     ?? model.Provider;
@@ -165,7 +144,6 @@ public class SettingsController : Controller
       message = string.Format(_localizer["ProviderUnlinked"], providerDisplayName);
     }
 
-    // Перенаправляем пользователя на указанный URL
     return RedirectToAction("Index", new SettingsInputModel
     {
       ExpandElement = 1,
@@ -184,13 +162,11 @@ public class SettingsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> CloseOtherSessions(CloseSessionsInputModel model)
   {
-    // Отправляем команду на закрытие всех других сессий, возвращаем данного пользователя
     AppUser user = await _mediator.Send(new UpdateSecurityStampCommand { UserId = User.Id() });
 
     // Так как Security Stamp у пользователя обновился, то переавторизуем его, чтобы обновить куки
     await _signInManager.RefreshSignInAsync(user);
 
-    // Перенаправляем на действие "Index" с указанными параметрами returnUrl, expandElem и message
     return RedirectToAction("Index", new SettingsInputModel
     {
       ExpandElement = model.ExpandElement,
@@ -208,22 +184,17 @@ public class SettingsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> ChangePassword(ChangePasswordInputModel model)
   {
-    // Объявление переменной message и errorMessage типа string
     string? message = null, errorMessage = null;
-
-    // Присвоение описания первой ошибки валидации переменной message, если модель не валидна
     if (!ModelState.IsValid) errorMessage = GetFirstError();
     else
     {
       try
       {
-        // Отправляем команду на смену пароля и получаем пользователя с обновленными данными
         AppUser user = await _mediator.Send(new ChangePasswordCommand(model.OldPassword, model.NewPassword!)
         {
           UserId = User.Id()
         });
 
-        // Устанавливаем сообщение "PasswordChanged"
         message = _localizer["PasswordChanged"].ToString();
 
         // Так как Security Stamp у пользователя обновился, то переавторизуем его, чтобы обновить куки
@@ -231,39 +202,28 @@ public class SettingsController : Controller
       }
       catch (Exception ex)
       {
-        // Проверяем какое исключение мы словили и устанавливаем соответствующее значение в message
         switch (ex)
         {
-          // В случае если исключение ex является OldPasswordNeededException устанавливаем соответствующее сообщение
           case PasswordNeededException:
             errorMessage = _localizer["OldPasswordNeeded"];
             break;
 
-          // В случае если исключение ex является PasswordValidationException устанавливаем соответствующее сообщение
           case PasswordValidationException passwordValidationException:
-
-            // Формируем перечисление из локализованных ошибок валидации пароля
             IEnumerable<LocalizedString> errorsEnumerable = passwordValidationException.ValidationErrors
               .Select(code => _localizer[code.Key]);
 
-            // Формируем строку из перечисления ошибок через запятую
             errorMessage = string.Join(", ", errorsEnumerable);
             break;
 
-          // В случае если исключение ex является ArgumentException устанавливаем соответствующее сообщение
           case ArgumentException:
-
-            // Если старый пароль совпадает с новым, то устанавливаем соответствующее сообщение
             errorMessage = _localizer["OldPasswordMatchNew"];
             break;
 
-          // Если исключение ex не является ни одним их типов, то вызываем исключение дальше
           default: throw;
         }
       }
     }
 
-    // Перенаправляем на действие "Index" с указанными параметрами returnUrl, expandElem и message
     return RedirectToAction("Index", new SettingsInputModel
     {
       ExpandElement = 2,
@@ -282,17 +242,14 @@ public class SettingsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> RequestChangeEmail(RequestChangeEmailInputModel model)
   {
-    // Объявление переменной message и errorMessage типа string
     string? message = null, errorMessage = null;
 
-    // Присвоение описания первой ошибки валидации переменной message, если модель не валидна
     if (!ModelState.IsValid)
     {
       errorMessage = GetFirstError();
     }
     else
     {
-      // Формирование URL-адреса обратного вызова для изменения адреса электронной почты
       string resetUrl = Url.Action("ChangeEmail", "Settings", null, HttpContext.Request.Scheme)!;
 
       try
@@ -306,7 +263,6 @@ public class SettingsController : Controller
           ReturnUrl = model.ReturnUrl
         });
 
-        // Присвоение локализованной строки "EmailChangeRequested" переменной message
         message = _localizer["EmailChangeRequested"];
       }
       catch (PasswordNeededException)
@@ -319,7 +275,6 @@ public class SettingsController : Controller
       }
     }
 
-    // Перенаправление на действие "Index" с указанными данных
     return RedirectToAction("Index", new SettingsInputModel
     {
       ExpandElement = 3,
@@ -340,21 +295,14 @@ public class SettingsController : Controller
   [HttpGet]
   public async Task<IActionResult> ChangeEmail(Guid? id, string? email, string? code, string returnUrl = "/")
   {
-    // Выбрасывание исключения QueryParameterMissingException, если параметр id отсутствует
     if (!id.HasValue || id.Value != User.Id()) throw new QueryParameterMissingException(nameof(id));
-
-    // Выбрасывание исключения QueryParameterMissingException, если параметр email отсутствует
     if (string.IsNullOrEmpty(email)) throw new QueryParameterMissingException(nameof(email));
-
-    // Выбрасывание исключения QueryParameterMissingException, если параметр code отсутствует
     if (string.IsNullOrEmpty(code)) throw new QueryParameterMissingException(nameof(code));
 
-    // Объявление переменной message и errorMessage типа string
     string? message = null, errorMessage = null;
 
     try
     {
-      // Отправляем команду на смену почты и получаем пользователя с обновленными данными
       AppUser user = await _mediator.Send(new ChangeEmailCommand
       {
         Code = code,
@@ -362,7 +310,6 @@ public class SettingsController : Controller
         UserId = id.Value
       });
 
-      // Устанавливаем сообщение о том, что почта изменена
       message = _localizer["EmailChanged"];
 
       // Так как Security Stamp у пользователя обновился, то переавторизуем его, чтобы обновить куки
@@ -372,22 +319,18 @@ public class SettingsController : Controller
     {
       switch (ex)
       {
-        // В случае если исключение ex является EmailAlreadyTakenException устанавливаем соответствующее сообщение
         case EmailAlreadyTakenException:
           errorMessage = _localizer["EmailAlreadyTaken"];
           break;
 
-        // В случае если исключение ex является EmailFormatException устанавливаем соответствующее сообщение
         case EmailFormatException:
           errorMessage = _localizer["EmailFormatInvalid"];
           break;
 
-        // Если исключение ex не является ни одним их типов, то вызываем исключение дальше
         default: throw;
       }
     }
 
-    // Перенаправление на действие "Index" с указанными данных
     return RedirectToAction("Index", new SettingsInputModel
     {
       ExpandElement = 3,
@@ -406,13 +349,9 @@ public class SettingsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> ChangeName(ChangeNameInputModel model)
   {
-    // Объявление переменной message и errorMessage типа string
     string? message = null, errorMessage = null;
-
-    // Присвоение описания первой ошибки валидации переменной message, если модель не валидна
     if (!ModelState.IsValid) errorMessage = GetFirstError();
 
-    // Иначе
     else
     {
       try
@@ -423,7 +362,6 @@ public class SettingsController : Controller
           Name = model.Username!
         });
 
-        // Устанавливаем сообщение о том, что имя изменено
         message = _localizer["UserNameChanged"];
 
         // Так как Security Stamp у пользователя обновился, то переавторизуем его, чтобы обновить куки
@@ -435,7 +373,6 @@ public class SettingsController : Controller
       }
     }
 
-    // Перенаправление на действие "Index" с указанными данных
     return RedirectToAction("Index", new SettingsInputModel
     {
       ExpandElement = 4,
@@ -449,36 +386,24 @@ public class SettingsController : Controller
   [ValidateAntiForgeryToken]
   public async Task<ActionResult> ChangeAvatar(ChangeAvatarInputModel model)
   {
-    // Объявление переменной message и errorMessage типа string
     string? message = null, errorMessage = null;
-
-    // Присвоение описания первой ошибки валидации переменной message, если модель не валидна
     if (!ModelState.IsValid) errorMessage = GetFirstError();
-
-    // Иначе если размер аватара превышает 15 Мб
     else if (model.File!.Length > 15728640) errorMessage = _localizer["WrongFileSize"];
 
-    // Иначе
     else
     {
-      // Открываем поток с файлом модели
       await using Stream stream = model.File!.OpenReadStream();
 
-      // Отправляем команду на смену аватара
       await _mediator.Send(new ChangeAvatarCommand
       {
-        // Идентификатор пользователя
         UserId = User.Id(),
 
-        // Поток с аватаром
         Thumbnail = stream
       });
 
-      // Устанавливаем сообщение о том, что почта изменена
       message = _localizer["AvatarChanged"];
     }
 
-    // Перенаправление на действие "Index" с указанными данных
     return RedirectToAction("Index", new SettingsInputModel
     {
       ExpandElement = 5,
@@ -497,22 +422,14 @@ public class SettingsController : Controller
   /// <returns>Модель представления настроек</returns>
   private async Task<SettingsViewModel> BuildViewModelAsync(AppUser user, ICollection<Claim> claims, SettingsInputModel model)
   {
-    // Получаем список входов пользователя
     IReadOnlyCollection<string> logins = await _mediator.Send(new UserLoginsQuery { Id = user.Id });
-
-    // Получаем все внешние провайдеры идентификации (oauth схемы)
     IEnumerable<AuthenticationScheme> schemes = await _signInManager.GetExternalAuthenticationSchemesAsync();
-
-    // Создаем список для хранения внешних провайдеров аутентификации
     var userSchemes = new List<ExternalProvider>();
 
-    // Перебираем все схемы аутентификации для определения доступных провайдеров
     foreach (AuthenticationScheme authenticationScheme in schemes)
     {
-      // Проверяем, связан ли провайдер с пользователем
       bool isAssociated = logins.Any(login => login == authenticationScheme.Name);
 
-      // Создаем объект ExternalProvider и добавляем его в список
       userSchemes.Add(new ExternalProvider
       {
         DisplayName = authenticationScheme.DisplayName ?? authenticationScheme.Name,
@@ -523,7 +440,6 @@ public class SettingsController : Controller
 
     string? photoKey = AppUser.GetPhotoKey(claims);
 
-    // Создаем модель представления настроек с переданными внешними провайдерами и returnUrl
     var settingsModel = new SettingsViewModel
     {
       ReturnUrl = model.ReturnUrl,
@@ -539,7 +455,6 @@ public class SettingsController : Controller
         : null,
     };
 
-    // Возвращаем модель настроек
     return settingsModel;
   }
 
@@ -549,8 +464,6 @@ public class SettingsController : Controller
   /// <returns>Сообщение об ошибке.</returns>
   private string GetFirstError()
   {
-    // Выбирает все ошибки из коллекции ModelState.Values и объединяет их в одну коллекцию с помощью метода SelectMany.
-    // Затем берет первую ошибку с помощью метода First и возвращает сообщение об ошибке из свойства ErrorMessage первой ошибки.
     return ModelState.Values.SelectMany(v => v.Errors).First().ErrorMessage;
   }
 }

@@ -30,7 +30,6 @@ public class AuthenticateUserByPasswordCommandHandlerTest
   /// </summary>
   public AuthenticateUserByPasswordCommandHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -43,8 +42,6 @@ public class AuthenticateUserByPasswordCommandHandlerTest
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
     var publishEndpointMock = new Mock<IPublishEndpoint>();
-
-    // Инициализация обработчика.
     _handler = new AuthenticateUserByPasswordCommandHandler(_userManagerMock.Object, publishEndpointMock.Object);
   }
 
@@ -55,7 +52,6 @@ public class AuthenticateUserByPasswordCommandHandlerTest
   public async Task Handle_ValidCommand_AuthenticateByPassword()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
     _userManagerMock
       .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -66,7 +62,6 @@ public class AuthenticateUserByPasswordCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возвращения false при вызове IsLockedOutAsync.
     _userManagerMock
       .Setup(m => m.IsLockedOutAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => false);
@@ -75,13 +70,11 @@ public class AuthenticateUserByPasswordCommandHandlerTest
       .Setup(m => m.IsEmailConfirmedAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => true);
 
-    // Настройка mock объекта UserManager для возвращения true при вызове CheckPasswordAsync.
     _userManagerMock
       .Setup(m => m.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(() => true);
 
 
-    // Создаем команду для аутентификации пользователя по паролю.
     var command = new AuthenticateUserByPasswordCommand
     {
       Email = "test@example.com",
@@ -90,14 +83,12 @@ public class AuthenticateUserByPasswordCommandHandlerTest
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -108,12 +99,10 @@ public class AuthenticateUserByPasswordCommandHandlerTest
   public async Task Handle_WhenUserNotFoundByEmail_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения null при вызове FindByEmailAsync.
     _userManagerMock
       .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем команду для аутентификации пользователя по паролю.
     var command = new AuthenticateUserByPasswordCommand
     {
       Email = "test@example.com",
@@ -122,7 +111,6 @@ public class AuthenticateUserByPasswordCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -133,7 +121,6 @@ public class AuthenticateUserByPasswordCommandHandlerTest
   public async Task Handle_WhenUserIsLockout_ThrowsUserLockoutException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
     _userManagerMock
       .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -144,12 +131,10 @@ public class AuthenticateUserByPasswordCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возвращения true при вызове IsLockedOutAsync.
     _userManagerMock
       .Setup(m => m.IsLockedOutAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => true);
 
-    // Создаем команду для аутентификации пользователя по паролю.
     var command = new AuthenticateUserByPasswordCommand
     {
       Email = "test@example.com",
@@ -158,7 +143,6 @@ public class AuthenticateUserByPasswordCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserLockoutException.
     await Assert.ThrowsAsync<UserLockoutException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -169,7 +153,6 @@ public class AuthenticateUserByPasswordCommandHandlerTest
   public async Task Handle_WhenWrongPassword_ThrowsInvalidPasswordException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
     _userManagerMock
       .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -180,17 +163,14 @@ public class AuthenticateUserByPasswordCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возвращения false при вызове IsLockedOutAsync.
     _userManagerMock
       .Setup(m => m.IsLockedOutAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => false);
 
-    // Настройка mock объекта UserManager для возвращения false при вызове CheckPasswordAsync.
     _userManagerMock
       .Setup(m => m.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(() => false);
 
-    // Создаем команду для аутентификации пользователя по паролю.
     var command = new AuthenticateUserByPasswordCommand
     {
       Email = "test@example.com",
@@ -199,7 +179,6 @@ public class AuthenticateUserByPasswordCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения InvalidPasswordException.
     await Assert.ThrowsAsync<InvalidPasswordException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

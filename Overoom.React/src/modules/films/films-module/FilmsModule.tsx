@@ -75,13 +75,9 @@ const FilmsModule = (props: FilmsModuleProps): ReactElement => {
     [navigate]
   );
 
-  // Показ скелетона, если данные ещё загружаются
   if (isLoading) return <FilmsCatalogSkeleton />;
-
-  // Показ сообщения "Нет данных", если фильмы не найдены
   if (films.length === 0) return <NoData text="Фильмы не найдены" />;
 
-  // Основной рендер: компонент каталога фильмов
   return (
     <FilmsCatalog
       hasMore={hasMore}

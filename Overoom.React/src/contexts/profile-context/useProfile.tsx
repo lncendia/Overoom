@@ -11,7 +11,6 @@ export const useProfile = (): ProfileContextType => {
   /** Используем хук useContext для получения доступа к контексту профиля */
   const context = useContext(ProfileContext);
 
-  // Проверяем, что хук используется внутри провайдера контекста
   if (context === undefined) {
     throw new Error('useProfile must be used within a ProfileContextProvider');
   }

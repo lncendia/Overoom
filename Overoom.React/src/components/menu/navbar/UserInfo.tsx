@@ -39,14 +39,12 @@ const UserInfo = (props: UserInfoProps): ReactElement => {
     setAnchorEl(null);
   };
 
-  // Рендерим JSX с аватаром и контекстным меню
   return (
     <>
       <IconButton onClick={handleClick}>
         <Avatar sx={{ width: 40, height: 40 }} src={props.photoUrl ?? undefined} />
       </IconButton>
 
-      {/* Контекстное меню */}
       <Menu
         anchorEl={anchorEl}
         keepMounted
@@ -61,7 +59,6 @@ const UserInfo = (props: UserInfoProps): ReactElement => {
           horizontal: 'right',
         }}
       >
-        {/* Элемент меню: переход в профиль */}
         <MenuItem
           onClick={() => {
             handleClose();
@@ -71,7 +68,6 @@ const UserInfo = (props: UserInfoProps): ReactElement => {
           Профиль
         </MenuItem>
 
-        {/* Элемент меню: выход из приложения */}
         <MenuItem
           onClick={() => {
             handleClose();

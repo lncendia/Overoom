@@ -22,14 +22,9 @@ public class RatingCreatedEventHandler(IUnitOfWork unitOfWork) : BeforeSaveNotif
   /// <exception cref="RatingAlreadyExistsException">Если оценка данного пользователя для данного фильма уже существует</exception>
   protected override async Task Execute(CreateEvent<Rating> notification, CancellationToken cancellationToken)
   {
-    // Создаем спецификацию для поиска существующей оценки (ищем оценку данного пользователя для данного фильма)
     var spec = new DuplicateRatingsSpecification(notification.Aggregate.FilmId, notification.Aggregate.UserId);
-
-    // Ищем фильмы, удовлетворяющие критериям дубликатов
     IReadOnlyList<Rating> count = await unitOfWork.RatingRepository.Value.FindAsync(spec, cancellationToken: cancellationToken);
 
-    // Если найдены совпадения - бросаем исключение
-    // Это предотвращает создание дубликатов фильмов в системе
     if (count.Count > 0)
       throw new RatingAlreadyExistsException(notification.Aggregate.FilmId, notification.Aggregate.UserId);
   }

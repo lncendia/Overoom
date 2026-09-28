@@ -23,40 +23,28 @@ public class ScopesQueryHandler(IOpenIddictScopeManager scopeManager)
   {
     var results = new List<ScopeDto>();
 
-    // Ищем scope'ы по именам в хранилище OpenIddict
     await foreach (object scope in scopeManager.FindByNamesAsync([..request.RequestedScopes], cancellationToken))
     {
-      // Создаем и заполняем дескриптор scope для получения метаданных
       var descriptor = new OpenIddictScopeDescriptor();
       await scopeManager.PopulateAsync(descriptor, scope, cancellationToken);
-
-      // Получаем локализованные значения для указанной культуры
       CultureInfo culture = request.Culture;
       string? displayName = descriptor.DisplayNames.TryGetValue(culture, out string? dn) ? dn : descriptor.DisplayName;
       string? description = descriptor.Descriptions.GetValueOrDefault(culture);
 
-      // Формируем DTO объекта scope
       results.Add(new ScopeDto
       {
-        // Уникальное техническое имя scope'а
         Name = descriptor.Name!,
 
-        // Локализованное отображаемое имя (или техническое, если локализация не найдена)
         DisplayName = displayName ?? descriptor.Name!,
 
-        // Локализованное описание scope'а
         Description = description,
 
-        // Признак identity scope'а (доступ к данным пользователя)
         IdentityScope = descriptor.IsIdentityScope(),
 
-        // Признак визуального выделения в UI
         Emphasize = descriptor.GetEmphasize(),
 
-        // Признак обязательности scope'а
         Required = descriptor.GetRequired(),
 
-        // Scope включен по умолчанию (так как присутствует в запросе)
         Checked = request.RequestedScopes.Contains(descriptor.Name!, StringComparer.Ordinal)
       });
     }

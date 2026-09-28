@@ -28,16 +28,11 @@ public class ChangeFilmPosterCommandHandler(
   /// <exception cref="FilmNotFoundException">Если фильм с указанным ID не найден</exception>
   public async Task Handle(ChangeFilmPosterCommand request, CancellationToken cancellationToken)
   {
-    // Получаем фильм по ID из репозитория
     Film? film = await unitOfWork.FilmRepository.Value.GetAsync(request.Id, cancellationToken);
-
-    // Проверяем существование фильма
     if (film == null) throw new FilmNotFoundException(request.Id);
 
-    // Генерируем новый ключ для хранения постера
     string newPosterKey = string.Format(Constants.Poster.FilmKeyFormat, Guid.NewGuid());
 
-    // Загружаем новый постер в хранилище
     await posterStore.UploadAsync(newPosterKey, request.Poster.File, Constants.Mime.Photo,
       token: cancellationToken);
 
@@ -45,7 +40,6 @@ public class ChangeFilmPosterCommandHandler(
     {
       try
       {
-        // Пытаемся удалить старый постер
         await posterStore.DeleteAsync(film.PosterKey, token: cancellationToken);
       }
       catch (FileNotFoundException ex)
@@ -54,13 +48,8 @@ public class ChangeFilmPosterCommandHandler(
       }
     }
 
-    // Сохраняем новый ключ постера
     film.PosterKey = newPosterKey;
-
-    // Сохраняем изменения в репозитории
     await unitOfWork.FilmRepository.Value.UpdateAsync(film, cancellationToken);
-
-    // Фиксируем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

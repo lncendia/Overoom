@@ -18,16 +18,12 @@ public class HubConnectionIdFilter : IHubFilter
     HubInvocationContext invocationContext,
     Func<HubInvocationContext, ValueTask<object?>> next)
   {
-    // Получаем сервис контекста области из DI контейнера
     IScopedContext context = invocationContext.ServiceProvider.GetRequiredService<IScopedContext>();
 
-    // Создаем новую область видимости для изоляции данных вызова
     using (context.CreateScope())
     {
-      // Сохраняем идентификатор подключения SignalR в контексте области
       context.Current.Add(Constants.ScopedDictionary.CurrentConnectionIdKey, invocationContext.Context.ConnectionId);
 
-      // Выполняем следующий фильтр или метод хаба
       return await next(invocationContext);
     }
   }

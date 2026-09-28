@@ -17,7 +17,6 @@ export interface NoDataProps {
 const NoData = ({ text }: NoDataProps): ReactElement => {
   return (
     <Paper>
-      {/* Отображение текста сообщения */}
       <Typography>{text}</Typography>
     </Paper>
   );

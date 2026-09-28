@@ -25,45 +25,31 @@ public class ChangePlaylistCommandHandler(IUnitOfWork unitOfWork, MongoDbContext
   /// <exception cref="PlaylistNotFoundException">Выбрасывается если плейлист не найден</exception>
   public async Task Handle(ChangePlaylistCommand request, CancellationToken cancellationToken)
   {
-    // Получаем плейлист по идентификатору
     Playlist? playlist = await unitOfWork.PlaylistRepository.Value.GetAsync(request.Id, cancellationToken);
-
-    // Если плейлист не найден - выбрасываем исключение
     if (playlist == null) throw new PlaylistNotFoundException(request.Id);
 
-    // Обновляем описание плейлиста, если оно указано в запросе
     playlist.Description = request.Description;
 
-    // Обработка обновления списка фильмов
     if (request.Films != null)
     {
-      // Получаем информацию о фильмах из MongoDB
       List<Playlist.FilmToUpdate>? films = await context.Films.AsQueryable()
 
-        // Фильтруем только запрошенные фильмы
         .Where(x => request.Films.Contains(x.Id))
 
-        // Проецируем в упрощенную модель (ID и жанры)
         .Select(x => new Playlist.FilmToUpdate(x.Id, x.Genres.ToArray()))
 
-        // Преобразуем в список
         .ToListAsync(cancellationToken: cancellationToken);
 
-      // Проверяем, что все запрошенные фильмы найдены
       foreach (Guid film in request.Films)
       {
         if (films.All(f => f.Id != film))
           throw new FilmNotFoundException(film);
       }
 
-      // Обновляем список фильмов в плейлисте
       playlist.UpdateFilms(films);
     }
 
-    // Сохраняем изменения плейлиста в репозитории
     await unitOfWork.PlaylistRepository.Value.UpdateAsync(playlist, cancellationToken);
-
-    // Фиксируем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

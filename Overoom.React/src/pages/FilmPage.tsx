@@ -18,7 +18,6 @@ const FilmPage = (): ReactElement => {
   /** Используем хук useLocation для получения состояния навигации (в т.ч. ID фильма) */
   const { state } = useLocation();
 
-  // Оборачиваем внутреннюю страницу в контекст фильма
   return (
     <FilmContextProvider filmId={state.id}>
       <FilmPageInternal />
@@ -38,7 +37,6 @@ const FilmPageInternal = (): ReactElement => {
   /** Получаем данные о фильме из контекста с помощью хука useFilm */
   const { film } = useFilm();
 
-  // Рендерим основную структуру страницы фильма
   return (
     <>
       <FilmModule

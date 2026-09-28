@@ -18,7 +18,6 @@ public static class ConfigurationExtensions
   /// <exception cref="ConfigurationException">Вызывается, если значение не найдено или не может быть приведено к указанному типу.</exception>
   public static T GetRequiredValue<T>(this IConfiguration configuration, string key)
   {
-    // Возвращаем полученное значение или вызываем исключение, если оно не получено
     return configuration.GetValue<T?>(key) ?? throw new ConfigurationException(key);
   }
 }

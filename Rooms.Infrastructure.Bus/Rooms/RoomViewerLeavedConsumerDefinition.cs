@@ -18,7 +18,6 @@ public class RoomViewerLeavedConsumerDefinition : ConsumerDefinition<RoomViewerL
   protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
     IConsumerConfigurator<RoomViewerLeavedConsumer> consumerConfigurator, IRegistrationContext context)
   {
-    // Настройка повторной обработки
     consumerConfigurator.UseMessageRetry(cfg =>
     {
       cfg.Interval(5, TimeSpan.FromSeconds(5));

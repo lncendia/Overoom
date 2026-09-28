@@ -19,27 +19,22 @@ public class HubMetricsFilter : IHubFilter
     HubInvocationContext invocationContext,
     Func<HubInvocationContext, ValueTask<object?>> next)
   {
-    // Создаём таймер для измерения длительности вызова метода
     var sw = Stopwatch.StartNew();
 
     try
     {
-      // Выполняем следующий фильтр или сам метод хаба
       object? result = await next(invocationContext);
       return result;
     }
     finally
     {
-      // Останавливаем таймер после завершения метода
       sw.Stop();
 
-      // Создаём набор тегов/лейблов для метрики
       var labels = new KeyValuePair<string, object?>[]
       {
         new("method", invocationContext.HubMethodName)
       };
 
-      // Регистрируем длительность метода в гистограмме OpenTelemetry
       RoomsConnectionMetrics.MethodDuration.Record(sw.Elapsed.TotalMilliseconds, labels);
     }
   }

@@ -30,7 +30,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
   /// </summary>
   public AuthenticateTwoFactorCommandHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -42,7 +41,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
       new Mock<IServiceProvider>().Object,
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    // Инициализация обработчика.
     _handler = new AuthenticateTwoFactorCommandHandler(_userManagerMock.Object);
   }
 
@@ -53,7 +51,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
   public async Task Handle_ValidCommand_Authenticate()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -64,13 +61,11 @@ public class AuthenticateTwoFactorCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возвращения true при вызове VerifyTwoFactorTokenAsync.
     _userManagerMock
       .Setup(m => m.VerifyTwoFactorTokenAsync
         (It.IsAny<AppUser>(), It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(() => true);
 
-    // Создаем команду для прохождения пользователем 2FA.
     var command = new AuthenticateTwoFactorCommand
     {
       UserId = Guid.NewGuid(),
@@ -79,14 +74,12 @@ public class AuthenticateTwoFactorCommandHandlerTest
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -97,7 +90,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
   public async Task Handle_ValidCommandWithRecoveryCode_Authenticate()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -108,13 +100,11 @@ public class AuthenticateTwoFactorCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для успешного результата выполнения RedeemTwoFactorRecoveryCodeAsync.
     _userManagerMock
       .Setup(m => m.RedeemTwoFactorRecoveryCodeAsync
         (It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(() => IdentityResult.Success);
 
-    // Создаем команду для прохождения пользователем 2FA.
     var command = new AuthenticateTwoFactorCommand
     {
       Code = "test_code",
@@ -123,14 +113,12 @@ public class AuthenticateTwoFactorCommandHandlerTest
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -141,12 +129,10 @@ public class AuthenticateTwoFactorCommandHandlerTest
   public async Task Handle_WhenUserNotFoundById_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения null при вызове FindByLoginAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем команду для прохождения пользователем 2FA.
     var command = new AuthenticateTwoFactorCommand
     {
       UserId = Guid.NewGuid(),
@@ -155,7 +141,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -166,7 +151,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
   public async Task Handle_WhenInvalidTypeCodeFor2FA_ThrowsArgumentOutOfRangeException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -177,7 +161,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Создаем команду для прохождения пользователем 2FA.
     var command = new AuthenticateTwoFactorCommand
     {
       UserId = Guid.NewGuid(),
@@ -186,7 +169,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -197,7 +179,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
   public async Task Handle_WhenInvalidCode_ThrowsInvalidCodeException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -208,13 +189,11 @@ public class AuthenticateTwoFactorCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возвращения false пользователя при вызове VerifyTwoFactorTokenAsync.
     _userManagerMock
       .Setup(m => m.VerifyTwoFactorTokenAsync
         (It.IsAny<AppUser>(), It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(() => false);
 
-    // Создаем команду для прохождения пользователем 2FA.
     var command = new AuthenticateTwoFactorCommand
     {
       UserId = Guid.NewGuid(),
@@ -223,7 +202,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения InvalidCodeException.
     await Assert.ThrowsAsync<InvalidCodeException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -234,7 +212,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
   public async Task Handle_WhenInvalidCodeWithByRecoveryCode_ThrowsInvalidCodeException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -245,13 +222,11 @@ public class AuthenticateTwoFactorCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возвращения неудачного результата выполнения RedeemTwoFactorRecoveryCodeAsync.
     _userManagerMock
       .Setup(m => m.RedeemTwoFactorRecoveryCodeAsync
         (It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(() => IdentityResult.Failed());
 
-    // Создаем команду для прохождения пользователем 2FA.
     var command = new AuthenticateTwoFactorCommand
     {
       UserId = Guid.NewGuid(),
@@ -260,7 +235,6 @@ public class AuthenticateTwoFactorCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения InvalidCodeException.
     await Assert.ThrowsAsync<InvalidCodeException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

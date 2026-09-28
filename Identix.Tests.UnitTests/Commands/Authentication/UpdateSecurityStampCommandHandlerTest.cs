@@ -29,7 +29,6 @@ public class UpdateSecurityStampCommandHandlerTest
   /// </summary>
   public UpdateSecurityStampCommandHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -41,7 +40,6 @@ public class UpdateSecurityStampCommandHandlerTest
       new Mock<IServiceProvider>().Object,
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    // Инициализация обработчика.
     _handler = new UpdateSecurityStampCommandHandler(_userManagerMock.Object);
   }
 
@@ -52,7 +50,6 @@ public class UpdateSecurityStampCommandHandlerTest
   public async Task Handle_ValidCommand_CloseOtherSessions()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -63,21 +60,18 @@ public class UpdateSecurityStampCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Создаем команду для завершения других активных сессий у пользователя.
     var command = new UpdateSecurityStampCommand
     {
       UserId = Guid.NewGuid()
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -88,20 +82,16 @@ public class UpdateSecurityStampCommandHandlerTest
   public async Task Handle_WhenUserNotFoundById_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения null при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем команду для завершения других активных сессий у пользователя.
     var command = new UpdateSecurityStampCommand
     {
-      // Id пользователя.
       UserId = Guid.NewGuid()
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

@@ -21,23 +21,16 @@ public class AddVersionCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
   /// <exception cref="FilmNotFoundException">Если фильм с указанным ID не найден</exception>
   public async Task Handle(AddVersionCommand request, CancellationToken cancellationToken)
   {
-    // Получаем фильм по ID из репозитория
     Film? film = await unitOfWork.FilmRepository.Value.GetAsync(request.FilmId, cancellationToken);
-
-    // Проверяем существование фильма
     if (film == null) throw new FilmNotFoundException(request.FilmId);
 
-    // Добавляем новую версию к фильму
     film.AddVersion(
       version: request.Version,
       seasonNumber: request.Season,
       episodeNumber: request.Episode
     );
 
-    // Сохраняем изменения в репозитории
     await unitOfWork.FilmRepository.Value.UpdateAsync(film, cancellationToken);
-
-    // Фиксируем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

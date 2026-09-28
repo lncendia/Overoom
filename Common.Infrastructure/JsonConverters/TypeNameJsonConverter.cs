@@ -65,49 +65,28 @@ public class TypeNameJsonConverter<T> : JsonConverter<T>
   /// <exception cref="ArgumentNullException">Выбрасывается если значение равно null</exception>
   public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
   {
-    // Проверка на null входного значения
     if (value == null)
       throw new ArgumentNullException(nameof(value));
 
-    // Получаем реальный тип объекта (может быть производным от T)
     Type actualType = value.GetType();
-
-    // Начинаем запись JSON объекта
     writer.WriteStartObject();
-
-    // Получаем имя типа для использования как имя свойства
     string typeName = actualType.Name;
-
-    // Записываем имя свойства (имя типа) с учетом политики именования
     writer.WritePropertyName(options.PropertyNamingPolicy?.ConvertName(typeName) ?? typeName);
-
-    // Начинаем запись вложенного объекта для свойств
     writer.WriteStartObject();
 
-    // Перебираем все публичные свойства типа
     foreach (PropertyInfo prop in actualType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
     {
-      // Получаем значение свойства
       object? propValue = prop.GetValue(value);
 
-      // Пропускаем null-значения если настроено игнорирование null
       if (propValue == null && options.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingNull)
         continue;
 
-      // Преобразуем имя свойства согласно политике именования (по умолчанию camelCase)
       string propName = JsonNamingPolicy.CamelCase.ConvertName(prop.Name);
-
-      // Записываем имя свойства
       writer.WritePropertyName(propName);
-
-      // Сериализуем значение свойства с учетом его типа
       JsonSerializer.Serialize(writer, propValue, propValue?.GetType() ?? typeof(object), options);
     }
 
-    // Завершаем запись вложенного объекта
     writer.WriteEndObject();
-
-    // Завершаем запись основного объекта
     writer.WriteEndObject();
   }
 
@@ -131,7 +110,6 @@ public class TypeNameJsonConverter<T> : JsonConverter<T>
         }
         catch (ReflectionTypeLoadException e)
         {
-          // Если некоторые типы не удалось загрузить, возвращаем те, что удалось
           return e.Types.Where(t => t != null);
         }
       })

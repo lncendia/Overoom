@@ -1,23 +1,18 @@
-using System.Reflection;
+using Common.Domain.Aggregates;
 using Films.Domain.Ratings.Snapshots;
 
 namespace Films.Domain.Ratings;
 
-public partial class Rating
+public partial class Rating : ISnapshotable<Rating, RatingSnapshot>
 {
-  internal static Rating FromSnapshot(RatingSnapshot snapshot)
+  /// <inheritdoc/>
+  static Rating ISnapshotable<Rating, RatingSnapshot>.Restore(RatingSnapshot snapshot)
   {
-    Type type = typeof(Rating);
-    ConstructorInfo? ctor = type.GetConstructor(
-      BindingFlags.NonPublic | BindingFlags.Instance,
-      null,
-      [typeof(RatingSnapshot)],
-      null);
-
-    return (Rating)ctor!.Invoke([snapshot]);
+    return new Rating(snapshot);
   }
 
-  internal RatingSnapshot GetSnapshot()
+  /// <inheritdoc/>
+  RatingSnapshot ISnapshotable<Rating, RatingSnapshot>.ToSnapshot()
   {
     return new RatingSnapshot
     {
@@ -29,8 +24,9 @@ public partial class Rating
     };
   }
 
-  // Приватный конструктор для гидратации
-  // ReSharper disable once UnusedMember.Local
+  /// <summary>
+  /// Конструктор для восстановления из снапшота.
+  /// </summary>
   private Rating(RatingSnapshot snapshot) : base(snapshot.Id)
   {
     FilmId = snapshot.FilmId;

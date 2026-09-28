@@ -17,58 +17,32 @@ public static class MassTransitServices
   /// <param name="builder">Построитель веб-приложения.</param>
   public static void AddMassTransitServices(this IHostApplicationBuilder builder)
   {
-    // Получаем строку подключения к RabbitMq
     string rmq = builder.Configuration.GetRequiredValue<string>("RabbitMQ:ConnectionString");
-
-    // Получаем строку подключения к RabbitMq
     string massTransitDatabaseName = builder.Configuration.GetRequiredValue<string>("MongoDB:MassTransitDB");
 
-    // Конфигурируем MassTransit
     builder.Services.AddMassTransit(busConfigurator =>
     {
-      // Регистрируем обработчик
       busConfigurator.AddConsumer<UserRegisteredConsumer, UserRegisteredConsumerDefinition>();
-
-      // Регистрируем обработчик
       busConfigurator.AddConsumer<UserInfoChangedConsumer, UserInfoChangedConsumerDefinition>();
-
-      // Регистрируем обработчик
       busConfigurator.AddConsumer<VersionDownloadedConsumer, VersionDownloadedConsumerDefinition>();
-
-      // Добавляем планировщик отложенных сообщений
       busConfigurator.AddDelayedMessageScheduler();
 
-      // Настройка использования RabbitMQ в качестве транспорта для MassTransit.
       busConfigurator.UsingRabbitMq((ctx, cfg) =>
       {
-        // Указываем параметры подключения к RabbitMQ-серверу.
         cfg.Host(rmq);
-
-        // Конфигурируем точки входа для обработки сообщений.
         cfg.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter("films", false));
-
-        // Использовать планировщик отложенных сообщений
         cfg.UseDelayedMessageScheduler();
       });
 
-      // Настройка MongoDB Outbox для обеспечения отказоустойчивости и согласованности при отправке событий.
       busConfigurator.AddMongoDbOutbox(o =>
       {
-        // Задаем задержку между запросами к базе данных для проверки неотправленных сообщений.
         o.QueryDelay = TimeSpan.FromSeconds(5);
-
-        // Устанавливаем окно дедупликации, чтобы избежать повторной отправки сообщений.
         o.DuplicateDetectionWindow = TimeSpan.FromDays(2);
-
-        // Настройка фабрики клиентов MongoDB для создания экземпляра IMongoClient.
         o.ClientFactory(provider => provider.GetRequiredService<IMongoClient>());
 
-        // Настройка фабрики базы данных MongoDB.
         o.DatabaseFactory(provider =>
           provider.GetRequiredService<IMongoClient>().GetDatabase(massTransitDatabaseName));
 
-        // Включаем функциональность Bus Outbox, которая позволяет сохранять сообщения в базе данных перед их отправкой.
-        // Это гарантирует, что сообщения будут отправлены только после успешного завершения транзакции.
         o.UseBusOutbox();
       });
     });

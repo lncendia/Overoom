@@ -61,20 +61,16 @@ const Message = ({ message }: MessageProps): ReactElement => {
 
   return (
     <MessageContainer sx={{ justifyContent: message.isOutgoing ? 'flex-end' : 'flex-start' }}>
-      {/* Если сообщение входящее, отображаем аватар */}
       {!message.isOutgoing && (
         <RoomAvatar owner={message.isOwner} src={message.photoUrl ?? undefined} />
       )}
       <MessageBubble isOutgoing={message.isOutgoing}>
-        {/* Имя пользователя */}
         <Typography variant="subtitle2" fontWeight="bold">
           {message.userName}
         </Typography>
-        {/* Текст сообщения */}
         <Typography variant="body1" sx={{ wordBreak: 'break-word' }}>
           {message.text}
         </Typography>
-        {/* Время отправки */}
         <Typography variant="caption" display="block" textAlign="right">
           {formatedDate}
         </Typography>

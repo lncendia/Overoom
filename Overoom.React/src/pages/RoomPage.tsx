@@ -23,8 +23,6 @@ const RoomPage = (): ReactElement => {
   /** Используем хук useLocation для получения состояния навигации (в т.ч. ID фильма) */
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-
-  // Получаем параметры комнаты из URL или состояния навигации
   const code = params.get('code') ?? '';
   const id = params.get('id') ?? location.state.id;
 
@@ -34,26 +32,18 @@ const RoomPage = (): ReactElement => {
 
   return (
     <AuthorizeGuard>
-      {/* Модуль подключения к комнате (внешний слой) */}
       <ConnectRoomModule id={id} code={code}>
-        {/* Модуль подключения к хабу комнаты (внутренний слой) */}
         <ConnectHubModule id={id}>
-          {/* Основной layout комнаты для маленьких экранов */}
           {isMobile && <RoomMobileLayout />}
 
-          {/* Основной layout комнаты для больших экранов */}
           {!isMobile && <RoomDesktopLayout />}
 
-          {/* Модуль обработки звуковых сигналов "бип" */}
           <BeepModule />
 
-          {/* Модуль обработки скримеров */}
           <ScreamModule />
 
-          {/* Модуль обработки отключения от комнаты */}
           <DisconnectModule />
 
-          {/* Модуль системных уведомлений */}
           <NotificationModule />
         </ConnectHubModule>
       </ConnectRoomModule>
@@ -68,25 +58,18 @@ const RoomPage = (): ReactElement => {
 const RoomDesktopLayout = (): ReactElement => {
   return (
     <Box sx={{ display: 'flex', position: 'relative', columnGap: 4 }}>
-      {/* Левая колонка - основной контент */}
       <Box sx={{ width: '100%' }}>
-        {/* Информация о комнате */}
         <RoomInfoModule />
 
-        {/* Плеер для просмотра контента */}
         <RoomPlayerModule />
 
-        {/* Модуль рейтингов фильмов */}
         <FilmRatingModule sx={{ mb: 0 }} />
       </Box>
 
-      {/* Правая колонка - боковая панель */}
       <Box sx={{ flexShrink: 2, width: '100%' }}>
         <Box sx={{ position: 'sticky', top: 0, zIndex: 1 }}>
-          {/* Список зрителей комнаты */}
           <RoomViewersModule />
 
-          {/* Чат комнаты */}
           <RoomChatModule />
         </Box>
       </Box>
@@ -101,19 +84,14 @@ const RoomDesktopLayout = (): ReactElement => {
 const RoomMobileLayout = (): ReactElement => {
   return (
     <Box>
-      {/* Информация о комнате */}
       <RoomInfoModule />
 
-      {/* Список зрителей комнаты */}
       <RoomViewersModule />
 
-      {/* Плеер для просмотра контента */}
       <RoomPlayerModule />
 
-      {/* Чат комнаты */}
       <RoomChatModule />
 
-      {/* Модуль рейтингов фильмов */}
       <FilmRatingModule />
     </Box>
   );

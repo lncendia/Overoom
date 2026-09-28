@@ -63,7 +63,6 @@ const Drawer = ({
         ...sx,
       }}
     >
-      {/* Шапка панели с заголовком и кнопкой закрытия */}
       <Box sx={{ p: 2 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="h6" component="h2">
@@ -77,7 +76,6 @@ const Drawer = ({
 
       <Divider />
 
-      {/* Тело панели с содержимым */}
       <Box sx={{ p: 2, flex: 1, overflow: 'auto' }}>{children}</Box>
     </MuiDrawer>
   );

@@ -13,7 +13,6 @@ public class SearchRoomsValidator : AbstractValidator<SearchRoomsInputModel>
   /// </summary>
   public SearchRoomsValidator()
   {
-    // Валидация пагинации
     RuleFor(x => x.Take)
       .InclusiveBetween(1, 50)
       .WithMessage("Количество элементов должно быть от 1 до 50");
@@ -22,7 +21,6 @@ public class SearchRoomsValidator : AbstractValidator<SearchRoomsInputModel>
       .GreaterThanOrEqualTo(0)
       .WithMessage("Количество пропускаемых элементов не может быть отрицательным");
 
-    // Валидация FilmId при наличии значения
     RuleFor(x => x.FilmId)
       .NotEmpty()
       .When(x => x.FilmId.HasValue)

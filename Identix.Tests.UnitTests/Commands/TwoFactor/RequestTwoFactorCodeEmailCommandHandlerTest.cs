@@ -30,7 +30,6 @@ public class RequestTwoFactorCodeEmailCommandHandlerTest
   /// </summary>
   public RequestTwoFactorCodeEmailCommandHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -42,7 +41,6 @@ public class RequestTwoFactorCodeEmailCommandHandlerTest
       new Mock<IServiceProvider>().Object,
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    // Инициализация обработчика.
     _handler = new RequestTwoFactorCodeEmailCommandHandler(_userManagerMock.Object,
       new Mock<IPublishEndpoint>().Object);
   }
@@ -54,7 +52,6 @@ public class RequestTwoFactorCodeEmailCommandHandlerTest
   public async Task Handle_ValidCommand_SendRequest()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -65,23 +62,19 @@ public class RequestTwoFactorCodeEmailCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возвращения true при вызове IsEmailConfirmedAsync.
     _userManagerMock
       .Setup(m => m.IsEmailConfirmedAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => true);
 
-    // Создаем команду для отправки кода 2FA на почту и задаем id пользователя.
     var command = new RequestTwoFactorCodeEmailCommand { UserId = Guid.NewGuid() };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -92,16 +85,13 @@ public class RequestTwoFactorCodeEmailCommandHandlerTest
   public async Task Handle_WhenUserNotFoundById_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения null при вызове FindByLoginAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем команду для отправки кода 2FA на почту и задаем id пользователя.
     var command = new RequestTwoFactorCodeEmailCommand { UserId = Guid.NewGuid() };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

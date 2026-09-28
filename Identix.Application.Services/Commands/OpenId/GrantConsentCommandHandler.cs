@@ -34,16 +34,13 @@ public class GrantConsentCommandHandler(
   /// <exception cref="InvalidOperationException">Выбрасывается когда пользователь или приложение не найдены</exception>
   public async Task<ClaimsPrincipal> Handle(GrantConsentCommand request, CancellationToken cancellationToken)
   {
-    // Получаем профиль вошедшего в систему пользователя по его ID
     AppUser user = await userManager.FindByIdAsync(request.UserId.ToString()) ??
                    throw new UserNotFoundException();
 
-    // Получаем детали клиентского приложения из базы данных по client_id
     object application = await applicationManager.FindByClientIdAsync(request.ClientId, cancellationToken) ??
                          throw new InvalidOperationException(
                            "The details of the calling client application could not be found");
 
-    // Ищем постоянные авторизации, связанные с пользователем и клиентским приложением
     object? authorization = await authorizationManager.FindAsync(
         subject: await userManager.GetUserIdAsync(user),
         client: await applicationManager.GetIdAsync(application, cancellationToken),
@@ -52,17 +49,12 @@ public class GrantConsentCommandHandler(
         scopes: request.Scopes, cancellationToken: cancellationToken)
       .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-    // Создаем identity для пользователя с указанной схемой аутентификации
     ClaimsIdentity identity = await claimsIdentityFactory.CreateAsync(user, request.AuthenticationScheme, request.Identity);
 
-    // Получаем ресурсы запрашиваемых областей
     List<string> resources = await scopeManager.ListResourcesAsync(request.Scopes, cancellationToken)
       .ToListAsync(cancellationToken: cancellationToken);
 
-    // Устанавливаем запрошенные области (scopes) для identity
     identity.SetScopes(request.Scopes);
-
-    // Устанавливаем ресурсы, соответствующие запрошенным областям
     identity.SetResources(resources);
 
     // Автоматически создаем постоянную авторизацию, чтобы избежать запроса явного согласия
@@ -77,30 +69,19 @@ public class GrantConsentCommandHandler(
         scopes: identity.GetScopes(), cancellationToken: cancellationToken);
     }
 
-    // Обновляем описание авторизации, если оно предоставлено в запросе
     if (authorization != null && request.Description != null)
     {
-      // Создание дескриптора для обновления авторизации
       var descriptor = new OpenIddictAuthorizationDescriptor();
-
-      // Заполнение дескриптора текущими данными авторизации
       await authorizationManager.PopulateAsync(descriptor, authorization, cancellationToken);
-
-      // Обновление описания авторизации
       descriptor.SetDescription(request.Description);
-
-      // Применяем изменения к существующей авторизации
       await authorizationManager.UpdateAsync(authorization, descriptor, cancellationToken);
     }
 
-    // Устанавливаем идентификатор авторизации в claims identity
     if (authorization != null)
       identity.SetAuthorizationId(await authorizationManager.GetIdAsync(authorization, cancellationToken));
 
-    // Устанавливаем destinations для claims (куда они могут быть включены)
     identity.SetDestinations(claimsIdentityFactory.GetDestinations);
 
-    // Возвращаем ClaimsPrincipal с созданной identity
     return new ClaimsPrincipal(identity);
   }
 }

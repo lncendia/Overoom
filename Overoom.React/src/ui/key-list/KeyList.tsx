@@ -34,22 +34,18 @@ const ValueChip = styled(Chip)(({ theme }) => ({
  * @returns {ReactElement} JSX элемент списка ключей
  */
 const KeyList = ({ title, values, onKeySelect }: FilmKeyProps): ReactElement => {
-  // Нормализуем данные в единый формат: {name, description}
   const normalizedValues = values.map((item) =>
     Array.isArray(item) ? { name: item[0], description: item[1] } : { name: item }
   );
 
   return (
     <Box sx={{ mb: 2, display: 'flex', gap: 1 }}>
-      {/* Заголовок списка */}
       <Typography component="span" variant="subtitle2" gutterBottom>
         {title}
       </Typography>
 
-      {/* Блок с чипами */}
       <Stack direction="row" flexWrap="wrap">
         {normalizedValues.map(({ name, description }) => {
-          // Создаем чип с кликабельностью при наличии обработчика
           const chip = (
             <ValueChip
               label={name}
@@ -62,7 +58,6 @@ const KeyList = ({ title, values, onKeySelect }: FilmKeyProps): ReactElement => 
 
           return (
             <Box key={name} sx={{ display: 'flex', alignItems: 'center' }}>
-              {/* Если есть описание, оборачиваем чип в Tooltip */}
               {description ? <Tooltip title={description}>{chip}</Tooltip> : chip}
             </Box>
           );

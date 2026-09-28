@@ -11,7 +11,6 @@ export const useThemeContext = (): ThemeContextType => {
   /** Используем хук useContext для получения доступа к контексту темы */
   const context = useContext(ThemeContext);
 
-  // Проверяем, что хук используется внутри провайдера контекста
   if (context === undefined) {
     throw new Error('useThemeContext must be used within a ThemeContextProvider');
   }

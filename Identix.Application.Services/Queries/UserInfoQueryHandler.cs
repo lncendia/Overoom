@@ -28,13 +28,11 @@ public class UserInfoQueryHandler(UserManager<AppUser> userManager)
   /// <exception cref="UserNotFoundException">Вызывается когда пользователь с указанным ID не найден в системе</exception>
   public async Task<UserInfoDto> Handle(UserInfoQuery request, CancellationToken cancellationToken)
   {
-    // Получаем профиль пользователя по его ID из базы данных
     AppUser user = await userManager.FindByIdAsync(request.UserId.ToString()) ??
                    throw new UserNotFoundException();
 
     IList<Claim> claims = await userManager.GetClaimsAsync(user);
 
-    // Инициализируем DTO с обязательным claim 'sub' (subject identifier)
     var dto = new UserInfoDto
     {
       Sub = await userManager.GetUserIdAsync(user),
@@ -42,33 +40,26 @@ public class UserInfoQueryHandler(UserManager<AppUser> userManager)
       PreferredUsername = await userManager.GetUserNameAsync(user)
     };
 
-    // Обработка scope'а email: предоставляем email и статус подтверждения
     if (request.Scopes.Contains(OpenIddictConstants.Scopes.Email) && userManager.SupportsUserEmail)
     {
       dto.Email = await userManager.GetEmailAsync(user);
       dto.EmailVerified = await userManager.IsEmailConfirmedAsync(user);
     }
 
-    // Обработка scope'а phone: предоставляем номер телефона и статус подтверждения
     if (request.Scopes.Contains(OpenIddictConstants.Scopes.Phone) && userManager.SupportsUserPhoneNumber)
     {
       dto.PhoneNumber = await userManager.GetPhoneNumberAsync(user);
       dto.PhoneNumberVerified = await userManager.IsPhoneNumberConfirmedAsync(user);
     }
 
-    // Обработка scope'а roles: предоставляем список ролей пользователя
     if (request.Scopes.Contains(OpenIddictConstants.Scopes.Roles))
     {
       dto.Roles = await userManager.GetRolesAsync(user);
     }
 
-    // Обработка scope'а profile: предоставляем основную информацию профиля
     if (request.Scopes.Contains(OpenIddictConstants.Scopes.Profile))
     {
-      // Ключ или URL фотографии пользователя
       dto.Picture = AppUser.GetPhotoKey(claims);
-
-      // Локаль пользователя в строковом формате
       dto.Locale = AppUser.GetLocale(claims).GetLocalizationString();
     }
 

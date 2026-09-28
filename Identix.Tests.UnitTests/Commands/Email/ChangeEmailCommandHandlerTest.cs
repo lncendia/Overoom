@@ -29,7 +29,6 @@ public class ChangeEmailCommandHandlerTest
   /// </summary>
   public ChangeEmailCommandHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -41,7 +40,6 @@ public class ChangeEmailCommandHandlerTest
       new Mock<IServiceProvider>().Object,
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    // Инициализация обработчика.
     _handler = new ChangeEmailCommandHandler(_userManagerMock.Object);
   }
 
@@ -52,7 +50,6 @@ public class ChangeEmailCommandHandlerTest
   public async Task Handle_ValidCommand_ChangeEmail()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -63,12 +60,10 @@ public class ChangeEmailCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для успешной смены почты при вызове ChangeEmailAsync.
     _userManagerMock
       .Setup(m => m.ChangeEmailAsync(It.IsAny<AppUser>(), It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Success);
 
-    // Создаем команду для изменения эл. почты у пользователя.
     var command = new ChangeEmailCommand
     {
       UserId = Guid.NewGuid(),
@@ -77,14 +72,12 @@ public class ChangeEmailCommandHandlerTest
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -95,12 +88,10 @@ public class ChangeEmailCommandHandlerTest
   public async Task Handle_WhenUserNotFoundById_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения null при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем команду для изменения эл. почты у пользователя.
     var command = new ChangeEmailCommand
     {
       UserId = Guid.NewGuid(),
@@ -109,7 +100,6 @@ public class ChangeEmailCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -120,7 +110,6 @@ public class ChangeEmailCommandHandlerTest
   public async Task Handle_WhenEmailAlreadyTaken_ThrowsEmailAlreadyTakenException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -131,12 +120,10 @@ public class ChangeEmailCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возврата ошибки с кодом при вызове ChangeEmailAsync.
     _userManagerMock
       .Setup(m => m.ChangeEmailAsync(It.IsAny<AppUser>(), It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateEmail" }));
 
-    // Создаем команду для изменения эл. почты у пользователя.
     var command = new ChangeEmailCommand
     {
       UserId = Guid.NewGuid(),
@@ -145,7 +132,6 @@ public class ChangeEmailCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailAlreadyTakenException.
     await Assert.ThrowsAsync<EmailAlreadyTakenException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -156,7 +142,6 @@ public class ChangeEmailCommandHandlerTest
   public async Task Handle_WhenInvalidToken_ThrowsInvalidCodeException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByLoginAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -167,12 +152,10 @@ public class ChangeEmailCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возврата ошибки с кодом при вызове ChangeEmailAsync.
     _userManagerMock
       .Setup(m => m.ChangeEmailAsync(It.IsAny<AppUser>(), It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidToken" }));
 
-    // Создаем команду для изменения эл. почты у пользователя.
     var command = new ChangeEmailCommand
     {
       UserId = Guid.NewGuid(),
@@ -181,7 +164,6 @@ public class ChangeEmailCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения InvalidCodeException.
     await Assert.ThrowsAsync<InvalidCodeException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -192,7 +174,6 @@ public class ChangeEmailCommandHandlerTest
   public async Task Handle_WhenInvalidEmailFormat_ThrowsEmailFormatException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByLoginAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -203,12 +184,10 @@ public class ChangeEmailCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возврата ошибки с кодом при вызове ChangeEmailAsync.
     _userManagerMock
       .Setup(m => m.ChangeEmailAsync(It.IsAny<AppUser>(), It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidEmail" }));
 
-    // Создаем команду для изменения эл. почты у пользователя.
     var command = new ChangeEmailCommand
     {
       UserId = Guid.NewGuid(),
@@ -217,7 +196,6 @@ public class ChangeEmailCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailFormatException.
     await Assert.ThrowsAsync<EmailFormatException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

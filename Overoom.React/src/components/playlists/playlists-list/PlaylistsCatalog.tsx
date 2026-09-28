@@ -52,7 +52,6 @@ const PlaylistsCatalog = ({
             key={playlist.id}
             sx={{ display: 'flex', justifyContent: 'center' }}
           >
-            {/* Элемент плейлиста */}
             <PlaylistItem
               selectedGenre={genre}
               playlist={playlist}

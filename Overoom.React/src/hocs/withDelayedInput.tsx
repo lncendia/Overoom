@@ -38,17 +38,13 @@ const withDelayedInput = <P extends object>(WrappedComponent: React.ComponentTyp
      */
     const onChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        // Обновляем текущее значение поля ввода.
         setCurrentValue(e.target.value);
 
-        // Если таймаут уже был установлен, очищаем его.
         if (timeoutIdRef.current) {
           clearTimeout(timeoutIdRef.current);
         }
 
-        // Устанавливаем новый таймаут на 500 мс.
         timeoutIdRef.current = setTimeout(() => {
-          // Если передан обработчик onChange, вызываем его с событием.
           if (props.onChange) props.onChange(e);
         }, 500);
       },
@@ -58,14 +54,12 @@ const withDelayedInput = <P extends object>(WrappedComponent: React.ComponentTyp
     /** Эффект для очистки таймаута при размонтировании компонента. */
     useEffect(() => {
       return () => {
-        // Очищаем таймаут, если он существует.
         if (timeoutIdRef.current) {
           clearTimeout(timeoutIdRef.current);
         }
       };
     }, []);
 
-    // Возвращаем обернутый компонент с добавленными пропсами.
     return (
       <WrappedComponent
         {...props} // Передаем все оригинальные пропсы.

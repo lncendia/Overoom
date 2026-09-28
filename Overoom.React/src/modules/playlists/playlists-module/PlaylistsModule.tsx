@@ -69,13 +69,9 @@ const PlaylistsModule = (props: PlaylistsModuleProps): ReactElement => {
     [navigate]
   );
 
-  // Отображает скелетон во время получения данных
   if (isLoading) return <FilmsCatalogSkeleton />;
-
-  // Отображает состояние пустого списка если подборки не найдены
   if (playlists.length === 0) return <NoData text="Подборки не найдены" />;
 
-  // Возвращает каталог подборок с поддержкой пагинации и фильтрации
   return (
     <PlaylistsCatalog
       hasMore={hasMore}

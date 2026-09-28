@@ -19,14 +19,12 @@ public class UserSettingsChangedEventHandler(IPublishEndpoint publishEndpoint)
   /// <param name="cancellationToken">Токен отмены операции</param>
   protected override async Task Execute(UserSettingsChangedEvent notification, CancellationToken cancellationToken)
   {
-    // Создаем событие интеграции для синхронизации настроек пользователя между сервисами
     var integrationEvent = new UserSettingsChangedIntegrationEvent
     {
       Id = notification.User.Id,
       Settings = notification.User.RoomSettings
     };
 
-    // Публикуем событие интеграции через MassTransit
     await publishEndpoint.Publish(integrationEvent, cancellationToken: cancellationToken);
   }
 }

@@ -18,10 +18,8 @@ public class RoomCreatedConsumer(ISender mediator) : IConsumer<RoomCreatedIntegr
   /// <param name="context">Контекст сообщения</param>
   public async Task Consume(ConsumeContext<RoomCreatedIntegrationEvent> context)
   {
-    // Получаем данные события
     RoomCreatedIntegrationEvent integrationEvent = context.Message;
 
-    // Отправляем команду на обработку события
     await mediator.Send(new CreateRoomCommand
     {
       Id = integrationEvent.Id,

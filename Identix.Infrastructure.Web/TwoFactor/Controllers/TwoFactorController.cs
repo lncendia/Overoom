@@ -72,10 +72,8 @@ public class TwoFactorController : Controller
   [Authorize]
   public async Task<IActionResult> Setup(string returnUrl = "/")
   {
-    // Создаем вью-модель подключения 2FA
     SetupTwoFactorViewModel model = await BuildSetupViewModelAsync(returnUrl);
 
-    // возвращаем view
     return View(model);
   }
 
@@ -87,32 +85,24 @@ public class TwoFactorController : Controller
   [Authorize]
   public async Task<IActionResult> VerifySetup(SetupTwoFactorInputModel model)
   {
-    // Устанавливаем в строку запроса закодированную returnUrl, чтоб при изменении локали открылась корректная ссылка (смотреть _Culture.cshtml)
     HttpContext.Request.QueryString = new QueryString("?ReturnUrl=" + HttpUtility.UrlEncode(model.ReturnUrl));
 
-    // Если модель не валидна
     if (!ModelState.IsValid)
     {
-      // строим заного модель представления
       SetupTwoFactorViewModel viewModel = await BuildSetupViewModelAsync(model.ReturnUrl);
-
-      // передаем в модель введенный ранее код
       viewModel.Code = model.Code;
 
-      // возвращаем представление
       return View("Setup", viewModel);
     }
 
     try
     {
-      // попытка подключения 2FA
       IReadOnlyCollection<string> codes = await _mediator.Send(new VerifySetupTwoFactorTokenCommand
       {
         UserId = User.Id(),
         Code = model.Code!
       });
 
-      // перенаправляем по url возврата
       return View("VerifySetup", new RecoveryCodesViewModel
       {
         RecoveryCodes = codes,
@@ -121,16 +111,10 @@ public class TwoFactorController : Controller
     }
     catch (InvalidCodeException)
     {
-      // Добавляем локализованную ошибку в модель
       ModelState.AddModelError(string.Empty, _localizer["InvalidCode"]);
-
-      // строим заного модель представления
       SetupTwoFactorViewModel viewModel = await BuildSetupViewModelAsync(model.ReturnUrl);
-
-      // передаем в модель введенный ранее код
       viewModel.Code = model.Code;
 
-      // возвращаем представление
       return View("Setup", viewModel);
     }
   }
@@ -144,7 +128,6 @@ public class TwoFactorController : Controller
   [Authorize(AuthenticationSchemes = "Identity.TwoFactorUserId")]
   public async Task<IActionResult> LoginTwoStep(bool rememberMe, string returnUrl = "/")
   {
-    // Возвращаем представление пользователю
     return View(await BuildLoginTwoStepViewModelAsync(rememberMe, returnUrl, CodeType.Authenticator));
   }
 
@@ -156,28 +139,20 @@ public class TwoFactorController : Controller
   [Authorize(AuthenticationSchemes = "Identity.TwoFactorUserId")]
   public async Task<IActionResult> LoginTwoStep(LoginTwoStepInputModel model)
   {
-    // Устанавливаем в строку запроса закодированную returnUrl, чтоб при изменении локали открылась корректная ссылка (смотреть _Culture.cshtml)
     HttpContext.Request.QueryString = new QueryString("?ReturnUrl=" + HttpUtility.UrlEncode(model.ReturnUrl));
 
-    // Если модель не валидна
     if (!ModelState.IsValid)
     {
-      // Очищаем список ошибок модели
       ModelState.Clear();
 
-      // Заного формируем представление и возвращаем пользователю
       return View(await BuildLoginTwoStepViewModelAsync(model.RememberMe, model.ReturnUrl, model.CodeType));
     }
 
-    // Получаем провайдер из контекста запроса
     string? loginProvider = User.FindFirstValue(Constants.Claims.IdentityProvider);
-
-    // Проверяем, находимся ли мы в контексте запроса авторизации
     OpenIddictRequest? context = HttpContext.Session.GetOpenIdRequest(model.ReturnUrl);
 
     try
     {
-      // Отправляем команду на прохождение 2FA
       AppUser user = await _mediator.Send(new AuthenticateTwoFactorCommand
       {
         Code = model.Code!,
@@ -185,45 +160,32 @@ public class TwoFactorController : Controller
         Type = model.CodeType
       });
 
-      // Аутентифицируем пользователя
       await _signInManager.SignInAsync(user, model.RememberMe, loginProvider);
-
-      // Удаляем куки с идентификатором пользователя
       await HttpContext.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
 
-      // если стоит флаг о запоминании пользователя
       if (model.RememberMe)
       {
-        // устанавливаем куки
         await _signInManager.RememberTwoFactorClientAsync(user);
       }
 
-      // Инициализируем событие об успешном входе пользователя
       _logger.LogInformation(
         "User login successful. Email: {Email}, UserId: {UserId}, UserName: {UserName}, ClientId: {ClientId}",
         user.Email, user.Id, user.UserName, context?.ClientId);
 
-      // Перенаправляем на адрес возврата
       return Redirect(model.ReturnUrl);
     }
     catch (InvalidCodeException)
     {
-      // Отчищаем модель от введенных параметров
       ModelState.Clear();
-
-      // Получаем данные пользователя
       (AppUser user, ICollection<Claim> _) = await _mediator.Send(new UserByIdQuery { Id = User.Id() });
 
-      // Инициализируем событие об неуспешном входе пользователя
       _logger.LogWarning(
         "User {Email} failed to login: invalid two-factor code. ClientId: {ClientId}",
         user.Email,
         context?.ClientId);
 
-      // Добавляем локализованную ошибку в модель
       ModelState.AddModelError(string.Empty, _localizer["InvalidCode"]);
 
-      // Заного формируем представление и возвращаем пользователю
       return View(await BuildLoginTwoStepViewModelAsync(model.RememberMe, model.ReturnUrl, model.CodeType));
     }
   }
@@ -236,16 +198,13 @@ public class TwoFactorController : Controller
   {
     try
     {
-      // Отправляем команду на отправку письма с кодом пользователю
       await _mediator.Send(new RequestTwoFactorCodeEmailCommand { UserId = User.Id() });
     }
     catch
     {
-      // Возвращаем пустой ответ с кодом 400
       return BadRequest();
     }
 
-    // Возвращаем пустой ответ с кодом 200
     return Ok();
   }
 
@@ -257,7 +216,6 @@ public class TwoFactorController : Controller
   [Authorize]
   public IActionResult Reset(string returnUrl = "/")
   {
-    // Возвращаем представление сброса 2FA
     return View(new ResetTwoFactorViewModel { CodeType = CodeType.Authenticator, ReturnUrl = returnUrl });
   }
 
@@ -269,22 +227,17 @@ public class TwoFactorController : Controller
   [Authorize]
   public async Task<IActionResult> Reset(TwoFactorAuthenticateInputModel model)
   {
-    // Устанавливаем в строку запроса закодированную returnUrl, чтоб при изменении локали открылась корректная ссылка (смотреть _Culture.cshtml)
     HttpContext.Request.QueryString = new QueryString("?ReturnUrl=" + HttpUtility.UrlEncode(model.ReturnUrl));
 
-    // Если модель не валидна
     if (!ModelState.IsValid)
     {
-      // Очищаем список ошибок модели
       ModelState.Clear();
 
-      // Заного формируем представление и возвращаем пользователю
       return View(new ResetTwoFactorViewModel { CodeType = model.CodeType, ReturnUrl = model.ReturnUrl });
     }
 
     try
     {
-      // Отправляем команду на сброс 2FA
       AppUser user = await _mediator.Send(new ResetTwoFactorCommand
       {
         UserId = User.Id(),
@@ -295,15 +248,12 @@ public class TwoFactorController : Controller
       // Так как Security Stamp у пользователя обновился, то переавторизуем его, чтобы обновить куки
       await _signInManager.RefreshSignInAsync(user);
 
-      // Перенаправляем пользователя назад в настройки
       return RedirectToAction("Index", "Settings", new { model.ReturnUrl });
     }
     catch (InvalidCodeException)
     {
-      // Добавляем локализованную ошибку в модель
       ModelState.AddModelError(string.Empty, _localizer["InvalidCode"]);
 
-      // Заново формируем представление и возвращаем пользователю
       return View(new ResetTwoFactorViewModel { CodeType = model.CodeType, ReturnUrl = model.ReturnUrl });
     }
   }
@@ -315,13 +265,9 @@ public class TwoFactorController : Controller
   /// <returns>Модель представления подключения 2FA</returns>
   private async Task<SetupTwoFactorViewModel> BuildSetupViewModelAsync(string returnUrl)
   {
-    // Отправляем команду на получение аутентификатора и добавления его пользователю
     (AppUser user, string token) result = await _mediator.Send(new SetupTwoFactorCommand { UserId = User.Id() });
-
-    // обновляем вход пользователя, чтобы он остался аутентифицирован после получения аутентификатора
     await _signInManager.RefreshSignInAsync(result.user);
 
-    // возвращаем представление для подключения 2FA
     return new SetupTwoFactorViewModel(result.token, result.user.Email!, "Identix") { ReturnUrl = returnUrl };
   }
 
@@ -335,10 +281,8 @@ public class TwoFactorController : Controller
   private async Task<LoginTwoStepViewModel> BuildLoginTwoStepViewModelAsync(bool rememberMe, string returnUrl,
     CodeType codeType)
   {
-    // Отправляем команду на получение аутентификатора и добавления его пользователю
     (AppUser user, ICollection<Claim> _) = await _mediator.Send(new UserByIdQuery { Id = User.Id() });
 
-    // возвращаем представление для подключения 2FA
     return new LoginTwoStepViewModel
     {
       CodeType = codeType,

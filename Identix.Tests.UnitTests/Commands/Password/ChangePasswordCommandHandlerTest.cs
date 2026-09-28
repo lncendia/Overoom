@@ -29,7 +29,6 @@ public class ChangePasswordCommandHandlerTest
   /// </summary>
   public ChangePasswordCommandHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -41,7 +40,6 @@ public class ChangePasswordCommandHandlerTest
       new Mock<IServiceProvider>().Object,
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    // Инициализация обработчика.
     _handler = new ChangePasswordCommandHandler(_userManagerMock.Object);
   }
 
@@ -52,7 +50,6 @@ public class ChangePasswordCommandHandlerTest
   public async Task Handle_ValidCommand_ChangePassword()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -63,31 +60,26 @@ public class ChangePasswordCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для успешного добавления пароля при вызове AddPasswordAsync.
     _userManagerMock
       .Setup(m => m.AddPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Success);
 
-    // Настройка mock объекта UserManager для успешной смены пароля при вызове ChangePasswordAsync.
     _userManagerMock
       .Setup(m => m.ChangePasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Success);
 
-    // Создаем команду для изменения пароля у пользователя.
     var command = new ChangePasswordCommand("old_password", "new_password")
     {
       UserId = Guid.NewGuid()
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -98,19 +90,16 @@ public class ChangePasswordCommandHandlerTest
   public async Task Handle_WhenUserNotFoundById_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения null при вызове FindByLoginAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем команду для изменения пароля у пользователя.
     var command = new ChangePasswordCommand("old_password", "new_password")
     {
       UserId = Guid.NewGuid()
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -121,7 +110,6 @@ public class ChangePasswordCommandHandlerTest
   public async Task Handle_WhenOldPasswordIsNull_ThrowsOldPasswordNeededException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -133,14 +121,12 @@ public class ChangePasswordCommandHandlerTest
         PasswordHash = "test_hash"
       });
 
-    // Создаем команду для изменения пароля у пользователя.
     var command = new ChangePasswordCommand(null, "new_password")
     {
       UserId = Guid.NewGuid()
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<PasswordNeededException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -151,7 +137,6 @@ public class ChangePasswordCommandHandlerTest
   public async Task Handle_WhenInvalidPassword_ThrowsPasswordValidationException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -162,24 +147,20 @@ public class ChangePasswordCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возврата неудачного результата при вызове AddPasswordAsync.
     _userManagerMock
       .Setup(m => m.AddPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Failed());
 
-    // Настройка mock объекта UserManager для неудачного результата при вызове ChangePasswordAsync.
     _userManagerMock
       .Setup(m => m.ChangePasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Failed());
 
-    // Создаем команду для изменения пароля у пользователя.
     var command = new ChangePasswordCommand("old_password", "new_password")
     {
       UserId = Guid.NewGuid()
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<PasswordValidationException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

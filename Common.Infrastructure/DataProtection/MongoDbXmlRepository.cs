@@ -23,8 +23,6 @@ public class MongoDbXmlRepository(IMongoClient client, string databaseName) : IX
   /// <returns>Коллекция XML-элементов только для чтения</returns>
   public IReadOnlyCollection<XElement> GetAllElements()
   {
-    // Находим все документы в коллекции, преобразуем в список,
-    // парсим XML из каждого документа и возвращаем как read-only коллекцию
     return _collection.Find(_ => true)
       .ToList()
       .Select(x => XElement.Parse(x.Xml))
@@ -39,23 +37,17 @@ public class MongoDbXmlRepository(IMongoClient client, string databaseName) : IX
   /// <param name="friendlyName">Человеко-читаемое имя элемента</param>
   public void StoreElement(XElement element, string friendlyName)
   {
-    // Создаем новую сущность для хранения в MongoDB
     var entity = new MongoDataProtectionKey
     {
-      // Уникальный идентификатор
       Id = Guid.NewGuid(),
 
-      // Человеко-читаемое имя
       FriendlyName = friendlyName,
 
-      // XML в виде строки (без форматирования)
       Xml = element.ToString(SaveOptions.DisableFormatting),
 
-      // Дата истечения срока действия (извлекается из XML)
       ExpirationDate = (DateTime?)element.Element("expirationDate")
     };
 
-    // Вставляем документ в коллекцию MongoDB
     _collection.InsertOne(entity);
   }
 }

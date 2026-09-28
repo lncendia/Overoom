@@ -13,7 +13,6 @@ public class ChangeFilmValidator : AbstractValidator<ChangeFilmInputModel>
   /// </summary>
   public ChangeFilmValidator()
   {
-    // Основные поля
     RuleFor(x => x.Description)
       .NotEmpty().WithMessage("Поле не должно быть пустым")
       .MaximumLength(1500).WithMessage("Не больше 1500 символов");
@@ -21,7 +20,6 @@ public class ChangeFilmValidator : AbstractValidator<ChangeFilmInputModel>
     RuleFor(x => x.ShortDescription)
       .MaximumLength(500).WithMessage("Не больше 500 символов");
 
-    // Рейтинги
     RuleFor(x => x.RatingKp)
       .InclusiveBetween(0, 10).WithMessage("Рейтинг должен быть в диапазоне от 0 до 10");
 

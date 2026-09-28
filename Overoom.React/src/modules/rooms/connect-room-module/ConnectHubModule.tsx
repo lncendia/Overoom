@@ -31,7 +31,6 @@ const ConnectHubModule = (props: ConnectHubModuleProps): ReactElement => {
   /** Хук для управления подключением к комнате */
   const hub = useRoomConnection(roomHubFactory, props.id, props.joined ?? false);
 
-  // При успешном подключении предоставляем контекст комнаты
   return (
     <RoomContextProvider id={props.id} hub={hub}>
       {props.children}
@@ -68,16 +67,13 @@ const useRoomConnection = (
   const connectHubOnce = useCallback(
     (hub: RoomHub): Promise<void> => {
       return new Promise((resolve, reject) => {
-        // Обработчик входящих событий от хаба
         const handler = (e: RoomEventContainer) => {
-          // Если пришло событие подтверждающее, что текущий клиент/пользователь успешно подключён к комнате
           if (e.connectEvent) {
             hub.removeHandler(handler);
             resolve();
             return;
           }
 
-          // Если пришла ошибка — отписываемся и реджектим промис, чтобы верхний слой мог retry.
           if (e.errorNotificationEvent) {
             hub.removeHandler(handler);
             reject(new Error(e.errorNotificationEvent.message));
@@ -85,7 +81,6 @@ const useRoomConnection = (
           }
         };
 
-        // Подписываем handler на события hub
         hub.addHandler(handler);
 
         // Выполняем сам connect — не await'им здесь, потому что мы ждём события через handler.
@@ -111,16 +106,12 @@ const useRoomConnection = (
 
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
-          // ждем подтверждения от сервера (через события)
           await connectHubOnce(hub);
-          // успешно — ставим локальный флаг и выходим
           setIsConnected(true);
           return;
         } catch (err) {
-          // Если достигнут лимит попыток — пробрасываем ошибку дальше
           if (attempt === maxAttempts) throw err;
 
-          // Вычисляем экспоненциальную задержку
           const delay = baseDelay * 2 ** (attempt - 1);
 
           console.warn(
@@ -128,7 +119,6 @@ const useRoomConnection = (
             err
           );
 
-          // Пауза перед повторной попыткой
           await new Promise((res) => setTimeout(res, delay));
         }
       }
@@ -146,13 +136,10 @@ const useRoomConnection = (
 
   /** Эффект: когда у нас есть hub и joined === true — запускаем логику подключения. */
   useEffect(() => {
-    // не пытаемся ничего делать, пока пользователь не joined (не подключился к комнате)
     if (!joined || !hub) return;
 
-    // вызов соединения
     connectToHub(hub).then();
 
-    // cleanup — при размонтировании/изменении зависимостей сбрасываем флаг
     return () => {
       setIsConnected(false);
     };
@@ -167,13 +154,10 @@ const useRoomConnection = (
     });
 
     return () => {
-      // Отключаем hub и удаляем ссылку, чтобы избежать утечек
       setHub(null);
       hubInstance?.disconnect();
     };
   }, [createHub]);
 
-  // возвращаем hub только когда подтверждена успешная handshake-логика (isConnected = true).
-  // Это облегчает потребителям — они получают рабочий hub или null.
   return isConnected ? hub : null;
 };

@@ -10,7 +10,7 @@ namespace Films.Domain.Comments;
 /// <summary>
 /// Класс, представляющий комментарий к фильму.
 /// </summary>
-public partial class Comment : AggregateRoot<CommentSnapshot>
+public partial class Comment : AggregateRoot
 {
   #region Константы
 

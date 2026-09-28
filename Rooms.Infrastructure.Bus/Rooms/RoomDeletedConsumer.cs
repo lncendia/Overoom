@@ -17,10 +17,8 @@ public class RoomDeletedConsumer(ISender mediator) : IConsumer<RoomDeletedIntegr
   /// <param name="context">Контекст сообщения</param>
   public async Task Consume(ConsumeContext<RoomDeletedIntegrationEvent> context)
   {
-    // Получаем данные события
     RoomDeletedIntegrationEvent integrationEvent = context.Message;
 
-    // Отправляем команду на обработку события
     await mediator.Send(new DeleteRoomCommand
     {
       RoomId = integrationEvent.Id

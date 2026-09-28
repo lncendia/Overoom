@@ -23,28 +23,15 @@ public sealed class HlsS3Storage(IFileStorage fileStorage) : IHlsStorage
   /// <param name="token">Токен отмены для прерывания операции</param>
   public async Task UploadAsync(FilmRecord film, string directory, CancellationToken token = default)
   {
-    // Рекурсивно получаем все файлы из директории и поддиректорий
     IEnumerable<string> files = Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories);
 
-    // Обрабатываем каждый файл в директории
     foreach (string filePath in files)
     {
-      // Проверяем не была ли запрошена отмена операции
       token.ThrowIfCancellationRequested();
-
-      // Получаем относительный путь файла относительно корневой директории
       string relativePath = Path.GetRelativePath(directory, filePath).Replace("\\", "/");
-
-      // Формируем ключ для S3 хранилища на основе метаданных фильма
       string key = $"{BuildKey(film)}/{relativePath}";
-
-      // Определяем MIME-тип содержимого файла на основе расширения
       string contentType = GetContentType(filePath);
-
-      // Открываем файловый поток для чтения в асинхронном режиме
       await using FileStream stream = File.OpenRead(filePath);
-
-      // Загружаем файл в S3-совместимое хранилище
       await _fileStorage.UploadAsync(key, stream, contentType, token: token);
     }
   }
@@ -56,10 +43,8 @@ public sealed class HlsS3Storage(IFileStorage fileStorage) : IHlsStorage
   /// <param name="token">Токен отмены</param>
   public Task DeleteAsync(FilmRecord film, CancellationToken token = default)
   {
-    // Генерируем ключ в S3
     string key = BuildKey(film);
 
-    // Выполняем удаление
     return _fileStorage.DeleteAsync(key, token: token);
   }
 
@@ -70,10 +55,8 @@ public sealed class HlsS3Storage(IFileStorage fileStorage) : IHlsStorage
   /// <param name="token">Токен отмены</param>
   public Task<bool> IsExistsAsync(FilmRecord film, CancellationToken token = default)
   {
-    // Генерируем ключ в S3
     string key = BuildKey(film);
 
-    // Выполняем удаление
     return _fileStorage.IsPathExistAsync(key, token: token);
   }
 
@@ -84,19 +67,12 @@ public sealed class HlsS3Storage(IFileStorage fileStorage) : IHlsStorage
   /// <returns>Ключ объекта в S3</returns>
   private static string BuildKey(FilmRecord film)
   {
-    // Формируем список частей ключа S3
     var parts = new List<string> { film.Id.ToString() };
-
-    // Добавляем сезон в формате s01, s02 и т.д., если указан
     if (film.Season.HasValue) parts.Add($"s{film.Season.Value:D2}");
-
-    // Добавляем эпизод в формате e01, e02 и т.д., если указан
     if (film.Episode.HasValue) parts.Add($"e{film.Episode.Value:D2}");
 
-    // Добавляем версию фильма
     parts.Add(film.Version);
 
-    // Объединяем все части через слеш для формирования итогового ключа
     return string.Join('/', parts);
   }
 

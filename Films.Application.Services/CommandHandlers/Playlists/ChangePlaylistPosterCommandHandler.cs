@@ -28,16 +28,11 @@ public class ChangePlaylistPosterCommandHandler(
   /// <exception cref="FilmNotFoundException">Если подборка с указанным ID не найден</exception>
   public async Task Handle(ChangePlaylistPosterCommand request, CancellationToken cancellationToken)
   {
-    // Получаем подборку по ID из репозитория
     Playlist? playlist = await unitOfWork.PlaylistRepository.Value.GetAsync(request.Id, cancellationToken);
-
-    // Проверяем существование подборки
     if (playlist == null) throw new PlaylistNotFoundException(request.Id);
 
-    // Генерируем новый ключ для хранения постера
     string newPosterKey = string.Format(Constants.Poster.PlaylistKeyFormat, Guid.NewGuid());
 
-    // Загружаем новый постер в хранилище
     await posterStore.UploadAsync(newPosterKey, request.Poster.File, Constants.Mime.Photo,
       token: cancellationToken);
 
@@ -45,7 +40,6 @@ public class ChangePlaylistPosterCommandHandler(
     {
       try
       {
-        // Пытаемся удалить старый постер
         await posterStore.DeleteAsync(playlist.PosterKey, token: cancellationToken);
       }
       catch (FileNotFoundException ex)
@@ -54,13 +48,8 @@ public class ChangePlaylistPosterCommandHandler(
       }
     }
 
-    // Сохраняем новый ключ постера
     playlist.PosterKey = newPosterKey;
-
-    // Сохраняем изменения в репозитории
     await unitOfWork.PlaylistRepository.Value.UpdateAsync(playlist, cancellationToken);
-
-    // Фиксируем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

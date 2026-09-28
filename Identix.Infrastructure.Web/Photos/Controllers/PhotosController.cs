@@ -30,20 +30,16 @@ public class PhotosController(ISender mediator) : ControllerBase
   {
     try
     {
-      // Отправляем запрос на получение фото через медиатор
       FileResult result = await mediator.Send(new PhotoQuery(key), cancellationToken);
 
-      // Возвращаем файл как результат
       return File(result.Stream, result.ContentType, result.FileName);
     }
     catch (FileNotFoundException)
     {
-      // Файл не найден в S3
       return NotFound();
     }
     catch (ArgumentException ex)
     {
-      // Некорректный формат ключа или другие ошибки валидации
       return BadRequest(ex.Message);
     }
   }

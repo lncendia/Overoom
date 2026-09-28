@@ -24,19 +24,13 @@ public class GetRoomSyncDataQueryHandler(IUnitOfWork unitOfWork) : IRequestHandl
   /// <exception cref="RoomNotFoundException">Выбрасывается, если комната с указанным ID не найдена</exception>
   public async Task<RoomSyncDto> Handle(GetRoomSyncDataQuery request, CancellationToken cancellationToken)
   {
-    // Получаем комнату по ID из репозитория
     Room? room = await unitOfWork.RoomRepository.Value.GetAsync(request.Id, cancellationToken);
-
-    // Проверяем существование комнаты
     if (room == null) throw new RoomNotFoundException(request.Id);
 
-    // Определяем пользователя, чье состояние будет использоваться для синхронизации
-    // Если владелец онлайн - используем его состояние, иначе состояние текущего зрителя
     Viewer viewerToSync = room.Owner.Online
       ? room.Owner
       : room.Viewers[request.ViewerId];
 
-    // Формируем DTO с синхронизированными данными комнаты
     return new RoomSyncDto
     {
       PauseEvent = new PauseEvent

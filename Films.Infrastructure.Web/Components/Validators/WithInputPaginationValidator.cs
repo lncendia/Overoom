@@ -13,7 +13,6 @@ public class WithInputPaginationValidator : AbstractValidator<IWithInputPaginati
   /// </summary>
   public WithInputPaginationValidator()
   {
-    // Валидация пагинации
     RuleFor(x => x.Take)
       .InclusiveBetween(1, 50)
       .WithMessage("Количество элементов должно быть от 1 до 50");

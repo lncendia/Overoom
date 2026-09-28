@@ -29,66 +29,39 @@ public class AuthenticateUserByPasswordCommandHandler(
   /// <exception cref="TwoFactorRequiredException">Вызывается, если у пользователя включена 2фа.</exception>
   public async Task<AppUser> Handle(AuthenticateUserByPasswordCommand request, CancellationToken cancellationToken)
   {
-    // Получаем пользователя по его электронной почте.
     AppUser? user = await userManager.FindByEmailAsync(request.Email);
-
-    // Если пользователь не найден, вызываем исключение UserNotFoundException.
     if (user == null) throw new UserNotFoundException();
 
-    // Проверяем заблокирован ли пользователь 
     if (await userManager.IsLockedOutAsync(user))
     {
-      // Если пользователь заблокирован, вызываем исключение UserLockoutException.
       throw new UserLockoutException();
     }
 
-    // Проверяем правильность введенного пароля.
     bool success = await userManager.CheckPasswordAsync(user, request.Password);
 
-    // Если пароль верный
     if (success)
     {
-      // Сбрасываем счетчик неудачных попыток входа
       await userManager.ResetAccessFailedCountAsync(user);
 
-      // Проверяем, подтверждена ли почта у пользователя
       if (!await userManager.IsEmailConfirmedAsync(user))
       {
-        // Генерация кода подтверждения и формирование URL для подтверждения электронной почты.
         string code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-
-        // Генерация URL подтверждения почты
         string url = user.GenerateMailConfirmUrl(request.ConfirmUrl, code, request.ReturnUrl);
-
-        // Отправка электронного письма со ссылкой для подтверждения регистрации.
         var message = new ConfirmRegistrationEmail { Recipient = user.Email!, ConfirmLink = url };
         await publishEndpoint.SkipOutbox().Publish(new SendEmail { Message = message }, cancellationToken);
-
-        // Вызываем исключение
         throw new EmailNotConfirmedException();
       }
 
-      // Проверяем, включена ли 2фа у пользователя
       bool is2FaEnabled = await userManager.GetTwoFactorEnabledAsync(user);
-
-      // Если у пользователя включена 2фа выбрасываем исключение
       if (is2FaEnabled) throw new TwoFactorRequiredException(user);
 
-      // Устанавливаем время последнего входа
       user.LastAuthTimeUtc = DateTime.UtcNow;
-
-      // Обновляем данные
       await userManager.UpdateAsync(user);
 
-      // Возвращаем пользователя
       return user;
     }
 
-    // Если пароль неверный.
-    // Инкриминируем счетчик неудачных попыток
     await userManager.AccessFailedAsync(user);
-
-    // Вызываем исключение InvalidPasswordException.
     throw new InvalidPasswordException();
   }
 }

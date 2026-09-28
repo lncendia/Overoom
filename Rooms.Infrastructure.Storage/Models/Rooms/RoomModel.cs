@@ -63,11 +63,8 @@ public class RoomModel : IModel<RoomSnapshot>
     FilmId = snapshot.FilmId;
     OwnerId = snapshot.OwnerId;
     IsSerial = snapshot.IsSerial;
-
-    // Удаляем зрителей, которых больше нет в снапшоте
     Viewers.RemoveAll(v => !snapshot.Viewers.ContainsKey(v.Id));
 
-    // Обновляем существующих зрителей
     foreach (ViewerModel viewer in Viewers)
     {
       viewer.UpdateFromSnapshot(snapshot.Viewers[viewer.Id]);

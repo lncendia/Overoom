@@ -17,10 +17,8 @@ public class UserInfoChangedConsumer(ISender mediator) : IConsumer<UserInfoChang
   /// <param name="context">Контекст сообщения</param>
   public async Task Consume(ConsumeContext<UserInfoChangedIntegrationEvent> context)
   {
-    // Получаем данные события
     UserInfoChangedIntegrationEvent integrationEvent = context.Message;
 
-    // Отправляем команду на обработку события
     await mediator.Send(new ChangeUserCommand
     {
       Id = integrationEvent.Id,

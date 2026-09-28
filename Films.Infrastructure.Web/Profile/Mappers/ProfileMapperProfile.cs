@@ -14,10 +14,8 @@ public class ProfileMapperProfile : AutoMapper.Profile
   /// </summary>
   public ProfileMapperProfile()
   {
-    // Карта для UpdateRoomSettingsInputModel в RoomSettings
     CreateMap<UpdateRoomSettingsInputModel, RoomSettings>();
 
-    // Карта для UpdateRoomSettingsInputModel в UpdateRoomSettingsCommand
     CreateMap<UpdateRoomSettingsInputModel, UpdateRoomSettingsCommand>()
       .ForMember(dest => dest.Settings, opt => opt.MapFrom(s => s));
   }

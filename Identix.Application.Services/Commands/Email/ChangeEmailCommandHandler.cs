@@ -21,29 +21,18 @@ public class ChangeEmailCommandHandler(UserManager<AppUser> userManager) : IRequ
   /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден.</exception>
   public async Task<AppUser> Handle(ChangeEmailCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Вызываем исключение UserNotFoundException если не найден пользователь
     if (user == null) throw new UserNotFoundException();
 
-    // Попытка изменения электронной почты пользователя.
     IdentityResult result = await userManager.ChangeEmailAsync(user, request.NewEmail, request.Code);
 
-    // Если результат неудачный
     if (!result.Succeeded)
     {
-      // Если хоть одна ошибка DuplicateEmail, то вызываем исключение 
       if (result.Errors.Any(error => error.Code == "DuplicateEmail")) throw new EmailAlreadyTakenException();
-
-      // Если хоть одна ошибка InvalidToken, то вызываем исключение 
       if (result.Errors.Any(error => error.Code == "InvalidToken")) throw new InvalidCodeException();
-
-      // Если хоть одна ошибка InvalidEmail, то вызываем исключение 
       if (result.Errors.Any(e => e.Code == "InvalidEmail")) throw new EmailFormatException();
     }
 
-    // Возвращаем пользователя 
     return user;
   }
 }

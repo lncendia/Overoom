@@ -18,7 +18,6 @@ public class HubRoomEventSender(IHubContext<RoomHub> hubContext) : IRoomEventSen
   public Task SendAsync(RoomBaseEvent @event, Guid roomId, string? excludedConnectionId,
     CancellationToken cancellationToken = default)
   {
-    // Отправка события всем клиентам в группе комнаты, кроме указанного подключения
     return hubContext.Clients
       .GroupExcept(roomId.ToString(), excludedConnectionId ?? string.Empty)
       .SendAsync("Event", @event, cancellationToken);

@@ -16,7 +16,6 @@ public class DefaultSessionHandler(IMongoClient client) : ISessionHandler
   /// <param name="token">Токен отмены операции.</param>
   public Task BeforeSaveExecuteAsync(Func<CancellationToken, Task> action, CancellationToken token = default)
   {
-    // Выполняем действие
     return action(token);
   }
 
@@ -28,10 +27,7 @@ public class DefaultSessionHandler(IMongoClient client) : ISessionHandler
   public async Task ExecuteAsync(Func<IClientSessionHandle, CancellationToken, Task> action,
     CancellationToken token = default)
   {
-    // Создаем новую сессию MongoDB
     using IClientSessionHandle? sessionHandle = await client.StartSessionAsync(cancellationToken: token);
-
-    // Выполняем действие без транзакции
     await action(sessionHandle, token);
   }
 }

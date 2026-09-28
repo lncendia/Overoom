@@ -19,7 +19,6 @@ const FilmsSliderSkeleton = (): ReactElement => {
     maxWidth: 4000,
   });
 
-  // Настройки карусели
   const carouselProps = {
     infinite: true,
     autoPlay: true,
@@ -40,7 +39,6 @@ const FilmsSliderSkeleton = (): ReactElement => {
               key={i}
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: '5px' }}
             >
-              {/* Скелетон элемента фильма в карусели */}
               <FilmShortItemSkeleton />
             </Box>
           );

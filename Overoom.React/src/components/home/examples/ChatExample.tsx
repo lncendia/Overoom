@@ -70,20 +70,16 @@ const ChatExample = (): ReactElement => {
 
   return (
     <Paper>
-      {/* Область сообщений чата */}
       <Box sx={{ display: 'flex', flexDirection: 'column-reverse' }}>
         {messages.map((m) => (
           <Message key={m.id} message={m} />
         ))}
       </Box>
 
-      {/* Индикатор, показывающий, что кто-то печатает */}
       <TypingIndicator message={'Astrey печатает'} />
 
-      {/* Форма отправки нового сообщения */}
       <SendMessageForm onSend={handle} onTyping={handle} />
 
-      {/* Компонент с кнопкой копирования ссылки */}
       <ConnectUrl isClicked={isClicked} onClick={callback} />
     </Paper>
   );

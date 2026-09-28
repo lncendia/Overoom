@@ -13,10 +13,7 @@ public class FilmsMapperProfile : AutoMapper.Profile
   /// </summary>
   public FilmsMapperProfile()
   {
-    // Карта для GetPopularFilmsInputModel в GetPopularFilmsQuery
     CreateMap<GetPopularFilmsInputModel, GetPopularFilmsQuery>();
-
-    // Карта для SearchFilmsInputModel в SearchFilmsQuery
     CreateMap<SearchFilmsInputModel, SearchFilmsQuery>();
   }
 }

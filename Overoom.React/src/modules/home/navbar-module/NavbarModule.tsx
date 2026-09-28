@@ -102,7 +102,6 @@ const NavbarModule = (): ReactElement => {
     [setMode]
   );
 
-  // Рендерим компонент навигации, передавая все необходимые свойства и обработчики
   return (
     <Navbar
       onFilm={onFilm}

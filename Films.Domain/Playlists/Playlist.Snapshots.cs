@@ -1,23 +1,20 @@
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
+
+using Common.Domain.Aggregates;
 using Films.Domain.Playlists.Snapshots;
 
 namespace Films.Domain.Playlists;
 
-public partial class Playlist
+public partial class Playlist : ISnapshotable<Playlist, PlaylistSnapshot>
 {
-  internal static Playlist FromSnapshot(PlaylistSnapshot snapshot)
+  /// <inheritdoc/>
+  static Playlist ISnapshotable<Playlist, PlaylistSnapshot>.Restore(PlaylistSnapshot snapshot)
   {
-    Type type = typeof(Playlist);
-    ConstructorInfo? ctor = type.GetConstructor(
-      BindingFlags.NonPublic | BindingFlags.Instance,
-      null,
-      [typeof(PlaylistSnapshot)],
-      null);
-
-    return (Playlist)ctor!.Invoke([snapshot]);
+    return new Playlist(snapshot);
   }
 
-  internal PlaylistSnapshot GetSnapshot()
+  /// <inheritdoc/>
+  PlaylistSnapshot ISnapshotable<Playlist, PlaylistSnapshot>.ToSnapshot()
   {
     return new PlaylistSnapshot
     {
@@ -26,20 +23,22 @@ public partial class Playlist
       Description = Description,
       PosterKey = PosterKey,
       UpdatedAt = UpdatedAt,
-      Films = _films.ToList(),
-      Genres = _genres.ToList()
+      Films = [.. _films],
+      Genres = [.. _genres]
     };
   }
 
-  // Приватный конструктор для гидратации
-  // ReSharper disable once UnusedMember.Local
+  /// <summary>
+  /// Конструктор для восстановления из снапшота.
+  /// </summary>
+  [SetsRequiredMembers]
   private Playlist(PlaylistSnapshot snapshot) : this(snapshot.Id)
   {
     Name = snapshot.Name;
     Description = snapshot.Description;
     PosterKey = snapshot.PosterKey;
     UpdatedAt = snapshot.UpdatedAt;
-    _films = snapshot.Films.ToHashSet();
-    _genres = snapshot.Genres.ToHashSet();
+    _films = [.. snapshot.Films];
+    _genres = [.. snapshot.Genres];
   }
 }

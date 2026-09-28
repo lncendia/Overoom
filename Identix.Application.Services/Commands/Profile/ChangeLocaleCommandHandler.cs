@@ -34,36 +34,23 @@ public class ChangeLocaleCommandHandler(
   /// <exception cref="UserNameLengthException">Вызывается, если имя пользователя имеет некорректную длину.</exception>
   public async Task Handle(ChangeLocaleCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Вызываем исключение UserNotFoundException если не найден пользователь
     if (user == null) throw new UserNotFoundException();
 
     IList<Claim> claims = await userManager.GetClaimsAsync(user);
-
-    // Сохраняем старый клайм
     Claim? oldClaim = claims.FirstOrDefault(c => c.Type == OpenIddictConstants.Claims.Locale);
-
-    // Создаем новый клайм
     var newClaim = new Claim(OpenIddictConstants.Claims.Locale, request.Localization.GetLocalizationString());
-
-    // Начинаем транзакцию в контексте базы данных MongoDB.
     await dbContext.BeginTransaction(cancellationToken);
 
-    // Если старый клайм существует
     if (oldClaim != null)
     {
-      // Заменяем клайм аватара
       await userManager.ReplaceClaimAsync(user, oldClaim, newClaim);
     }
     else
     {
-      // Добавляем утверждение об аватаре
       await userManager.AddClaimAsync(user, newClaim);
     }
 
-    // Публикуем событие
     await publishEndpoint.Publish(new UserInfoChangedIntegrationEvent
     {
       Id = user.Id,
@@ -73,7 +60,6 @@ public class ChangeLocaleCommandHandler(
       Locale = newClaim.Value
     }, cancellationToken);
 
-    // Фиксируем транзакцию в контексте базы данных MongoDB.
     await dbContext.CommitTransaction(cancellationToken);
   }
 }

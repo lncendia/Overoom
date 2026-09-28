@@ -26,31 +26,14 @@ public abstract class UnitOfWorkBase(
   /// </summary>
   public async Task SaveChangesAsync(ISessionHandler? handler = null, CancellationToken token = default)
   {
-    // Если обработчик не передан, создаем обработчик по умолчанию через фабрику.
     handler ??= handlerFactory.CreateDefaultHandler();
-
-    // Выполняем действия перед началом транзакции
     await handler.BeforeSaveExecuteAsync(BeforeCommitSessionAsync, token);
-
-    // Создаем таймер для замера времени.
     var stopwatch = Stopwatch.StartNew();
-
-    // Применяем изменения к базе данных, используя сессию.
     await handler.ExecuteAsync(ApplyChanges, token);
-
-    // Останавливаем общий таймер.
     stopwatch.Stop();
-
-    // Логируем о запуске всех инстансов
     logger.LogInformation("Transaction commited in {elapsed} ms.", stopwatch.ElapsedMilliseconds);
-
-    // Записываем метрику
     RepositoryMetrics.TransactionDuration.Record(stopwatch.Elapsed.TotalMilliseconds);
-
-    // Записываем метрику
     RepositoryMetrics.TransactionsCommitted.Add(1);
-
-    // Выполняем действия после завершения транзакции
     await AfterCommitSessionAsync(token);
   }
 
@@ -65,10 +48,8 @@ public abstract class UnitOfWorkBase(
   /// </remarks>
   private async Task ApplyChanges(IClientSessionHandle sessionHandle, CancellationToken token)
   {
-    // Получаем массив всех репозиториев с изменениями
-    IRepository[] repositories = GetRepositories().ToArray();
+    IRepository[] repositories = [.. GetRepositories()];
 
-    // Применяем изменения для каждого репозитория
     foreach (IRepository repository in repositories)
     {
       await repository.CommitAsync(sessionHandle, token);
@@ -84,29 +65,18 @@ public abstract class UnitOfWorkBase(
   /// </remarks>
   private async Task BeforeCommitSessionAsync(CancellationToken token = default)
   {
-    // Получаем массив всех репозиториев с изменениями
-    IRepository[] repositories = GetRepositories().ToArray();
-
-    // Выбираем все доменные события, которые должны быть обработаны после сохранения
+    IRepository[] repositories = [.. GetRepositories()];
     IEnumerable<DomainEvent> domainEvents = repositories.SelectMany(r => r.Events);
-
-    // Создаем таймер для замера времени выполнения операций
     var stopwatch = Stopwatch.StartNew();
 
-    // Публикуем все события, которые должны быть обработаны после сохранения
     foreach (DomainEvent domainEvent in domainEvents)
     {
       domainEvent.BeforeSave = true;
       await publisher.Publish(domainEvent, token);
     }
 
-    // Останавливаем общий таймер
     stopwatch.Stop();
-
-    // Логируем время выполнения операций
     logger.LogInformation("Before save events executed in {elapsed} ms.", stopwatch.ElapsedMilliseconds);
-
-    // Записываем метрику
     RepositoryMetrics.BeforeCommitDuration.Record(stopwatch.Elapsed.TotalMilliseconds);
   }
 
@@ -120,16 +90,10 @@ public abstract class UnitOfWorkBase(
   /// </remarks>
   private async Task AfterCommitSessionAsync(CancellationToken token = default)
   {
-    // Получаем массив всех репозиториев с изменениями
-    IRepository[] repositories = GetRepositories().ToArray();
-
-    // Выбираем все доменные события, которые должны быть обработаны после сохранения
+    IRepository[] repositories = [.. GetRepositories()];
     IEnumerable<DomainEvent> domainEvents = repositories.SelectMany(r => r.Events);
-
-    // Создаем таймер для замера времени выполнения операций
     var stopwatch = Stopwatch.StartNew();
 
-    // Публикуем все события, которые должны быть обработаны после сохранения
     foreach (DomainEvent domainEvent in domainEvents)
     {
       try
@@ -139,18 +103,12 @@ public abstract class UnitOfWorkBase(
       }
       catch (Exception ex)
       {
-        // Логируем ошибку, но продолжаем выполнение для остальных событий
         logger.LogWarning(ex, "An error occured while executing after save event.");
       }
     }
 
-    // Останавливаем общий таймер
     stopwatch.Stop();
-
-    // Логируем время выполнения операций
     logger.LogInformation("After save events executed in {elapsed} ms.", stopwatch.ElapsedMilliseconds);
-
-    // Записываем метрику
     RepositoryMetrics.AfterCommitDuration.Record(stopwatch.Elapsed.TotalMilliseconds);
   }
 

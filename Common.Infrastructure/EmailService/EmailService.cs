@@ -20,13 +20,9 @@ public class EmailService(SmtpConfiguration smtpConfiguration, IEmailVisitor vis
   /// <param name="token">Токен отмены для отслеживания отмены операции.</param>
   public Task SendAsync(EmailMessage emailData, CancellationToken token = default)
   {
-    // Посещаем письмо
     emailData.Accept(visitor);
-
-    // Если визитор по какой-то причине не установил свойства - не продолжаем
     if (visitor.Subject is null || visitor.Body is null) return Task.CompletedTask;
 
-    // Отправляем Email, контент берем из посетителя
     return SendEmailBySmtpAsync(emailData.Recipient, visitor.Subject, visitor.Body, token);
   }
 
@@ -42,43 +38,25 @@ public class EmailService(SmtpConfiguration smtpConfiguration, IEmailVisitor vis
   {
     try
     {
-      // создаем структуру сообщения
       var message = new MimeMessage();
-
-      // отправитель сообщения
       message.From.Add(new MailboxAddress(smtpConfiguration.DisplayedName, smtpConfiguration.Login));
-
-      // адресат сообщения
       message.To.Add(new MailboxAddress("Customer", recipient));
-
-      // тема сообщения
       message.Subject = subject;
 
-      // тело сообщения (так же в формате HTML)
       message.Body = new BodyBuilder
         {
           HtmlBody = htmlContent
         }
         .ToMessageBody();
 
-      // инициализируем клиент smtp
       using var client = new MailKit.Net.Smtp.SmtpClient();
-
-      // либо используем порт 465
       await client.ConnectAsync(smtpConfiguration.Host, smtpConfiguration.Port, true, token);
-
-      // Аутентифицируемся с помощью логина и пароля
       await client.AuthenticateAsync(smtpConfiguration.Login, smtpConfiguration.Password, token);
-
-      // Асинхронно отправьте указанное сообщение
       await client.SendAsync(message, token);
-
-      // Асинхронно отключить сервис
       await client.DisconnectAsync(true, token);
     }
     catch (Exception exception) when (exception is not OperationCanceledException)
     {
-      // Инкапсулируем полученное исключение в EmailException и вызываем его дальше
       throw new EmailSendException(exception);
     }
   }

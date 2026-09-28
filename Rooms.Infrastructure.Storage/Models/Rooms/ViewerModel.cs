@@ -118,18 +118,14 @@ public class ViewerModel
     Episode = snapshot.Episode;
     Speed = snapshot.Speed;
     Muted = snapshot.Muted;
-    Tags = snapshot.Tags.ToList();
-
-    // Удаляем отсутствующие
+    Tags = [.. snapshot.Tags];
     Statistic.RemoveAll(s => !snapshot.Statistic.ContainsKey(s.Name));
 
-    // Обновляем существующие
     foreach (StatisticProperty stat in Statistic)
     {
       stat.Value = snapshot.Statistic[stat.Name];
     }
 
-    // Добавляем новые
     var existingNames = Statistic.Select(s => s.Name).ToHashSet();
 
     foreach ((string name, int value) in snapshot.Statistic)

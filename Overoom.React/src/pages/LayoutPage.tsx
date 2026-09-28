@@ -12,20 +12,16 @@ import NavbarModule from '../modules/home/navbar-module/NavbarModule.tsx';
 const LayoutPage = (): ReactElement => {
   return (
     <>
-      {/* Модуль навигационной панели */}
       <NavbarModule />
 
-      {/* Основной контейнер контента */}
       <Container
         sx={{ paddingTop: '5.5rem !important' }}
         className="background-container"
         maxWidth={false}
       >
-        {/* Outlet для рендеринга дочерних страниц роутинга */}
         <Outlet />
       </Container>
 
-      {/* Модуль подвала страницы */}
       <FooterModule />
     </>
   );

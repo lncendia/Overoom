@@ -36,7 +36,6 @@ public static class RoomsConnectionMetrics
   /// </summary>
   static RoomsConnectionMetrics()
   {
-    // Gauge — метрика, отражающая текущее состояние (в отличие от Counter)
     _meter.CreateObservableGauge(
       "rooms_active_connections",
       () => new Measurement<int>(_activeConnections),

@@ -1,4 +1,4 @@
-using Films.Application.Abstractions.DTOs.Films;
+﻿using Films.Application.Abstractions.DTOs.Films;
 using Films.Application.Abstractions.Queries.Films;
 using Films.Infrastructure.Storage.Context;
 using MediatR;
@@ -23,34 +23,20 @@ public class GetPopularFilmsQueryHandler(MongoDbContext context)
   public async Task<IReadOnlyList<FilmShortDto>> Handle(GetPopularFilmsQuery request,
     CancellationToken cancellationToken)
   {
-    // Выполняем запрос и получаем результаты в виде списка
     return await context.Films.AsQueryable()
-      .GroupJoin(
-        context.Ratings.AsQueryable(),
-        film => film.Id,
-        rating => rating.FilmId,
-        (film, ratings) => new
-        {
-          Film = film,
-          // ReSharper disable once PossibleMultipleEnumeration
-          UserRating = ratings.Average(r => r.Score),
-          // ReSharper disable once PossibleMultipleEnumeration
-          UserRatingCount = ratings.Count()
-        }
-      )
-      .OrderByDescending(x => x.UserRatingCount)
+      .OrderByDescending(f => f.UserRatingsCount)
       .Take(request.Take)
-      .Select(x => new FilmShortDto
+      .Select(f => new FilmShortDto
       {
-        Id = x.Film.Id,
-        Title = x.Film.Title,
-        PosterKey = x.Film.PosterKey,
-        Year = x.Film.Date.Year,
-        RatingKp = x.Film.RatingKp,
-        RatingImdb = x.Film.RatingImdb,
-        Description = x.Film.ShortDescription,
-        IsSerial = x.Film.Seasons != null && x.Film.Content == null,
-        Genres = x.Film.Genres
+        Id = f.Id,
+        Title = f.Title,
+        PosterKey = f.PosterKey,
+        Year = f.Date.Year,
+        RatingKp = f.RatingKp,
+        RatingImdb = f.RatingImdb,
+        Description = f.ShortDescription,
+        IsSerial = f.Seasons != null && f.Content == null,
+        Genres = f.Genres
       })
       .ToListAsync(cancellationToken);
   }

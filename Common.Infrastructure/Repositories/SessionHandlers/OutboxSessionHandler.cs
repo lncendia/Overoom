@@ -17,10 +17,7 @@ public class OutboxSessionHandler(MongoDbContext dbContext) : ISessionHandler
   /// <param name="token">Токен отмены</param>
   public async Task BeforeSaveExecuteAsync(Func<CancellationToken, Task> action, CancellationToken token = default)
   {
-    // Начинаем транзакцию в контексте базы данных MongoDB.
     await dbContext.BeginTransaction(token);
-
-    // Выполняем действие
     await action(token);
   }
 
@@ -33,10 +30,7 @@ public class OutboxSessionHandler(MongoDbContext dbContext) : ISessionHandler
   public async Task ExecuteAsync(Func<IClientSessionHandle, CancellationToken, Task> action,
     CancellationToken token = default)
   {
-    // Сохраняем изменения и сообщения outbox атомарно
     await action(dbContext.Session!, token);
-
-    // Фиксируем транзакцию в контексте базы данных MongoDB.
     await dbContext.CommitTransaction(token);
   }
 }

@@ -47,7 +47,6 @@ const UserInfo = ({ userName, photoUrl, genres, onGenreSelect }: UserInfoProps):
         padding: 2,
       }}
     >
-      {/* Аватар пользователя */}
       <Avatar
         sx={{ width: 64, height: 64 }}
         alt="Аватар пользователя"
@@ -55,12 +54,10 @@ const UserInfo = ({ userName, photoUrl, genres, onGenreSelect }: UserInfoProps):
       />
 
       <Box sx={{ ml: 2 }}>
-        {/* Имя пользователя */}
         <Typography variant="h6" component="h3" gutterBottom>
           {userName}
         </Typography>
 
-        {/* Список жанров пользователя */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
           {genres.map((genre) => (
             <GenreChip

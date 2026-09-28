@@ -19,7 +19,6 @@ public class NewMessageEventHandler(IRoomEventSender eventSender) : AfterSaveNot
   /// <param name="cancellationToken">Токен отмены операции</param>
   protected override async Task Execute(NewMessageEvent @event, CancellationToken cancellationToken)
   {
-    // Создаем DTO сообщения
     var dto = new MessageDto
     {
       Id = @event.Message.Id,
@@ -28,7 +27,6 @@ public class NewMessageEventHandler(IRoomEventSender eventSender) : AfterSaveNot
       SentAt = @event.Message.SentAt
     };
 
-    // Публикуем событие комнаты
     await eventSender.SendAsync(new MessageEvent { Message = dto }, @event.Room.Id, null, cancellationToken);
   }
 }

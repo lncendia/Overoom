@@ -23,7 +23,6 @@ public class GetUserRoomsQueryHandler(MongoDbContext context)
   public async Task<IReadOnlyList<RoomShortDto>> Handle(GetUserRoomsQuery request,
     CancellationToken cancellationToken)
   {
-    // Получаем комнату из базы данных с агрегацией связанных данных
     return await context.Rooms.AsQueryable()
       .Where(r => r.Viewers.Contains(request.UserId))
       .GroupJoin(

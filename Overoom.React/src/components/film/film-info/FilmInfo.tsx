@@ -65,7 +65,6 @@ const FilmInfo = (props: FilmInfoProps): ReactElement => {
   return (
     <Paper>
       <FilmInfoCard {...props.film}>
-        {/* Заголовок и кнопка "Смотреть позже" */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <Typography variant="h5">{props.film.title}</Typography>
           <FilmWatchlist
@@ -76,13 +75,11 @@ const FilmInfo = (props: FilmInfoProps): ReactElement => {
 
         <Divider sx={{ my: 1, borderWidth: 1 }} />
 
-        {/* Описание фильма */}
         <Stack direction="row" alignItems="flex-start" spacing={1}>
           <Typography variant="body2" sx={{ flexGrow: 1 }}>
             {props.film.description}
           </Typography>
 
-          {/* Кнопка меню только на мобильных */}
           {isMobile && (
             <IconButton
               color={'secondary'}
@@ -102,7 +99,6 @@ const FilmInfo = (props: FilmInfoProps): ReactElement => {
 
         <Divider sx={{ my: 1, borderWidth: 1 }} />
 
-        {/* Списки информации */}
         <Collapse in={collapseOpen} timeout="auto">
           <Stack spacing={1} sx={{ mb: 3 }}>
             <KeyList
@@ -141,7 +137,6 @@ const FilmInfo = (props: FilmInfoProps): ReactElement => {
             />
           </Stack>
         </Collapse>
-        {/* Кнопка */}
         {props.buttonText && props.onButtonClicked && (
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Button

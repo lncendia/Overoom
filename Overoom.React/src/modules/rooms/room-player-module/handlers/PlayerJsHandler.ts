@@ -27,16 +27,12 @@ export class PlayerJsHandler implements IPlayerHandler {
 
   /** Инициализация обработчика событий плеера. */
   mount() {
-    // Устанавливаем глобальную функцию для обработки событий от Player.js
     window.PlayerjsEvents = this.handler.bind(this);
   }
 
   /** Очистка обработчика событий при демонтаже компонента. */
   unmount() {
-    // Убираем глобальную функцию, чтобы избежать утечек памяти
     window.PlayerjsEvents = undefined;
-
-    // Очищаем массив обработчиков
     this.handlers = [];
   }
 
@@ -48,17 +44,12 @@ export class PlayerJsHandler implements IPlayerHandler {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private handler(event: string, id: string, info: any) {
-    // Игнорируем события от других плееров
     if (id != this.playerId) return;
 
     console.log(`Received Player.js event:`, event, info);
-
-    // Создаем контейнер для события
     const ev: PlayerEventContainer = {};
 
-    // Обрабатываем различные типы событий
     if (event === 'play' || event === 'buffered') {
-      // События воспроизведения: играть или буферизация завершена
       const time = toTicksFromSeconds(window.pljssglobal[0].api('time'));
       ev.pauseEvent = {
         onPause: false,
@@ -66,7 +57,6 @@ export class PlayerJsHandler implements IPlayerHandler {
         buffering: event === 'buffered',
       };
     } else if (event === 'pause' || event === 'buffering') {
-      // События паузы: пауза или активная буферизация
       const time = toTicksFromSeconds(window.pljssglobal[0].api('time'));
       ev.pauseEvent = {
         onPause: true,
@@ -74,28 +64,19 @@ export class PlayerJsHandler implements IPlayerHandler {
         buffering: event === 'buffering',
       };
     } else if (event === 'seek') {
-      // Событие перемотки
       ev.seekEvent = { ticks: toTicksFromSeconds(info) };
     } else if (event === 'fullscreen') {
-      // Вход в полноэкранный режим
       ev.fullscreenEvent = { fullscreen: true };
     } else if (event === 'exitfullscreen') {
-      // Выход из полноэкранного режима
       ev.fullscreenEvent = { fullscreen: false };
     } else if (event === 'speed') {
-      // Изменение скорости воспроизведения
       ev.speedEvent = { speed: parseFloat(info as string) };
     } else if (event === 'mute') {
-      // Изменение громкости
       ev.muteEvent = { muted: true };
     } else if (event === 'unmute') {
-      // Изменение громкости
       ev.muteEvent = { muted: false };
     } else if (event === 'new') {
-      // Берём текущий id
       const id = window.pljssglobal[0].api('playlist_id');
-
-      // Регулярка для вида s<season>e<episode>
       const match = /^s(\d+)e(\d+)/i.exec(id);
 
       if (match) {
@@ -108,14 +89,11 @@ export class PlayerJsHandler implements IPlayerHandler {
         };
       }
     } else if (event === 'init') {
-      // Выход из полноэкранного режима
       ev.initEvent = {};
     } else {
-      // Неизвестное событие - игнорируем
       return;
     }
 
-    // Передаем событие всем зарегистрированным обработчикам
     this.pushEvent(ev);
   }
 
@@ -175,17 +153,10 @@ export class PlayerJsHandler implements IPlayerHandler {
    * @param episode Номер эпизода
    */
   setEpisode(season: number, episode: number) {
-    // Берём текущий id
     const currentId = window.pljssglobal[0].api('playlist_id');
-
-    // Отделяем озвучку после подчёркивания
     const parts = currentId.split('_');
     const voice = parts.length > 1 ? parts[1] : '';
-
-    // Собираем новый id
     const newId = `id:s${season}e${episode}${voice ? '_' + voice : ''}`;
-
-    // Переключаем на него
     window.pljssglobal[0].api('play', newId);
   }
 

@@ -13,7 +13,6 @@ const PlaylistPage = (): ReactElement => {
   /** Используем хук useLocation для получения состояния навигации (в т.ч. ID плейлиста) */
   const { state } = useLocation();
 
-  // Рендерим модуль информации о плейлисте и связанные с ним фильмы
   return (
     <>
       <PlaylistInfoModule id={state?.id} />

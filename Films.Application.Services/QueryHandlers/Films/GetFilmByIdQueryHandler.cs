@@ -1,4 +1,4 @@
-using Films.Application.Abstractions.DTOs.Films;
+﻿using Films.Application.Abstractions.DTOs.Films;
 using Films.Application.Abstractions.Exceptions;
 using Films.Application.Abstractions.Queries.Films;
 using Films.Infrastructure.Storage.Context;
@@ -30,46 +30,38 @@ public class GetFilmByIdQueryHandler(MongoDbContext context) : IRequestHandler<G
         .ToListAsync(cancellationToken: cancellationToken)
       : [];
 
-    // Начинаем агрегацию по коллекции фильмов
+    double? userScore = request.UserId.HasValue
+      ? await context.Ratings.AsQueryable()
+        .Where(r => r.UserId == request.UserId && r.FilmId == request.Id)
+        .Select(r => (double?)r.Score)
+        .FirstOrDefaultAsync(cancellationToken)
+      : null;
+
     FilmDto? film = await context.Films.AsQueryable()
-      .GroupJoin(
-        context.Ratings.AsQueryable(),
-        film => film.Id,
-        rating => rating.FilmId,
-        (film, ratings) => new
-        {
-          Film = film,
-          // ReSharper disable once PossibleMultipleEnumeration
-          UserRating = ratings.Average(r => r.Score),
-          // ReSharper disable once PossibleMultipleEnumeration
-          UserRatingCount = ratings.Count(),
-          // ReSharper disable once PossibleMultipleEnumeration
-          UserScore = ratings.FirstOrDefault(r => r.UserId == request.UserId)
-        }
-      )
+      .Where(f => f.Id == request.Id)
       .Select(x => new FilmDto
       {
-        Id = x.Film.Id,
-        Title = x.Film.Title,
-        PosterKey = x.Film.PosterKey,
-        Year = x.Film.Date.Year,
-        UserRating = x.UserRating,
-        RatingKp = x.Film.RatingKp,
-        RatingImdb = x.Film.RatingImdb,
-        Description = x.Film.Description,
-        IsSerial = x.Film.Seasons != null && x.Film.Content == null,
-        Genres = x.Film.Genres,
-        UserRatingsCount = x.UserRatingCount,
-        CanCreateRoom = x.Film.Content != null || (x.Film.Seasons != null && x.Film.Seasons.Any()),
-        Content = x.Film.Content == null
+        Id = x.Id,
+        Title = x.Title,
+        PosterKey = x.PosterKey,
+        Year = x.Date.Year,
+        UserRating = x.UserRatingsCount == 0 ? null : x.UserRatingsSum / x.UserRatingsCount,
+        RatingKp = x.RatingKp,
+        RatingImdb = x.RatingImdb,
+        Description = x.Description,
+        IsSerial = x.Seasons != null && x.Content == null,
+        Genres = x.Genres,
+        UserRatingsCount = x.UserRatingsCount,
+        CanCreateRoom = x.Content != null || (x.Seasons != null && x.Seasons.Any()),
+        Content = x.Content == null
           ? null
           : new MediaContentDto
           {
-            Versions = x.Film.Content.Versions
+            Versions = x.Content.Versions
           },
-        Seasons = x.Film.Seasons == null
+        Seasons = x.Seasons == null
           ? null
-          : x.Film.Seasons.Select(s => new SeasonDto
+          : x.Seasons.Select(s => new SeasonDto
           {
             Number = s.Number,
             Episodes = s.Episodes.Select(e => new EpisodeDto
@@ -78,16 +70,15 @@ public class GetFilmByIdQueryHandler(MongoDbContext context) : IRequestHandler<G
               Versions = e.Versions
             }).ToList()
           }).ToList(),
-        Countries = x.Film.Countries,
-        Directors = x.Film.Directors,
-        ScreenWriters = x.Film.Screenwriters,
-        Actors = x.Film.Actors,
-        UserScore = x.UserScore == null ? null : x.UserScore.Score,
-        InWatchlist = userWatchlist.Contains(x.Film.Id)
+        Countries = x.Countries,
+        Directors = x.Directors,
+        ScreenWriters = x.Screenwriters,
+        Actors = x.Actors,
+        UserScore = userScore,
+        InWatchlist = userWatchlist.Contains(x.Id)
       })
-      .FirstOrDefaultAsync(f => f.Id == request.Id, cancellationToken);
+      .FirstOrDefaultAsync(cancellationToken);
 
-    // Возвращаем фильм
     return film ?? throw new FilmNotFoundException(request.Id);
   }
 }

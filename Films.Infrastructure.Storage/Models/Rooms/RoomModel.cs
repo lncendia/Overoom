@@ -61,8 +61,8 @@ public class RoomModel : IModel<RoomSnapshot>
     Code = snapshot.Code;
     OwnerId = snapshot.OwnerId;
     CreatedAt = snapshot.CreatedAt;
-    Viewers = snapshot.Viewers.ToList();
-    BannedUsers = snapshot.BannedUsers.ToList();
+    Viewers = [.. snapshot.Viewers];
+    BannedUsers = [.. snapshot.BannedUsers];
   }
 
   public RoomSnapshot GetSnapshot()

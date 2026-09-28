@@ -21,15 +21,12 @@ public class GetPhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<GetP
   /// <exception cref="FileNotFoundException">Выбрасывается, если файл фотографии не найден в хранилище</exception>
   public async Task<FileResult> Handle(GetPhotoQuery request, CancellationToken cancellationToken)
   {
-    // Валидируем запрашиваемый ключ
     if (!IsValidUserPhotoKey(request.Key))
       throw new ArgumentException(
         $"Invalid user photo key format. Expected: {Constants.Poster.FilmKeyFormat} or {Constants.Poster.PlaylistKeyFormat}");
 
-    // Получаем объект из S3
     (Stream stream, string contentType) = await fileStore.GetAsync(request.Key, token: cancellationToken);
 
-    // Возвращаем файл
     return new FileResult(stream, contentType, request.Key);
   }
 
@@ -43,7 +40,6 @@ public class GetPhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<GetP
     if (string.IsNullOrWhiteSpace(key))
       return false;
 
-    // Разбиваем путь на части
     string[] parts = key.Split('/');
     return parts.Length == 3;
   }

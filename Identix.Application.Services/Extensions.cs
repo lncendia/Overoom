@@ -22,14 +22,11 @@ public static class Extensions
     PropertyInfo? property = publishEndpoint.GetType()
       .GetProperty("PublishEndpointProvider", BindingFlags.Instance | BindingFlags.NonPublic);
 
-    // Если свойство отсутствует — вернуть без изменений
     if (property == null)
       return publishEndpoint;
 
-    // Извлекаем значение свойства (провайдера)
     object? value = property.GetValue(publishEndpoint);
 
-    // Проверяем, является ли оно OutboxPublishEndpointProvider
     if (value is not OutboxPublishEndpointProvider outboxPublishEndpointProvider)
       return publishEndpoint;
 
@@ -38,14 +35,11 @@ public static class Extensions
     FieldInfo? innerProvider = outboxPublishEndpointProvider.GetType()
       .GetField("_publishEndpointProvider", BindingFlags.Instance | BindingFlags.NonPublic);
 
-    // Если не нашли внутренний провайдер — вернуть без изменений
     if (innerProvider == null)
       return publishEndpoint;
 
-    // Подменяем текущий PublishEndpointProvider на исходный (вне Outbox)
     property.SetValue(publishEndpoint, innerProvider.GetValue(outboxPublishEndpointProvider));
 
-    // Возвращаем обновлённый экземпляр
     return publishEndpoint;
   }
 
@@ -61,32 +55,21 @@ public static class Extensions
   public static string GenerateMailConfirmUrl(this AppUser user, string url, string code, string? returnUrl,
     params KeyValuePair<string, object>[] query)
   {
-    // Создаем объект UriBuilder с базовым URL
     var uriBuilder = new UriBuilder(url);
-
-    // Получаем коллекцию параметров запроса
     NameValueCollection queryParameters = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
-
-    // Добавляем параметр "id" со значением
     queryParameters["id"] = user.Id.ToString();
-
-    // Добавляем параметр "code" со значением
     queryParameters["code"] = code;
 
-    // Добавляем параметр "returnUrl" со значением
     if (returnUrl != null)
       queryParameters["returnUrl"] = returnUrl;
 
-    // Добавляем дополнительные параметры
     foreach (KeyValuePair<string, object> keyValuePair in query)
     {
       queryParameters[keyValuePair.Key] = keyValuePair.Value.ToString();
     }
 
-    // Устанавливаем обновленную строку запроса
     uriBuilder.Query = queryParameters.ToString();
 
-    // Получаем обновленный URL
     return uriBuilder.ToString();
   }
 }

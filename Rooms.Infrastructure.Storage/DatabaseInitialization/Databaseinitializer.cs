@@ -15,10 +15,7 @@ public static class DatabaseInitializer
   /// т. е. объекта, обеспечивающего настраиваемую поддержку для других объектов.</param>
   public static async Task InitAsync(IServiceProvider scopeServiceProvider)
   {
-    // Получаем контекст базы данных
     MongoDbContext context = scopeServiceProvider.GetRequiredService<MongoDbContext>();
-
-    // Обновляем базу данных
     await context.EnsureCreatedAsync();
   }
 }

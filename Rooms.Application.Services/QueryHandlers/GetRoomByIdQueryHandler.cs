@@ -23,22 +23,18 @@ public class GetRoomByIdQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<G
   /// <exception cref="RoomNotFoundException">Выбрасывается, если плейлист с указанным ID не найден</exception>
   public async Task<RoomDto> Handle(GetRoomByIdQuery request, CancellationToken cancellationToken)
   {
-    // Получаем комнату по ID из репозитория
     Room? room = await unitOfWork.RoomRepository.Value.GetAsync(request.RoomId, cancellationToken);
-
-    // Проверяем существование фильма
     if (room == null) throw new RoomNotFoundException(request.RoomId);
 
     if (!room.Viewers.ContainsKey(request.ViewerId)) throw new ActionNotAllowedException("GetRoom");
 
-    // Возвращаем комнату
     return new RoomDto
     {
       Id = room.Id,
       OwnerId = room.Owner.Id,
       FilmId = room.FilmId,
       IsSerial = room.IsSerial,
-      Viewers = room.Viewers.Values.Select(ViewerDto.Create).ToArray()
+      Viewers = [.. room.Viewers.Values.Select(ViewerDto.Create)]
     };
   }
 }

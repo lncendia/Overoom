@@ -66,7 +66,6 @@ const ConnectRoomForm = (props: ConnectRoomFormProps): ReactElement => {
         width: '100%',
       }}
     >
-      {/* Условное отображение поля ввода кода комнаты */}
       {codeNeeded && (
         <FormControl fullWidth error={formik.touched.code && Boolean(formik.errors.code)}>
           <InputLabel htmlFor="code-input">Код комнаты</InputLabel>
@@ -86,7 +85,6 @@ const ConnectRoomForm = (props: ConnectRoomFormProps): ReactElement => {
         </FormControl>
       )}
 
-      {/* Кнопка подключения с индикатором загрузки */}
       <Button
         type="submit"
         variant="contained"
@@ -114,7 +112,6 @@ const ConnectRoomForm = (props: ConnectRoomFormProps): ReactElement => {
                 marginLeft: '-12px',
               }}
             />
-            {/* Скрытый текст для сохранения размера кнопки */}
             <span style={{ opacity: 0 }}>Подключиться</span>
           </>
         ) : (

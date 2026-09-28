@@ -27,7 +27,6 @@ public class CreatePlaylistCommandHandler(IUnitOfWork unitOfWork, MongoDbContext
   /// <exception cref="PlaylistAlreadyExistsException">Если плейлист с таким именем уже существует</exception>
   public async Task<Guid> Handle(CreatePlaylistCommand request, CancellationToken cancellationToken)
   {
-    // Создаем новый плейлист
     var playlist = new Playlist(Guid.NewGuid())
     {
       Name = request.Name,
@@ -35,36 +34,24 @@ public class CreatePlaylistCommandHandler(IUnitOfWork unitOfWork, MongoDbContext
       PosterKey = Constants.Poster.PlaylistDefault
     };
 
-    // Обработка обновления списка фильмов
-    // Получаем информацию о фильмах из MongoDB
     List<Playlist.FilmToUpdate>? films = await context.Films.AsQueryable()
 
-      // Фильтруем только запрошенные фильмы
       .Where(x => request.Films.Contains(x.Id))
 
-      // Проецируем в упрощенную модель (ID и жанры)
       .Select(x => new Playlist.FilmToUpdate(x.Id, x.Genres.ToArray()))
 
-      // Преобразуем в список
       .ToListAsync(cancellationToken: cancellationToken);
 
-    // Проверяем, что все запрошенные фильмы найдены
     foreach (Guid film in request.Films)
     {
       if (films.All(f => f.Id != film))
         throw new FilmNotFoundException(film);
     }
 
-    // Обновляем список фильмов в плейлисте
     playlist.UpdateFilms(films);
-
-    // Добавляем плейлист в репозиторий
     await unitOfWork.PlaylistRepository.Value.AddAsync(playlist, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
 
-    // Возвращаем идентификатор созданного плейлиста
     return playlist.Id;
   }
 }

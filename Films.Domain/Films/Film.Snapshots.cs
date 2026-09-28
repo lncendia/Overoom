@@ -1,53 +1,43 @@
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
+
+using Common.Domain.Aggregates;
 using Films.Domain.Films.Snapshots;
+using Films.Domain.Films.ValueObjects;
 
 namespace Films.Domain.Films;
 
-public partial class Film
+public partial class Film : ISnapshotable<Film, FilmSnapshot>
 {
-  internal static Film FromSnapshot(FilmSnapshot snapshot)
+  /// <inheritdoc/>
+  static Film ISnapshotable<Film, FilmSnapshot>.Restore(FilmSnapshot snapshot)
   {
-    // Получаем тип Film
-    Type filmType = typeof(Film);
-
-    // Получаем внутренний конструктор, который принимает FilmSnapshot
-    ConstructorInfo? constructor = filmType.GetConstructor(
-      BindingFlags.NonPublic | BindingFlags.Instance,
-      null,
-      [typeof(FilmSnapshot)],
-      null);
-
-    // Вызываем конструктор и возвращаем результат
-    return (Film)constructor!.Invoke([snapshot]);
+    return new Film(snapshot);
   }
 
   /// <summary>
-  /// Внутренний конструктор для гидратации из снапшота или БД.
+  /// Конструктор для восстановления из снапшота.
   /// </summary>
-  // ReSharper disable once UnusedMember.Local
-  internal Film(FilmSnapshot snapshot) : this(snapshot.Id)
+  [SetsRequiredMembers]
+  private Film(FilmSnapshot snapshot) : this(snapshot.Id)
   {
     Date = snapshot.Date;
     PosterKey = snapshot.PosterKey;
     RatingKp = snapshot.RatingKp;
     RatingImdb = snapshot.RatingImdb;
     Content = snapshot.Content;
-    Seasons = snapshot.Seasons;
+    ShortDescription = snapshot.ShortDescription;
+    Seasons = snapshot.Seasons == null ? null : new SortedSet<Season>(snapshot.Seasons);
     Title = snapshot.Title;
     _description = snapshot.Description;
-    _genres = snapshot.Genres.ToHashSet();
-    _countries = snapshot.Countries.ToHashSet();
-    _actors = snapshot.Actors.ToHashSet();
-    _directors = snapshot.Directors.ToHashSet();
-    _screenwriters = snapshot.Screenwriters.ToHashSet();
-    if (snapshot.ShortDescription != null)
-      ShortDescription = snapshot.ShortDescription;
+    _genres = [.. snapshot.Genres];
+    _countries = [.. snapshot.Countries];
+    _actors = [.. snapshot.Actors];
+    _directors = [.. snapshot.Directors];
+    _screenwriters = [.. snapshot.Screenwriters];
   }
 
-  /// <summary>
-  /// Получение снапшота текущего состояния агрегата.
-  /// </summary>
-  internal FilmSnapshot GetSnapshot()
+  /// <inheritdoc/>
+  FilmSnapshot ISnapshotable<Film, FilmSnapshot>.ToSnapshot()
   {
     return new FilmSnapshot
     {

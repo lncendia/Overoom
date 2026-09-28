@@ -20,25 +20,13 @@ public static class JwtAuthentication
   /// <param name="builder">Построитель веб-приложений и сервисов.</param>
   public static void AddJwtAuthentication(this IHostApplicationBuilder builder)
   {
-    // Получаем секцию из конфигурации
     IConfigurationSection section = builder.Configuration.GetSection("Authentication");
-
-    // Получение значения "Authorization:Authority" из конфигурации.
     string authority = section.GetRequiredValue<string>("Authority");
-
-    // Получение значения "Authorization:Issuer" из конфигурации.
     string issuer = section.GetRequiredValue<string>("Issuer");
-
-    // Получение значения "Authorization:Audience" из конфигурации.
     string audience = section.GetRequiredValue<string>("Audience");
-
-    // Получение значения "Authorization:InsecureConnection" из конфигурации.
     bool insecureConnection = section.GetValue<bool>("InsecureConnection");
-
-    // Получение путей хабов SignalR из "Authorization:SignalR" конфигурации.
     string[] signalRPaths = section.GetSection("SignalR").Get<string[]>() ?? [];
 
-    // Регистрация аутентификации с настройками по умолчанию
     builder.Services.AddAuthentication(options =>
       {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -46,7 +34,6 @@ public static class JwtAuthentication
       })
       .AddJwtBearer(options =>
       {
-        // Если разрешено небезопасное подключение, то доверяем сертификату сервера OIDC в любом случае
         if (insecureConnection)
         {
           options.BackchannelHttpHandler = new HttpClientHandler

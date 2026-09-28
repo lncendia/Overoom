@@ -76,7 +76,6 @@ export const NotifyContextProvider: React.FC<NotifyContextProviderProps> = ({
     setIsOpened(false);
   };
 
-  // Возвращаем провайдер контекста с текущим уведомлением и методами управления
   return (
     <NotifyContext.Provider value={{ setNotification: setNotify, setError, notification }}>
       {children}

@@ -35,7 +35,6 @@ const WishText = styled(Typography)(({ theme }) => ({
 const Wishes = ({ text, sx }: WishesProps): ReactElement => {
   return (
     <Box sx={{ textAlign: 'center', ...sx }}>
-      {/* Текст пожелания */}
       <WishText>{text}</WishText>
     </Box>
   );

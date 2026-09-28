@@ -26,7 +26,6 @@ public static class FileStorageServices
   /// <param name="builder">Построитель веб-приложения</param>
   public static void AddFileStorage(this IHostApplicationBuilder builder)
   {
-    // Получаем настройки S3 клиента из конфигурации
     IConfigurationSection section = builder.Configuration.GetSection(ConfigurationSectionName);
 
     string defaultBucket = section.GetRequiredValue<string>("DefaultBucket");
@@ -35,18 +34,14 @@ public static class FileStorageServices
     string baseAddress = section.GetRequiredValue<string>("BaseAddress");
     string region = section.GetRequiredValue<string>("Region");
     int? maxErrorRetry = section.GetValue<int?>("MaxErrorRetry");
-
-    // Регистрируем фабрику HTTP-клиентов для работы с S3
     builder.Services.AddHttpClient<AwsS3HttpClientFactory>();
 
-    // Регистрируем реализацию файлового хранилища на основе S3
     builder.Services.AddSingleton<IFileStorage, AwsS3ApiClient>(sp => new AwsS3ApiClient(
       sp.GetRequiredService<IAmazonS3>(),
       sp.GetRequiredService<IHttpClientFactory>(),
       sp.GetRequiredService<AwsS3HttpClientFactory>(),
       defaultBucket));
 
-    // Настраиваем и регистрируем клиент Amazon S3XL: 
     builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
     {
       Credentials = new BasicAWSCredentials(accessKey, secretKey),
@@ -58,7 +53,6 @@ public static class FileStorageServices
       Region = RegionEndpoint.GetBySystemName(region)
     });
 
-    // Регистрация именного HttpClient с именем AwsS3ApiClient.HttpClientName.
     builder.Services.AddHttpClient(AwsS3ApiClient.HttpClientName);
   }
 }

@@ -61,7 +61,6 @@ const FilmRatingModule = ({ sx }: { sx?: SxProps<Theme> }): ReactElement => {
    */
   const scoreChanged = useSafeCallback(
     async (value: number) => {
-      // Если пользователь не авторизован - показываем предупреждение
       if (!authorizedUser) {
         renderAuthWarning();
         return;
@@ -69,14 +68,11 @@ const FilmRatingModule = ({ sx }: { sx?: SxProps<Theme> }): ReactElement => {
 
       if (!film) return;
 
-      // Расчет нового количества оценок
       const ratingCount = film.userScore ? film.userRatingsCount : film.userRatingsCount + 1;
 
-      // Расчет новой суммы оценок
       const scoreSum =
         (film.userRating ?? 0) * film.userRatingsCount - (film.userScore ?? 0) + value;
 
-      // Обновление локального состояния фильма
       editFilm((prev) => ({
         ...prev!,
         userRating: scoreSum / ratingCount,
@@ -84,16 +80,13 @@ const FilmRatingModule = ({ sx }: { sx?: SxProps<Theme> }): ReactElement => {
         userScore: value,
       }));
 
-      // Отправка оценки на сервер
       await filmsApi.rateFilm(film.id, value);
     },
     [authorizedUser, editFilm, film, filmsApi, renderAuthWarning]
   );
 
-  // Показываем скелетон, если данные фильма ещё не загружены
   if (!film) return <FilmRatingSkeleton />;
 
-  // Основной рендер: компонент FilmRating с передачей данных и обработчиком изменения оценки
   return (
     <FilmRating
       sx={sx}

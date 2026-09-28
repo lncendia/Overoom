@@ -96,7 +96,6 @@ const Rating = ({ rating, scoreChanged }: RatingProps): ReactElement => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      {/* Блок с рейтингом и текстовой подсказкой */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <MuiRating
           name="film-rating"
@@ -114,7 +113,6 @@ const Rating = ({ rating, scoreChanged }: RatingProps): ReactElement => {
           }}
         />
 
-        {/* Отображаем текстовую подсказку при наведении */}
         {hoverRating && (
           <Typography variant="body2" sx={{ minWidth: 150 }}>
             {getReviewLabel(hoverRating)}
@@ -122,7 +120,6 @@ const Rating = ({ rating, scoreChanged }: RatingProps): ReactElement => {
         )}
       </Box>
 
-      {/* Блок с количеством оценок */}
       <Typography variant="caption" color="text.secondary">
         {getScoresString(rating)}
       </Typography>

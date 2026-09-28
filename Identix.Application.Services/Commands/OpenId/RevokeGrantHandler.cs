@@ -20,21 +20,18 @@ public class RevokeGrantHandler(IOpenIddictAuthorizationManager authorizationMan
   /// <exception cref="UnauthorizedAccessException">Выбрасывается, если авторизация не принадлежит пользователю.</exception>
   public async Task Handle(RevokeGrantCommand request, CancellationToken cancellationToken)
   {
-    // Ищем авторизацию по Id
     object? authorization = await authorizationManager.FindByIdAsync(request.GrantId, cancellationToken);
     if (authorization is null)
     {
       throw new InvalidOperationException("Authorization not found");
     }
 
-    // Проверяем, что авторизация принадлежит текущему пользователю
     string? subject = await authorizationManager.GetSubjectAsync(authorization, cancellationToken);
     if (!Guid.TryParse(subject, out Guid subjectGuid) || subjectGuid != request.UserId)
     {
       throw new UnauthorizedAccessException("Authorization does not belong to the user");
     }
 
-    // Отзываем авторизацию (помечаем как недействительную)
     await authorizationManager.TryRevokeAsync(authorization, cancellationToken);
   }
 }

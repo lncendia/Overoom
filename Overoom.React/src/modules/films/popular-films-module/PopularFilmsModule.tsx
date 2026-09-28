@@ -51,10 +51,8 @@ const PopularFilmsModule = (): ReactElement => {
     [navigate]
   );
 
-  // Показываем скелетон, пока данные фильмов загружаются
   if (isLoading) return <FilmsSliderSkeleton />;
 
-  // Основной рендер: компонент слайдера фильмов
   return <FilmsSlider films={films} onSelect={onSelect} />;
 };
 

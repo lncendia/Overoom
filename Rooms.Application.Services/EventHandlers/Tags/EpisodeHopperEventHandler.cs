@@ -19,7 +19,6 @@ public class EpisodeHopperEventHandler(IUnitOfWork unitOfWork)
   /// <param name="cancellationToken">Токен отмены операции</param>
   protected override async Task Execute(ViewerEpisodeChangedEvent notification, CancellationToken cancellationToken)
   {
-    // Если это синхронизация - не обрабатываем
     if (notification.IsSyncEvent) return;
 
     int hops = notification.Room.IncrementStatisticParameter(notification.Viewer.Id,

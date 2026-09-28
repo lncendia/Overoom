@@ -25,17 +25,12 @@ public class GetUserRatingsQueryHandler(MongoDbContext context)
   /// <returns>Результат с оценками пользователя и общим количеством</returns>
   public async Task<CountResult<UserRatingDto>> Handle(GetUserRatingsQuery request, CancellationToken cancellationToken)
   {
-    // Создаем базовый запрос к коллекции оценок
     IQueryable<RatingModel> baseQuery = context.Ratings.AsQueryable()
       .Where(r => r.UserId == request.Id);
 
-    // Получаем общее количество найденных оценок
     int count = await baseQuery.CountAsync(cancellationToken);
-
-    // Если оценки не найдены, возвращаем пустой результат
     if (count == 0) return CountResult<UserRatingDto>.NoValues();
 
-    // Выполняем запрос и получаем результаты в виде списка
     List<UserRatingDto>? films = await baseQuery
       .OrderByDescending(x => x.CreatedAt)
       .Skip(request.Skip)
@@ -44,22 +39,8 @@ public class GetUserRatingsQueryHandler(MongoDbContext context)
         context.Films.AsQueryable(),
         rating => rating.FilmId,
         film => film.Id,
-        (rating, films) => new { Rating = rating, Film = films.First() }
+        (rating, films) => new { Film = films.First(), rating.Score }
       )
-      .GroupJoin(
-        context.Ratings.AsQueryable(),
-        film => film.Film.Id,
-        rating => rating.FilmId,
-        (film, ratings) => new
-        {
-          film.Film,
-          film.Rating.Score,
-          Date = film.Rating.CreatedAt,
-          // ReSharper disable once PossibleMultipleEnumeration
-          UserRating = ratings.Average(r => r.Score)
-        }
-      )
-      .OrderByDescending(x => x.Date)
       .Select(x => new UserRatingDto
       {
         Id = x.Film.Id,
@@ -75,7 +56,6 @@ public class GetUserRatingsQueryHandler(MongoDbContext context)
       })
       .ToListAsync(cancellationToken);
 
-    // Возвращаем результат с данными и общим количеством
     return new CountResult<UserRatingDto>
     {
       List = films,

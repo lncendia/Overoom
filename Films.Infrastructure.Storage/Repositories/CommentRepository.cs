@@ -46,10 +46,4 @@ public class CommentRepository : RepositoryBase<CommentModel, Comment, CommentSn
       Id = aggregate.Id
     };
   }
-
-  /// <inheritdoc/>
-  protected override Comment FromSnapshot(CommentSnapshot snapshot)
-  {
-    return Comment.FromSnapshot(snapshot);
-  }
 }

@@ -23,19 +23,11 @@ public class LeaveRoomCommandHandler(ISessionHandlerFactory sessionHandlerFactor
   /// <exception cref="RoomNotFoundException">Если комната с указанным ID не найдена</exception>
   public async Task Handle(LeaveRoomCommand request, CancellationToken cancellationToken)
   {
-    // Получаем комнату по идентификатору из запроса
     Room? room = await unitOfWork.RoomRepository.Value.GetAsync(request.RoomId, cancellationToken);
-
-    // Проверяем существование комнаты
     if (room == null) throw new RoomNotFoundException(request.RoomId);
 
-    // Выполняем отключение пользователя от комнаты
     room.Leave(request.UserId);
-
-    // Обновляем состояние комнаты в репозитории
     await unitOfWork.RoomRepository.Value.UpdateAsync(room, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(sessionHandlerFactory.CreateOutboxHandler(), cancellationToken);
   }
 }

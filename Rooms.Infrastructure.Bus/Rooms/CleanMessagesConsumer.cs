@@ -15,7 +15,6 @@ public class CleanMessagesConsumer(IMessagesCleaner cleaner) : IConsumer<CleanMe
   /// <param name="context">Контекст сообщения</param>
   public async Task Consume(ConsumeContext<CleanMessages> context)
   {
-    // Запускаем отчистку сообщений
     await cleaner.CleanAsync(context.Message.RoomId, context.CancellationToken);
   }
 }

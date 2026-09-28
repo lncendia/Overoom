@@ -24,7 +24,6 @@ public class ViewerPlayerUpdatedEventHandler(IRoomEventSender eventSender, IScop
   /// <param name="cancellationToken">Токен отмены операции</param>
   protected override async Task Execute(SaveEvent<Room> @event, CancellationToken cancellationToken)
   {
-    // Если мы не в контексте (событие пришло не через хаб) - не продолжаем
     if (!context.InScope) return;
 
     string excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
@@ -53,7 +52,6 @@ public class ViewerPlayerUpdatedEventHandler(IRoomEventSender eventSender, IScop
       UpdatedFields = updatedFields
     };
 
-    // Обработка измененных свойств зрителя
     foreach (string property in viewer.ChangedProperties)
     {
       string propertyToLower = LowercaseFirstLetter(property);
@@ -86,7 +84,6 @@ public class ViewerPlayerUpdatedEventHandler(IRoomEventSender eventSender, IScop
       }
     }
 
-    // Публикация события только если были изменения
     if (updatedFields.Count == 0) return;
     await eventSender.SendAsync(publishEvent, roomId, excludedConnectionId, cancellationToken);
   }

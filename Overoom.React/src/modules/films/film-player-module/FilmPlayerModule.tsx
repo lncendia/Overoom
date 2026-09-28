@@ -32,15 +32,12 @@ const FilmPlayerModule = (): ReactElement => {
   /** Сезоны и эпизоды фильма/сериала */
   const seasons = useFilmSeasons(film, config);
 
-  // Показываем скелетон, если данные фильма ещё не загружены
   if (!film) return <FilmPlayerSkeleton />;
 
-  // Если нет ни контента, ни сезонов, показываем сообщение "Нет данных"
   if (!seasons && !content) {
     return <NoData text="Фильм еще не загружен" />;
   }
 
-  // Основной рендер: компонент плеера с контентом и сезонами
   return <FilmPlayer content={content} seasons={seasons} />;
 };
 

@@ -19,7 +19,6 @@ public class SeekerEventHandler(IUnitOfWork unitOfWork)
   /// <param name="cancellationToken">Токен отмены операции</param>
   protected override async Task Execute(ViewerTimeLineChangedEvent notification, CancellationToken cancellationToken)
   {
-    // Если это синхронизация - не обрабатываем
     if (notification.IsSyncEvent) return;
 
     int seekCount =

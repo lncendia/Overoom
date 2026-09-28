@@ -62,50 +62,30 @@ public class VkIdClaimsMapper : ExternalClaimsMapperBase
   /// <exception cref="HttpRequestException">Выбрасывается при ошибке запроса к VK API</exception>
   public override async Task<ClaimsIdentity> MapAsync(AuthenticateResult result)
   {
-    // Получаем идентификатор пользователя из claims
     string id = result.Principal?.FindFirstValue(ClaimTypes.NameIdentifier)
                 ?? throw new Exception("VkId: missing id");
 
-    // Создаем базовую identity с идентификатором
     ClaimsIdentity identity = CreateBaseIdentity(id);
-
-    // Добавляем email пользователя, если он есть
     identity.TryAddClaim(ClaimTypes.Email, result.Principal?.FindFirstValue(ClaimTypes.Email));
-
-    // Добавляем аватар пользователя
     identity.TryAddClaim(Constants.Claims.Thumbnail, result.Principal?.FindFirstValue("avatar"));
-
-    // Извлекаем access_token из properties аутентификации
     IEnumerable<AuthenticationToken>? tokens = result.Properties?.GetTokens();
     string? accessToken = tokens?.FirstOrDefault(t => t.Name == "backchannel_access_token")?.Value;
 
-    // Проверяем наличие access token
     if (string.IsNullOrEmpty(accessToken))
       throw new Exception("VkId: missing access_token");
 
-    // Формируем параметры запроса к VK API
     var parameters = new Dictionary<string, string?>
     {
       ["v"] = ApiVersion,
       ["fields"] = "first_name,last_name"
     };
 
-    // Формируем URL запроса с параметрами
     string address = QueryHelpers.AddQueryString(UserInformationEndpoint, parameters);
-
-    // Формируем запрос к Vk API для получения информации о пользователе
     var request = new HttpRequestMessage(HttpMethod.Get, address);
-
-    // Устанавливаем заголовок авторизации с access token
     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-    // Получаем токен отмены из HTTP контекста
     CancellationToken cancellation = _httpContextAccessor.HttpContext?.RequestAborted ?? CancellationToken.None;
-
-    // Выполняем запрос к VK API для получения дополнительной информации о пользователе
     using HttpResponseMessage response = await _backchannel.SendAsync(request, cancellation);
 
-    // Проверяем успешность запроса
     if (!response.IsSuccessStatusCode)
     {
       _logger.LogError("VK profile request failed: {StatusCode} {Reason}",
@@ -113,22 +93,19 @@ public class VkIdClaimsMapper : ExternalClaimsMapperBase
       throw new HttpRequestException("An error occurred while retrieving the VK user profile.");
     }
 
-    // Парсим ответ от VK API
     using var container = JsonDocument.Parse(await response.Content.ReadAsStringAsync(cancellation));
 
-    // Извлекаем данные первого пользователя из ответа
     JsonElement user = container.RootElement
       .GetProperty("response")
       .EnumerateArray()
       .FirstOrDefault();
 
-    // Если получены данные пользователя, извлекаем имя и фамилию, так как в UserInfo приходит английский вариант имени
+    // Берём имя и фамилию отсюда, так как в UserInfo приходит английский вариант имени
     if (user.ValueKind == JsonValueKind.Object)
     {
       string? firstName = user.TryGetProperty("first_name", out JsonElement fn) ? fn.GetString() : null;
       string? lastName = user.TryGetProperty("last_name", out JsonElement ln) ? ln.GetString() : null;
 
-      // Формируем полное имя из имени и фамилии
       if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
       {
         string fullName = string.Join(" ", new[] { firstName, lastName }.Where(x => !string.IsNullOrEmpty(x)));

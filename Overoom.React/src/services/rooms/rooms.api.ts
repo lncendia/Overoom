@@ -60,12 +60,10 @@ export class RoomsApi {
       params: query,
     });
 
-    // Добавляем URL постеров к комнатам
     for (const room of response.data.list) {
       room.posterUrl = this.posterUrlFormat + room.posterKey;
     }
 
-    // Добавляем URL аватарок к комнатам
     for (const room of response.data.list) {
       room.photoUrl = this.thumbnailUrlFormat + room.photoKey;
     }
@@ -80,12 +78,10 @@ export class RoomsApi {
   async getMy(): Promise<RoomShortResponse[]> {
     const response = await this.axiosInstance.get<RoomShortResponse[]>('rooms/my');
 
-    // Добавляем URL постеров к комнатам
     for (const room of response.data) {
       room.posterUrl = this.posterUrlFormat + room.posterKey;
     }
 
-    // Добавляем URL аватарок к комнатам
     for (const room of response.data) {
       room.photoUrl = this.thumbnailUrlFormat + room.photoKey;
     }

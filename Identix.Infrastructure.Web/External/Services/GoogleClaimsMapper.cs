@@ -19,19 +19,10 @@ public class GoogleClaimsMapper() : ExternalClaimsMapperBase(OpenIddictClientWeb
   /// <exception cref="Exception">Когда отсутствует обязательный идентификатор пользователя</exception>
   public override Task<ClaimsIdentity> MapAsync(AuthenticateResult result)
   {
-    // Получаем обязательный идентификатор пользователя из Google
     string? id = result.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
-
-    // Создаем базовую identity с идентификатором
     ClaimsIdentity identity = CreateBaseIdentity(id);
-
-    // Маппим отображаемое имя пользователя
     identity.TryAddClaim(ClaimTypes.Name, result.Principal?.FindFirstValue(ClaimTypes.Name));
-
-    // Маппим email пользователя
     identity.TryAddClaim(ClaimTypes.Email, result.Principal?.FindFirstValue(ClaimTypes.Email));
-
-    // Маппим URL аватара пользователя из claim "picture"
     identity.TryAddClaim(Constants.Claims.Thumbnail, result.Principal?.FindFirstValue("picture"));
 
     return Task.FromResult(identity);

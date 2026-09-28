@@ -27,17 +27,10 @@ public class ViewerJoinedEventHandler(IUnitOfWork unitOfWork, IPublishEndpoint p
   protected override async Task Execute(ViewerJoinedEvent notification, CancellationToken cancellationToken)
   {
     User user = notification.Viewer;
-
-    // Создаем спецификацию для поиска комнат, созданных текущим пользователем
     var roomsSpecification = new RoomByUserSpecification(user.Id);
-
-    // Получаем количество комнат, созданных пользователем
     int roomsCount = await unitOfWork.RoomRepository.Value.CountAsync(roomsSpecification, cancellationToken);
-
-    // Проверяем, не превысил ли пользователь лимит созданных комнат (5 комнаты)
     if (roomsCount >= Constants.Limits.MaxRoomsPerUser) throw new MaxNumberRoomsReachedException(user.Id);
 
-    // Создаем событие интеграции с информацией о подключившемся зрителе
     var integrationEvent = new RoomViewerJoinedIntegrationEvent
     {
       RoomId = notification.Room.Id,
@@ -50,7 +43,6 @@ public class ViewerJoinedEventHandler(IUnitOfWork unitOfWork, IPublishEndpoint p
       }
     };
 
-    // Публикуем событие интеграции через MassTransit
     await publishEndpoint.Publish(integrationEvent, cancellationToken: cancellationToken);
   }
 }

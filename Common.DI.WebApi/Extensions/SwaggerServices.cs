@@ -21,37 +21,22 @@ public static class SwaggerServices
   /// <param name="types">Типы, из сборок которых будут загружены файлы с документацией.</param>
   public static void AddSwaggerServices(this IHostApplicationBuilder builder, params Type[] types)
   {
-    // Получение значения "Authorization:Issuer" из конфигурации.
     string issuer = builder.Configuration.GetRequiredValue<string>("Swagger:Issuer");
-
-    // Получение областей OAuth из конфигурации.
     Scope[]? scopes = builder.Configuration.GetSection("Swagger:Scopes").Get<Scope[]>();
-
-    // Получение значения "Swagger:Title" из конфигурации.
     string title = builder.Configuration.GetRequiredValue<string>("Swagger:Title");
-
-    // Получение значения "Swagger:Version" из конфигурации.
     string version = builder.Configuration.GetRequiredValue<string>("Swagger:Version");
-
-    // Если области не указаны - вызывается исключение.
     if (scopes == null || scopes.Length == 0) throw new ConfigurationException("Swagger:Scopes");
 
     builder.Services.AddSwaggerGen(options =>
     {
-      // Включение human-friendly описаний для операций, параметров и схем на
-      // основе файлов комментариев XML
       foreach (Type type in types)
       {
-        // Получение имени файла
         string filename = $"{type.Assembly.GetName().Name}.xml";
-
-        // Добавление комментариев в файлы
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, filename));
       }
 
       options.SwaggerDoc(version, new OpenApiInfo { Title = title, Version = version });
 
-      // Определите схему OAuth2 для Swagger
       options.AddSecurityDefinition("OAuth2", new OpenApiSecurityScheme
       {
         Type = SecuritySchemeType.OAuth2,
@@ -66,10 +51,9 @@ public static class SwaggerServices
         }
       });
 
-      // Используйте схему OAuth2 для всех операций в Swagger
       options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
       {
-        [new OpenApiSecuritySchemeReference("OAuth2", document)] = scopes.Select(s => s.Name).ToList()
+        [new OpenApiSecuritySchemeReference("OAuth2", document)] = [.. scopes.Select(s => s.Name)]
       });
     });
   }

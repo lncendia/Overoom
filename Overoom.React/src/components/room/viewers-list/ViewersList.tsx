@@ -26,20 +26,14 @@ interface ViewersListProps {
  * @returns {ReactElement} JSX элемент списка зрителей
  */
 const ViewersList = (props: ViewersListProps): ReactElement => {
-  // Состояние видимости списка других зрителей
   const [show, setShow] = useState(props.isCollapsed ?? false);
-
-  // Текущий пользователь (отображается всегда)
   const currentViewer = useMemo(() => props.viewers.filter((v) => v.isCurrent)[0], [props.viewers]);
-
-  // Остальные зрители (отображаются в раскрывающемся списке)
   const otherViewers = useMemo(() => props.viewers.filter((v) => !v.isCurrent), [props.viewers]);
 
   const open = useMemo(() => show && otherViewers.length > 0, [otherViewers.length, show]);
 
   return (
     <Paper>
-      {/* Основная панель с текущим пользователем и кнопкой меню */}
       <Box
         sx={{
           display: 'flex',
@@ -47,7 +41,6 @@ const ViewersList = (props: ViewersListProps): ReactElement => {
           alignItems: 'center',
         }}
       >
-        {/* Компонент текущего пользователя */}
         {currentViewer && (
           <Viewer
             viewer={currentViewer}
@@ -56,7 +49,6 @@ const ViewersList = (props: ViewersListProps): ReactElement => {
           />
         )}
 
-        {/* Кнопка переключения видимости списка зрителей */}
         <IconButton
           color={open ? 'primary' : 'inherit'}
           onClick={() => setShow((v) => !v)}
@@ -66,7 +58,6 @@ const ViewersList = (props: ViewersListProps): ReactElement => {
         </IconButton>
       </Box>
 
-      {/* Раскрывающаяся секция с остальными зрителями */}
       <Collapse in={open}>
         <Divider sx={{ mt: 2 }} />
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>

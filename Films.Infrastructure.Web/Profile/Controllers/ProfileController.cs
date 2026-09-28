@@ -32,10 +32,8 @@ public class ProfileController(ISender mediator, IMapper mapper) : ControllerBas
   [HttpGet]
   public async Task<UserProfileDto> GetProfile(CancellationToken token = default)
   {
-    // Преобразуем входную модель в CQRS запрос
     var query = new GetUserProfileQuery { Id = User.GetId() };
 
-    // Отправляем запрос через медиатор и возвращаем результат
     return await mediator.Send(query, token);
   }
 
@@ -50,10 +48,8 @@ public class ProfileController(ISender mediator, IMapper mapper) : ControllerBas
   [Authorize]
   public Task<IReadOnlyList<FilmShortDto>> GetWatchlist(CancellationToken token = default)
   {
-    // Создаем запрос с ID текущего пользователя
     var query = new GetUserWatchlistQuery { Id = User.GetId() };
 
-    // Отправляем запрос через медиатор и возвращаем результат
     return mediator.Send(query, token);
   }
 
@@ -68,10 +64,8 @@ public class ProfileController(ISender mediator, IMapper mapper) : ControllerBas
   [Authorize]
   public Task<IReadOnlyList<FilmShortDto>> GetHistory(CancellationToken token = default)
   {
-    // Создаем запрос с ID текущего пользователя
     var query = new GetUserHistoryQuery { Id = User.GetId() };
 
-    // Отправляем запрос через медиатор и возвращаем результат
     return mediator.Send(query, token);
   }
 
@@ -91,13 +85,9 @@ public class ProfileController(ISender mediator, IMapper mapper) : ControllerBas
     [FromQuery] GetRatingsInputModel model,
     CancellationToken token = default)
   {
-    // Преобразуем входную модель в CQRS запрос
     var query = new GetUserRatingsQuery { Id = User.GetId(), Skip = model.Skip, Take = model.Take };
-
-    // Устанавливаем ID пользователя из контекста авторизации
     query.Id = User.GetId();
 
-    // Отправляем запрос через медиатор и возвращаем результат
     return await mediator.Send(query, token);
   }
 
@@ -113,17 +103,14 @@ public class ProfileController(ISender mediator, IMapper mapper) : ControllerBas
   [HttpPost("history/{filmId:guid}")]
   public async Task<IActionResult> AddFilmToHistory(Guid filmId, CancellationToken token = default)
   {
-    // Преобразуем входную модель в CQRS запрос
     var command = new AddToHistoryCommand
     {
       UserId = User.GetId(),
       FilmId = filmId
     };
 
-    // Отправляем запрос через медиатор и возвращаем результат
     await mediator.Send(command, token);
 
-    // Возвращаем статус 204 No Content
     return NoContent();
   }
 
@@ -140,17 +127,14 @@ public class ProfileController(ISender mediator, IMapper mapper) : ControllerBas
   [HttpPost("watchlist/{filmId:guid}")]
   public async Task<IActionResult> ToggleWatchListCommand(Guid filmId, CancellationToken token = default)
   {
-    // Преобразуем входную модель в CQRS запрос
     var command = new ToggleWatchListCommand
     {
       UserId = User.GetId(),
       FilmId = filmId
     };
 
-    // Отправляем запрос через медиатор и возвращаем результат
     await mediator.Send(command, token);
 
-    // Возвращаем статус 204 No Content
     return NoContent();
   }
 
@@ -167,14 +151,10 @@ public class ProfileController(ISender mediator, IMapper mapper) : ControllerBas
   public async Task<IActionResult> UpdateNotificationSettings([FromBody] UpdateRoomSettingsInputModel model,
     CancellationToken token = default)
   {
-    // Преобразуем входную модель в CQRS запрос
     UpdateRoomSettingsCommand? command = mapper.Map<UpdateRoomSettingsCommand>(model);
     command.UserId = User.GetId();
-
-    // Отправляем запрос через медиатор и возвращаем результат
     await mediator.Send(command, token);
 
-    // Возвращаем статус 204 No Content
     return NoContent();
   }
 }

@@ -33,15 +33,11 @@ const GenreChip = styled(Chip)(({ theme }) => ({
  * @returns {ReactElement} JSX элемент со списком жанров
  */
 const GenresList = ({ genres, selected, limit }: GenresListProps): ReactElement => {
-  // Ограничиваем количество отображаемых жанров, если указан limit
   const displayedGenres = limit ? genres.slice(0, limit) : genres;
-
-  // Считаем количество скрытых жанров
   const remainingCount = limit && genres.length > limit ? genres.length - limit : 0;
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-      {/* Чипы с жанрами */}
       {displayedGenres.map((genre) => (
         <GenreChip
           key={genre}
@@ -57,7 +53,6 @@ const GenresList = ({ genres, selected, limit }: GenresListProps): ReactElement 
         />
       ))}
 
-      {/* Показываем количество скрытых жанров, если они есть */}
       {remainingCount > 0 && (
         <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
           +{remainingCount}

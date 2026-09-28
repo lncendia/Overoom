@@ -44,7 +44,6 @@ const PosterImage = styled('img')({
 const FilmSearchElement = ({ film, onClick }: FilmSearchElementProps): ReactElement => {
   return (
     <SearchElement onClick={onClick}>
-      {/* Изображение постера фильма */}
       <PosterImage
         src={film.posterUrl}
         alt={`Постер ${film.title}`}
@@ -53,7 +52,6 @@ const FilmSearchElement = ({ film, onClick }: FilmSearchElementProps): ReactElem
         }}
       />
       <Box sx={{ overflow: 'hidden' }}>
-        {/* Заголовок фильма */}
         <Typography
           variant="subtitle1"
           noWrap
@@ -65,7 +63,6 @@ const FilmSearchElement = ({ film, onClick }: FilmSearchElementProps): ReactElem
         >
           {film.title}
         </Typography>
-        {/* Описание фильма (если есть) */}
         {film.description && (
           <Typography
             variant="body2"

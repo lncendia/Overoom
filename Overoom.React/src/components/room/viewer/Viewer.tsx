@@ -44,10 +44,8 @@ const Viewer = (props: ViewerProps): ReactElement => {
 
   return (
     <Stack direction="row" spacing={2} alignItems="top" sx={{ mt: 1 }}>
-      {/* Аватар зрителя */}
       <Avatar src={viewer.photoUrl ?? undefined} sx={{ width: 48, height: 48 }} />
 
-      {/* Основная информация о зрителе */}
       <Box flex={1}>
         {viewer.online ? <OnlineViewer {...props} /> : <OfflineViewer {...props} />}
         <TagsList tags={viewer.tags} />
@@ -66,25 +64,20 @@ const OnlineViewer = (props: ViewerProps): ReactElement => {
 
   return (
     <>
-      {/* Строка с именем и индикаторами состояния */}
       <Stack direction="row" spacing={1} alignItems="center">
         <Username {...props} />
 
-        {/* Индикатор паузы/воспроизведения */}
         {viewer.onPause ? <PauseIcon fontSize="small" /> : <PlayArrowIcon fontSize="small" />}
 
-        {/* Индикатор полноэкранного режима */}
         {viewer.fullScreen ? (
           <FullscreenIcon fontSize="small" />
         ) : (
           <FullscreenExitIcon fontSize="small" />
         )}
 
-        {/* Индикатор печатания */}
         {viewer.typing && <KeyboardIcon fontSize="small" />}
       </Stack>
 
-      {/* Время просмотра и информация о сезоне/эпизоде */}
       <Typography variant="body2">
         {formatTime(viewer.timeLine)}
         {viewer.season && viewer.episode && (
@@ -107,7 +100,6 @@ const OfflineViewer = (props: ViewerProps): ReactElement => {
   return (
     <Stack direction="row" spacing={1} alignItems="center">
       <Username {...props} />
-      {/* Бейдж оффлайн статуса */}
       <Chip label="offline" size="small" color="default" />
     </Stack>
   );
@@ -123,8 +115,6 @@ const Username = (props: ViewerProps): ReactElement => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-
-  // Проверяем наличие доступных действий для этого зрителя
   const hasActions = viewer.canBeep || viewer.canScream || viewer.canKick || viewer.canSync;
 
   /**
@@ -142,28 +132,22 @@ const Username = (props: ViewerProps): ReactElement => {
 
   return (
     <Stack direction="row" alignItems="center" spacing={0.5}>
-      {/* Имя пользователя с цветом в зависимости от статуса */}
       <Typography variant="subtitle1" color={viewer.online ? 'text.primary' : 'text.disabled'}>
         {viewer.userName}
       </Typography>
 
-      {/* Кнопка меню действий (отображается только если есть доступные действия) */}
       {hasActions && (
         <>
           <IconButton size="small" onClick={handleClick} color="inherit">
             <MoreVertIcon fontSize="small" />
           </IconButton>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-            {/* Действие синхронизации (только для онлайн зрителей) */}
             {viewer.canSync && <MenuItem onClick={onSync}>Синхронизовать</MenuItem>}
 
-            {/* Действие выгона из комнаты */}
             {viewer.canKick && <MenuItem onClick={onKick}>Выгнать</MenuItem>}
 
-            {/* Действие "бип" (только для онлайн зрителей) */}
             {viewer.canBeep && <MenuItem onClick={onBeep}>Разбудить</MenuItem>}
 
-            {/* Действие "крик" (только для онлайн зрителей) */}
             {viewer.canScream && <MenuItem onClick={onScream}>Напугать</MenuItem>}
           </Menu>
         </>

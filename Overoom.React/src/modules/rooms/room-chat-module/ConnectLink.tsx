@@ -31,25 +31,13 @@ const ConnectLink = ({
    * Формирует URL с идентификатором комнаты и кодом доступа и копирует его в буфер обмена
    */
   const callback = useCallback(() => {
-    // Создаем объект для работы с query-параметрами
     const searchParams = new URLSearchParams();
-
-    // Добавляем обязательный параметр "id" комнаты
     searchParams.set('id', id);
-
-    // Добавляем код доступа, если он предоставлен
     if (code) searchParams.set('code', code);
 
-    // Формируем полный URL
     const newUrl = `${window.location.origin}/${endpoint}?${searchParams.toString()}`;
-
-    // Копируем URL в буфер обмена
     navigator.clipboard.writeText(newUrl).then();
-
-    // Устанавливаем флаг "скопировано"
     setIsClicked(true);
-
-    // Сбрасываем флаг через 5 секунд
     handleClick();
   }, [code, endpoint, handleClick, id]);
 

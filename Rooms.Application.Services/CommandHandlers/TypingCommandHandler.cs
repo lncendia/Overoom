@@ -24,10 +24,8 @@ public class TypingCommandHandler(IRoomEventSender eventSender, IScopedContext c
   /// <exception cref="InvalidOperationException">Если данные контекста невалидны</exception>
   public async Task Handle(TypingCommand request, CancellationToken cancellationToken)
   {
-    // Получаем идентификатор текущего соединения из контекста области
     string excludedConnectionId = context.Current.Get<string>(Constants.ScopedDictionary.CurrentConnectionIdKey);
 
-    // Публикуем событие о наборе текста в комнату через MassTransit
     await eventSender.SendAsync(new TypingEvent { Initiator = request.ViewerId }, request.RoomId, excludedConnectionId,
       cancellationToken);
   }

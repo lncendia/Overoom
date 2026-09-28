@@ -19,7 +19,6 @@ public class FullscreenerEventHandler(IUnitOfWork unitOfWork)
   /// <param name="cancellationToken">Токен отмены операции</param>
   protected override async Task Execute(ViewerFullScreenChangedEvent notification, CancellationToken cancellationToken)
   {
-    // Если это синхронизация - не обрабатываем
     if (notification.IsSyncEvent) return;
 
     if (notification.Viewer.FullScreen)

@@ -24,13 +24,9 @@ public class OpenIdClaimsIdentityFactory(UserManager<AppUser> userManager, RoleM
   /// <returns>Обновленный ClaimsPrincipal</returns>
   public async Task<ClaimsIdentity> CreateAsync(AppUser user, string scheme, ClaimsIdentity baseIdentity)
   {
-    // Создаем новую identity с актуальными данными пользователя
     ClaimsIdentity newIdentity = await BuildIdentityAsync(user, scheme);
-
-    // Сохраняем важные claims аутентификации из текущего principal
     AddPreservedClaims(newIdentity, baseIdentity);
 
-    // Возвращаем готовую identity для использования в токенах
     return newIdentity;
   }
 
@@ -42,40 +38,31 @@ public class OpenIdClaimsIdentityFactory(UserManager<AppUser> userManager, RoleM
   /// <returns>ClaimsIdentity с claims пользователя</returns>
   private async Task<ClaimsIdentity> BuildIdentityAsync(AppUser user, string scheme)
   {
-    // Создаём пустую identity с правильными типами name/role для OpenID Connect
     var identity = new ClaimsIdentity(
       authenticationType: scheme,
       nameType: OpenIddictConstants.Claims.Name,
       roleType: OpenIddictConstants.Claims.Role);
 
-    // Добавляем основной идентификатор пользователя (claim 'sub')
     await AddSubjectClaimAsync(identity, user);
-
-    // Добавляем claims связанные с именем пользователя (name, preferred_username)
     await AddUsernameClaimsAsync(identity, user);
 
-    // Добавляем claims email если UserManager поддерживает работу с email
     if (userManager.SupportsUserEmail)
     {
       await AddEmailClaimsAsync(identity, user);
     }
 
-    // Добавляем claims телефона если UserManager поддерживает работу с номерами телефонов
     if (userManager.SupportsUserPhoneNumber)
     {
       await AddPhoneClaimsAsync(identity, user);
     }
 
-    // Добавляем claims ролей если UserManager поддерживает систему ролей
     if (userManager.SupportsUserRole)
     {
       await AddRoleClaimsAsync(identity, user);
     }
 
-    // Добавляем кастомные пользовательские claims из хранилища
     await AddUserClaimsAsync(identity, user);
 
-    // Возвращаем полностью сформированную identity со всеми claims пользователя
     return identity;
   }
 
@@ -86,10 +73,7 @@ public class OpenIdClaimsIdentityFactory(UserManager<AppUser> userManager, RoleM
   /// <param name="user">Пользователь, для которого добавляются claims</param>
   private async Task AddSubjectClaimAsync(ClaimsIdentity identity, AppUser user)
   {
-    // Получаем уникальный идентификатор пользователя из UserManager
     string sub = await userManager.GetUserIdAsync(user);
-
-    // Добавляем OIDC claim 'sub'
     identity.AddClaim(new Claim(OpenIddictConstants.Claims.Subject, sub));
   }
 
@@ -100,14 +84,10 @@ public class OpenIdClaimsIdentityFactory(UserManager<AppUser> userManager, RoleM
   /// <param name="user">Пользователь, для которого добавляются claims</param>
   private async Task AddUsernameClaimsAsync(ClaimsIdentity identity, AppUser user)
   {
-    // Получаем имя пользователя из UserManager
     string? username = await userManager.GetUserNameAsync(user);
     if (string.IsNullOrWhiteSpace(username)) return;
 
-    // Добавляем OIDC claim 'name'
     identity.AddClaim(new Claim(OpenIddictConstants.Claims.Name, username));
-
-    // Добавляем OIDC claim 'preferred_username'
     identity.AddClaim(new Claim(OpenIddictConstants.Claims.PreferredUsername, username));
   }
 
@@ -118,22 +98,16 @@ public class OpenIdClaimsIdentityFactory(UserManager<AppUser> userManager, RoleM
   /// <param name="user">Пользователь, для которого добавляются claims</param>
   private async Task AddRoleClaimsAsync(ClaimsIdentity identity, AppUser user)
   {
-    // Получаем список ролей пользователя из UserManager
     IList<string> roles = await userManager.GetRolesAsync(user);
 
-    // Добавляем claim для каждой роли пользователя
     foreach (string roleName in roles)
     {
-      // Добавляем основную claim роли
       identity.AddClaim(new Claim(OpenIddictConstants.Claims.Role, roleName));
-
-      // Если RoleManager поддерживает claims ролей, добавляем дополнительные claims
       if (!roleManager.SupportsRoleClaims) continue;
 
       AppRole? role = await roleManager.FindByNameAsync(roleName);
       if (role == null) continue;
 
-      // Получаем claims, связанные с ролью, и фильтруем по разрешенному списку
       IList<Claim> roleClaims = await roleManager.GetClaimsAsync(role);
       identity.AddClaims(roleClaims.Where(c => _allowedClaims.Contains(c.Type)));
     }
@@ -146,10 +120,7 @@ public class OpenIdClaimsIdentityFactory(UserManager<AppUser> userManager, RoleM
   /// <param name="user">Пользователь, для которого добавляются claims</param>
   private async Task AddUserClaimsAsync(ClaimsIdentity identity, AppUser user)
   {
-    // Получаем все пользовательские claims из UserManager
     IList<Claim> claims = await userManager.GetClaimsAsync(user);
-
-    // Фильтруем claims через whitelist разрешенных claims и добавляем в identity
     identity.AddClaims(claims.Where(c => _allowedClaims.Contains(c.Type)));
   }
 
@@ -160,17 +131,12 @@ public class OpenIdClaimsIdentityFactory(UserManager<AppUser> userManager, RoleM
   /// <param name="user">Пользователь, для которого добавляются claims</param>
   private async Task AddEmailClaimsAsync(ClaimsIdentity identity, AppUser user)
   {
-    // Получаем email пользователя из UserManager
     string? email = await userManager.GetEmailAsync(user);
     if (string.IsNullOrWhiteSpace(email)) return;
 
-    // Проверяем подтвержден ли email
     bool emailVerified = await userManager.IsEmailConfirmedAsync(user);
-
-    // Добавляем OIDC claim 'email'
     identity.AddClaim(new Claim(OpenIddictConstants.Claims.Email, email));
 
-    // Добавляем OIDC claim 'email_verified'
     identity.AddClaim(new Claim(OpenIddictConstants.Claims.EmailVerified,
       emailVerified.ToString().ToLowerInvariant(), ClaimValueTypes.Boolean));
   }
@@ -182,17 +148,12 @@ public class OpenIdClaimsIdentityFactory(UserManager<AppUser> userManager, RoleM
   /// <param name="user">Пользователь, для которого добавляются claims</param>
   private async Task AddPhoneClaimsAsync(ClaimsIdentity identity, AppUser user)
   {
-    // Получаем номер телефона пользователя из UserManager
     string? phone = await userManager.GetPhoneNumberAsync(user);
     if (string.IsNullOrWhiteSpace(phone)) return;
 
-    // Проверяем подтвержден ли номер телефона
     bool phoneVerified = await userManager.IsPhoneNumberConfirmedAsync(user);
-
-    // Добавляем OIDC claim 'phone_number'
     identity.AddClaim(new Claim(OpenIddictConstants.Claims.PhoneNumber, phone));
 
-    // Добавляем OIDC claim 'phone_number_verified'
     identity.AddClaim(new Claim(OpenIddictConstants.Claims.PhoneNumberVerified,
       phoneVerified.ToString().ToLowerInvariant(), ClaimValueTypes.Boolean));
   }
@@ -204,13 +165,11 @@ public class OpenIdClaimsIdentityFactory(UserManager<AppUser> userManager, RoleM
   /// <param name="currentIdentity">Текущая ClaimsIdentity с исходными claims</param>
   private static void AddPreservedClaims(ClaimsIdentity identity, ClaimsIdentity currentIdentity)
   {
-    // Находим claims, которые нужно сохранить из текущей identity
     IEnumerable<Claim> preservedClaims = currentIdentity.Claims
       .Where(c => c.Type is OpenIddictConstants.Claims.AuthenticationMethodReference
         or Constants.Claims.IdentityProvider
         or OpenIddictConstants.Claims.AuthenticationTime || c.Type.StartsWith("oi_"));
 
-    // Добавляем каждый сохраненный claim, если он отсутствует в целевой identity
     identity.AddClaims(preservedClaims);
   }
 
@@ -218,19 +177,18 @@ public class OpenIdClaimsIdentityFactory(UserManager<AppUser> userManager, RoleM
   /// Список разрешенных claims (утверждений) для использования в системе.
   /// Включает стандартные claims OpenIddict и дополнительные кастомные claims.
   /// </summary>
-  private static readonly HashSet<string> _allowedClaims = typeof(OpenIddictConstants.Claims)
+  private static readonly HashSet<string> _allowedClaims =
+  [
+    .. typeof(OpenIddictConstants.Claims)
 
-    // Получаем все публичные статические поля из класса OpenIddictConstants.Claims
-    .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+      .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
 
-    // Извлекаем значения этих полей (строковые константы)
-    .Select(f => (string)f.GetValue(null)!)
+      .Select(f => (string)f.GetValue(null)!),
 
-    // Добавляем кастомный claim Identity Provider
-    .Concat([Constants.Claims.IdentityProvider])
 
-    // Преобразовываем в хеш-сет
-    .ToHashSet();
+    Constants.Claims.IdentityProvider
+
+  ];
 
   /// <summary>
   /// Управляет попаданием клаймов в Access/Identity токены в зависимости от scope

@@ -32,10 +32,8 @@ public class FilmsController(ISender mediator, IMapper mapper) : ControllerBase
   public async Task<IEnumerable<FilmShortDto>> GetPopular([FromQuery] GetPopularFilmsInputModel model,
     CancellationToken token = default)
   {
-    // Преобразуем входную модель в CQRS запрос
     GetPopularFilmsQuery? query = mapper.Map<GetPopularFilmsQuery>(model);
 
-    // Отправляем запрос через медиатор и возвращаем результат
     return await mediator.Send(query, token);
   }
 
@@ -51,10 +49,8 @@ public class FilmsController(ISender mediator, IMapper mapper) : ControllerBase
   public Task<CountResult<FilmShortDto>> Search([FromQuery] SearchFilmsInputModel model,
     CancellationToken token = default)
   {
-    // Преобразуем входную модель в CQRS запрос
     SearchFilmsQuery? query = mapper.Map<SearchFilmsQuery>(model);
 
-    // Отправляем запрос через медиатор и возвращаем результат
     return mediator.Send(query, token);
   }
 
@@ -69,14 +65,12 @@ public class FilmsController(ISender mediator, IMapper mapper) : ControllerBase
   [HttpGet("{id:guid}")]
   public Task<FilmDto> GetById(Guid id, CancellationToken token = default)
   {
-    // Создаем запрос с ID фильма и ID пользователя (если авторизован)
     var query = new GetFilmByIdQuery
     {
       Id = id,
       UserId = User.Identity is { IsAuthenticated: true } ? User.GetId() : null
     };
 
-    // Отправляем запрос через медиатор и возвращаем результат
     return mediator.Send(query, token);
   }
 
@@ -99,7 +93,6 @@ public class FilmsController(ISender mediator, IMapper mapper) : ControllerBase
     [FromBody] RateFilmInputModel model,
     CancellationToken token = default)
   {
-    // Преобразуем входную модель в CQRS запрос
     var command = new SetRatingCommand
     {
       FilmId = filmId,
@@ -107,10 +100,8 @@ public class FilmsController(ISender mediator, IMapper mapper) : ControllerBase
       Score = model.Score
     };
 
-    // Отправляем запрос через медиатор и возвращаем результат
     await mediator.Send(command, token);
 
-    // Возвращаем статус 204 No Content
     return NoContent();
   }
 }

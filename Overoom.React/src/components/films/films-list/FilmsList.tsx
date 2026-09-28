@@ -45,7 +45,6 @@ const FilmsList = ({
         <Grid container spacing={2}>
           {films.map((film) => (
             <Grid size="auto" key={film.id} sx={{ display: 'flex', justifyContent: 'center' }}>
-              {/* Карточка компактного фильма */}
               <FilmShortItem film={film} onClick={() => onSelect(film.id)} />
             </Grid>
           ))}

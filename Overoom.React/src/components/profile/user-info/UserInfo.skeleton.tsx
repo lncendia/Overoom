@@ -14,14 +14,11 @@ const UserInfoSkeleton = (): ReactElement => {
         padding: 2,
       }}
     >
-      {/* Скелетон аватара пользователя */}
       <Skeleton variant="circular" width={64} height={64} />
 
       <Box sx={{ ml: 2, flex: 1 }}>
-        {/* Скелетон имени пользователя */}
         <Skeleton variant="text" width="40%" height={28} sx={{ mb: 1 }} />
 
-        {/* Скелетоны чипов жанров */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
           {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton

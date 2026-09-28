@@ -23,28 +23,16 @@ public class SetupTwoFactorCommandHandler(UserManager<AppUser> userManager)
   /// <exception cref="TwoFactorAlreadyEnabledException">Вызывается, если 2FA уже подключена, и аутентификатор уже был установлен</exception>
   public async Task<(AppUser, string)> Handle(SetupTwoFactorCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по адресу электронной почты.
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Вызываем исключение, если пользователь не найден
     if (user == null) throw new UserNotFoundException();
-
-    // Вызываем исключение, если 2FA уже подключена
     if (await userManager.GetTwoFactorEnabledAsync(user)) throw new TwoFactorAlreadyEnabledException();
 
-    // Устанавливаем аутентификатор и получаем в виде строки
     string? authenticatorKey = await userManager.GetAuthenticatorKeyAsync(user);
-
-    // Если аутентификатор установлен, возвращаем его
     if (authenticatorKey != null) return (user, authenticatorKey);
 
-    // Если нет, сбрасываем аутентификатор
     await userManager.ResetAuthenticatorKeyAsync(user);
-
-    // Устанавливаем аутентификатор и получаем в виде строки
     authenticatorKey = await userManager.GetAuthenticatorKeyAsync(user);
 
-    // Возвращаем кортеж из пользователя и аутентификатора
     return (user, authenticatorKey!);
   }
 }

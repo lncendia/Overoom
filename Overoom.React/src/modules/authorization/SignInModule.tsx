@@ -28,7 +28,6 @@ const SignInModule = (): ReactElement => {
     handleSignInCallback();
   }, [handleSignInCallback]);
 
-  // Возвращаем JSX элемент, который содержит структуру страницы с текстом "Перенаправление"
   return <Redirecting />;
 };
 

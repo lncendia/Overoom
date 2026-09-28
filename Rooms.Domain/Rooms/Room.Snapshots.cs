@@ -1,32 +1,20 @@
-using System.Reflection;
+using Common.Domain.Aggregates;
 
 using Rooms.Domain.Rooms.Entities;
 using Rooms.Domain.Rooms.Snapshots;
 
 namespace Rooms.Domain.Rooms;
 
-public partial class Room
+public partial class Room : ISnapshotable<Room, RoomSnapshot>
 {
-  /// <summary>
-  /// Воссоздаёт агрегат Message из снапшота.
-  /// </summary>
-  internal static Room FromSnapshot(RoomSnapshot snapshot)
+  /// <inheritdoc/>
+  static Room ISnapshotable<Room, RoomSnapshot>.Restore(RoomSnapshot snapshot)
   {
-    // Получаем тип Room
-    Type filmType = typeof(Room);
-
-    // Получаем внутренний конструктор, который принимает RoomSnapshot
-    ConstructorInfo? constructor = filmType.GetConstructor(
-      BindingFlags.NonPublic | BindingFlags.Instance,
-      null,
-      [typeof(RoomSnapshot)],
-      null);
-
-    // Вызываем конструктор и возвращаем результат
-    return (Room)constructor!.Invoke([snapshot]);
+    return new Room(snapshot);
   }
 
-  internal RoomSnapshot GetSnapshot()
+  /// <inheritdoc/>
+  RoomSnapshot ISnapshotable<Room, RoomSnapshot>.ToSnapshot()
   {
     return new RoomSnapshot
     {
@@ -39,9 +27,8 @@ public partial class Room
   }
 
   /// <summary>
-  /// Внутренний конструктор для гидратации из инфраструктуры
+  /// Конструктор для восстановления из снапшота.
   /// </summary>
-  // ReSharper disable once UnusedMember.Local
   private Room(RoomSnapshot snapshot) : base(snapshot.Id)
   {
     var viewers = snapshot.Viewers.Values

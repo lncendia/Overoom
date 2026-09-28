@@ -41,7 +41,6 @@ export const ProfileContextProvider: React.FC<ProfileContextProviderProps> = ({
     };
   }, [loadProfile, profileApi]);
 
-  // Возвращаем провайдер контекста с профилем и функцией редактирования
   return (
     <ProfileContext.Provider value={{ profile, editProfile: setProfile }}>
       {children}

@@ -35,16 +35,10 @@ public class ScopedContext : IScopedContext
   /// <returns>Disposable объект для управления временем жизни области видимости</returns>
   public IDisposable CreateScope()
   {
-    // Инициализируем стек если он еще не создан
     _scopes.Value ??= new Stack<ScopedDictionary>();
-
-    // Создаем новую область видимости
     var scope = new ScopedDictionary();
-
-    // Добавляем новую область в стек
     _scopes.Value.Push(scope);
 
-    // Возвращаем disposer для корректного удаления области при выходе
     return new ScopeDisposer(_scopes.Value);
   }
 
@@ -61,10 +55,8 @@ public class ScopedContext : IScopedContext
     /// </summary>
     public void Dispose()
     {
-      // Защита от многократного вызова Dispose
       if (_disposed || stack.Count <= 0) return;
 
-      // Удаляем текущую область из стека
       stack.Pop();
       _disposed = true;
     }

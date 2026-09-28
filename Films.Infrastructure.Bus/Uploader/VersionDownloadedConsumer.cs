@@ -17,10 +17,8 @@ public class VersionDownloadedConsumer(ISender mediator) : IConsumer<VersionDown
   /// <param name="context">Контекст сообщения</param>
   public Task Consume(ConsumeContext<VersionDownloadedIntegrationEvent> context)
   {
-    // Получаем данные события
     VersionDownloadedIntegrationEvent integrationEvent = context.Message;
 
-    // Отправляем команду на обработку события
     return mediator.Send(new AddVersionCommand
     {
       FilmId = integrationEvent.FilmId,

@@ -29,22 +29,11 @@ public class UnitOfWork : UnitOfWorkBase, IUnitOfWork
     IPublisher publisher, ILogger<UnitOfWork> logger)
     : base(handlerFactory, publisher, logger)
   {
-    // Создаем CommentRepository
     CommentRepository = new Lazy<ICommentRepository>(() => new CommentRepository(context, config));
-
-    // Создаем FilmRepository
     FilmRepository = new Lazy<IFilmRepository>(() => new FilmRepository(context, config));
-
-    // Создаем RoomRepository
     RoomRepository = new Lazy<IRoomRepository>(() => new RoomRepository(context, config));
-
-    // Создаем PlaylistRepository
     PlaylistRepository = new Lazy<IPlaylistRepository>(() => new PlaylistRepository(context, config));
-
-    // Создаем RatingRepository
     RatingRepository = new Lazy<IRatingRepository>(() => new RatingRepository(context, config));
-
-    // Создаем UserRepository
     UserRepository = new Lazy<IUserRepository>(() => new UserRepository(context, config));
   }
 
@@ -84,27 +73,21 @@ public class UnitOfWork : UnitOfWorkBase, IUnitOfWork
   /// </summary>
   protected override IEnumerable<IRepository> GetRepositories()
   {
-    // Проверяем, были ли созданы изменения в репозитории CommentRepository.
     if (CommentRepository.IsValueCreated)
       yield return (CommentRepository)CommentRepository.Value;
 
-    // Проверяем, были ли созданы изменения в репозитории FilmRepository.
     if (FilmRepository.IsValueCreated)
       yield return (FilmRepository)FilmRepository.Value;
 
-    // Проверяем, были ли созданы изменения в репозитории RoomRepository.
     if (RoomRepository.IsValueCreated)
       yield return (RoomRepository)RoomRepository.Value;
 
-    // Проверяем, были ли созданы изменения в репозитории PlaylistRepository.
     if (PlaylistRepository.IsValueCreated)
       yield return (PlaylistRepository)PlaylistRepository.Value;
 
-    // Проверяем, были ли созданы изменения в репозитории RatingRepository.
     if (RatingRepository.IsValueCreated)
       yield return (RatingRepository)RatingRepository.Value;
 
-    // Проверяем, были ли созданы изменения в репозитории UserRepository.
     if (UserRepository.IsValueCreated)
       yield return (UserRepository)UserRepository.Value;
   }

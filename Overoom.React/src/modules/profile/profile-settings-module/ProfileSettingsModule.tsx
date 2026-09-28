@@ -24,10 +24,8 @@ const ProfileSettingsModule = (): ReactElement => {
       </Paper>
     );
 
-  // Возвращает JSX элемент с кнопкой для перехода к настройкам аккаунта
   return (
     <Paper>
-      {/** Кнопка для перехода к настройкам аккаунта */}
       <Button
         href={`${config.oidc.authority}/settings?returnUrl=${encodeURIComponent(window.location.href)}`}
         target="_blank"

@@ -25,30 +25,22 @@ public class SearchPlaylistsQueryHandler(MongoDbContext context)
   /// <returns>Результат с найденными плейлистами и общим количеством</returns>
   public async Task<CountResult<PlaylistDto>> Handle(SearchPlaylistsQuery request, CancellationToken cancellationToken)
   {
-    // Создаем базовый запрос к коллекции плейлистов
     IQueryable<PlaylistModel>? baseQuery = context.Playlists.AsQueryable();
 
-    // Если указан поисковый запрос, добавляем фильтр по названию плейлиста
     if (!string.IsNullOrEmpty(request.Query))
       baseQuery =
         baseQuery.Where(x => x.Name.Contains(request.Query, StringComparison.CurrentCultureIgnoreCase));
 
-    // Если указан жанр, добавляем фильтр по жанрам плейлиста
     if (!string.IsNullOrEmpty(request.Genre))
       baseQuery = baseQuery.Where(x =>
         x.Genres.Any(g => g.Contains(request.Genre, StringComparison.CurrentCultureIgnoreCase)));
 
-    // Если указан ID фильма, добавляем фильтр по списку фильмов в плейлисте
     if (request.FilmId.HasValue)
       baseQuery = baseQuery.Where(x => x.Films.Contains(request.FilmId.Value));
 
-    // Получаем общее количество плейлистов, удовлетворяющих фильтрам
     int count = await baseQuery.CountAsync(cancellationToken: cancellationToken);
-
-    // Если плейлистов не найдено, возвращаем пустой результат
     if (count == 0) return CountResult<PlaylistDto>.NoValues();
 
-    // Получаем список плейлистов с преобразованием в DTO
     List<PlaylistDto>? list = await baseQuery
       .Skip(request.Skip)
       .Take(request.Take)
@@ -63,7 +55,6 @@ public class SearchPlaylistsQueryHandler(MongoDbContext context)
       })
       .ToListAsync(cancellationToken: cancellationToken);
 
-    // Возвращаем результат с найденными плейлистами и общим количеством
     return new CountResult<PlaylistDto>
     {
       List = list,

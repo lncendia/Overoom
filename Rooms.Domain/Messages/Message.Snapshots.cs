@@ -1,4 +1,4 @@
-using System.Reflection;
+using Common.Domain.Aggregates;
 using Rooms.Domain.Messages.Snapshots;
 
 namespace Rooms.Domain.Messages;
@@ -6,12 +6,11 @@ namespace Rooms.Domain.Messages;
 /// <summary>
 /// Представляет текстовое сообщение в комнате.
 /// </summary>
-public partial class Message
+public partial class Message : ISnapshotable<Message, MessageSnapshot>
 {
   /// <summary>
-  /// Внутренний конструктор для гидратации из снапшота или БД.
+  /// Конструктор для восстановления из снапшота.
   /// </summary>
-  // ReSharper disable once UnusedMember.Local
   private Message(MessageSnapshot snapshot) : base(snapshot.Id)
   {
     RoomId = snapshot.RoomId;
@@ -20,10 +19,8 @@ public partial class Message
     SentAt = snapshot.SentAt;
   }
 
-  /// <summary>
-  /// Создаёт снапшот текущего состояния агрегата.
-  /// </summary>
-  internal MessageSnapshot GetSnapshot()
+  /// <inheritdoc/>
+  MessageSnapshot ISnapshotable<Message, MessageSnapshot>.ToSnapshot()
   {
     return new MessageSnapshot
     {
@@ -35,22 +32,9 @@ public partial class Message
     };
   }
 
-  /// <summary>
-  /// Воссоздаёт агрегат Message из снапшота.
-  /// </summary>
-  internal static Message FromSnapshot(MessageSnapshot snapshot)
+  /// <inheritdoc/>
+  static Message ISnapshotable<Message, MessageSnapshot>.Restore(MessageSnapshot snapshot)
   {
-    // Получаем тип Message
-    Type filmType = typeof(Message);
-
-    // Получаем внутренний конструктор, который принимает MessageSnapshot
-    ConstructorInfo? constructor = filmType.GetConstructor(
-      BindingFlags.NonPublic | BindingFlags.Instance,
-      null,
-      [typeof(MessageSnapshot)],
-      null);
-
-    // Вызываем конструктор и возвращаем результат
-    return (Message)constructor!.Invoke([snapshot]);
+    return new Message(snapshot);
   }
 }

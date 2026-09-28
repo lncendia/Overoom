@@ -23,7 +23,6 @@ public class GetRoomByIdQueryHandler(MongoDbContext context) : IRequestHandler<G
   /// <exception cref="RoomNotFoundException">Выбрасывается если комната не найдена</exception>
   public async Task<RoomDto> Handle(GetRoomByIdQuery request, CancellationToken cancellationToken)
   {
-    // Получаем комнату из базы данных с агрегацией связанных данных
     RoomDto? room = await context.Rooms.AsQueryable()
       .Where(r => r.Id == request.Id)
       .Select(x => new RoomDto
@@ -36,7 +35,6 @@ public class GetRoomByIdQueryHandler(MongoDbContext context) : IRequestHandler<G
       })
       .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-    // Возвращаем найденную комнату или выбрасываем исключение
     return room ?? throw new RoomNotFoundException(request.Id);
   }
 }

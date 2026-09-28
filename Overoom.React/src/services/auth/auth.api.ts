@@ -1,4 +1,3 @@
-// auth.api.ts
 import { UserManager } from 'oidc-client';
 
 /**

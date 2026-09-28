@@ -17,10 +17,8 @@ public class RoomViewerKickedConsumer(ISender mediator) : IConsumer<RoomViewerKi
   /// <param name="context">Контекст сообщения</param>
   public Task Consume(ConsumeContext<RoomViewerKickedIntegrationEvent> context)
   {
-    // Получаем данные события
     RoomViewerKickedIntegrationEvent integrationEvent = context.Message;
 
-    // Отправляем команду на обработку события
     return mediator.Send(new KickCommand
     {
       RoomId = integrationEvent.RoomId,

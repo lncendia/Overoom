@@ -15,10 +15,8 @@ const FilmItemSkeleton = (): ReactElement => {
         position: 'relative',
       }}
     >
-      {/* Левая часть с постером */}
       <Box sx={{ textAlign: 'center' }}>
         <Box sx={{ position: 'relative', display: 'inline-block', verticalAlign: 'middle' }}>
-          {/* Основное изображение */}
           <Skeleton
             variant="rectangular"
             sx={(theme) => ({
@@ -45,7 +43,6 @@ const FilmItemSkeleton = (): ReactElement => {
             })}
           />
 
-          {/* Скелетоны под рейтинги */}
           <Box
             sx={{
               position: 'absolute',
@@ -62,27 +59,22 @@ const FilmItemSkeleton = (): ReactElement => {
         </Box>
       </Box>
 
-      {/* Правая часть с текстом */}
       <Box sx={{ width: '100%' }}>
-        {/* Заголовок */}
         <CardHeader title={<Skeleton variant="text" width="60%" height={28} sx={{ mb: 1 }} />} />
 
         <CardContent sx={{ flexGrow: 1 }}>
-          {/* Описание */}
           <Box sx={{ mb: 3 }}>
             <Skeleton variant="text" width="100%" height={18} />
             <Skeleton variant="text" width="90%" height={18} />
             <Skeleton variant="text" width="95%" height={18} />
           </Box>
 
-          {/* Список жанров */}
           <Box sx={{ display: 'flex', gap: 1, mb: 4 }}>
             <Skeleton variant="rounded" width={60} height={24} />
             <Skeleton variant="rounded" width={50} height={24} />
             <Skeleton variant="rounded" width={70} height={24} />
           </Box>
 
-          {/* Индикатор типа */}
           <Skeleton
             variant="rounded"
             width={50}

@@ -33,20 +33,14 @@ const ScreamModule = (): ReactElement => {
   const showVideo = useCallback(() => {
     if (!screamer.current) return;
 
-    // Случайный выбор номера скримера от 1 до 4
     const randomIndex = Math.floor(Math.random() * 4) + 1;
     screamer.current.src = `/video/screamer${randomIndex}.mp4`;
-
-    // Устанавливаем громкость и запускаем видео
     screamer.current.volume = 0.1;
     screamer.current.play().catch(() => {
-      // Игнорируем ошибки воспроизведения для избежания необработанных исключений
     });
 
-    // Показываем видео через изменение display свойства
     screamer.current.style.display = 'block';
 
-    // Через 2 секунды скрываем видео (длительность эффекта)
     setTimeout(() => {
       if (screamer.current) {
         screamer.current.style.display = 'none';
@@ -56,7 +50,6 @@ const ScreamModule = (): ReactElement => {
 
   /** Эффект для подписки на события уведомлений от хаба комнаты. */
   useEffect(() => {
-    // Если хаб еще не проинициализирован - ничего не делаем
     if (!hub) return;
 
     /**
@@ -66,24 +59,17 @@ const ScreamModule = (): ReactElement => {
      * @returns {void}
      */
     const handler = (e: RoomEventContainer) => {
-      // Пропускаем события, не относящиеся к уведомлениям "скример"
       if (!e.screamNotificationEvent) return;
-
-      // Проверяем, что уведомление предназначено текущему пользователю
       if (e.screamNotificationEvent.target !== currentViewerId) return;
 
-      // Запускаем воспроизведение видео "скримера"
       showVideo();
     };
 
-    // Добавляем обработчик событий в хаб комнаты
     hub.addHandler(handler);
 
-    // Функция очистки эффекта
     return (): void => hub.removeHandler(handler);
   }, [currentViewerId, hub, showVideo]);
 
-  // Возвращает скрытый видео элемент с предзагруженным видео "скример"
   return <ScreamerVideo ref={screamer} />;
 };
 

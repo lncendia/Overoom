@@ -27,7 +27,6 @@ const FilmPlayerSkeleton = (): ReactElement => {
   return (
     <Paper>
       <PlayerSkeletonContainer>
-        {/* Скелетон области видеоплеера */}
         <Skeleton
           variant="rectangular"
           width="100%"

@@ -50,15 +50,12 @@ const Error = ({ action }: { action: () => void }): ReactElement => {
           alignItems: 'center',
         }}
       >
-        {/* Иллюстрация ошибки */}
         <StyledImage src="/img/error.svg" alt="Произошла ошибка" />
 
-        {/* Заголовок ошибки */}
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
           Что-то пошло не так
         </Typography>
 
-        {/* Описание проблемы */}
         <Typography
           variant="body1"
           sx={{
@@ -71,7 +68,6 @@ const Error = ({ action }: { action: () => void }): ReactElement => {
           Попробуйте обновить страницу.
         </Typography>
 
-        {/* Кнопка для обновления страницы */}
         <WildButton
           buttonText="Обновить"
           onClick={action}

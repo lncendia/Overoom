@@ -34,7 +34,6 @@ const SignIn = (props: SignInProps): ReactElement => {
     props.onLogin();
   };
 
-  // Рендерим JSX с аватаром и контекстным меню
   return (
     <>
       <IconButton onClick={handleMenu}>
@@ -56,7 +55,6 @@ const SignIn = (props: SignInProps): ReactElement => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {/* Элемент меню для входа */}
         <MenuItem onClick={handleClose}>Войти</MenuItem>
       </Menu>
     </>

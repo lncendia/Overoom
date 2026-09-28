@@ -33,26 +33,18 @@ public class VerifyEmailCommandHandler(
   /// <exception cref="InvalidCodeException">Вызывается, если код подтверждения недействителен.</exception>
   public async Task Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору; если не найден, вызываем исключение UserNotFoundException.
     AppUser user = await userManager.FindByIdAsync(request.UserId.ToString()) ?? throw new UserNotFoundException();
-
-    // Начинаем транзакцию в контексте базы данных MongoDB.
     await dbContext.BeginTransaction(cancellationToken);
-
-    // Попытка подтверждения электронной почты.
     IdentityResult result = await userManager.ConfirmEmailAsync(user, request.Code);
 
-    // Проверка успешности подтверждения; если не удалось, вызываем исключение InvalidCodeException.
     if (!result.Succeeded)
     {
-      // Отмена транзакции
       await dbContext.AbortTransaction(cancellationToken);
       throw new InvalidCodeException();
     }
 
     IList<Claim> claims = await userManager.GetClaimsAsync(user);
 
-    // Публикуем событие
     await publishEndpoint.Publish(new UserRegisteredIntegrationEvent
     {
       Id = user.Id,
@@ -63,7 +55,6 @@ public class VerifyEmailCommandHandler(
       Locale = AppUser.GetLocale(claims).GetLocalizationString()
     }, cancellationToken);
 
-    // Фиксируем транзакцию в контексте базы данных MongoDB.
     await dbContext.CommitTransaction(cancellationToken);
   }
 }

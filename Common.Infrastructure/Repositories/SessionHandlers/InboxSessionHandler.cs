@@ -19,10 +19,8 @@ public class InboxSessionHandler(MongoDbContext dbContext) : ISessionHandler
   /// <exception cref="InvalidOperationException">Если сессия не инициализирована</exception>
   public Task BeforeSaveExecuteAsync(Func<CancellationToken, Task> action, CancellationToken token = default)
   {
-    // Проверяем наличие активной сессии
     if (dbContext.Session == null) throw new InvalidOperationException("Session is null");
 
-    // Выполняем действие
     return action(token);
   }
 
@@ -35,10 +33,8 @@ public class InboxSessionHandler(MongoDbContext dbContext) : ISessionHandler
   public async Task ExecuteAsync(Func<IClientSessionHandle, CancellationToken, Task> action,
     CancellationToken token = default)
   {
-    // Проверяем наличие активной сессии
     if (dbContext.Session == null) throw new InvalidOperationException("Session is null");
 
-    // Выполняем действие в контексте существующей сессии
     await action(dbContext.Session, token);
   }
 }

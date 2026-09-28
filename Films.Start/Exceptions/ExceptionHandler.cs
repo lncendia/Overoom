@@ -23,23 +23,16 @@ public class ExceptionHandler : IExceptionHandler
   public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception,
     CancellationToken cancellationToken)
   {
-    // Переменная для хранения сообщения об ошибке, которое будет отправлено клиенту
     string? message;
-
-    // Переменная для хранения статус кода
     HttpStatusCode statusCode;
 
-    // Создаем словарь для хранения дополнительных данных, которые будут включены в ответ
     var extensions = new Dictionary<string, object?>
     {
-      // Добавляем идентификатор запроса (traceId) для отслеживания ошибки
       ["traceId"] = context.TraceIdentifier
     };
 
-    // Обработка исключения в зависимости от его типа
     switch (exception)
     {
-      // NotFound исключения - 404 статус код
       case CommentNotFoundException ex:
         statusCode = HttpStatusCode.NotFound;
         message = "Комментарий не найден";
@@ -70,7 +63,6 @@ public class ExceptionHandler : IExceptionHandler
         extensions["userId"] = ex.UserId;
         break;
 
-      // Conflict исключения - 409 статус код
       case FilmAlreadyExistsException ex:
         statusCode = HttpStatusCode.Conflict;
         message = "Фильм с таким названием и датой уже существует";
@@ -98,7 +90,6 @@ public class ExceptionHandler : IExceptionHandler
         extensions["roomId"] = ex.RoomId;
         break;
 
-      // Forbidden исключения - 403 статус код
       case ActionNotAllowedException ex:
         statusCode = HttpStatusCode.Forbidden;
         message = "Действие запрещено";
@@ -113,7 +104,6 @@ public class ExceptionHandler : IExceptionHandler
         extensions["roomId"] = ex.RoomId;
         break;
 
-      // Bad Request исключения - 400 статус код
       case CommentNotBelongToUserException ex:
         statusCode = HttpStatusCode.BadRequest;
         message = "Комментарий не принадлежит пользователю";
@@ -151,17 +141,14 @@ public class ExceptionHandler : IExceptionHandler
         extensions["roomId"] = ex.RoomId;
         break;
 
-      // Если исключение не относится к указанным выше типам
       default:
         statusCode = HttpStatusCode.InternalServerError;
         message = "Возникла ошибка при обработке запроса";
         break;
     }
 
-    // Устанавливаем статус код ответа в HTTP-контексте
     context.Response.StatusCode = (int)statusCode;
 
-    // Создаем объект ProblemDetails для формирования ответа клиенту
     var problemDetails = new ProblemDetails
     {
       Title = "Ошибка",
@@ -172,10 +159,8 @@ public class ExceptionHandler : IExceptionHandler
       Extensions = extensions
     };
 
-    // Отправляем ответ в формате JSON клиенту
     await context.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
-    // Возвращаем true, чтобы указать, что исключение успешно обработано
     return true;
   }
 }

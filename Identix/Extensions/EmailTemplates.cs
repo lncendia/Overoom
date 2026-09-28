@@ -20,10 +20,8 @@ public static class EmailTemplates
   /// <param name="builder">Построитель веб-приложения.</param>
   public static void AddEmailTemplates(this IHostApplicationBuilder builder)
   {
-    // Получаем конфигурацию для шаблона письма конфигурации приложения
     EmailTemplateConfiguration templateConfiguration = GetTemplateConfiguration(builder.Configuration);
 
-    // Регистрируем экземпляр интерфейса IEmailVisitor с реализацией EmailContentVisitor.
     builder.Services.AddScoped<IEmailVisitor>(sp =>
       new EmailContentVisitor(templateConfiguration,
         sp.GetRequiredService<IStringLocalizer<EmailContentVisitor>>()));
@@ -36,35 +34,25 @@ public static class EmailTemplates
   /// <returns>Настройки для шаблона электронного письма</returns>
   private static EmailTemplateConfiguration GetTemplateConfiguration(IConfiguration configuration)
   {
-    // Получаем секцию с настройками шаблона письма
     IConfigurationSection? templateConfigurationSection = configuration.GetSection("Email:TemplateSettings");
-
-    // Если секции конфигурации нет - вызываем исключение
     if (templateConfigurationSection == null) throw new ConfigurationException("Email:TemplateSettings");
 
-    // Получаем данные из конфигурации
     string companyName = templateConfigurationSection.GetRequiredValue<string>("CompanyName");
     string logoLink = templateConfigurationSection.GetRequiredValue<string>("LogoLink");
     string privatePolicyLink = templateConfigurationSection.GetRequiredValue<string>("PrivatePolicyLink");
     string homePageLink = templateConfigurationSection.GetRequiredValue<string>("HomePageLink");
     string sideLogoLink = templateConfigurationSection.GetRequiredValue<string>("SideLogoLink");
 
-    // создаем объект данных об настройках шаблона письма
     return new EmailTemplateConfiguration
     {
-      // Имя компании
       CompanyName = companyName,
 
-      // Ссылка на лого компании
       LogoLink = logoLink,
 
-      // Ссылка на страницу приватной политики
       PrivatePolicyLink = privatePolicyLink,
 
-      // Ссылка на домашнюю страницу
       HomePageLink = homePageLink,
 
-      // Ссылка на вторичное лого компании
       SideLogoLink = sideLogoLink
     };
   }

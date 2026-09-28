@@ -44,7 +44,6 @@ const TypeChip = styled(Chip)(({ theme }) => ({
 const FilmItem = ({ film, selectedGenre, typeSelected, onClick }: FilmItemProps): ReactElement => {
   return (
     <FilmCard {...film} onClick={onClick} header={film.title}>
-      {/* Описание фильма/сериала с ограничением по строкам */}
       <Typography
         variant="body2"
         color="text.secondary"
@@ -59,12 +58,10 @@ const FilmItem = ({ film, selectedGenre, typeSelected, onClick }: FilmItemProps)
         {film.description}
       </Typography>
 
-      {/* Список жанров с подсветкой выбранного */}
       <Box>
         <GenresList genres={film.genres} selected={selectedGenre} />
       </Box>
 
-      {/* Индикатор типа контента (Фильм или Сериал) */}
       <TypeChip
         label={film.isSerial ? 'Сериал' : 'Фильм'}
         size="small"

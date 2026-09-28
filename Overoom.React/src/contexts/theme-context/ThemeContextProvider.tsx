@@ -23,7 +23,6 @@ export const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({
 
   /** Генерация объекта темы Material-UI на основе выбранного режима */
   const theme = useMemo(() => {
-    // Определяем базовые цвета для light и dark
     const palette = {
       dark: {
         primary: 'rgb(118,70,255)',
@@ -214,11 +213,9 @@ const usePreferredMode = (
    * @returns {PaletteMode} 'light' или 'dark'
    */
   const getInitialMode = (): PaletteMode => {
-    // Читаем сохранённый режим из localStorage
     const saved = localStorage.getItem('themeMode') as PaletteMode | null;
     if (saved === 'light' || saved === 'dark') return saved;
 
-    // Проверяем системное предпочтение
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     return prefersDark ? 'dark' : defaultMode;
   };
@@ -226,7 +223,6 @@ const usePreferredMode = (
   /** Состояние текущего режима темы */
   const [mode, setMode] = useState<PaletteMode>(getInitialMode);
 
-  // Сохраняем выбор пользователя в localStorage при изменении режима
   useEffect(() => {
     localStorage.setItem('themeMode', mode);
   }, [mode]);

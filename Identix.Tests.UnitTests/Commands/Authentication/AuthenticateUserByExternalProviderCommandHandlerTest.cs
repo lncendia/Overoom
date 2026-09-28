@@ -29,7 +29,6 @@ public class AuthenticateUserByExternalProviderCommandHandlerTest
   /// </summary>
   public AuthenticateUserByExternalProviderCommandHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -41,7 +40,6 @@ public class AuthenticateUserByExternalProviderCommandHandlerTest
       new Mock<IServiceProvider>().Object,
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    // Инициализация обработчика.
     _handler = new AuthenticateUserByExternalProviderCommandHandler(_userManagerMock.Object);
   }
 
@@ -52,7 +50,6 @@ public class AuthenticateUserByExternalProviderCommandHandlerTest
   public async Task Handle_ValidCommand_Authenticate()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByLoginAsync.
     _userManagerMock
       .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -63,12 +60,10 @@ public class AuthenticateUserByExternalProviderCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возвращения false при вызове IsLockedOutAsync.
     _userManagerMock
       .Setup(m => m.IsLockedOutAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => false);
 
-    // Создаем команду для аутентификации пользователя через внешний провайдер.
     var command = new AuthenticateUserByExternalProviderCommand
     {
       LoginProvider = "TestProvider",
@@ -76,14 +71,12 @@ public class AuthenticateUserByExternalProviderCommandHandlerTest
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -94,12 +87,10 @@ public class AuthenticateUserByExternalProviderCommandHandlerTest
   public async Task Handle_WhenUserNotFoundFromProvider_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения null при вызове FindByLoginAsync.
     _userManagerMock
       .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем команду для аутентификации пользователя через внешний провайдер.
     var command = new AuthenticateUserByExternalProviderCommand
     {
       LoginProvider = "TestProvider",
@@ -107,7 +98,6 @@ public class AuthenticateUserByExternalProviderCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -118,7 +108,6 @@ public class AuthenticateUserByExternalProviderCommandHandlerTest
   public async Task Handle_WhenUserIsLockout_ThrowsUserLockoutException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByLoginAsync.
     _userManagerMock
       .Setup(m => m.FindByLoginAsync(It.IsAny<string>(), It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -129,12 +118,10 @@ public class AuthenticateUserByExternalProviderCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возвращения true при вызове IsLockedOutAsync.
     _userManagerMock
       .Setup(m => m.IsLockedOutAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => true);
 
-    // Создаем команду для аутентификации пользователя через внешний провайдер.
     var command = new AuthenticateUserByExternalProviderCommand
     {
       LoginProvider = "TestProvider",
@@ -142,7 +129,6 @@ public class AuthenticateUserByExternalProviderCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserLockoutException.
     await Assert.ThrowsAsync<UserLockoutException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

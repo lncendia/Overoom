@@ -41,7 +41,6 @@ const CommentItem = ({ comment, removeComment }: CommentParams): ReactElement =>
     }).format(comment.createdAt);
   }, [comment.createdAt]);
 
-  // Рендерим карточку с аватаром, именем пользователя, датой и текстом комментария
   return (
     <StyledCard>
       <CardHeader

@@ -25,19 +25,13 @@ const BeepModule = (): ReactElement => {
   const onBeep = useCallback(() => {
     if (!beep.current) return;
 
-    // Сбрасываем время воспроизведения для мгновенного запуска
     beep.current.currentTime = 0;
-
-    // Устанавливаем низкую громкость для комфортного восприятия
     beep.current.volume = 0.1;
-
-    // Запускаем воспроизведение звука
     beep.current.play().then();
   }, []);
 
   /** Эффект для подписки на события уведомлений от хаба комнаты. */
   useEffect(() => {
-    // Если хаб еще не проинициализирован - ничего не делаем
     if (!hub) return;
 
     /**
@@ -47,24 +41,17 @@ const BeepModule = (): ReactElement => {
      * @returns {void}
      */
     const handler = (e: RoomEventContainer) => {
-      // Пропускаем события, не относящиеся к уведомлениям "бип"
       if (!e.beepNotificationEvent) return;
-
-      // Проверяем, что уведомление предназначено текущему пользователю
       if (e.beepNotificationEvent.target !== currentViewerId) return;
 
-      // Воспроизводим звук "бип"
       onBeep();
     };
 
-    // Добавляем обработчик событий в хаб комнаты
     hub.addHandler(handler);
 
-    // Функция очистки эффекта
     return (): void => hub.removeHandler(handler);
   }, [currentViewerId, hub, onBeep]);
 
-  // Возвращает скрытый аудио элемент с предзагруженным звуком "бип"
   return <HiddenAudio ref={beep} src="/audio/beep.wav" />;
 };
 

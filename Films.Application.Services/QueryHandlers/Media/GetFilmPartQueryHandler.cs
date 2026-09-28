@@ -20,13 +20,9 @@ public class GetFilmPartQueryHandler(IFileStorage fileStore) : IRequestHandler<G
   /// <exception cref="FileNotFoundException">Выбрасывается если файл не найден в хранилище</exception>
   public async Task<FileResult> Handle(GetFilmPartQuery request, CancellationToken cancellationToken)
   {
-    // Формируем ключ файла в хранилище на основе параметров запроса
     string key = BuildKey(request);
-
-    // Получаем объект из S3 хранилища
     (Stream stream, string contentType) = await fileStore.GetAsync(key, token: cancellationToken);
 
-    // Возвращаем файл в виде результата
     return new FileResult(stream, contentType, request.FileName);
   }
 
@@ -39,19 +35,15 @@ public class GetFilmPartQueryHandler(IFileStorage fileStore) : IRequestHandler<G
   {
     var parts = new List<string>
     {
-      // ID фильма
       request.Id.ToString()
     };
 
-    // Добавляем сезон, если указан
     if (request.Season.HasValue)
       parts.Add($"s{request.Season.Value:D2}");
 
-    // Добавляем эпизод, если указан
     if (request.Episode.HasValue)
       parts.Add($"e{request.Episode.Value:D2}");
 
-    // Версия
     parts.Add(request.Version);
 
     if (request.Resolution.HasValue)
@@ -59,7 +51,6 @@ public class GetFilmPartQueryHandler(IFileStorage fileStore) : IRequestHandler<G
 
     parts.Add(request.FileName);
 
-    // Объединяем части через слеш
     return string.Join('/', parts);
   }
 }

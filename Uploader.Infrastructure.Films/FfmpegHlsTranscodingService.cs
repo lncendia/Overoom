@@ -23,40 +23,25 @@ public class FfmpegHlsTranscodingService(ILogger<FfmpegHlsTranscodingService> lo
   public async Task TranscodeAsync(string inputPath, FilmResolution resolution, string directory,
     CancellationToken cancellationToken)
   {
-    // Проверка существования исходного файла
     if (!File.Exists(inputPath))
       throw new FileNotFoundException("The source file was not found", inputPath);
 
-    // Если выходной файл уже существует - удаляем его
     if (Directory.Exists(directory))
     {
-      // Логируем предупреждение о том, что каталог будет очищен
       logger.LogWarning("The {outputDirectory} directory will be cleared", directory);
-
-      // Рекурсивно удаляем каталог со всем содержимым
       Directory.Delete(directory, recursive: true);
     }
 
-    // Получаем базовую директорию приложения
     string baseDir = AppContext.BaseDirectory;
-
-    // Определяем платформо-специфичную папку
     string runtime = GetPlatformFolder();
-
-    // Формируем путь к бинарнику FFmpeg
     string ffmpegPath = Path.Combine(baseDir, runtime, GetFfmpegFileName());
 
-    // Проверяем наличие бинарника FFmpeg
     if (!File.Exists(ffmpegPath))
       throw new FileNotFoundException($"ffmpeg binary not found at {ffmpegPath}");
 
-    // Получаем параметры масштабирования для FFmpeg
     List<HlsVariant> settingsList = GetHlsVariants(resolution);
-
-    // Формируем аргументы командной строки для запуска FFmpeg
     string arguments = BuildHlsArgs(inputPath, directory, settingsList);
 
-    // Настраиваем параметры запуска процесса
     var startInfo = new ProcessStartInfo
     {
       FileName = ffmpegPath,
@@ -69,46 +54,32 @@ public class FfmpegHlsTranscodingService(ILogger<FfmpegHlsTranscodingService> lo
       StandardErrorEncoding = Encoding.UTF8
     };
 
-    // Запускаем процесс FFmpeg с указанными параметрами
     using var process = Process.Start(startInfo)!;
 
     logger.LogInformation("Transcoding started");
 
-    // Подписываемся на события вывода стандартного потока (stdout)
     process.OutputDataReceived += (_, args) =>
     {
-      // Проверяем, что данные не пустые
       if (!string.IsNullOrEmpty(args.Data))
       {
-        // Логируем stdout вывод FFmpeg в транзитном режиме (информационное сообщение)
         logger.LogDebug("[FFmpeg stdout] {Output}", args.Data);
       }
     };
 
-    // Подписываемся на события вывода ошибок (stderr)
     process.ErrorDataReceived += (_, args) =>
     {
-      // Проверяем, что данные не пустые
       if (!string.IsNullOrEmpty(args.Data))
       {
-        // Логируем stderr вывод FFmpeg (может содержать предупреждения и ошибки)
         logger.LogDebug("[FFmpeg stderr] {Error}", args.Data);
       }
     };
 
-    // Начинаем асинхронное чтение стандартного потока вывода
     process.BeginOutputReadLine();
-
-    // Начинаем асинхронное чтение потока ошибок
     process.BeginErrorReadLine();
-
-    // Ожидаем завершения процесса
     await process.WaitForExitAsync(cancellationToken);
 
-    // Проверяем код возврата
     if (process.ExitCode != 0)
     {
-      // Читаем сообщение об ошибке
       string error = await process.StandardError.ReadToEndAsync(cancellationToken);
       throw new Exception($"FFmpeg failed with an error ({process.ExitCode}): {error}");
     }
@@ -135,7 +106,7 @@ public class FfmpegHlsTranscodingService(ILogger<FfmpegHlsTranscodingService> lo
   /// <returns>Отфильтрованный список вариантов качества для транскодирования</returns>
   private static List<HlsVariant> GetHlsVariants(FilmResolution source)
   {
-    return _variants.Where(v => v.Resolution <= source).ToList();
+    return [.. _variants.Where(v => v.Resolution <= source)];
   }
 
   /// <summary>
@@ -166,40 +137,31 @@ public class FfmpegHlsTranscodingService(ILogger<FfmpegHlsTranscodingService> lo
   /// <returns>Строка аргументов для запуска FFmpeg</returns>
   private static string BuildHlsArgs(string input, string outputDir, List<HlsVariant> variants)
   {
-    // Определяем количество вариантов качества для разделения видео
     int splitCount = variants.Count;
 
-    // Создаем фильтры масштабирования для каждого варианта качества
     string scaleFilters = string.Join(" ", variants.Select((v, i) =>
       $"[v{i + 1}]scale=w={v.Size.Split('x')[0]}:h={v.Size.Split('x')[1]}[v{i + 1}out];"
     ));
 
-    // Создаем комплексный фильтр для разделения видео на несколько потоков
     string filterComplex = $"[0:v]split={splitCount}" +
                            string.Concat(Enumerable.Range(1, splitCount).Select(i => $"[v{i}]")) +
                            $"; {scaleFilters}".TrimEnd(';');
 
-    // Строим карты потоков (map) для видео и аудио
     var maps = new StringBuilder();
-    // Строим карту переменных потоков для HLS манифеста
     var varStreamMap = new StringBuilder();
 
-    // Обрабатываем каждый вариант качества
     for (int i = 0; i < variants.Count; i++)
     {
       string name = variants[i].Resolution.ToString();
 
-      // Добавляем параметры кодирования видео для текущего варианта
       maps.Append($"""
                        -map "[v{i + 1}out]" -c:v:{i} h264_nvenc -preset fast -b:v:{i} {variants[i].Bitrate} -maxrate:v:{i} {variants[i].Maxrate} -bufsize:v:{i} {variants[i].Bufsize} 
                        -map a:0 -c:a:{i} aac -b:a:{i} {variants[i].AudioBitrate} -ac 2 
                    """);
 
-      // Добавляем информацию о потоке в карту переменных
       varStreamMap.Append($"v:{i},a:{i},name:{name} ");
     }
 
-    // Формируем итоговую строку аргументов FFmpeg
     return $"""
                 -i "{input}" 
                 -filter_complex "{filterComplex}" 

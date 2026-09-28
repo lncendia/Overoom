@@ -18,10 +18,8 @@ public class RoomViewerJoinedConsumer(ISender mediator) : IConsumer<RoomViewerJo
   /// <param name="context">Контекст сообщения</param>
   public async Task Consume(ConsumeContext<RoomViewerJoinedIntegrationEvent> context)
   {
-    // Получаем данные события
     RoomViewerJoinedIntegrationEvent integrationEvent = context.Message;
 
-    // Отправляем команду на обработку события
     await mediator.Send(new JoinCommand
     {
       RoomId = integrationEvent.RoomId,

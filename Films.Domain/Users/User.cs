@@ -12,7 +12,7 @@ namespace Films.Domain.Users;
 /// <summary>
 /// Класс, представляющий пользователя системы
 /// </summary>
-public partial class User : AggregateRoot<UserSnapshot>
+public partial class User : AggregateRoot
 {
   #region Константы
 
@@ -78,12 +78,12 @@ public partial class User : AggregateRoot<UserSnapshot>
   /// <summary>
   /// Список желаемого (отсортированный по дате добавления)
   /// </summary>
-  public IReadOnlyCollection<FilmNote> Watchlist => _watchlist.OrderByDescending(x => x.Date).ToArray();
+  public IReadOnlyCollection<FilmNote> Watchlist => [.. _watchlist.OrderByDescending(x => x.Date)];
 
   /// <summary>
   /// История просмотров (отсортированная по дате просмотра)
   /// </summary>
-  public IReadOnlyCollection<FilmNote> History => _history.OrderByDescending(x => x.Date).ToArray();
+  public IReadOnlyCollection<FilmNote> History => [.. _history.OrderByDescending(x => x.Date)];
 
   /// <summary>
   /// Предпочитаемые жанры пользователя
@@ -104,7 +104,7 @@ public partial class User : AggregateRoot<UserSnapshot>
   /// </remarks>
   public void ToggleWatchlist(Film film)
   {
-    _watchlist.RemoveWhere(x => x.FilmId == film.Id);
+    if (_watchlist.RemoveWhere(x => x.FilmId == film.Id) > 0) return;
 
     if (_watchlist.Count > 14)
       _watchlist.Remove(_watchlist.OrderBy(x => x.Date).First());
@@ -144,13 +144,15 @@ public partial class User : AggregateRoot<UserSnapshot>
   /// </remarks>
   public void UpdateGenres(IReadOnlyList<FilmToUpdate> films)
   {
-    _genres = films
-      .SelectMany(x => x.Genres)
-      .GroupBy(g => g)
-      .OrderByDescending(genre => genre.Count())
-      .Select(x => x.Key)
-      .Take(5)
-      .ToHashSet();
+    _genres =
+    [
+      .. films
+        .SelectMany(x => x.Genres)
+        .GroupBy(g => g)
+        .OrderByDescending(genre => genre.Count())
+        .Select(x => x.Key)
+        .Take(5)
+    ];
   }
 
   #endregion

@@ -51,7 +51,6 @@ const ConnectRoomModule = (props: ConnectRoomModuleProps): ReactElement => {
     return room != null && (room.isUserIn || isConnected);
   }, [isConnected, room]);
 
-  // Если не подключены к комнате, показываем форму подключения
   return (
     <>
       <Drawer title="Подключение к комнате" show={show} onClose={() => navigate(-1)}>

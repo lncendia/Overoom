@@ -17,7 +17,6 @@ import BlockTitle from '../ui/block-title/BlockTitle.tsx';
  * @returns {ReactElement} JSX-элемент страницы профиля пользователя
  */
 const ProfilePage = (): ReactElement => {
-  // Оборачиваем содержимое профиля в Guard и контекст
   return (
     <AuthorizeGuard>
       <ProfileContextProvider>
@@ -33,10 +32,8 @@ const ProfilePage = (): ReactElement => {
  * @returns {ReactElement} JSX-элемент с контентом страницы профиля
  */
 const ProfilePageContent = (): ReactElement => {
-  // Используем Grid для разделения контента на основную и боковую колонки
   return (
     <Grid container columnSpacing={4}>
-      {/* Основная колонка с информацией о пользователе и активностью */}
       <Grid size={{ xs: 12, lg: 8 }} order={{ xs: 2, lg: 1 }}>
         <UserInfoModule />
 
@@ -50,7 +47,6 @@ const ProfilePageContent = (): ReactElement => {
         <UserRatingsModule />
       </Grid>
 
-      {/* Боковая колонка с настройками профиля */}
       <Grid size={{ xs: 12, lg: 4 }} order={{ xs: 1, lg: 2 }}>
         <UserNotificationSettingsModule />
         <ProfileSettingsModule />

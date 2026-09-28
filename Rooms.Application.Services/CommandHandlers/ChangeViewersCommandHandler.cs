@@ -19,11 +19,9 @@ public class ChangeViewersCommandHandler(IUnitOfWork unitOfWork) : IRequestHandl
   /// <param name="cancellationToken">Токен отмены операции</param>
   public async Task Handle(ChangeViewersCommand request, CancellationToken cancellationToken)
   {
-    // Получаем все комнаты, где присутствует пользователь
     IReadOnlyList<Room> rooms = await unitOfWork.RoomRepository.Value.FindAsync(new RoomsByViewerSpecification(request.UserId),
       cancellationToken: cancellationToken);
 
-    // Обновляем данные пользователя в каждой комнате
     foreach (Room room in rooms)
     {
       room.SetUserName(request.UserId, request.UserName);
@@ -31,7 +29,6 @@ public class ChangeViewersCommandHandler(IUnitOfWork unitOfWork) : IRequestHandl
       await unitOfWork.RoomRepository.Value.UpdateAsync(room, cancellationToken);
     }
 
-    // Фиксируем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

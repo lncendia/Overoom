@@ -30,39 +30,26 @@ public class AuthenticateTwoFactorCommandHandler(UserManager<AppUser> userManage
   /// <exception cref="ArgumentOutOfRangeException">Возникает, при неопознанном типе кода сброса 2фа</exception>
   public async Task<AppUser> Handle(AuthenticateTwoFactorCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Вызываем исключение UserNotFoundException если не найден пользователь
     if (user == null) throw new UserNotFoundException();
 
-    // Верифицируем токен на основе указанного провайдера
     bool result = request.Type switch
     {
-      // Если код от аутентификатора - указываем AuthenticatorTokenProvider в качестве провайдера валидации
       CodeType.Authenticator => await userManager.VerifyTwoFactorTokenAsync(user,
         userManager.Options.Tokens.AuthenticatorTokenProvider, request.Code),
 
-      // Если код от провайдера Email - указываем EmailTokenProvider в качестве провайдера валидации
       CodeType.Email => await userManager.VerifyTwoFactorTokenAsync(user, EmailTokenProvider, request.Code),
 
-      // Если пришел код восстановления - проверяем его методом RedeemTwoFactorRecoveryCodeAsync
       CodeType.RecoveryCode => (await userManager.RedeemTwoFactorRecoveryCodeAsync(user, request.Code)).Succeeded,
 
-      // При ином значении CodeType выбрасываем исключение
       _ => throw new ArgumentOutOfRangeException(nameof(request))
     };
 
-    // Если код неверный, выбрасываем исключение
     if (!result) throw new InvalidCodeException();
 
-    // Устанавливаем время последнего входа
     user.LastAuthTimeUtc = DateTime.UtcNow;
-
-    // Обновляем данные
     await userManager.UpdateAsync(user);
 
-    // Возвращаем аутентифицированного пользователя
     return user;
   }
 }

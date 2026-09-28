@@ -22,16 +22,11 @@ public class UpdateSecurityStampCommandHandler(UserManager<AppUser> userManager)
   /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден.</exception>
   public async Task<AppUser> Handle(UpdateSecurityStampCommand request, CancellationToken cancellationToken)
   {
-    // Получаем пользователя по id.
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Выкидываем исключение если пользователь не найден.
     if (user == null) throw new UserNotFoundException();
 
-    // Обновляем SecurityStamp, так как данные у пользователя поменялись.
     await userManager.UpdateSecurityStampAsync(user);
 
-    // Возвращаем пользователя.
     return user;
   }
 }

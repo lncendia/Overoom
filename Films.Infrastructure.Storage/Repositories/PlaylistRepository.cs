@@ -49,10 +49,4 @@ public class PlaylistRepository : RepositoryBase<PlaylistModel, Playlist, Playli
       PosterKey = null
     };
   }
-
-  /// <inheritdoc/>
-  protected override Playlist FromSnapshot(PlaylistSnapshot snapshot)
-  {
-    return Playlist.FromSnapshot(snapshot);
-  }
 }

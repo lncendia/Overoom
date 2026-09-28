@@ -8,7 +8,7 @@ namespace Films.Domain.Playlists;
 /// <summary>
 /// Плейлист фильмов.
 /// </summary>
-public partial class Playlist : AggregateRoot<PlaylistSnapshot>
+public partial class Playlist : AggregateRoot
 {
   #region Поля и свойства
 
@@ -71,15 +71,17 @@ public partial class Playlist : AggregateRoot<PlaylistSnapshot>
   /// <param name="films">Коллекция идентификаторов фильмов, которые нужно добавить или удалить из плейлиста.</param>
   public void UpdateFilms(IReadOnlyList<FilmToUpdate> films)
   {
-    _films = films.Select(x => x.Id).ToHashSet();
+    _films = [.. films.Select(x => x.Id)];
 
-    _genres = films
-      .SelectMany(x => x.Genres)
-      .GroupBy(g => g)
-      .OrderByDescending(genre => genre.Count())
-      .Select(x => x.Key)
-      .Take(5)
-      .ToHashSet();
+    _genres =
+    [
+      .. films
+        .SelectMany(x => x.Genres)
+        .GroupBy(g => g)
+        .OrderByDescending(genre => genre.Count())
+        .Select(x => x.Key)
+        .Take(5)
+    ];
   }
 
   #endregion

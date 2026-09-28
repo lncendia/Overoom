@@ -1,165 +1,165 @@
 ﻿services:
-  
+
   identix:
     container_name: overoom.identix
     build:
-      dockerfile: "Identix/Dockerfile"  # Путь к Dockerfile
-      target: "base"  # Целевой этап сборки
+      dockerfile: "Identix/Dockerfile"
+      target: "base"
     environment:
-      ASPNETCORE_ENVIRONMENT: "DevContainer"  # Окружение для ASP.NET Core
-      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net9.0/Identix.staticwebassets.runtime.CT.json"  # Путь к статическим веб-ассетам
-      DOTNET_USE_POLLING_FILE_WATCHER: "true"  # Использование файлового наблюдателя
-    image: "identix"  # Имя образа
+      ASPNETCORE_ENVIRONMENT: "DevContainer"
+      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net10.0/Identix.staticwebassets.runtime.CT.json"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "identix"
     entrypoint:
       - "dotnet"
-      - "/app/bin/Debug/net9.0/Identix.dll"  # Точка входа для контейнера
+      - "/app/bin/Debug/net10.0/Identix.dll"
     ports:
-      - "443:443"  # Порты для проброса
+      - "443:443"
     volumes:
-      - "./development/configurations/identix/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
-      - "./development/configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
-      - "~/.nuget/packages:/home/app/.nuget/packages"  # Монтирование тома для NuGet пакетов
-      - "./Identix:/app:rw"  # Монтирование тома для приложения
-      - "./:/src:rw"  # Монтирование тома для исходного кода
-    working_dir: "/app"  # Рабочая директория
+      - "./development/configurations/identix/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"
+      - "./development/configurations/ssl:/https:ro"
+      - "~/.nuget/packages:/home/app/.nuget/packages"
+      - "./Identix:/app:rw"
+      - "./:/src:rw"
+    working_dir: "/app"
     depends_on:
       rabbitmq:
-        condition: service_healthy  # Зависимость от RabbitMQ
+        condition: service_healthy
       mongo:
-        condition: service_healthy  # Зависимость от MongoDB
+        condition: service_healthy
       minio:
-        condition: service_healthy  # Зависимость от Minio
-  
+        condition: service_healthy
+
   films:
     container_name: overoom.films
     build:
-      dockerfile: "Films.Start/Dockerfile"  # Путь к Dockerfile
-      target: "base"  # Целевой этап сборки
+      dockerfile: "Films.Start/Dockerfile"
+      target: "base"
     environment:
-      ASPNETCORE_ENVIRONMENT: "DevContainer"  # Окружение для ASP.NET Core
-      DOTNET_USE_POLLING_FILE_WATCHER: "true"  # Использование файлового наблюдателя
-    image: "films"  # Имя образа
+      ASPNETCORE_ENVIRONMENT: "DevContainer"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "films"
     entrypoint:
       - "dotnet"
-      - "/app/bin/Debug/net9.0/Films.Start.dll"  # Точка входа для контейнера
+      - "/app/bin/Debug/net10.0/Films.Start.dll"
     ports:
-      - "7131:443"  # Порты для проброса
+      - "7131:443"
     volumes:
-      - "./development/configurations/films/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
-      - "./development/configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
-      - "~/.nuget/packages:/home/app/.nuget/packages"  # Монтирование тома для NuGet пакетов
-      - "./Films.Start:/app:rw"  # Монтирование тома для приложения
-      - "./:/src:rw"  # Монтирование тома для исходного кода
-    working_dir: "/app"  # Рабочая директория
+      - "./development/configurations/films/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"
+      - "./development/configurations/ssl:/https:ro"
+      - "~/.nuget/packages:/home/app/.nuget/packages"
+      - "./Films.Start:/app:rw"
+      - "./:/src:rw"
+    working_dir: "/app"
     depends_on:
       rabbitmq:
-        condition: service_healthy  # Зависимость от RabbitMQ
+        condition: service_healthy
       mongo:
-        condition: service_healthy  # Зависимость от MongoDB
+        condition: service_healthy
       minio:
-        condition: service_healthy  # Зависимость от Minio
-  
+        condition: service_healthy
+
   rooms:
     container_name: overoom.rooms
     build:
-      dockerfile: "Rooms.Start/Dockerfile"  # Путь к Dockerfile
-      target: "base"  # Целевой этап сборки
+      dockerfile: "Rooms.Start/Dockerfile"
+      target: "base"
     environment:
-      ASPNETCORE_ENVIRONMENT: "DevContainer"  # Окружение для ASP.NET Core
-      DOTNET_USE_POLLING_FILE_WATCHER: "true"  # Использование файлового наблюдателя
-    image: "rooms"  # Имя образа
+      ASPNETCORE_ENVIRONMENT: "DevContainer"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "rooms"
     entrypoint:
       - "dotnet"
-      - "/app/bin/Debug/net9.0/Rooms.Start.dll"  # Точка входа для контейнера
+      - "/app/bin/Debug/net10.0/Rooms.Start.dll"
     ports:
-      - "7291:443"  # Порты для проброса
+      - "7291:443"
     volumes:
-      - "./development/configurations/rooms/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"  # Монтирование конфигурации приложения
-      - "./development/configurations/ssl:/https:ro"  # Монтирование тома для HTTPS
-      - "~/.nuget/packages:/home/app/.nuget/packages"  # Монтирование тома для NuGet пакетов
-      - "./Rooms.Start:/app:rw"  # Монтирование тома для приложения
-      - "./:/src:rw"  # Монтирование тома для исходного кода
-    working_dir: "/app"  # Рабочая директория
+      - "./development/configurations/rooms/appsettings.DevContainer.json:/app-1/appsettings.DevContainer.json"
+      - "./development/configurations/ssl:/https:ro"
+      - "~/.nuget/packages:/home/app/.nuget/packages"
+      - "./Rooms.Start:/app:rw"
+      - "./:/src:rw"
+    working_dir: "/app"
     depends_on:
       rabbitmq:
-        condition: service_healthy  # Зависимость от RabbitMQ
+        condition: service_healthy
       mongo:
-        condition: service_healthy  # Зависимость от MongoDB
-  
+        condition: service_healthy
+
   mongo:
-    image: mongo:8.0.15 # Образ Mongo
-    container_name: overoom.mongo # Название контейнера
+    image: mongo:8.3.11
+    container_name: overoom.mongo
     ports:
-      - '27017:27017' # Выделяем порт
+      - '27017:27017'
     volumes:
-      - "./development/configurations/mongo/:/mongo/config" # Монтирование конфигурационных файлов
-      - './development/containers/mongo/:/data/db' # Монтирование тома для хранения данных MongoDB
-    command: [ "--replSet", "rs0", "--bind_ip_all" ] # Команда для запуска MongoDB с настройками репликации
+      - "./development/configurations/mongo/:/mongo/config"
+      - './development/containers/mongo/:/data/db'
+    command: [ "--replSet", "rs0", "--bind_ip_all" ]
     healthcheck:
-      test: [ "CMD-SHELL", "/mongo/config/healthcheck.sh" ]  # Проверка состояния
-      interval: 5s # Интервал между проверками
-      timeout: 30s # Максимальное время ожидания ответа от проверки
-      start_period: 0s # Задержка перед началом первой проверки
-      retries: 30 # Количество попыток проверки перед тем, как контейнер будет объявлен нездоровым
+      test: [ "CMD-SHELL", "/mongo/config/healthcheck.sh" ]
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      retries: 30
 
   mongo-express:
-    image: mongo-express:1.0.2-20-alpine3.19  # Используем последний образ Mongo Express
-    container_name: overoom.mongo-express  # Имя контейнера
+    image: mongo-express:1.0.2-20-alpine3.19
+    container_name: overoom.mongo-express
     ports:
-      - "8081:8081"  # Пробрасываем порт 8081 Mongo Express
+      - "8081:8081"
     environment:
       ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/admin?retryWrites=true&loadBalanced=false&connectTimeoutMS=10000
       ME_CONFIG_BASICAUTH: "false"
     depends_on:
       mongo:
-        condition: service_healthy  # Запускать Mongo Express только после успешной проверки здоровья MongoDB
-  
+        condition: service_healthy
+
   rabbitmq:
-    image: rabbitmq:4.2.0-management-de  # Образ RabbitMQ
+    image: rabbitmq:4.3.6-management
     container_name: overoom.rabbitmq
     environment:
-      - RABBITMQ_DEFAULT_USER=rmuser  # Пользователь RabbitMQ
-      - RABBITMQ_DEFAULT_PASS=rmpassword  # Пароль RabbitMQ
+      - RABBITMQ_DEFAULT_USER=rmuser
+      - RABBITMQ_DEFAULT_PASS=rmpassword
     ports:
-      - "15672:15672"  # Порты для проброса
-      - "5672:5672"  # Порты для проброса
+      - "15672:15672"
+      - "5672:5672"
     healthcheck:
-      test: [ "CMD", "rabbitmqctl", "status" ]  # Проверка состояния
-      interval: 10s  # Интервал проверки
-      timeout: 5s  # Таймаут проверки
-      retries: 5  # Количество попыток
-  
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   minio:
-    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z  # Официальный образ MinIO
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     container_name: overoom.minio
-    command: server /data --console-address ":9001"  # Запуск сервера с веб-консолью
+    command: server /data --console-address ":9001"
     environment:
-      - MINIO_ROOT_USER=minioadmin  # Логин администратора (по умолчанию)
-      - MINIO_ROOT_PASSWORD=minioadmin  # Пароль администратора (по умолчанию)
-      - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001  # URL для редиректа консоли
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
     volumes:
-      - './development/containers/minio/:/data/' # Монтирование тома для хранения данных
+      - './development/containers/minio/:/data/'
     ports:
-      - "9000:9000"  # API порт (для клиентов)
-      - "9001:9001"  # Консоль управления (Web UI)
+      - "9000:9000"
+      - "9001:9001"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]  # Проверка состояния
-      interval: 30s  # Проверка каждые 30 секунд
-      timeout: 20s  # Максимальное время ожидания
-      retries: 3  # Количество попыток
-  
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
   prometheus:
-    image: prom/prometheus:v3.7.1 # Образ Prometheus
-    container_name: prometheus # Имя контейнера
+    image: prom/prometheus:v3.15.0
+    container_name: prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml' # Указываем файл конфигурации
-      - '--web.config.file=/etc/prometheus/web.yml' # Указываем файл конфигурации
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.config.file=/etc/prometheus/web.yml'
     volumes:
-      - "./development/configurations/prometheus/:/etc/prometheus" # Монтирование конфигурационных файлов
+      - "./development/configurations/prometheus/:/etc/prometheus"
     ports:
       - "9090:9090"
     healthcheck:
-      test: [ "CMD-SHELL", "/etc/prometheus/healthcheck.sh" ]  # Проверка состояния
-      interval: 5s  # Интервал между проверками
-      timeout: 5s  # Максимальное время ожидания ответа
-      retries: 5  # Количество повторных попыток
+      test: [ "CMD-SHELL", "/etc/prometheus/healthcheck.sh" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5

@@ -19,20 +19,14 @@ public class AddUserCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<Add
   /// <exception cref="UserAlreadyExistsException">Если пользователь с таким Id уже существует</exception>
   public async Task Handle(AddUserCommand request, CancellationToken cancellationToken)
   {
-    // Создаем нового пользователя с указанными данными
     var user = new User(request.Id)
     {
-      // Устанавливаем имя пользователя
       Username = request.UserName,
 
-      // Устанавливаем ключ фото
       PhotoKey = request.PhotoKey
     };
 
-    // Добавляем нового пользователя в репозиторий
     await unitOfWork.UserRepository.Value.AddAsync(user, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

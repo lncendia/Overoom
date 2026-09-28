@@ -42,13 +42,11 @@ public abstract class ExternalClaimsMapperBase(string provider) : IExternalClaim
     if (string.IsNullOrEmpty(id))
       throw new ExternalAuthenticationFailureException("The user ID was not received from an external provider");
 
-    // Создаем identity с указанием типов для имени и ролей
     var identity = new ClaimsIdentity(
       authenticationType: "ExternalLogin",
       nameType: ClaimTypes.Name,
       roleType: ClaimTypes.Role);
 
-    // Добавляем обязательный claim с идентификатором пользователя
     identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, id));
     return identity;
   }

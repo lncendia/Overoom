@@ -23,20 +23,12 @@ public class CultureInfoDictionaryConverter : JsonConverter<Dictionary<CultureIn
     JsonSerializerOptions options)
   {
     var dict = new Dictionary<CultureInfo, string>();
-
-    // Парсинг JSON документа
     using var doc = JsonDocument.ParseValue(ref reader);
 
-    // Итерация по всем свойствам JSON объекта
     foreach (JsonProperty prop in doc.RootElement.EnumerateObject())
     {
-      // Преобразование имени свойства (строки) в объект CultureInfo
       var culture = CultureInfo.GetCultureInfo(prop.Name);
-
-      // Получение строкового значения свойства
       string stringValue = prop.Value.GetString()!;
-
-      // Добавление пары ключ-значение в словарь
       dict[culture] = stringValue;
     }
 
@@ -52,17 +44,13 @@ public class CultureInfoDictionaryConverter : JsonConverter<Dictionary<CultureIn
   public override void Write(Utf8JsonWriter writer, Dictionary<CultureInfo, string> value,
     JsonSerializerOptions options)
   {
-    // Начало записи JSON объекта
     writer.WriteStartObject();
 
-    // Итерация по всем элементам словаря
     foreach (KeyValuePair<CultureInfo, string> kvp in value)
     {
-      // Запись пары ключ-значение, где ключ - имя культуры (например, "ru-RU")
       writer.WriteString(kvp.Key.Name, kvp.Value);
     }
 
-    // Завершение записи JSON объекта
     writer.WriteEndObject();
   }
 }

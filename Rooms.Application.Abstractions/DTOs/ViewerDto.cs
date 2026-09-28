@@ -94,15 +94,18 @@ public class ViewerDto
       Season = viewer.Season,
       Episode = viewer.Episode,
       Settings = viewer.Settings,
-      Tags = viewer.Tags.Select(t =>
-      {
-        Constants.ViewerTags.All.TryGetValue(t, out string? description);
-        return new ViewerTagDto
+      Tags =
+      [
+        .. viewer.Tags.Select(t =>
         {
-          Name = t,
-          Description = description
-        };
-      }).ToArray()
+          Constants.ViewerTags.All.TryGetValue(t, out string? description);
+          return new ViewerTagDto
+          {
+            Name = t,
+            Description = description
+          };
+        })
+      ]
     };
   }
 }

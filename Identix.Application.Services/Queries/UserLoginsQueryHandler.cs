@@ -22,16 +22,11 @@ public class UserLoginsQueryHandler(UserManager<AppUser> userManager)
   /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден.</exception>
   public async Task<IReadOnlyCollection<string>> Handle(UserLoginsQuery request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору; 
     AppUser? user = await userManager.FindByIdAsync(request.Id.ToString());
-
-    // Если не найден, вызываем исключение UserNotFoundException.
     if (user == null) throw new UserNotFoundException();
 
-    // Получение списка внешних учетных записей пользователя.
     IList<UserLoginInfo> logins = await userManager.GetLoginsAsync(user);
 
-    // Возвращение списка внешних учетных записей в виде массива строк.
-    return logins.Select(info => info.LoginProvider).ToArray();
+    return [.. logins.Select(info => info.LoginProvider)];
   }
 }

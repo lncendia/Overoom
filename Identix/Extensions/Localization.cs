@@ -17,28 +17,18 @@ public static class Localization
   /// <param name="services">Коллекция сервисов.</param>
   public static void AddLocalizationServices(this IServiceCollection services)
   {
-    // Добавляет службы, необходимые для локализации приложения.
     services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-    // Регистрирует действие
     services.Configure<RequestLocalizationOptions>(options =>
     {
-      // поддерживаемые культуры
-      CultureInfo[] supportedCultures = new[]
-      {
-        // английский
+      CultureInfo[] supportedCultures =
+      [
         new CultureInfo(LocalizationExtensions.En),
-        // русский
         new CultureInfo(LocalizationExtensions.Ru)
-      };
+      ];
 
-      // Задает культуру по умолчанию
       options.DefaultRequestCulture = new RequestCulture("en", "en");
-
-      // Культуры, поддерживаемые приложением
       options.SupportedCultures = supportedCultures;
-
-      // Культуры пользовательского интерфейса
       options.SupportedUICultures = supportedCultures;
     });
   }

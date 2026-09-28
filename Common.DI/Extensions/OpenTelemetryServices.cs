@@ -20,31 +20,16 @@ public static class OpenTelemetryServices
   public static void AddOpenTelemetryServices(this IServiceCollection services, string serviceName,
     params string[] meters)
   {
-    // Конфигурируем OpenTelemetry
     services.AddOpenTelemetry()
-      // Добавляем ресурсы сервиса: имя, версия, окружение и др.
       .ConfigureResource(r => r.AddService(serviceName))
       .WithMetrics(mb =>
       {
-        // Системные метрики runtime (.NET сборщик мусора, потоковые таймеры, CPU, память и т.д.)
         mb.AddRuntimeInstrumentation();
-
-        // Метрики исходящих HTTP-запросов через HttpClient
         mb.AddHttpClientInstrumentation();
-
-        // Метрики входящих HTTP-запросов через ASP.NET Core
         mb.AddAspNetCoreInstrumentation();
-
-        // Добавляем кастомный Meter из проекта (InstrumentationOptions)
         mb.AddMeter(InstrumentationOptions.MeterName);
-
-        // Добавляем метрики репозиториев (счётчики транзакций, гистограммы времени выполнения)
         mb.AddMeter(RepositoryMetrics.MeterName);
-
-        // Добавляем все Meter'ы, переданные в параметрах метода
         mb.AddMeter(meters);
-
-        // Экспорт метрик в Prometheus (подключается эндпоинт /metrics)
         mb.AddPrometheusExporter();
       });
   }

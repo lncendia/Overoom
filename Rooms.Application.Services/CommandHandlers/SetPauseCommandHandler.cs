@@ -20,19 +20,11 @@ public class SetPauseCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<Se
   /// <exception cref="RoomNotFoundException">Если комната с указанным ID не найдена</exception>
   public async Task Handle(SetPauseCommand request, CancellationToken cancellationToken)
   {
-    // Получаем комнату по ID из репозитория
     Room? room = await unitOfWork.RoomRepository.Value.GetAsync(request.RoomId, cancellationToken);
-
-    // Проверяем существование комнаты
     if (room == null) throw new RoomNotFoundException(request.RoomId);
 
-    // Устанавливаем флаг паузы и буферизации с текущим таймлайном
     room.SetPause(request.ViewerId, request.Pause, request.TimeLine, request.Buffering);
-
-    // Обновляем комнату в репозитории
     await unitOfWork.RoomRepository.Value.UpdateAsync(room, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

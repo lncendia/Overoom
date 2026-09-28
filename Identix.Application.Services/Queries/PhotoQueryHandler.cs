@@ -19,15 +19,12 @@ public class PhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<PhotoQu
   /// <returns>Результат в виде файла (FileResult) с потоком данных фотографии</returns>
   public async Task<FileResult> Handle(PhotoQuery request, CancellationToken cancellationToken)
   {
-    // Валидируем запрашиваемый ключ
     if (!IsValidUserPhotoKey(request.Key))
       throw new ArgumentException(
         $"Invalid photo key format. Expected: {Constants.Storage.UserPhotoKeyFormat} or {Constants.Storage.ClientPhotoKeyFormat}");
 
-    // Получаем объект из S3
     (Stream stream, string contentType) = await fileStore.GetAsync(request.Key, token: cancellationToken);
 
-    // Возвращаем файл
     return new FileResult(stream, contentType, request.Key);
   }
 
@@ -40,7 +37,6 @@ public class PhotoQueryHandler(IFileStorage fileStore) : IRequestHandler<PhotoQu
   {
     if (string.IsNullOrWhiteSpace(key)) return false;
 
-    // Разбиваем путь на части
     string[] parts = key.Split('/');
     return parts.Length == 3;
   }

@@ -14,7 +14,6 @@ public class AddFilmValidator : AbstractValidator<AddFilmInputModel>
   /// <param name="actorValidator">Валидатор для актёров</param>
   public AddFilmValidator(IValidator<ActorInputModel> actorValidator)
   {
-    // Основные поля
     RuleFor(x => x.Description)
       .NotEmpty().WithMessage("Поле не должно быть пустым")
       .MaximumLength(1500).WithMessage("Не больше 1500 символов");
@@ -31,7 +30,6 @@ public class AddFilmValidator : AbstractValidator<AddFilmInputModel>
       .InclusiveBetween(new DateOnly(1800, 1, 1), new DateOnly(2100, 1, 1))
       .WithMessage("Введите корректный год выхода");
 
-    // Рейтинги
     RuleFor(x => x.RatingKp)
       .InclusiveBetween(0, 10).WithMessage("Рейтинг должен быть в диапазоне от 0 до 10");
 

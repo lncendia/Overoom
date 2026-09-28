@@ -27,32 +27,21 @@ public class CreateRoomCommandHandler(ISessionHandlerFactory sessionHandlerFacto
   /// <exception cref="UserNotFoundException">Если пользователь не найден</exception>
   public async Task<Guid> Handle(CreateRoomCommand request, CancellationToken cancellationToken)
   {
-    // Получаем информацию о фильме по ID из запроса
     Film? film = await unitOfWork.FilmRepository.Value.GetAsync(request.FilmId, cancellationToken);
-
-    // Проверяем существование фильма
     if (film == null) throw new FilmNotFoundException(request.FilmId);
 
-    // Получаем данные пользователя-создателя комнаты
     User? user = await unitOfWork.UserRepository.Value.GetAsync(request.UserId, cancellationToken);
-
-    // Проверяем существование пользователя
     if (user == null) throw new UserNotFoundException(request.UserId);
 
-    // Создаем новую комнату с уникальным идентификатором
     var room = new Room(
       id: Guid.NewGuid(),
       user: user,
       film: film,
       isOpen: request.IsOpen);
 
-    // Добавляем комнату в репозиторий
     await unitOfWork.RoomRepository.Value.AddAsync(room, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(sessionHandlerFactory.CreateOutboxHandler(), cancellationToken);
 
-    // Возвращаем идентификатор созданной комнаты
     return room.Id;
   }
 }

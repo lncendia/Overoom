@@ -30,13 +30,9 @@ public class FilmsManagementController(ISender mediator, IMapper mapper) : Contr
   [HttpPost]
   public async Task<IActionResult> CreateFilm(AddFilmInputModel model, CancellationToken token = default)
   {
-    // Преобразуем входную модель в команду
     AddFilmCommand? command = mapper.Map<AddFilmCommand>(model);
-
-    // Отправляем команду через медиатор
     Guid result = await mediator.Send(command, token);
 
-    // Возвращаем статус 201 с Location header
     return CreatedAtAction(
       actionName: "GetById",
       controllerName: "Films",
@@ -62,7 +58,6 @@ public class FilmsManagementController(ISender mediator, IMapper mapper) : Contr
     ChangeFilmInputModel model,
     CancellationToken token = default)
   {
-    // Преобразуем входную модель в команду
     ChangeFilmCommand? command = mapper.Map<ChangeFilmCommand>(model);
     command.Id = id;
 
@@ -89,7 +84,6 @@ public class FilmsManagementController(ISender mediator, IMapper mapper) : Contr
     ChangeFilmPosterInputModel model,
     CancellationToken token = default)
   {
-    // Преобразуем входную модель в команду
     ChangeFilmPosterCommand? command = mapper.Map<ChangeFilmPosterCommand>(model);
     command.Id = id;
 
@@ -101,7 +95,6 @@ public class FilmsManagementController(ISender mediator, IMapper mapper) : Contr
     }
     finally
     {
-      // Закрываем поток с файлом вручную после выполнения команды
       await command.Poster.File.DisposeAsync();
     }
   }

@@ -44,16 +44,12 @@ const PosterOverlay = styled(Box)(({ theme }) => ({
 const FilmShortItemSkeleton = (): ReactElement => {
   return (
     <PosterContainer>
-      {/* Заглушка для постера */}
       <Skeleton variant="rectangular" width="100%" height="100%" />
 
-      {/* Наложение с имитацией текста */}
       <PosterOverlay>
-        {/* Заглушка под название фильма */}
         <Skeleton variant="text" width="80%" height={20} sx={{ bgcolor: 'grey.700' }} />
       </PosterOverlay>
 
-      {/* Заглушки под чипы с рейтингами */}
       <Box
         sx={{
           position: 'absolute',

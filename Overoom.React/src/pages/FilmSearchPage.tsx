@@ -28,7 +28,6 @@ const FilmSearchPage = (): ReactElement => {
   /** Используем хук useLocation для получения состояния навигации */
   const { state } = useLocation();
 
-  // Рендерим заголовок и список фильмов в зависимости от выбранных параметров
   return (
     <>
       <BlockTitle title={getTitle(state)} />

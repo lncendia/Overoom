@@ -40,13 +40,11 @@ const CreateRoomModule = (props: CreateFilmRoomModuleProps): ReactElement => {
   const createRoom = useSafeCallback(
     async (open: boolean) => {
       if (!film) return;
-      // Создаем комнату через API
       const id = await roomsApi.create({
         open: open,
         filmId: film.id,
       });
 
-      // Перенаправляем пользователя на страницу комнаты
       navigate('/room', { state: { id: id } });
     },
     [roomsApi, film, navigate]

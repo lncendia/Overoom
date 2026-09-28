@@ -19,11 +19,8 @@ public class UserSettingsChangedConsumer(ISender mediator) : IConsumer<UserSetti
   /// <returns>Задача, представляющая асинхронную обработку события</returns>
   public async Task Consume(ConsumeContext<UserSettingsChangedIntegrationEvent> context)
   {
-    // Извлекаем данные события из контекста сообщения
     UserSettingsChangedIntegrationEvent integrationEvent = context.Message;
 
-    // Преобразуем интеграционное событие во внутреннюю команду приложения
-    // и отправляем ее через медиатор для дальнейшей обработки
     await mediator.Send(new ChangeViewersSettingsCommand
     {
       UserId = integrationEvent.Id,

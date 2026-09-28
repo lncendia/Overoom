@@ -56,8 +56,8 @@ public class PlaylistModel : IModel<PlaylistSnapshot>
     Description = snapshot.Description;
     PosterKey = snapshot.PosterKey;
     UpdatedAt = snapshot.UpdatedAt;
-    Films = snapshot.Films.ToList();
-    Genres = snapshot.Genres.ToList();
+    Films = [.. snapshot.Films];
+    Genres = [.. snapshot.Genres];
   }
 
   public PlaylistSnapshot GetSnapshot()

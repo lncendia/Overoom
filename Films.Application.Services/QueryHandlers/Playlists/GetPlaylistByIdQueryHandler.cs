@@ -23,7 +23,6 @@ public class GetPlaylistByIdQueryHandler(MongoDbContext context) : IRequestHandl
   /// <exception cref="PlaylistNotFoundException">Выбрасывается, если плейлист с указанным ID не найден</exception>
   public async Task<PlaylistDto> Handle(GetPlaylistByIdQuery request, CancellationToken cancellationToken)
   {
-    // Находим первый плейлист с указанным ID или null, если не найден
     PlaylistDto? playlist = await context.Playlists.AsQueryable()
       .Select(p => new PlaylistDto
       {
@@ -36,7 +35,6 @@ public class GetPlaylistByIdQueryHandler(MongoDbContext context) : IRequestHandl
       })
       .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken: cancellationToken);
 
-    // Возвращаем найденный плейлист или выбрасываем исключение, если не найден
     return playlist ?? throw new PlaylistNotFoundException(request.Id);
   }
 }

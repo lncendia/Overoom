@@ -28,27 +28,19 @@ public class DeleteFilmCommandHandler(
   /// <exception cref="FilmNotFoundException">Если фильм с указанным ID не найден</exception>
   public async Task Handle(DeleteFilmCommand request, CancellationToken cancellationToken)
   {
-    // Получаем фильм по ID из репозитория
     Film? film = await unitOfWork.FilmRepository.Value.GetAsync(request.Id, cancellationToken);
-
-    // Проверяем существование фильма
     if (film == null) throw new FilmNotFoundException(request.Id);
 
     try
     {
-      // Удаляем обложку фильма из файлового хранилища, если она существует
       await posterStore.DeleteAsync(film.PosterKey, token: cancellationToken);
     }
     catch (FileNotFoundException)
     {
-      // Логируем отсутствие файла, но не прерываем выполнение
       logger.LogWarning("Файл обложки {poster} не найден в хранилище", film.PosterKey);
     }
 
-    // Удаляем запись о фильме из репозитория
     await unitOfWork.FilmRepository.Value.DeleteAsync(film, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

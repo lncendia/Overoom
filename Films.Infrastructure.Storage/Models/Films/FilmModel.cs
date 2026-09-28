@@ -90,6 +90,23 @@ public class FilmModel : IModel<FilmSnapshot>
   /// </summary>
   public DateTime ModifiedAt { get; set; }
 
+  /// <summary>
+  /// Количество пользовательских оценок фильма.
+  /// </summary>
+  /// <remarks>
+  /// Денормализованный счётчик для запросов чтения. Не входит в снапшот агрегата и обновляется
+  /// только атомарным $inc из <see cref="Repositories.RatingRepository"/>, поэтому трекер его не перезаписывает.
+  /// </remarks>
+  public int UserRatingsCount { get; set; }
+
+  /// <summary>
+  /// Сумма пользовательских оценок фильма.
+  /// </summary>
+  /// <remarks>
+  /// Денормализованное значение для расчёта средней оценки, обновляется вместе с <see cref="UserRatingsCount"/>.
+  /// </remarks>
+  public double UserRatingsSum { get; set; }
+
   #endregion
 
   #region IModel
@@ -144,16 +161,16 @@ public class FilmModel : IModel<FilmSnapshot>
     PosterKey = snapshot.PosterKey;
     RatingKp = snapshot.RatingKp?.Value;
     RatingImdb = snapshot.RatingImdb?.Value;
-    Genres = snapshot.Genres.ToList();
-    Countries = snapshot.Countries.ToList();
-    Actors = snapshot.Actors.ToList();
-    Directors = snapshot.Directors.ToList();
-    Screenwriters = snapshot.Screenwriters.ToList();
+    Genres = [.. snapshot.Genres];
+    Countries = [.. snapshot.Countries];
+    Actors = [.. snapshot.Actors];
+    Directors = [.. snapshot.Directors];
+    Screenwriters = [.. snapshot.Screenwriters];
 
     if (snapshot.Content != null)
     {
       Content ??= new MediaContentModel();
-      Content.Versions = snapshot.Content.Versions.ToList();
+      Content.Versions = [.. snapshot.Content.Versions];
     }
     else
     {
@@ -164,24 +181,30 @@ public class FilmModel : IModel<FilmSnapshot>
     {
       var seasonsByNumber = Seasons?.ToDictionary(s => s.Number);
 
-      Seasons = snapshot.Seasons.Select(@as =>
-      {
-        if (seasonsByNumber == null || !seasonsByNumber.TryGetValue(@as.Number, out SeasonModel? season))
-          season = new SeasonModel { Number = @as.Number };
-
-        var episodesByNumber = season.Episodes.ToDictionary(e => e.Number);
-
-        season.Episodes = @as.Episodes.Select(ae =>
+      Seasons =
+      [
+        .. snapshot.Seasons.Select(@as =>
         {
-          if (!episodesByNumber.TryGetValue(ae.Number, out EpisodeModel? episode))
-            episode = new EpisodeModel { Number = ae.Number };
+          if (seasonsByNumber == null || !seasonsByNumber.TryGetValue(@as.Number, out SeasonModel? season))
+            season = new SeasonModel { Number = @as.Number };
 
-          episode.Versions = ae.Versions.ToList();
-          return episode;
-        }).ToList();
+          var episodesByNumber = season.Episodes.ToDictionary(e => e.Number);
 
-        return season;
-      }).ToList();
+          season.Episodes =
+          [
+            .. @as.Episodes.Select(ae =>
+            {
+              if (!episodesByNumber.TryGetValue(ae.Number, out EpisodeModel? episode))
+                episode = new EpisodeModel { Number = ae.Number };
+
+              episode.Versions = [.. ae.Versions];
+              return episode;
+            })
+          ];
+
+          return season;
+        })
+      ];
     }
     else
     {

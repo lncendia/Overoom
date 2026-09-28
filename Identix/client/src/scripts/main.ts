@@ -16,32 +16,17 @@ import {CultureForm} from "./helpers/culture-form";
 import {ThemeToggler} from "./helpers/theme-toggler";
 
 window.addEventListener("load", () => {
-
-    // получаем текущий URL
     const currentUrl = new URL(document.location.href);
-
-    // получаем путь из URL
     const pathname = currentUrl.pathname.toLowerCase();
-
-    // разбиваем пути URL на части
     const partsPath = pathname.split("/");
-
-    // Создаем класс формы языка текущей страницы
     const cultureForm = new CultureForm();
-
-    // Запускаем функционал формы языка текущей страницы
     cultureForm.startCultureForm();
 
-    // Создаем класс переключателя темы
     const themeToggler = new ThemeToggler()
 
-    // Запускаем функционал переключателя темы
     themeToggler.startThemeToggler()
 
-    // Смотрим имя контроллера
     switch (partsPath[1]) {
-
-        // Контроллер Account
         case "account": {
             switch (partsPath[2]) {
                 case "login": {
@@ -63,7 +48,6 @@ window.addEventListener("load", () => {
             break;
         }
 
-        // Контроллер Registration
         case "registration": {
             switch (partsPath[2]) {
                 case "registration": {
@@ -75,7 +59,6 @@ window.addEventListener("load", () => {
             break;
         }
 
-        // Контроллер Settings
         case "settings": {
             switch (partsPath[2]) {
                 default: {
@@ -87,7 +70,6 @@ window.addEventListener("load", () => {
             break;
         }
 
-        // Контроллер TwoFactor
         case "twofactor": {
             switch (partsPath[2]) {
                 case "setup": {

@@ -28,38 +28,28 @@ public sealed class AuthorizeClientCommandHandler(
   /// </exception>
   public async Task<ClaimsPrincipal> Handle(AuthorizeClientCommand request, CancellationToken cancellationToken)
   {
-    // Поиск клиентского приложения по ClientId
     object application = await applicationManager.FindByClientIdAsync(request.ClientId, cancellationToken)
                          ?? throw new InvalidOperationException(
                            "The details of the calling client application could not be found");
 
-    // Создание identity для клиентского приложения
     var identity = new ClaimsIdentity(
       authenticationType: TokenValidationParameters.DefaultAuthenticationType,
       nameType: OpenIddictConstants.Claims.Name,
       roleType: OpenIddictConstants.Claims.Role);
 
-    // Установка основных claims клиентского приложения
     identity.SetClaim(OpenIddictConstants.Claims.Subject,
       await applicationManager.GetClientIdAsync(application, cancellationToken));
 
     identity.SetClaim(OpenIddictConstants.Claims.Name,
       await applicationManager.GetDisplayNameAsync(application, cancellationToken));
 
-    // Получаем ресурсы запрашиваемых областей
     List<string> resources = await scopeManager.ListResourcesAsync(identity.GetScopes(), cancellationToken)
       .ToListAsync(cancellationToken: cancellationToken);
 
-    // Устанавливаем запрошенные области (scopes) для identity
     identity.SetScopes(request.Scopes);
-
-    // Устанавливаем ресурсы, соответствующие запрошенным областям
     identity.SetResources(resources);
-
-    // Определение destinations для claims (в какие токены включать claims)
     identity.SetDestinations(GetDestinations);
 
-    // Возвращаем ClaimsPrincipal с созданной identity
     return new ClaimsPrincipal(identity);
   }
 
@@ -72,12 +62,10 @@ public sealed class AuthorizeClientCommandHandler(
   {
     switch (claim.Type)
     {
-      // Subject claim включается только в Access Token
       case OpenIddictConstants.Claims.Subject:
         yield return OpenIddictConstants.Destinations.AccessToken;
         break;
 
-      // Name claim включается в оба токена
       case OpenIddictConstants.Claims.Name:
         yield return OpenIddictConstants.Destinations.AccessToken;
         yield return OpenIddictConstants.Destinations.IdentityToken;

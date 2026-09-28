@@ -24,26 +24,17 @@ public class AddUserExternalLoginCommandHandler(UserManager<AppUser> userManager
   /// <exception cref="LoginAlreadyAssociatedException">Вызывается, если внешний логин уже ассоциирован с другим аккаунтом.</exception>
   public async Task<AppUser> Handle(AddUserExternalLoginCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору; 
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Если не найден, вызываем исключение UserNotFoundException.
     if (user == null) throw new UserNotFoundException();
 
-    // Получение всех внешних логинов пользователя.
     IList<UserLoginInfo> logins = await userManager.GetLoginsAsync(user);
 
-    // Проверка наличия внешнего логина с тем же провайдером; если есть, вызываем исключение LoginAlreadyExistsException.
     if (logins.Any(info => info.LoginProvider == request.LoginInfo.LoginProvider))
       throw new LoginAlreadyExistsException();
 
-    // Попытка добавления внешнего логина.
     IdentityResult result = await userManager.AddLoginAsync(user, request.LoginInfo);
-
-    // Если операция не удалась, вызываем исключение LoginAlreadyAssociatedException.
     if (!result.Succeeded) throw new LoginAlreadyAssociatedException();
 
-    // Возвращаем пользователя 
     return user;
   }
 }

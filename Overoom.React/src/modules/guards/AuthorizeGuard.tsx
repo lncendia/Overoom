@@ -46,10 +46,8 @@ const AuthorizeGuard = ({
     return authorizedUser.roles.includes(role); // Проверяем роль пользователя
   }, [authorizedUser, role]);
 
-  // Если доступ разрешен, рендерим дочерние элементы
   if (show) return children;
 
-  // Если доступ запрещен и showAuthPage = true, рендерим страницу "Нет прав"
   return showAuthPage ? <NotEnoughRights action={login} /> : null;
 };
 

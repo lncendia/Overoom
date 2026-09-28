@@ -31,17 +31,10 @@ public class RoomCreatedEventHandler(IUnitOfWork unitOfWork, IPublishEndpoint pu
     Room room = notification.Room;
     User user = notification.Owner;
     Film film = notification.Film;
-
-    // Создаем спецификацию для поиска комнат, созданных текущим пользователем
     var roomsSpecification = new RoomByUserSpecification(user.Id);
-
-    // Получаем количество комнат, созданных пользователем
     int roomsCount = await unitOfWork.RoomRepository.Value.CountAsync(roomsSpecification, cancellationToken);
-
-    // Проверяем, не превысил ли пользователь лимит созданных комнат (5 комнаты)
     if (roomsCount >= Constants.Limits.MaxRoomsPerUser) throw new MaxNumberRoomsReachedException(user.Id);
 
-    // Создаем событие интеграции с полной информацией о созданной комнате
     var integrationEvent = new RoomCreatedIntegrationEvent
     {
       Id = room.Id,
@@ -56,7 +49,6 @@ public class RoomCreatedEventHandler(IUnitOfWork unitOfWork, IPublishEndpoint pu
       }
     };
 
-    // Публикуем событие интеграции через MassTransit
     await publishEndpoint.Publish(integrationEvent, cancellationToken: cancellationToken);
   }
 }

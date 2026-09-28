@@ -41,20 +41,16 @@ const FilmModule = (props: FilmModuleProps): ReactElement => {
   const toggleWatchlist = useSafeCallback(async () => {
     if (authorizedUser === null || film == null) return;
 
-    // Обновляем локальный статус watchlist в контексте фильма
     editFilm((prev) => ({
       ...prev!,
       inWatchlist: !prev!.inWatchlist,
     }));
 
-    // Обновляем статус watchlist на сервере
     await profileApi.toggleWatchlist(film.id);
   }, [authorizedUser, profileApi, film, editFilm]);
 
-  // Показываем скелетон, если данные фильма ещё не загружены
   if (!film) return <FilmInfoSkeleton />;
 
-  // Основной рендер: компонент FilmInfo с навигацией по фильтрам и управлением watchlist
   return (
     <FilmInfo
       film={film}

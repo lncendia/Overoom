@@ -8,7 +8,6 @@ import SignInModule from '../modules/authorization/SignInModule.tsx';
  * @returns {ReactElement} JSX-элемент страницы входа
  */
 const SignInPage = (): ReactElement => {
-  // Рендерим модуль авторизации
   return <SignInModule />;
 };
 

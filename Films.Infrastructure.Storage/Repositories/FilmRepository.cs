@@ -46,10 +46,4 @@ public class FilmRepository : RepositoryBase<FilmModel, Film, FilmSnapshot, IFil
       Id = aggregate.Id
     };
   }
-
-  /// <inheritdoc/>
-  protected override Film FromSnapshot(FilmSnapshot snapshot)
-  {
-    return Film.FromSnapshot(snapshot);
-  }
 }

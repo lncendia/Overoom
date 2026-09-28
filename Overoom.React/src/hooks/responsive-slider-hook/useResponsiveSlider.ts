@@ -39,7 +39,6 @@ export function useResponsiveSlider({
     let items = startItems;
     let index = 0;
 
-    // Генерируем диапазоны, пока не достигнем максимальной ширины
     while (min < maxWidth) {
       const key = `bp${index++}`;
       result[key] = {
@@ -48,7 +47,6 @@ export function useResponsiveSlider({
         slidesToSlide: 1,
       };
 
-      // Смещаем диапазон и увеличиваем количество элементов
       min = max;
       max += step;
       items++;

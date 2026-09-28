@@ -35,7 +35,6 @@ public class CreateUserCommandHandler(
   /// <exception cref="PasswordValidationException">Вызывается, если валидация пароля не прошла.</exception>
   public async Task<AppUser> Handle(CreateUserCommand request, CancellationToken cancellationToken)
   {
-    // Создание нового объекта пользователя на основе данных из запроса.
     var user = new AppUser
     {
       Id = Guid.NewGuid(),
@@ -45,52 +44,29 @@ public class CreateUserCommandHandler(
       LastAuthTimeUtc = DateTime.UtcNow
     };
 
-    // Начинаем транзакцию в контексте базы данных MongoDB.
     await dbContext.BeginTransaction(cancellationToken);
-
-    // Попытка создания пользователя с использованием UserManager.
     IdentityResult result = await userManager.CreateAsync(user, request.Password);
 
-    // Проверка успешности создания пользователя
     if (!result.Succeeded)
     {
-      // Отмена транзакции
       await dbContext.AbortTransaction(cancellationToken);
-
-      // Если хоть одна ошибка DuplicateEmail, то вызываем исключение
       if (result.Errors.Any(e => e.Code == "DuplicateEmail")) throw new EmailAlreadyTakenException();
-
-      // Если хоть одна ошибка InvalidEmail, то вызываем исключение
       if (result.Errors.Any(e => e.Code == "InvalidEmail")) throw new EmailFormatException();
-
-      // Если хоть одна ошибка InvalidUserNameLength, то вызываем исключение
       if (result.Errors.Any(error => error.Code == "InvalidUserNameLength")) throw new UserNameLengthException();
 
-      // Создаем словарь для хранения ошибок
       var passwordValidationErrors = result.Errors.ToDictionary(e => e.Code, e => e.Description);
-
-      // Вызываем исключение, содержащие в себе словарь ошибок валидации пароля
       throw new PasswordValidationException { ValidationErrors = passwordValidationErrors };
     }
 
-    // Так же добавляем локализацию в утверждения пользователя
     await userManager.AddClaimAsync(user,
       new Claim(OpenIddictConstants.Claims.Locale, request.Locale.GetLocalizationString()));
 
-    // Генерация кода подтверждения и формирование URL для подтверждения электронной почты.
     string code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-
-    // Генерация URL подтверждения почты
     string url = user.GenerateMailConfirmUrl(request.ConfirmUrl, code, request.ReturnUrl);
-
-    // Отправка электронного письма со ссылкой для подтверждения регистрации.
     var message = new ConfirmRegistrationEmail { Recipient = request.Email, ConfirmLink = url };
     await publishEndpoint.Publish(new SendEmail { Message = message }, cancellationToken);
-
-    // Фиксируем транзакцию в контексте базы данных MongoDB.
     await dbContext.CommitTransaction(cancellationToken);
 
-    // Возвращение созданного пользователя.
     return user;
   }
 }

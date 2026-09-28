@@ -23,19 +23,11 @@ public class UpdateRoomSettingsCommandHandler(ISessionHandlerFactory sessionHand
   /// <exception cref="UserNotFoundException">Если пользователь не найден</exception>
   public async Task Handle(UpdateRoomSettingsCommand request, CancellationToken cancellationToken)
   {
-    // Получаем пользователя по ID из запроса
     User? user = await unitOfWork.UserRepository.Value.GetAsync(request.UserId, cancellationToken);
-
-    // Проверяем существование пользователя
     if (user == null) throw new UserNotFoundException(request.UserId);
 
-    // Создаем новый объект разрешений с переданными параметрами
     user.RoomSettings = request.Settings;
-
-    // Обновляем данные пользователя в репозитории
     await unitOfWork.UserRepository.Value.UpdateAsync(user, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(sessionHandlerFactory.CreateOutboxHandler(), cancellationToken);
   }
 }

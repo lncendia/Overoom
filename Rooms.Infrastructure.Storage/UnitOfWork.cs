@@ -29,10 +29,7 @@ public class UnitOfWork : UnitOfWorkBase, IUnitOfWork
     IPublisher publisher, ILogger<UnitOfWork> logger)
     : base(handlerFactory, publisher, logger)
   {
-    // Создаем RoomRepository
     RoomRepository = new Lazy<IRoomRepository>(() => new RoomRepository(context, config));
-
-    // Создаем MessageRepository
     MessageRepository = new Lazy<IMessageRepository>(() => new MessageRepository(context, config));
   }
 
@@ -52,11 +49,9 @@ public class UnitOfWork : UnitOfWorkBase, IUnitOfWork
   /// </summary>
   protected override IEnumerable<IRepository> GetRepositories()
   {
-    // Проверяем, были ли созданы изменения в репозитории RoomRepository.
     if (RoomRepository.IsValueCreated)
       yield return (RoomRepository)RoomRepository.Value;
 
-    // Проверяем, были ли созданы изменения в репозитории MessageRepository.
     if (MessageRepository.IsValueCreated)
       yield return (MessageRepository)MessageRepository.Value;
   }

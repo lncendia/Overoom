@@ -24,10 +24,8 @@ public static class LocalizationExtensions
   /// <returns>Локализация как строка</returns>
   public static Localization GetLocalization(this string? localization)
   {
-    // проверяем входящие данные
     if (localization == null) return Localization.En;
 
-    // смотрим локализацию в нижнем регистре и отдаем значение из enum
     return localization.ToLower() switch
     {
       Ru => Localization.Ru,
@@ -42,7 +40,6 @@ public static class LocalizationExtensions
   /// <returns>Локализация как строка</returns>
   public static string GetLocalizationString(this Localization localization)
   {
-    // смотрим локализацию в нижнем регистре и отдаем значение из enum
     return localization.ToString().ToLower();
   }
 }

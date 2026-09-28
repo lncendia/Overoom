@@ -32,10 +32,8 @@ const FilmRatingStack = ({ kp, imdb, sx }: FilmRatingStackProps): ReactElement =
         ...sx,
       }}
     >
-      {/* Чип с рейтингом Кинопоиска */}
       {kp && <Chip label={`КП: ${kp}`} color="primary" size="small" sx={{ fontWeight: 'bold' }} />}
 
-      {/* Чип с рейтингом IMDB */}
       {imdb && (
         <Chip label={`IMDB: ${imdb}`} color="secondary" size="small" sx={{ fontWeight: 'bold' }} />
       )}

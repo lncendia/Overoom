@@ -18,13 +18,12 @@ public class PauseMasterEventHandler(IUnitOfWork unitOfWork) : BeforeSaveNotific
   /// <param name="cancellationToken">Токен отмены операции</param>
   protected override async Task Execute(ViewerPauseChangedEvent notification, CancellationToken cancellationToken)
   {
-    // Если это синхронизация или буферизация - не обрабатываем
     if (notification.IsSyncEvent || notification.Buffering) return;
 
     if (!notification.Viewer.OnPause) return;
-    int pauses =
-      notification.Room.IncrementStatisticParameter(notification.Viewer.Id,
-        Constants.ViewerStatisticParameters.PauseCount);
+    int pauses = notification.Room.IncrementStatisticParameter(
+      notification.Viewer.Id, Constants.ViewerStatisticParameters.PauseCount);
+
     if (pauses > 30)
       notification.Room.AddTag(notification.Viewer.Id, Constants.ViewerTags.PauseMaster);
 

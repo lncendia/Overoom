@@ -39,13 +39,9 @@ public static class PasswordHasher
   /// <returns>Строка в формате "соль.хэш" где обе части в Base64</returns>
   public static string Hash(string password)
   {
-    // Генерируем криптографически безопасную случайную соль
     byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
-
-    // Создаем ключ (хэш) используя PBKDF2 с солью и множеством итераций
     byte[] key = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, _algorithm, KeySize);
 
-    // Возвращаем соль и хэш в формате Base64, разделенные точкой
     return $"{Convert.ToBase64String(salt)}.{Convert.ToBase64String(key)}";
   }
 
@@ -58,18 +54,13 @@ public static class PasswordHasher
   /// <returns>true - если пароль соответствует хэшу, false - в противном случае</returns>
   public static bool Verify(string password, string hash)
   {
-    // Разделяем хэш на соль и ключ
     string[] parts = hash.Split('.');
     if (parts.Length != 2) return false;
 
-    // Декодируем соль и ключ из Base64
     byte[] salt = Convert.FromBase64String(parts[0]);
     byte[] key = Convert.FromBase64String(parts[1]);
-
-    // Вычисляем хэш для предоставленного пароля с той же солью
     byte[] attemptedKey = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, _algorithm, KeySize);
 
-    // Сравниваем хэши с постоянным временем выполнения
     return CryptographicOperations.FixedTimeEquals(attemptedKey, key);
   }
 }

@@ -14,13 +14,10 @@ const PlaylistsPage = (): ReactElement => {
 
   return (
     <>
-      {/* Заголовок блока выбора жанров */}
       <BlockTitle title="Жанры" />
 
-      {/* Модуль выбора жанра */}
       <GenreSelectModule genre={genre} onSelect={(g) => genreSelect(g)} />
 
-      {/* Модуль отображения подборок по выбранному жанру */}
       <PlaylistsModule genre={genre} />
     </>
   );

@@ -13,7 +13,6 @@ public class CommentsMapperProfile : AutoMapper.Profile
   /// </summary>
   public CommentsMapperProfile()
   {
-    // Карта для GetCommentsInputModel в GetFilmCommentsQuery
     CreateMap<GetCommentsInputModel, GetFilmCommentsQuery>();
   }
 }

@@ -40,20 +40,14 @@ export const RoomContextProvider: React.FC<RoomContextProviderProps> = ({
   const updateCurrentViewer = useCallback(
     (updater: (viewer: ViewerStateDto) => ViewerStateDto) => {
       setRoom((prev) => {
-        // Если комнаты ещё нет или пользователь не авторизован → возвращаем предыдущее состояние без изменений
         if (!prev || !authorizedUser) return prev;
 
-        // Копируем карту зрителей (viewerStates), чтобы не мутировать оригинал
         const newPlayers = new Map(prev.viewerStates);
-
-        // Находим состояние текущего пользователя
         const current = newPlayers.get(authorizedUser.id);
         if (!current) return prev;
 
-        // Обновляем состояние текущего пользователя через функцию updater
         newPlayers.set(authorizedUser.id, updater(current));
 
-        // Возвращаем новое состояние комнаты с обновлённым viewerStates
         return { ...prev, viewerStates: newPlayers };
       });
     },

@@ -42,7 +42,6 @@ public class CustomUserValidatorTest
   public async Task ValidateAsync_ValidEmail(string email)
   {
     // Arrange
-    // Создаем экземпляр пользователя.
     var user = new AppUser
     {
       UserName = email.Split('@')[0],
@@ -51,17 +50,14 @@ public class CustomUserValidatorTest
       LastAuthTimeUtc = DateTime.UtcNow
     };
 
-    // Настройка mock объекта UserManager для возвращения null при вызове FindByEmailAsync.
     _userManagerMock
       .Setup(m => m.FindByEmailAsync(email))
       .ReturnsAsync(() => null);
 
     // Act
-    // Валидация почты
     IdentityResult result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
 
     // Assert
-    // Проверяем является ли тип результата нашим ожиданием.
     Assert.Equal(IdentityResult.Success, result);
   }
 
@@ -73,7 +69,6 @@ public class CustomUserValidatorTest
   public async Task ValidateAsync_InvalidEmailWithNullOrWhiteSpace(string email)
   {
     // Arrange
-    // Создаем экземпляр пользователя.
     var user = new AppUser
     {
       UserName = email.Split('@')[0],
@@ -83,11 +78,9 @@ public class CustomUserValidatorTest
     };
 
     // Act
-    // Валидация пароля
     IdentityResult result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
 
     // Assert
-    // Проверяем является ли код ошибки тем, который мы ожидали
     Assert.Equal("InvalidUserNameLength", result.Errors.FirstOrDefault()?.Code);
   }
 
@@ -102,7 +95,6 @@ public class CustomUserValidatorTest
   public async Task ValidateAsync_InvalidFormatEmail(string email)
   {
     // Arrange
-    // Создаем экземпляр пользователя.
     var user = new AppUser
     {
       UserName = "test_user",
@@ -112,11 +104,9 @@ public class CustomUserValidatorTest
     };
 
     // Act
-    // Валидация пароля
     IdentityResult result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
 
     // Assert
-    // Проверяем является ли код ошибки тем, который мы ожидали
     Assert.Equal("InvalidEmail", result.Errors.FirstOrDefault()?.Code);
   }
 
@@ -128,7 +118,6 @@ public class CustomUserValidatorTest
   public async Task ValidateAsync_WhenEmailAlreadyTaken(string email)
   {
     // Arrange
-    // Создаем экземпляр пользователя.
     var user = new AppUser
     {
       UserName = email.Split('@')[0],
@@ -138,7 +127,6 @@ public class CustomUserValidatorTest
       Id = Guid.NewGuid()
     };
 
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
     _userManagerMock
       .Setup(m => m.FindByEmailAsync(email))
       .ReturnsAsync(() => new AppUser
@@ -151,11 +139,9 @@ public class CustomUserValidatorTest
       });
 
     // Act
-    // Валидация пароля
     IdentityResult result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
 
     // Assert
-    // Проверяем является ли код ошибки тем, который мы ожидали
     Assert.Equal("DuplicateEmail", result.Errors.FirstOrDefault()?.Code);
   }
 
@@ -168,7 +154,6 @@ public class CustomUserValidatorTest
   public async Task ValidateAsync_WhenUsernameLengthIsInvalid(string username)
   {
     // Arrange
-    // Создаем экземпляр пользователя.
     var user = new AppUser
     {
       UserName = username,
@@ -178,7 +163,6 @@ public class CustomUserValidatorTest
       Id = Guid.NewGuid()
     };
 
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
     _userManagerMock
       .Setup(m => m.FindByEmailAsync(username))
       .ReturnsAsync(() => new AppUser
@@ -191,11 +175,9 @@ public class CustomUserValidatorTest
       });
 
     // Act
-    // Валидация пароля
     IdentityResult result = await _customUserValidator.ValidateAsync(_userManagerMock.Object, user);
 
     // Assert
-    // Проверяем является ли код ошибки тем, который мы ожидали
     Assert.Equal("InvalidUserNameLength", result.Errors.FirstOrDefault()?.Code);
   }
 }

@@ -7,7 +7,6 @@ import { ReactElement } from 'react';
  * @returns {ReactElement} JSX-элемент футера
  */
 const FooterModule = (): ReactElement => {
-  // Основной контейнер футера
   return (
     <Box
       component="footer"
@@ -15,7 +14,6 @@ const FooterModule = (): ReactElement => {
         backgroundColor: theme.palette.background.default,
         padding: theme.spacing(2, 0),
 
-        // Для прижатия футера к низу страницы
         marginTop: 'auto',
       })}
     >
@@ -29,12 +27,10 @@ const FooterModule = (): ReactElement => {
             gap: 2,
           }}
         >
-          {/* Копирайт с текущим годом */}
           <Typography variant="body2" color="text.secondary">
             &copy; {new Date().getFullYear()} - Overoom
           </Typography>
 
-          {/* Ссылка для правообладателей */}
           <Link
             href="#"
             variant="body2"

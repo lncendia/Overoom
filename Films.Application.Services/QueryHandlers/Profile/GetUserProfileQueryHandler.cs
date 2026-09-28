@@ -24,7 +24,6 @@ public class GetUserProfileQueryHandler(MongoDbContext context)
   /// <exception cref="UserNotFoundException">Выбрасывается, если пользователь с указанным ID не найден</exception>
   public async Task<UserProfileDto> Handle(GetUserProfileQuery request, CancellationToken cancellationToken)
   {
-    // Находим первого пользователя с указанным ID
     UserProfileDto? user = await context.Users.AsQueryable()
       .Where(u => u.Id == request.Id)
       .Select(u => new UserProfileDto
@@ -36,7 +35,6 @@ public class GetUserProfileQueryHandler(MongoDbContext context)
       })
       .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-    // Возвращаем найденного пользователя или выбрасываем исключение
     return user ?? throw new UserNotFoundException(request.Id);
   }
 }

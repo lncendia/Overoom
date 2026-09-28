@@ -40,26 +40,20 @@ const PlaylistInfo = (props: PlaylistInfo): ReactElement => {
 
   return (
     <Paper sx={{ p: 2, my: 2 }}>
-      {/** Компонент карточки фильма, переиспользуемый для плейлистов */}
       <FilmInfoCard {...props} ratingKp={null} ratingImdb={null}>
-        {/* Заголовок плейлиста */}
         <Typography variant="h4" component="h1">
           {props.name}
         </Typography>
 
         <Divider sx={{ my: 2, borderWidth: 1 }} />
 
-        {/* Описание плейлиста */}
         <Typography variant="body1">{props.description}</Typography>
 
         <Divider sx={{ my: 2, borderWidth: 1 }} />
 
-        {/* Списки информации о плейлисте */}
         <Stack spacing={1}>
-          {/** Список жанров плейлиста с возможностью выбора для поиска */}
           <KeyList title="Жанр:" values={props.genres} onKeySelect={props.onGenreSelect} />
 
-          {/** Дата последнего обновления плейлиста */}
           <KeyList title="Обновлена:" values={[formatedDate]} />
         </Stack>
       </FilmInfoCard>

@@ -30,10 +30,8 @@ public class PlaylistsController(ISender mediator, IMapper mapper) : ControllerB
     [FromQuery] SearchPlaylistsInputModel model,
     CancellationToken token = default)
   {
-    // Преобразуем входную модель в запрос
     SearchPlaylistsQuery? query = mapper.Map<SearchPlaylistsQuery>(model);
 
-    // Получаем данные
     return await mediator.Send(query, token);
   }
 
@@ -48,7 +46,6 @@ public class PlaylistsController(ISender mediator, IMapper mapper) : ControllerB
   [HttpGet("{id:guid}")]
   public async Task<PlaylistDto> GetById(Guid id, CancellationToken token = default)
   {
-    // Преобразуем входную модель в запрос
     return await mediator.Send(new GetPlaylistByIdQuery { Id = id }, token);
   }
 }

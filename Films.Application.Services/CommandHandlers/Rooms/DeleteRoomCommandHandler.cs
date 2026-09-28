@@ -24,19 +24,11 @@ public class DeleteRoomCommandHandler(ISessionHandlerFactory sessionHandlerFacto
   /// <exception cref="RoomNotFoundException">Если указанная комната не найдена</exception>
   public async Task Handle(DeleteRoomCommand request, CancellationToken cancellationToken)
   {
-    // Получаем комнату по идентификатору из запроса
     Room? room = await unitOfWork.RoomRepository.Value.GetAsync(request.RoomId, cancellationToken);
-
-    // Проверяем существование комнаты
     if (room == null) throw new RoomNotFoundException(request.RoomId);
 
-    // Проверка, может ли текущий пользователь удалить комнату
     room.CanDelete(request.UserId);
-
-    // Удаляем комнату из репозитория
     await unitOfWork.RoomRepository.Value.DeleteAsync(room, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(sessionHandlerFactory.CreateOutboxHandler(), cancellationToken);
   }
 }

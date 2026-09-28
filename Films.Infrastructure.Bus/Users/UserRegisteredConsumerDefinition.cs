@@ -16,10 +16,8 @@ public class UserRegisteredConsumerDefinition : ConsumerDefinition<UserRegistere
   protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
     IConsumerConfigurator<UserRegisteredConsumer> consumerConfigurator, IRegistrationContext context)
   {
-    // Настройка повторной обработки
     consumerConfigurator.UseMessageRetry(cfg => { cfg.Interval(5, TimeSpan.FromSeconds(5)); });
 
-    // Настройка отложенной повторной доставки с экспоненциальной политикой
     endpointConfigurator.UseScheduledRedelivery(cfg =>
     {
       cfg.Exponential(10, TimeSpan.FromMinutes(1), TimeSpan.FromDays(1), TimeSpan.FromSeconds(30));

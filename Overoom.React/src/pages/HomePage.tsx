@@ -57,16 +57,13 @@ const HomePage = (): ReactElement => {
 
   return (
     <>
-      {/* Модуль случайного видео с навигацией и логотипом */}
       <RandomVideoModule>
         <NavbarModule />
         <Logo />
       </RandomVideoModule>
 
-      {/* Основной контейнер контента */}
       <Container maxWidth={false} className="background-container">
         <Container maxWidth="xl">
-          {/* Секция каталога */}
           <BlockTitle sx={{ mt: 5 }} title="Каталог" />
           <Paper>
             <Grid container spacing={2}>
@@ -79,7 +76,6 @@ const HomePage = (): ReactElement => {
             </Grid>
           </Paper>
 
-          {/* Секция комнат */}
           <BlockTitle sx={{ mt: 5 }} title="Комнаты" />
           <Paper>
             <FilmInfoExample
@@ -94,7 +90,6 @@ const HomePage = (): ReactElement => {
             <StyledTypography>{roomsInfo}</StyledTypography>
           </Paper>
 
-          {/* Секция чата */}
           <BlockTitle sx={{ mt: 5 }} title="Чат" />
           <Paper>
             <Grid container spacing={2}>
@@ -107,7 +102,6 @@ const HomePage = (): ReactElement => {
             </Grid>
           </Paper>
 
-          {/* Секция действий */}
           <BlockTitle sx={{ mt: 5 }} title="Действия" />
           <Paper>
             <Grid container spacing={2}>
@@ -120,7 +114,6 @@ const HomePage = (): ReactElement => {
             </Grid>
           </Paper>
 
-          {/* Секция профиля */}
           <BlockTitle sx={{ mt: 5 }} title="Профиль" />
           <Paper>
             <Grid container spacing={2}>
@@ -133,12 +126,10 @@ const HomePage = (): ReactElement => {
             </Grid>
           </Paper>
 
-          {/* Пожелание */}
           <Wishes sx={{ mt: 5 }} text="Приятного просмотра" />
         </Container>
       </Container>
 
-      {/* Подвал страницы */}
       <FooterModule />
     </>
   );

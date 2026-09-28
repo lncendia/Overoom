@@ -35,18 +35,14 @@ public class CallbackController : Controller
   [HttpGet("~/signin-{provider}")]
   public async Task<IActionResult> ExternalLoginCallback(string provider)
   {
-    // Получаем маппер claims для указанного провайдера
     IExternalClaimsMapper? mapper = _mappers.FirstOrDefault(m => m.SupportsProvider(provider));
 
-    // Проверяем поддержку провайдера
     if (mapper is null)
       throw new AuthenticationFailureException(
         $"The provider '{provider}' is not supported. Available Providers: {string.Join(", ", _mappers.Select(m => m.GetType().Name))}");
 
-    // Аутентифицируемся через внешний провайдер
     AuthenticateResult result = await HttpContext.AuthenticateAsync(mapper.Provider);
 
-    // Проверяем успешность аутентификации
     if (!result.Succeeded)
       throw new AuthenticationFailureException($"Authentication via the provider '{provider}' failed", result.Failure);
 
@@ -58,16 +54,13 @@ public class CallbackController : Controller
       throw new AuthenticationFailureException(
         $"As a result of authentication via '{provider}', no Properties were received");
 
-    // Маппим claims из внешнего провайдера
     ClaimsIdentity identity = await mapper.MapAsync(result);
 
-    // Создаем свойства аутентификации для перенаправления
     var properties = new AuthenticationProperties(result.Properties.Items)
     {
       RedirectUri = result.Properties.RedirectUri ?? "/"
     };
 
-    // Выполняем вход
     return SignIn(new ClaimsPrincipal(identity), properties, IdentityConstants.ExternalScheme);
   }
 }

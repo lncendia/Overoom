@@ -58,7 +58,6 @@ const FilmsCatalog = ({
             key={film.id}
             sx={{ display: 'flex', justifyContent: 'center' }}
           >
-            {/* Карточка отдельного фильма/сериала */}
             <FilmItem
               selectedGenre={genre}
               film={film}

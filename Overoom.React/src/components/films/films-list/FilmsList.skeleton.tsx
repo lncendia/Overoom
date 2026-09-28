@@ -8,7 +8,6 @@ import FilmShortItemSkeleton from '../film-short-item/FilmShortItem.skeleton.tsx
  * @returns {ReactElement} JSX элемент скелетона списка фильмов
  */
 const FilmsListSkeleton = (): ReactElement => {
-  // Массив для генерации заглушек элементов фильмов
   const items = Array.from({ length: 5 }, (_, i) => i);
 
   return (
@@ -16,7 +15,6 @@ const FilmsListSkeleton = (): ReactElement => {
       <Grid container spacing={2}>
         {items.map((i) => (
           <Grid size="auto" key={i} sx={{ display: 'flex', justifyContent: 'center' }}>
-            {/* Скелетон компактного элемента фильма */}
             <FilmShortItemSkeleton />
           </Grid>
         ))}

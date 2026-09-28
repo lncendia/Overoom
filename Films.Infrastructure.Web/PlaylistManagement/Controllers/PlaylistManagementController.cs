@@ -65,7 +65,6 @@ public class PlaylistManagementController(ISender mediator, IMapper mapper) : Co
 
     await mediator.Send(command, token);
 
-    // Возвращаем статус 204 No Content
     return NoContent();
   }
 
@@ -87,7 +86,6 @@ public class PlaylistManagementController(ISender mediator, IMapper mapper) : Co
     ChangePlaylistPosterInputModel model,
     CancellationToken token = default)
   {
-    // Преобразуем входную модель в команду
     ChangePlaylistPosterCommand? command = mapper.Map<ChangePlaylistPosterCommand>(model);
     command.Id = id;
 
@@ -99,7 +97,6 @@ public class PlaylistManagementController(ISender mediator, IMapper mapper) : Co
     }
     finally
     {
-      // Закрываем поток с файлом вручную после выполнения команды
       await command.Poster.File.DisposeAsync();
     }
   }
@@ -119,7 +116,6 @@ public class PlaylistManagementController(ISender mediator, IMapper mapper) : Co
   {
     await mediator.Send(new DeletePlaylistCommand { Id = id }, token);
 
-    // Возвращаем статус 204 No Content
     return NoContent();
   }
 }

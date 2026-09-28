@@ -8,7 +8,6 @@ import SignInSilentModule from '../modules/authorization/SignInSilentModule.tsx'
  * @returns {ReactElement} JSX-элемент страницы silent-входа
  */
 const SignInSilentPage = (): ReactElement => {
-  // Рендерим модуль фоновой авторизации
   return <SignInSilentModule />;
 };
 

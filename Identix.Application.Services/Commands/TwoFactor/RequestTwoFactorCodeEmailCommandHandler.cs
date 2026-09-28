@@ -29,16 +29,10 @@ public class RequestTwoFactorCodeEmailCommandHandler(UserManager<AppUser> userMa
   /// <exception cref="UserNotFoundException">Вызывается, если пользователь не был найден</exception>
   public async Task Handle(RequestTwoFactorCodeEmailCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Вызываем исключение UserNotFoundException если не найден пользователь
     if (user == null) throw new UserNotFoundException();
 
-    // Генерируем код 2fa
     string code = await userManager.GenerateTwoFactorTokenAsync(user, EmailTokenProvider);
-
-    // Отправка электронного письма с кодом.
     var message = new TwoFactorCodeEmail { Recipient = user.Email!, Code = code };
     await publishEndpoint.SkipOutbox().Publish(new SendEmail { Message = message }, cancellationToken);
   }

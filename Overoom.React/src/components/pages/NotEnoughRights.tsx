@@ -50,15 +50,12 @@ const NotEnoughRights = ({ action }: { action: () => void }): ReactElement => {
           alignItems: 'center',
         }}
       >
-        {/* Иллюстрация ограничения доступа */}
         <StyledImage src="/img/login.svg" alt="Доступ ограничен" />
 
-        {/* Заголовок страницы */}
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
           Доступ ограничен
         </Typography>
 
-        {/* Сообщение о необходимости авторизации */}
         <Typography
           variant="body1"
           sx={{
@@ -70,7 +67,6 @@ const NotEnoughRights = ({ action }: { action: () => void }): ReactElement => {
           или у вас недостаточно прав доступа.
         </Typography>
 
-        {/* Кнопка перехода к авторизации */}
         <WildButton
           buttonText="Войти"
           onClick={action}

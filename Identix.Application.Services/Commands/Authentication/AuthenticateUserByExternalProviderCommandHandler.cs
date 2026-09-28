@@ -24,35 +24,21 @@ public class AuthenticateUserByExternalProviderCommandHandler(UserManager<AppUse
   public async Task<AppUser> Handle(AuthenticateUserByExternalProviderCommand request,
     CancellationToken cancellationToken)
   {
-    // Получаем пользователя по данным внешнего провайдера
     AppUser? user = await userManager.FindByLoginAsync(request.LoginProvider, request.ProviderKey);
-
-    // Если пользователь не найден, вызываем исключение UserNotFoundException.
     if (user == null) throw new UserNotFoundException();
 
-    // Проверяем заблокирован ли пользователь 
     if (await userManager.IsLockedOutAsync(user))
     {
-      // Если пользователь заблокирован, вызываем исключение UserLockoutException.
       throw new UserLockoutException();
     }
 
-    // Cбрасываем счетчик неудачных попыток входа
     await userManager.ResetAccessFailedCountAsync(user);
-
-    // Проверяем, включена ли 2фа у пользователя
     bool is2FaEnabled = await userManager.GetTwoFactorEnabledAsync(user);
-
-    // Если у пользователя включена 2фа выбрасываем исключение
     if (is2FaEnabled) throw new TwoFactorRequiredException(user);
 
-    // Устанавливаем время последнего входа
     user.LastAuthTimeUtc = DateTime.UtcNow;
-
-    // Обновляем данные
     await userManager.UpdateAsync(user);
 
-    // Возвращаем пользователя
     return user;
   }
 }

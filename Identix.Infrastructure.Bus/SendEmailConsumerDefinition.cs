@@ -16,10 +16,8 @@ public class SendEmailConsumerDefinition : ConsumerDefinition<SendEmailConsumer>
   protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
     IConsumerConfigurator<SendEmailConsumer> consumerConfigurator, IRegistrationContext context)
   {
-    // Настройка повторной обработки
     consumerConfigurator.UseMessageRetry(cfg => { cfg.Interval(5, TimeSpan.FromSeconds(1)); });
 
-    // Настройка отложенной повторной доставки с экспоненциальной политикой
     endpointConfigurator.UseScheduledRedelivery(cfg =>
     {
       cfg.Exponential(10, TimeSpan.FromMinutes(1), TimeSpan.FromHours(5), TimeSpan.FromSeconds(30));

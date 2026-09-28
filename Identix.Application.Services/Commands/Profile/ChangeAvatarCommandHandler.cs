@@ -38,53 +38,35 @@ public class ChangeAvatarCommandHandler(
   /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден.</exception>
   public async Task<AppUser> Handle(ChangeAvatarCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Вызываем исключение UserNotFoundException если не найден пользователь
     if (user == null) throw new UserNotFoundException();
 
     IList<Claim> claims = await userManager.GetClaimsAsync(user);
-
-    // Получаем предыдущую аватарку
     string? oldThumbnail = AppUser.GetPhotoKey(claims);
 
-    // Если до этого был установлен аватар
     if (oldThumbnail != null)
     {
-      // Удаляем старый аватар
       await fileStore.DeleteAsync(oldThumbnail, token: cancellationToken);
     }
 
-    // Формируем новый ключ для фото пользователя
     string newThumbnail = string.Format(Constants.Storage.UserPhotoKeyFormat, user.Id);
 
-    // Сохраняем новый аватар локально
     await fileStore.UploadAsync(newThumbnail, request.Thumbnail, Constants.Storage.JpegMimeType,
       token: cancellationToken);
 
-    // Создаем новый клайм
     var newClaim = new Claim(OpenIddictConstants.Claims.Picture, newThumbnail);
-
-    // Начинаем транзакцию в контексте базы данных MongoDB.
     await dbContext.BeginTransaction(cancellationToken);
 
-    // Если до этого был установлен аватар
     if (oldThumbnail != null)
     {
-      // Сохраняем старый клайм
       Claim oldClaim = claims.First(c => c.Type == OpenIddictConstants.Claims.Picture);
-
-      // Заменяем клайм аватара
       await userManager.ReplaceClaimAsync(user, oldClaim, newClaim);
     }
     else
     {
-      // Добавляем утверждение об аватаре
       await userManager.AddClaimAsync(user, newClaim);
     }
 
-    // Публикуем событие
     await publishEndpoint.Publish(new UserInfoChangedIntegrationEvent
     {
       Id = user.Id,
@@ -94,10 +76,8 @@ public class ChangeAvatarCommandHandler(
       Locale = AppUser.GetLocale(claims).GetLocalizationString()
     }, cancellationToken);
 
-    // Фиксируем транзакцию в контексте базы данных MongoDB.
     await dbContext.CommitTransaction(cancellationToken);
 
-    // Возвращаем пользователя
     return user;
   }
 }

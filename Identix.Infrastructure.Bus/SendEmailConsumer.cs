@@ -16,7 +16,6 @@ public class SendEmailConsumer(IEmailService sender) : IConsumer<SendEmail>
   /// <param name="context">Контекст сообщения</param>
   public async Task Consume(ConsumeContext<SendEmail> context)
   {
-    // Отправляем письмо
     await sender.SendAsync(context.Message.Message, context.CancellationToken);
   }
 }

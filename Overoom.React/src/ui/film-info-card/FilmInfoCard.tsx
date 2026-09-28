@@ -52,18 +52,14 @@ const FilmInfoCard = ({
 }: FilmInfoCardProps): ReactElement => {
   return (
     <Grid container spacing={3}>
-      {/* Блок с постером */}
       <Grid size={{ xs: 12, md: 4, lg: 3, xl: 2.5 }} sx={{ textAlign: 'center' }}>
         <PosterContainer>
-          {/* Основное изображение постера */}
           <ScalingPoster src={posterUrl} alt="Постер фильма" />
 
-          {/* Чипы с рейтингами */}
           <FilmRatingStack sx={{ top: 8, right: 8 }} kp={ratingKp} imdb={ratingImdb} />
         </PosterContainer>
       </Grid>
 
-      {/* Блок с информацией о фильме */}
       <Grid size={{ xs: 12, md: 8, lg: 9, xl: 9.5 }}>{children}</Grid>
     </Grid>
   );

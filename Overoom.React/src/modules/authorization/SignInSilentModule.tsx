@@ -28,7 +28,6 @@ const SignInSilentModule = (): ReactElement => {
     handleSilentCallback();
   }, [handleSilentCallback]);
 
-  // Возвращаем JSX элемент, который содержит структуру страницы с текстом "Перенаправление"
   return <Redirecting />;
 };
 

@@ -33,16 +33,13 @@ public class AuthorizeUserCommandHandler(
   /// <exception cref="InvalidOperationException">Выбрасывается когда пользователь или приложение не найдены</exception>
   public async Task<ClaimsPrincipal> Handle(AuthorizeUserCommand request, CancellationToken cancellationToken)
   {
-    // Получаем профиль вошедшего в систему пользователя по его ID
     AppUser user = await userManager.FindByIdAsync(request.UserId.ToString()) ??
                    throw new UserNotFoundException();
 
-    // Получаем детали клиентского приложения из базы данных по client_id
     object application = await applicationManager.FindByClientIdAsync(request.ClientId, cancellationToken) ??
                          throw new InvalidOperationException(
                            "The details of the calling client application could not be found");
 
-    // Ищем постоянные авторизации, связанные с пользователем и клиентским приложением
     object? authorization = await authorizationManager.FindAsync(
         subject: await userManager.GetUserIdAsync(user),
         client: await applicationManager.GetIdAsync(application, cancellationToken),
@@ -51,28 +48,20 @@ public class AuthorizeUserCommandHandler(
         scopes: request.Scopes, cancellationToken: cancellationToken)
       .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-    // Получаем тип подтверждения приложения
     string? consentType = await applicationManager.GetConsentTypeAsync(application, cancellationToken);
 
-    // Проверяем тип согласия (consent type) для приложения
     switch (consentType)
     {
       case null:
       case OpenIddictConstants.ConsentTypes.Implicit:
       case OpenIddictConstants.ConsentTypes.External when authorization is not null:
       case OpenIddictConstants.ConsentTypes.Explicit when authorization is not null:
-
-        // Создаем identity для пользователя с указанной схемой аутентификации
         ClaimsIdentity identity = await claimsIdentityFactory.CreateAsync(user, request.AuthenticationScheme, request.Identity);
 
-        // Получаем ресурсы запрашиваемых областей
         List<string> resources = await scopeManager.ListResourcesAsync(request.Scopes, cancellationToken)
           .ToListAsync(cancellationToken: cancellationToken);
 
-        // Устанавливаем запрошенные области (scopes) для identity
         identity.SetScopes(request.Scopes);
-
-        // Устанавливаем ресурсы, соответствующие запрошенным областям
         identity.SetResources(resources);
 
         // Автоматически создаем постоянную авторизацию, чтобы избежать запроса явного согласия
@@ -84,17 +73,12 @@ public class AuthorizeUserCommandHandler(
           type: OpenIddictConstants.AuthorizationTypes.Permanent,
           scopes: identity.GetScopes(), cancellationToken: cancellationToken);
 
-        // Устанавливаем идентификатор авторизации в claims identity
         identity.SetAuthorizationId(await authorizationManager.GetIdAsync(authorization, cancellationToken));
-
-        // Устанавливаем destinations для claims (куда они могут быть включены)
         identity.SetDestinations(claimsIdentityFactory.GetDestinations);
 
-        // Возвращаем ClaimsPrincipal с созданной identity
         return new ClaimsPrincipal(identity);
     }
 
-    // Выбрасываем исключение о необходимости согласия
     throw new ConsentRequiredException(consentType);
   }
 }

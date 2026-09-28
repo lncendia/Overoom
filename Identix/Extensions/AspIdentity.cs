@@ -26,22 +26,14 @@ public static class AspIdentity
   /// <param name="builder">Построитель веб-приложения.</param>
   public static void AddAspIdentity(this IHostApplicationBuilder builder)
   {
-    // Извлекаем имя базы данных из конфигурации.
     string database = builder.Configuration.GetRequiredValue<string>("MongoDB:IdentityDB");
-
-    // Добавляет валидатор для пользователя.
     builder.Services.AddTransient<IUserValidator<AppUser>, CustomUserValidator>();
-
-    // Добавляет валидатор для пароля.
     builder.Services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordValidator>();
-
-    // Добавляет SignInManager
     builder.Services.AddScoped<SignInManager<AppUser>, OpenIdSignInManager<AppUser>>();
 
     builder.Services.AddScoped<IUserStore<AppUser>, UserStore>();
     builder.Services.AddScoped<IRoleStore<AppRole>, RoleStore>();
 
-    // Добавляет и настраивает идентификационную систему для указанных пользователей и типов ролей.
     builder.Services.AddIdentity<AppUser, AppRole>(options =>
       {
         options.Lockout.AllowedForNewUsers = true;
@@ -52,7 +44,6 @@ public static class AspIdentity
       .AddMongoStores(options => { options.Database = MongoDbProvider.Client.GetDatabase(database); })
       .AddDefaultTokenProviders();
 
-    // Добавляет службы политики авторизации в указанную коллекцию IServiceCollection.
     builder.Services.AddAuthorization();
   }
 }

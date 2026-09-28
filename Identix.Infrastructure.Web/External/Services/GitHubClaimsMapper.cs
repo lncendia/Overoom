@@ -56,43 +56,26 @@ public class GitHubClaimsMapper : ExternalClaimsMapperBase
   /// <exception cref="HttpRequestException">Выбрасывается при ошибке запроса к GitHub API</exception>
   public override async Task<ClaimsIdentity> MapAsync(AuthenticateResult result)
   {
-    // Получаем идентификатор пользователя из claims
     string id = result.Principal?.FindFirstValue(ClaimTypes.NameIdentifier)
                 ?? throw new Exception("GitHub: missing id");
 
-    // Создаем базовую identity с идентификатором
     ClaimsIdentity identity = CreateBaseIdentity(id);
-
-    // Добавляем логин пользователя как имя
     identity.TryAddClaim(ClaimTypes.Name, result.Principal?.FindFirstValue("login"));
-
-    // Добавляем аватар пользователя
     identity.TryAddClaim(Constants.Claims.Thumbnail, result.Principal?.FindFirstValue("avatar_url"));
-
-    // Извлекаем access_token из properties аутентификации
     IEnumerable<AuthenticationToken>? tokens = result.Properties?.GetTokens();
     string? accessToken = tokens?.FirstOrDefault(t => t.Name == "backchannel_access_token")?.Value;
 
-    // Проверяем наличие access token
     if (string.IsNullOrEmpty(accessToken))
       throw new Exception("GitHub: missing access_token");
 
-    // Формируем запрос к GitHub API для получения email-адресов
     var request = new HttpRequestMessage(HttpMethod.Get, EmailsEndpoint);
-
-    // Устанавливаем заголовок авторизации с access token
     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
     // Добавляем User-Agent, так как GitHub требует его для всех API запросов
     request.Headers.UserAgent.Add(new ProductInfoHeaderValue("Identix", "1.0.0"));
-
-    // Получаем токен отмены из HTTP контекста
     CancellationToken cancellation = _httpContextAccessor.HttpContext?.RequestAborted ?? CancellationToken.None;
-
-    // Выполняем запрос к GitHub API
     using HttpResponseMessage response = await _backchannel.SendAsync(request, cancellation);
 
-    // Проверяем успешность запроса
     if (!response.IsSuccessStatusCode)
     {
       _logger.LogError("GitHub email request failed: {StatusCode} {Reason}",
@@ -100,10 +83,8 @@ public class GitHubClaimsMapper : ExternalClaimsMapperBase
       throw new HttpRequestException("An error occurred while retrieving the GitHub user emails.");
     }
 
-    // Парсим ответ от GitHub API
     using var container = JsonDocument.Parse(await response.Content.ReadAsStringAsync(cancellation));
 
-    // Ищем основной подтвержденный email пользователя
     string? email = container.RootElement
       .EnumerateArray()
       .Where(e => e.TryGetProperty("primary", out JsonElement p) && p.GetBoolean())
@@ -111,7 +92,6 @@ public class GitHubClaimsMapper : ExternalClaimsMapperBase
       .Select(e => e.GetProperty("email").GetString())
       .FirstOrDefault();
 
-    // Добавляем email в claims, если он найден
     if (!string.IsNullOrEmpty(email))
       identity.TryAddClaim(ClaimTypes.Email, email);
 

@@ -19,16 +19,9 @@ public static class DatabaseInitializer
   /// <returns>Задача, представляющая асинхронную операцию инициализации.</returns>
   public static async Task InitAsync(IServiceProvider serviceProvider, IConfiguration configuration)
   {
-    // Настройка индексов MongoDB для Identity модуля
     await IdentityMongoIndexCreator.ConfigureAsync(serviceProvider);
-
-    // Конфигурация начальных данных для Identity модуля
     await IdentityConfiguration.ConfigureAsync(serviceProvider, configuration);
-
-    // Настройка индексов MongoDB для OpenId модуля
     await OpenIdMongoIndexCreator.ConfigureAsync(serviceProvider);
-
-    // Конфигурация начальных данных для OpenId модуля
     await OpenIdConfiguration.ConfigureAsync(serviceProvider);
   }
 }

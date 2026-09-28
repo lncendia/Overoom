@@ -13,13 +13,8 @@ public class PlaylistManagementMapperProfile : AutoMapper.Profile
   /// </summary>
   public PlaylistManagementMapperProfile()
   {
-    // Карта для CreatePlaylistInputModel в CreatePlaylistCommand
     CreateMap<CreatePlaylistInputModel, CreatePlaylistCommand>();
-
-    // Карта для ChangePlaylistInputModel в ChangePlaylistCommand
     CreateMap<ChangePlaylistInputModel, ChangePlaylistCommand>();
-
-    // Карта для ChangePlaylistPosterInputModel в ChangePlaylistPosterCommand
     CreateMap<ChangePlaylistPosterInputModel, ChangePlaylistPosterCommand>();
   }
 }

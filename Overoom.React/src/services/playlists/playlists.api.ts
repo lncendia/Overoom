@@ -43,7 +43,6 @@ export class PlaylistsApi {
       params: query,
     });
 
-    // Добавляем URL постеров к плейлистам
     for (const playlist of response.data.list) {
       playlist.posterUrl = this.posterUrlFormat + playlist.posterKey;
     }

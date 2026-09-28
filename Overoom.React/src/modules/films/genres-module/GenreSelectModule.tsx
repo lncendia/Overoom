@@ -38,7 +38,6 @@ interface GenreSelectModuleProps {
  * @returns {ReactElement} JSX-элемент, отображающий слайдер жанров
  */
 const GenreSelectModule = ({ genre, onSelect }: GenreSelectModuleProps): ReactElement => {
-  // Рендерим компонент GenreSlider с переданными жанрами и выбранным значением
   return <GenreSlider genre={genre} onSelect={onSelect} genres={genres} />;
 };
 

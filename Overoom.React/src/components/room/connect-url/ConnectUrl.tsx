@@ -36,7 +36,6 @@ const StyledContainer = styled(Box, {
  * @returns {ReactElement} JSX элемент с иконкой и текстом
  */
 const ConnectUrl = ({ onClick, isClicked }: ConnectUrlProps): ReactElement => {
-  // Текст, отображаемый в зависимости от состояния
   const title = isClicked ? 'Ссылка скопирована' : 'Ссылка для подключения';
 
   /** Обработчик клика по элементу */
@@ -47,7 +46,6 @@ const ConnectUrl = ({ onClick, isClicked }: ConnectUrlProps): ReactElement => {
 
   return (
     <StyledContainer isClicked={isClicked} onClick={handleClick}>
-      {/* Иконка состояния: скопировано / копировать */}
       {isClicked ? (
         <CheckIcon sx={{ width: 16, height: 16, mr: 1 }} />
       ) : (

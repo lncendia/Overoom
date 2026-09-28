@@ -34,24 +34,15 @@ public class ChangeNameCommandHandler(
   /// <exception cref="UserNameLengthException">Вызывается, если имя пользователя имеет некорректную длину.</exception>
   public async Task<AppUser> Handle(ChangeNameCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Вызываем исключение UserNotFoundException если не найден пользователь
     if (user == null) throw new UserNotFoundException();
 
     IList<Claim> claims = await userManager.GetClaimsAsync(user);
-
-    // Начинаем транзакцию в контексте базы данных MongoDB.
     await dbContext.BeginTransaction(cancellationToken);
-
-    // Попытка изменения электронной имени пользователя.
     IdentityResult result = await userManager.SetUserNameAsync(user, request.Name);
 
-    // Если результат неудачный
     if (!result.Succeeded)
     {
-      // Если хоть одна ошибка InvalidUserNameLength, то вызываем исключение
       if (result.Errors.Any(error => error.Code == "InvalidUserNameLength"))
       {
         await dbContext.AbortTransaction(cancellationToken);
@@ -59,7 +50,6 @@ public class ChangeNameCommandHandler(
       }
     }
 
-    // Публикуем событие
     await publishEndpoint.Publish(new UserInfoChangedIntegrationEvent
     {
       Id = user.Id,
@@ -69,10 +59,8 @@ public class ChangeNameCommandHandler(
       Locale = AppUser.GetLocale(claims).GetLocalizationString()
     }, cancellationToken);
 
-    // Фиксируем транзакцию в контексте базы данных MongoDB.
     await dbContext.CommitTransaction(cancellationToken);
 
-    // Возвращаем пользователя
     return user;
   }
 }

@@ -66,7 +66,6 @@ const NotificationModule = (): null => {
 
   /** Добавления обработчика событий комнаты*/
   useEffect(() => {
-    // Если хаб еще не инициализирован или нет владельца комнаты — не выполняем обработку
     if (!hub || !room?.ownerId) return;
 
     /**
@@ -75,7 +74,6 @@ const NotificationModule = (): null => {
      * @returns {void}
      */
     const handler = (event: RoomEventContainer): void => {
-      // Событие удаления комнаты
       if (event.deleteNotificationEvent) {
         const initiatorName = getViewerUserName(room.ownerId);
         setNotification({
@@ -83,7 +81,6 @@ const NotificationModule = (): null => {
           severity: 'info',
         });
       }
-      // Событие "beep" — разбудил пользователя
       else if (event.beepNotificationEvent) {
         const initiator = event.beepNotificationEvent.initiator;
         const target = event.beepNotificationEvent.target;
@@ -94,7 +91,6 @@ const NotificationModule = (): null => {
           severity: 'info',
         });
       }
-      // Событие "scream" — напугал пользователя
       else if (event.screamNotificationEvent) {
         const initiator = event.screamNotificationEvent.initiator;
         const target = event.screamNotificationEvent.target;
@@ -105,7 +101,6 @@ const NotificationModule = (): null => {
           severity: 'warning',
         });
       }
-      // Событие кика пользователя из комнаты
       else if (event.kickNotificationEvent) {
         const initiator = event.kickNotificationEvent.initiator;
         const target = event.kickNotificationEvent.target;
@@ -116,7 +111,6 @@ const NotificationModule = (): null => {
           severity: 'error',
         });
       }
-      // Событие выхода пользователя из комнаты
       else if (event.leaveNotificationEvent) {
         const initiator = event.leaveNotificationEvent.initiator;
         const viewerName = getUserName(initiator, event.leaveNotificationEvent.name);
@@ -125,7 +119,6 @@ const NotificationModule = (): null => {
           severity: 'info',
         });
       }
-      // Событие присоединения пользователя к комнате
       else if (event.joinNotificationEvent) {
         const viewer = event.joinNotificationEvent.initiator;
         const viewerName = getUserName(viewer, event.joinNotificationEvent.name);
@@ -134,7 +127,6 @@ const NotificationModule = (): null => {
           severity: 'info',
         });
       }
-      // Событие ошибки
       else if (event.errorNotificationEvent) {
         setNotification({
           message: event.errorNotificationEvent.message,
@@ -143,10 +135,8 @@ const NotificationModule = (): null => {
       }
     };
 
-    // Подписка на события хаба
     hub.addHandler(handler);
 
-    // Очистка подписки при размонтировании компонента
     return () => hub.removeHandler(handler);
   }, [hub, setNotification, getUserName, getViewerUserName, verbForm, room?.ownerId]);
 

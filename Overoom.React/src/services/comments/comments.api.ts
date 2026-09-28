@@ -34,7 +34,6 @@ export class CommentsApi {
       { params: query }
     );
 
-    // Добавляем URL фотографий к комментариям
     response.data.list.forEach((c) => {
       if (c.photoKey) c.photoUrl = this.thumbnailUrlFormat + c.photoKey;
     });

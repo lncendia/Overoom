@@ -24,19 +24,11 @@ public class RequestRecoverPasswordCommandHandler(UserManager<AppUser> userManag
   /// <exception cref="UserNotFoundException">Вызывается, если пользователь не найден.</exception>
   public async Task Handle(RequestRecoverPasswordCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по адресу электронной почты.
     AppUser? user = await userManager.FindByEmailAsync(request.Email);
-
-    // Вызываем исключение если пользователь не найден
     if (user == null) throw new UserNotFoundException();
 
-    // Генерация кода сброса пароля.
     string code = await userManager.GeneratePasswordResetTokenAsync(user);
-
-    // Формирование URL для подтверждения сброса пароля.
     string url = user.GenerateMailConfirmUrl(request.ResetUrl, code, request.ReturnUrl);
-
-    // Отправка электронного письма со ссылкой для подтверждения сброса пароля.
     var message = new ConfirmRecoverPasswordEmail { Recipient = request.Email, ConfirmLink = url };
     await publishEndpoint.SkipOutbox().Publish(new SendEmail { Message = message }, cancellationToken);
   }

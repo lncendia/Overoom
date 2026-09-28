@@ -20,23 +20,13 @@ public class DiscordClaimsMapper() : ExternalClaimsMapperBase(OpenIddictClientWe
   /// <exception cref="Exception">Когда отсутствует обязательный идентификатор пользователя</exception>
   public override Task<ClaimsIdentity> MapAsync(AuthenticateResult result)
   {
-    // Получаем обязательный идентификатор пользователя из Discord
     string? id = result.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
-
-    // Создаем базовую identity с идентификатором
     ClaimsIdentity identity = CreateBaseIdentity(id);
-
-    // Маппим отображаемое имя пользователя
     identity.TryAddClaim(ClaimTypes.Name, result.Principal?.FindFirstValue(ClaimTypes.Name));
-
-    // Маппим email пользователя
     identity.TryAddClaim(ClaimTypes.Email, result.Principal?.FindFirstValue(ClaimTypes.Email));
-
-    // Дополнительная обработка аватара пользователя
     string? avatarId = result.Principal?.GetClaim("avatar");
     if (avatarId != null)
     {
-      // Формируем URL аватара по шаблону Discord
       string url = $"https://cdn.discordapp.com/avatars/{id}/{avatarId}";
       identity.TryAddClaim(Constants.Claims.Thumbnail, url);
     }

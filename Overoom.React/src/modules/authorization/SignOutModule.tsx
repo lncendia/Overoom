@@ -28,7 +28,6 @@ const SignOutModule = (): ReactElement => {
     handleSignOutCallback();
   }, [handleSignOutCallback]);
 
-  // Возвращаем JSX элемент, который содержит структуру страницы с текстом "Перенаправление"
   return <Redirecting />;
 };
 

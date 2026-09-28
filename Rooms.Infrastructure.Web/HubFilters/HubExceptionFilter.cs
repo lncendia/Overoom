@@ -27,15 +27,11 @@ public class HubExceptionFilter : IHubFilter
   {
     try
     {
-      // Выполняем следующий фильтр или метод хаба
       return await next(invocationContext);
     }
     catch (Exception ex)
     {
-      // Обрабатываем исключение и отправляем сообщение клиенту
       await HandleHubException(invocationContext.Hub, ex);
-
-      // Пробрасываем исключение дальше
       throw;
     }
   }
@@ -51,7 +47,6 @@ public class HubExceptionFilter : IHubFilter
   /// </remarks>
   private static Task HandleHubException(Hub hub, Exception ex)
   {
-    // Преобразуем исключение в сообщение об ошибке
     string error = ex switch
     {
       RoomNotFoundException => "Комната не найдена",
@@ -63,7 +58,6 @@ public class HubExceptionFilter : IHubFilter
       _ => "Внутренняя ошибка"
     };
 
-    // Отправляем сообщение об ошибке вызывающему клиенту
     return hub.Clients.Caller.SendAsync("Event", new ErrorNotificationEvent { Message = error });
   }
 

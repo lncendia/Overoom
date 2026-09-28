@@ -8,7 +8,6 @@ import FilmItemSkeleton from '../film-item/FilmItem.skeleton.tsx';
  * @returns {ReactElement} JSX элемент скелетона каталога фильмов
  */
 const FilmsCatalogSkeleton = (): ReactElement => {
-  // Массив для генерации заглушек элементов фильмов
   const items = Array.from({ length: 6 }, (_, i) => i);
 
   return (
@@ -19,7 +18,6 @@ const FilmsCatalogSkeleton = (): ReactElement => {
           key={i}
           sx={{ display: 'flex', justifyContent: 'center' }}
         >
-          {/* Скелетон элемента фильма */}
           <FilmItemSkeleton />
         </Grid>
       ))}

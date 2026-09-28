@@ -44,7 +44,6 @@ public class ViewerUpdatedEventHandler(IRoomEventSender eventSender) : AfterSave
       UpdatedFields = updatedFields
     };
 
-    // Обработка измененных свойств зрителя
     foreach (string property in viewer.ChangedProperties)
     {
       string propertyToLower = LowercaseFirstLetter(property);
@@ -67,21 +66,23 @@ public class ViewerUpdatedEventHandler(IRoomEventSender eventSender) : AfterSave
           updatedFields.Add(propertyToLower);
           break;
         case nameof(viewer.Tags):
-          publishEvent.Tags = viewer.Tags.Select(t =>
-          {
-            Constants.ViewerTags.All.TryGetValue(t, out string? description);
-            return new ViewerTagDto
+          publishEvent.Tags =
+          [
+            .. viewer.Tags.Select(t =>
             {
-              Name = t,
-              Description = description
-            };
-          }).ToArray();
+              Constants.ViewerTags.All.TryGetValue(t, out string? description);
+              return new ViewerTagDto
+              {
+                Name = t,
+                Description = description
+              };
+            })
+          ];
           updatedFields.Add(propertyToLower);
           break;
       }
     }
 
-    // Публикация события только если были изменения
     if (updatedFields.Count == 0) return;
     await eventSender.SendAsync(publishEvent, roomId, null, cancellationToken);
   }

@@ -13,10 +13,8 @@ public static class Authorization
   /// <param name="services">Коллекция служб.</param>
   public static void AddAuthorizationPolicies(this IServiceCollection services)
   {
-    // Добавляет службы политики авторизации в указанную коллекцию IServiceCollection.
     services.AddAuthorizationBuilder()
 
-      // Добавляет службы политики авторизации в указанную коллекцию IServiceCollection.
       .AddPolicy("admin", policy => { policy.RequireClaim(ClaimTypes.Role, "admin"); });
   }
 }

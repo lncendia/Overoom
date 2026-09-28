@@ -14,10 +14,7 @@ public class RoomsMapperProfile : AutoMapper.Profile
   /// </summary>
   public RoomsMapperProfile()
   {
-    // Карта для CreateRoomInputModel в CreateRoomCommand
     CreateMap<CreateRoomInputModel, CreateRoomCommand>();
-
-    // Карта для SearchRoomsInputModel в SearchRoomsQuery
     CreateMap<SearchRoomsInputModel, SearchRoomsQuery>();
   }
 }

@@ -55,7 +55,6 @@ const GenreSlider = ({ genre, onSelect, genres }: GenreSliderProps): ReactElemen
       {genres.map((g) => {
         return (
           <Box key={g} sx={{ display: 'flex', alignItems: 'center', m: 2 }}>
-            {/* Элемент жанра с возможностью выбора */}
             <GenreSliderItem genre={g} selected={genre === g} onSelect={() => toggleGenre(g)} />
           </Box>
         );

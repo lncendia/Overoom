@@ -12,6 +12,5 @@ export interface ThemeContextType {
 
 /** Контекст комнаты с undefined в качестве значения по умолчанию */
 export const ThemeContext = createContext<ThemeContextType>({
-  // Устанавливаем темную тему
   setMode: () => {},
 });

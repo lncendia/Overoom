@@ -15,15 +15,12 @@ const CatalogPage = (): ReactElement => {
 
   return (
     <>
-      {/* Блок популярных фильмов */}
       <BlockTitle title="Популярное сейчас" />
       <PopularFilmsModule />
 
-      {/* Блок выбора жанра */}
       <BlockTitle title="Жанры" sx={{ mt: 3 }} />
       <GenreSelectModule genre={genre} onSelect={setGenre} />
 
-      {/* Список фильмов по выбранному жанру */}
       <FilmsModule genre={genre} />
     </>
   );

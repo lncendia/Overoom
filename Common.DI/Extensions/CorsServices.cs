@@ -21,20 +21,15 @@ public static class CorsServices
   /// <param name="builder">Построитель приложения</param>
   public static void AddCorsServices(this IHostApplicationBuilder builder)
   {
-    // Получение списка разрешенных origin из конфигурации
     string[]? allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 
-    // Если список пустой - исключение
     if (allowedOrigins == null || allowedOrigins.Length == 0)
       throw new ConfigurationException("Cors:AllowedOrigins");
 
-    // Флаг, что нужно разрешить любые источники
     bool allowAnyOrigin = allowedOrigins.Length == 1 && allowedOrigins.First() == "*";
 
-    // Добавление настройки CORS
     builder.Services.AddCors(options =>
     {
-      // Добавление политики CORS с именем CorsServices.CorsPolicy
       options.AddPolicy(CorsPolicy, policyBuilder =>
       {
         policyBuilder.WithOrigins(allowedOrigins);

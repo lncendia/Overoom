@@ -15,7 +15,7 @@ namespace Rooms.Domain.Rooms;
 /// Класс реализует логику синхронизации просмотра между участниками,
 /// управление состоянием комнаты и генерацию соответствующих доменных событий.
 /// </remarks>
-public partial class Room : AggregateRoot<RoomSnapshot>
+public partial class Room : AggregateRoot
 {
   #region Поля и свойства
 

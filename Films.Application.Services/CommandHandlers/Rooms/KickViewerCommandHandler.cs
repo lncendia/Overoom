@@ -23,19 +23,11 @@ public class KickViewerCommandHandler(ISessionHandlerFactory sessionHandlerFacto
   /// <exception cref="RoomNotFoundException">Выбрасывается, если комната не найдена</exception>
   public async Task Handle(KickViewerCommand request, CancellationToken cancellationToken)
   {
-    // Получаем комнату по идентификатору из запроса
     Room? room = await unitOfWork.RoomRepository.Value.GetAsync(request.RoomId, cancellationToken);
-
-    // Проверяем существование комнаты
     if (room == null) throw new RoomNotFoundException(request.RoomId);
 
-    // Выполняем блокировку пользователя в комнате
     room.Kick(request.UserId, request.TargetId);
-
-    // Обновляем данные комнаты в репозитории
     await unitOfWork.RoomRepository.Value.UpdateAsync(room, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(sessionHandlerFactory.CreateOutboxHandler(), cancellationToken);
   }
 }

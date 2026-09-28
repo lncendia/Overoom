@@ -22,7 +22,7 @@ namespace Common.Infrastructure.Repositories;
 /// <typeparam name="TS">Тип снапшота агрегата</typeparam>
 public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IRepository
   where T : class, IModel<TS>
-  where TA : AggregateRoot<TS>
+  where TA : AggregateRoot, ISnapshotable<TA, TS>
   where TV : ISpecificationVisitor<TV, TA>
 {
   #region Поля и свойства
@@ -54,6 +54,7 @@ public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IReposito
   public async Task CommitAsync(IClientSessionHandle sessionHandle, CancellationToken token)
   {
     await SaveChangesAsync(Collection, sessionHandle, cancellationToken: token);
+    await OnCommittedAsync(sessionHandle, token);
   }
 
   #endregion
@@ -67,9 +68,7 @@ public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IReposito
   /// <param name="cancellationToken">Токен отмены операции</param>
   public Task AddAsync(TA aggregate, CancellationToken cancellationToken = default)
   {
-    T model = FactoryMethod(aggregate);
-    model.UpdateFromSnapshot(aggregate.GetSnapshot());
-    Add(model, aggregate);
+    AddAggregate(aggregate);
     return Task.CompletedTask;
   }
 
@@ -82,9 +81,7 @@ public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IReposito
   {
     foreach (TA aggregate in aggregates)
     {
-      T model = FactoryMethod(aggregate);
-      model.UpdateFromSnapshot(aggregate.GetSnapshot());
-      Add(model, aggregate);
+      AddAggregate(aggregate);
     }
 
     return Task.CompletedTask;
@@ -97,9 +94,7 @@ public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IReposito
   /// <param name="cancellationToken">Токен отмены операции</param>
   public Task UpdateAsync(TA aggregate, CancellationToken cancellationToken = default)
   {
-    T model = Get(aggregate.Id);
-    model.UpdateFromSnapshot(aggregate.GetSnapshot());
-    Update(aggregate);
+    UpdateAggregate(aggregate);
     return Task.CompletedTask;
   }
 
@@ -112,9 +107,7 @@ public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IReposito
   {
     foreach (TA aggregate in aggregates)
     {
-      T model = Get(aggregate.Id);
-      model.UpdateFromSnapshot(aggregate.GetSnapshot());
-      Update(aggregate);
+      UpdateAggregate(aggregate);
     }
 
     return Task.CompletedTask;
@@ -169,7 +162,7 @@ public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IReposito
 
     if (model == null) return null;
     model = Track(model);
-    return FromSnapshot(model.GetSnapshot());
+    return TA.Restore(model.GetSnapshot());
   }
 
   /// <summary>
@@ -199,10 +192,12 @@ public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IReposito
 
     List<T>? models = await query.ToListAsync(cancellationToken: cancellationToken);
 
-    return models
-      .Select(Track)
-      .Select(m => FromSnapshot(m.GetSnapshot()))
-      .ToArray();
+    return
+    [
+      .. models
+        .Select(Track)
+        .Select(m => TA.Restore(m.GetSnapshot()))
+    ];
   }
 
   /// <summary>
@@ -256,6 +251,31 @@ public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IReposito
   }
 
   /// <summary>
+  /// Создаёт модель для нового агрегата и начинает её отслеживать
+  /// </summary>
+  /// <param name="aggregate">Добавляемый агрегат</param>
+  private void AddAggregate(TA aggregate)
+  {
+    T model = FactoryMethod(aggregate);
+    model.UpdateFromSnapshot(aggregate.ToSnapshot());
+    OnModelAdded(model);
+    Add(model, aggregate);
+  }
+
+  /// <summary>
+  /// Переносит состояние агрегата в отслеживаемую модель
+  /// </summary>
+  /// <param name="aggregate">Обновляемый агрегат</param>
+  private void UpdateAggregate(TA aggregate)
+  {
+    T model = Get(aggregate.Id);
+    TS snapshot = aggregate.ToSnapshot();
+    OnModelUpdating(model, snapshot);
+    model.UpdateFromSnapshot(snapshot);
+    Update(aggregate);
+  }
+
+  /// <summary>
   /// Добавляет сущность в репозиторий и регистрирует событие создания агрегата
   /// </summary>
   /// <param name="entity">Сущность для добавления в репозиторий</param>
@@ -286,6 +306,7 @@ public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IReposito
   /// <param name="id">Идентификатор сущности для удаления</param>
   private void Delete(T entity, Guid id)
   {
+    OnModelDeleted(entity);
     Delete(entity);
     _events.Add(new DeleteEvent<TA> { Id = id });
   }
@@ -305,11 +326,40 @@ public abstract class RepositoryBase<T, TA, TS, TV> : MongoTracker<T>, IReposito
   protected abstract T FactoryMethod(TA aggregate);
 
   /// <summary>
-  /// Восстанавливает агрегат из снапшота модели.
+  /// Вызывается после создания модели нового агрегата, до сохранения.
   /// </summary>
-  /// <param name="snapshot">Снапшот агрегата</param>
-  /// <returns>Восстановленный агрегат</returns>
-  protected abstract TA FromSnapshot(TS snapshot);
+  /// <param name="model">Модель нового агрегата</param>
+  protected virtual void OnModelAdded(T model)
+  {
+  }
+
+  /// <summary>
+  /// Вызывается перед переносом снапшота в модель, пока модель ещё хранит предыдущее состояние.
+  /// </summary>
+  /// <param name="model">Модель с предыдущим состоянием</param>
+  /// <param name="snapshot">Новое состояние агрегата</param>
+  protected virtual void OnModelUpdating(T model, TS snapshot)
+  {
+  }
+
+  /// <summary>
+  /// Вызывается при пометке модели на удаление, до сохранения.
+  /// </summary>
+  /// <param name="model">Удаляемая модель</param>
+  protected virtual void OnModelDeleted(T model)
+  {
+  }
+
+  /// <summary>
+  /// Вызывается после успешной записи изменений репозитория в рамках той же сессии.
+  /// Позволяет обновить связанные коллекции (например, денормализованные счётчики) атомарно с основной записью.
+  /// </summary>
+  /// <param name="sessionHandle">Сессия MongoDB</param>
+  /// <param name="token">Токен отмены операции</param>
+  protected virtual Task OnCommittedAsync(IClientSessionHandle sessionHandle, CancellationToken token)
+  {
+    return Task.CompletedTask;
+  }
 
   #endregion
 

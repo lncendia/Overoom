@@ -25,7 +25,6 @@ const DisconnectModule = (): null => {
 
   /** useEffect для добавления обработчика событий хаба при монтировании */
   useEffect(() => {
-    // Если хаб еще не инициализирован, пропускаем добавление обработчика
     if (!hub) return;
 
     /**
@@ -42,14 +41,11 @@ const DisconnectModule = (): null => {
       }
     };
 
-    // Добавляем обработчик событий в хаб
     hub.addHandler(handler);
 
-    // Возвращаем функцию для удаления обработчика при размонтировании
     return () => hub.removeHandler(handler);
   }, [currentViewerId, hub, onDisconnect]);
 
-  // Не рендерим JSX, компонент работает только через эффекты
   return null;
 };
 

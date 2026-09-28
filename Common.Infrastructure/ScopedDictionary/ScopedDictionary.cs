@@ -19,13 +19,11 @@ public class ScopedDictionary : IScopedDictionary
   /// <param name="value">Значение, которое нужно сохранить.</param>
   public void Add(string key, object value)
   {
-    // Проверка на null или пустой ключ
     if (string.IsNullOrEmpty(key))
     {
       throw new ArgumentException(@"Key cannot be null or empty.", nameof(key));
     }
 
-    // Добавление значения в словарь
     _dictionary[key] = value;
   }
 
@@ -36,13 +34,11 @@ public class ScopedDictionary : IScopedDictionary
   /// <returns>Значение, связанное с указанным ключом, или null, если ключ не найден.</returns>
   public T Get<T>(string key)
   {
-    // Проверка на null или пустой ключ
     if (string.IsNullOrEmpty(key))
     {
       throw new ArgumentException(@"Key cannot be null or empty.", nameof(key));
     }
 
-    // Возвращаем значение по ключу
     return (T)_dictionary[key];
   }
 

@@ -13,7 +13,6 @@ public class PlaylistsMapperProfile : AutoMapper.Profile
   /// </summary>
   public PlaylistsMapperProfile()
   {
-    // Карта для PlaylistsSearchInputModel в SearchPlaylistsQuery
     CreateMap<SearchPlaylistsInputModel, SearchPlaylistsQuery>();
   }
 }

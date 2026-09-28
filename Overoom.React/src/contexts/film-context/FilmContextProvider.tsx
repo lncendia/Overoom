@@ -65,7 +65,6 @@ export const FilmContextProvider: React.FC<FilmContextProviderProps> = ({
     };
   }, [fetchFilm]);
 
-  // Возвращаем провайдер контекста с текущим фильмом и функцией редактирования
   return (
     <FilmContext.Provider value={{ film, editFilm: setFilm }}>{children}</FilmContext.Provider>
   );

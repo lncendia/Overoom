@@ -16,7 +16,6 @@ public class UserInfoChangedConsumerDefinition : ConsumerDefinition<UserInfoChan
   protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
     IConsumerConfigurator<UserInfoChangedConsumer> consumerConfigurator, IRegistrationContext context)
   {
-    // Настройка повторной обработки
     consumerConfigurator.UseMessageRetry(cfg => { cfg.Interval(5, TimeSpan.FromSeconds(5)); });
   }
 }

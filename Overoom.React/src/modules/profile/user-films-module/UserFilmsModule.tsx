@@ -28,10 +28,8 @@ const UserFilmsModule = ({ films }: { films: FilmShortResponse[] }): ReactElemen
     [navigate]
   );
 
-  // Отображает компонент пустого состояния если список фильмов пуст
   if (films.length === 0) return <NoData text="Пусто" />;
 
-  // Возвращает список фильмов с обработчиком выбора
   return <FilmsList films={films} onSelect={onSelect} />;
 };
 

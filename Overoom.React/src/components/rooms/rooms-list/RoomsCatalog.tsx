@@ -46,7 +46,6 @@ const RoomsCatalog = ({ rooms, onSelect, hasMore, next }: RoomsCatalogProps): Re
             key={room.id}
             sx={{ display: 'flex', justifyContent: 'center' }}
           >
-            {/* Элемент комнаты */}
             <RoomItem room={room} onClick={() => onSelect(room.id)} />
           </Grid>
         ))}

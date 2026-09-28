@@ -28,7 +28,6 @@ const VideoWrapper = ({ children, src }: VideoWrapperProps): ReactElement => {
         backgroundColor: 'black',
       }}
     >
-      {/* Фоновое видео с полупрозрачным эффектом */}
       <Box
         component="video"
         playsInline
@@ -49,7 +48,6 @@ const VideoWrapper = ({ children, src }: VideoWrapperProps): ReactElement => {
         Ваш браузер не поддерживает видео.
       </Box>
 
-      {/* Контент поверх видео */}
       <Box sx={{ position: 'relative' }}>{children}</Box>
     </Box>
   );

@@ -25,28 +25,16 @@ public class AddCommentCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
   /// <exception cref="FilmNotFoundException">Выбрасывается, если фильм не найден</exception>
   public async Task<Guid> Handle(AddCommentCommand request, CancellationToken cancellationToken)
   {
-    // Получаем пользователя по ID
     User? user = await unitOfWork.UserRepository.Value.GetAsync(request.UserId, cancellationToken);
-
-    // Проверяем, что пользователь существует
     if (user == null) throw new UserNotFoundException(request.UserId);
 
-    // Получаем фильм по ID
     Film? film = await unitOfWork.FilmRepository.Value.GetAsync(request.FilmId, cancellationToken);
-
-    // Проверяем, что фильм существует
     if (film == null) throw new FilmNotFoundException(request.FilmId);
 
-    // Создаем новый комментарий
     var comment = new Comment(Guid.NewGuid(), film, user, request.Text);
-
-    // Добавляем комментарий в репозиторий
     await unitOfWork.CommentRepository.Value.AddAsync(comment, cancellationToken);
-
-    // Сохраняем изменения в БД
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
 
-    // Возвращаем DTO созданного комментария
     return comment.Id;
   }
 }

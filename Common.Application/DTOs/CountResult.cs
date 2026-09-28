@@ -22,7 +22,6 @@ public class CountResult<T>
   /// <returns></returns>
   public static CountResult<T> NoValues()
   {
-    // Возвращаем пустой CountResult
     return new CountResult<T>
     {
       List = [],

@@ -21,19 +21,11 @@ public class SendMessageCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler
   /// <exception cref="RoomNotFoundException">Если комната с указанным ID не найдена</exception>
   public async Task Handle(SendMessageCommand request, CancellationToken cancellationToken)
   {
-    // Получаем комнату по ID из репозитория
     Room? room = await unitOfWork.RoomRepository.Value.GetAsync(request.RoomId, cancellationToken);
-
-    // Проверяем существование комнаты
     if (room == null) throw new RoomNotFoundException(request.RoomId);
 
-    // Создаем объект сообщения с текстом и информацией об отправителе
     var message = new Message(room, request.ViewerId, request.Message);
-
-    // Добавляем сообщение в репозиторий
     await unitOfWork.MessageRepository.Value.AddAsync(message, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

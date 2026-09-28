@@ -18,10 +18,8 @@ public partial class CustomPasswordValidator : IPasswordValidator<AppUser>
   /// <returns>Возвращает результат валидации в виде объекта IdentityResult</returns>
   public Task<IdentityResult> ValidateAsync(UserManager<AppUser> manager, AppUser user, string? password)
   {
-    // Замена множественных пробелов на одиночный
     password = PasswordRegex().Replace(password!, " ");
 
-    // Проверка на длину пароля
     if (password.Length is < 8 or > 128)
     {
       return Task.FromResult(IdentityResult.Failed(new IdentityError
@@ -31,56 +29,42 @@ public partial class CustomPasswordValidator : IPasswordValidator<AppUser>
       }));
     }
 
-    // Проверка на наличие букв в верхнем регистре
     bool hasUpperChar = password.Any(char.IsUpper);
-
-    // Проверка на наличие букв в нижнем регистре
     bool hasLowerChar = password.Any(char.IsLower);
-
-    // Проверка на наличие цифр
     bool hasDigit = password.Any(char.IsDigit);
-
-    // Проверка на наличие специальных символов
     bool hasSpecialChar = password.Any(ch => !char.IsLetterOrDigit(ch));
 
-    // Если все условия соблюдаются, то возвращаем Success
     if (hasUpperChar && hasLowerChar && hasDigit && hasSpecialChar)
     {
       return Task.FromResult(IdentityResult.Success);
     }
 
-    // Создаем список IdentityError
     var errors = new List<IdentityError>();
 
-    // Проверка на наличие букв в верхнем регистре
     if (!hasUpperChar)
     {
       errors.Add(new IdentityError
         { Description = "Password must contain uppercase letters.", Code = "PasswordRequiresUpper" });
     }
 
-    // Проверка на наличие букв в нижнем регистре
     if (!hasLowerChar)
     {
       errors.Add(new IdentityError
         { Description = "Password must contain lowercase letters.", Code = "PasswordRequiresLower" });
     }
 
-    // Проверка на наличие цифр
     if (!hasDigit)
     {
       errors.Add(new IdentityError { Description = "Password must contain digits.", Code = "PasswordRequiresDigit" });
     }
 
-    // Проверка на наличие специальных символов
     if (!hasSpecialChar)
     {
       errors.Add(new IdentityError
         { Description = "Password must contain special characters.", Code = "PasswordRequiresNonAlphanumeric" });
     }
 
-    // Возвращаем массив IdentityError
-    return Task.FromResult(IdentityResult.Failed(errors.ToArray()));
+    return Task.FromResult(IdentityResult.Failed([.. errors]));
   }
 
   [GeneratedRegex(@"\s+")]

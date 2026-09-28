@@ -14,10 +14,8 @@ public static class FileStorage
   /// <param name="services">Коллекция служб.</param>
   public static void AddFileStorageHttpClient(this IServiceCollection services)
   {
-    // Регистрация именного HttpClient с именем "FileStoreHttpClient".
     services.AddHttpClient(AwsS3ApiClient.HttpClientName, client =>
     {
-      // Устанавливаем заголовок Accept для указания, что клиент принимает только изображения.
       client.DefaultRequestHeaders.Add("Accept", "image/*");
     });
   }

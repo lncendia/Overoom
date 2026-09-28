@@ -17,10 +17,8 @@ public class RoomViewerLeavedConsumer(ISender mediator) : IConsumer<RoomViewerLe
   /// <param name="context">Контекст сообщения</param>
   public Task Consume(ConsumeContext<RoomViewerLeavedIntegrationEvent> context)
   {
-    // Получаем данные события
     RoomViewerLeavedIntegrationEvent integrationEvent = context.Message;
 
-    // Отправляем команду на обработку события
     return mediator.Send(new LeaveCommand
     {
       RoomId = integrationEvent.RoomId,

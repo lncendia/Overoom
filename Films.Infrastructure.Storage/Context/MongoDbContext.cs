@@ -77,6 +77,7 @@ public class MongoDbContext
     await CreateRoomIndexesAsync(cancellationToken);
     await CreateCommentIndexesAsync(cancellationToken);
     await CreateRatingIndexesAsync(cancellationToken);
+    await BackfillFilmRatingsAsync(cancellationToken);
   }
 
   /// <summary>
@@ -85,20 +86,18 @@ public class MongoDbContext
   /// <param name="cancellationToken">Токен отмены для прерывания операции.</param>
   private async Task CreateCollectionsAsync(CancellationToken cancellationToken)
   {
-    // Перечень коллекций, необходимых для инициализации БД
-    string[] collections = new[]
-    {
+    string[] collections =
+    [
       "Films",
       "Playlists",
       "Rooms",
       "Users",
       "Comments",
       "Ratings"
-    };
+    ];
 
     foreach (string collectionName in collections)
     {
-      // Попытка создать коллекцию; если уже существует — будет выброшено исключение (возможно, стоит обрабатывать)
       await _database.CreateCollectionAsync(collectionName, cancellationToken: cancellationToken);
     }
   }
@@ -108,7 +107,6 @@ public class MongoDbContext
   /// </summary>
   private async Task CreateFilmIndexesAsync(CancellationToken cancellationToken)
   {
-    // 1. Уникальный составной индекс на название и год выпуска
     IndexKeysDefinition<FilmModel>? titleYearIndex = Builders<FilmModel>.IndexKeys
       .Ascending(f => f.Title)
       .Ascending(f => f.Date);
@@ -120,7 +118,6 @@ public class MongoDbContext
       }),
       cancellationToken: cancellationToken);
 
-    // 2. Текстовый индекс для поиска по названию (case insensitive)
     IndexKeysDefinition<FilmModel>? textSearchIndex = Builders<FilmModel>.IndexKeys
       .Text(f => f.Title);
 
@@ -128,7 +125,6 @@ public class MongoDbContext
       new CreateIndexModel<FilmModel>(textSearchIndex),
       cancellationToken: cancellationToken);
 
-    // 3. Индекс для поиска по жанрам
     IndexKeysDefinition<FilmModel>? genreIndex = Builders<FilmModel>.IndexKeys
       .Ascending(f => f.Genres);
 
@@ -136,7 +132,6 @@ public class MongoDbContext
       new CreateIndexModel<FilmModel>(genreIndex),
       cancellationToken: cancellationToken);
 
-    // 4. Индекс для поиска по странам
     IndexKeysDefinition<FilmModel>? countryIndex = Builders<FilmModel>.IndexKeys
       .Ascending(f => f.Countries);
 
@@ -144,15 +139,47 @@ public class MongoDbContext
       new CreateIndexModel<FilmModel>(countryIndex),
       cancellationToken: cancellationToken);
 
-    // 5. Составной индекс для сортировки по дате съемки (новые сначала)
-    // Оптимизирует:
-    // - Сортировку фильмов от новых к старым
-    // - Пагинацию с сортировкой
     IndexKeysDefinition<FilmModel>? dateSortIndex = Builders<FilmModel>.IndexKeys
       .Descending(c => c.Date);
 
     await Films.Indexes.CreateOneAsync(
       new CreateIndexModel<FilmModel>(dateSortIndex),
+      cancellationToken: cancellationToken);
+
+    IndexKeysDefinition<FilmModel>? popularityIndex = Builders<FilmModel>.IndexKeys
+      .Descending(f => f.UserRatingsCount);
+
+    await Films.Indexes.CreateOneAsync(
+      new CreateIndexModel<FilmModel>(popularityIndex),
+      cancellationToken: cancellationToken);
+  }
+
+  /// <summary>
+  /// Заполняет денормализованные счётчики оценок у фильмов, созданных до их появления.
+  /// </summary>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  private async Task BackfillFilmRatingsAsync(CancellationToken cancellationToken)
+  {
+    FilterDefinition<FilmModel> notFilled = Builders<FilmModel>.Filter.Exists(f => f.UserRatingsCount, false);
+    if (!await Films.Find(notFilled).AnyAsync(cancellationToken)) return;
+
+    var stats = await Ratings.Aggregate()
+      .Group(r => r.FilmId, g => new { FilmId = g.Key, Count = g.Count(), Sum = g.Sum(r => r.Score) })
+      .ToListAsync(cancellationToken);
+
+    UpdateOneModel<FilmModel>[] updates = stats
+      .Select(s => new UpdateOneModel<FilmModel>(
+        Builders<FilmModel>.Filter.And(Builders<FilmModel>.Filter.Eq(f => f.Id, s.FilmId), notFilled),
+        Builders<FilmModel>.Update
+          .Set(f => f.UserRatingsCount, s.Count)
+          .Set(f => f.UserRatingsSum, s.Sum)))
+      .ToArray();
+
+    if (updates.Length > 0)
+      await Films.BulkWriteAsync(updates, new BulkWriteOptions { IsOrdered = false }, cancellationToken);
+
+    await Films.UpdateManyAsync(notFilled,
+      Builders<FilmModel>.Update.Set(f => f.UserRatingsCount, 0).Set(f => f.UserRatingsSum, 0),
       cancellationToken: cancellationToken);
   }
 
@@ -162,7 +189,6 @@ public class MongoDbContext
   /// </summary>
   private async Task CreateRoomIndexesAsync(CancellationToken cancellationToken)
   {
-    // Индекс по идентификатору фильма
     IndexKeysDefinition<RoomModel>? filmIndex = Builders<RoomModel>.IndexKeys
       .Ascending(r => r.FilmId);
 
@@ -170,10 +196,6 @@ public class MongoDbContext
       new CreateIndexModel<RoomModel>(filmIndex),
       cancellationToken: cancellationToken);
 
-    // 2. Составной индекс для сортировки по дате съемки (новые сначала)
-    // Оптимизирует:
-    // - Сортировку фильмов от новых к старым
-    // - Пагинацию с сортировкой
     IndexKeysDefinition<RoomModel>? dateSortIndex = Builders<RoomModel>.IndexKeys
       .Descending(c => c.CreatedAt);
 
@@ -181,7 +203,6 @@ public class MongoDbContext
       new CreateIndexModel<RoomModel>(dateSortIndex),
       cancellationToken: cancellationToken);
 
-    // 3. Индекс для поиска по зрителям
     IndexKeysDefinition<RoomModel>? viewersIndex = Builders<RoomModel>.IndexKeys
       .Ascending(f => f.Viewers);
 
@@ -200,10 +221,6 @@ public class MongoDbContext
   /// <param name="cancellationToken">Токен отмены операции</param>
   private async Task CreateRatingIndexesAsync(CancellationToken cancellationToken)
   {
-    // 1. Индекс по FilmId для быстрого поиска всех оценок фильма.
-    // Используется при:
-    // - Показе средней оценки фильма
-    // - Отображении всех оценок конкретного фильма
     IndexKeysDefinition<RatingModel>? filmIndex = Builders<RatingModel>.IndexKeys
       .Ascending(r => r.FilmId);
 
@@ -211,10 +228,6 @@ public class MongoDbContext
       new CreateIndexModel<RatingModel>(filmIndex),
       cancellationToken: cancellationToken);
 
-    // 2. Индекс по UserId для быстрого поиска оценок пользователя.
-    // Используется при:
-    // - Показе истории оценок пользователя
-    // - Проверке активности пользователя
     IndexKeysDefinition<RatingModel>? userIndex = Builders<RatingModel>.IndexKeys
       .Ascending(r => r.UserId);
 
@@ -222,9 +235,6 @@ public class MongoDbContext
       new CreateIndexModel<RatingModel>(userIndex),
       cancellationToken: cancellationToken);
 
-    // 3. Уникальный составной индекс для обеспечения правила 
-    // "Один пользователь - одна оценка на фильм"
-    // Важно: Этот индекс НЕ заменяет отдельные индексы, а дополняет их
     IndexKeysDefinition<RatingModel>? uniqueUserFilmIndex = Builders<RatingModel>.IndexKeys
       .Ascending(r => r.UserId)
       .Ascending(r => r.FilmId);
@@ -236,10 +246,6 @@ public class MongoDbContext
       }),
       cancellationToken: cancellationToken);
 
-    // 4. Составной индекс для сортировки по дате оценки (новые сначала)
-    // Оптимизирует:
-    // - Сортировку оценок от новых к старым
-    // - Пагинацию с сортировкой
     IndexKeysDefinition<RatingModel>? dateSortIndex = Builders<RatingModel>.IndexKeys
       .Descending(c => c.CreatedAt);
 
@@ -257,10 +263,6 @@ public class MongoDbContext
   /// <param name="cancellationToken">Токен отмены операции</param>
   private async Task CreateCommentIndexesAsync(CancellationToken cancellationToken)
   {
-    // 1. Базовый индекс по FilmId для быстрого поиска комментариев фильма.
-    // Используется при:
-    // - Показе всех комментариев к фильму
-    // - Пагинации комментариев
     IndexKeysDefinition<CommentModel>? filmIndex = Builders<CommentModel>.IndexKeys
       .Ascending(c => c.FilmId);
 
@@ -268,10 +270,6 @@ public class MongoDbContext
       new CreateIndexModel<CommentModel>(filmIndex),
       cancellationToken: cancellationToken);
 
-    // 2. Составной индекс для сортировки по дате создания (новые сначала)
-    // Оптимизирует:
-    // - Сортировку комментариев от новых к старым
-    // - Пагинацию с сортировкой
     IndexKeysDefinition<CommentModel>? dateSortIndex = Builders<CommentModel>.IndexKeys
       .Descending(c => c.CreatedAt);
 

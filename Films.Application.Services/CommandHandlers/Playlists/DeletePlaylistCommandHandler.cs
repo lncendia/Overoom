@@ -27,27 +27,19 @@ public class DeletePlaylistCommandHandler(
   /// <exception cref="PlaylistNotFoundException">Если плейлист с указанным ID не найден</exception>
   public async Task Handle(DeletePlaylistCommand request, CancellationToken cancellationToken)
   {
-    // Получаем плейлист по ID из репозитория
     Playlist? playlist = await unitOfWork.PlaylistRepository.Value.GetAsync(request.Id, cancellationToken);
-
-    // Проверяем существование плейлиста
     if (playlist == null) throw new PlaylistNotFoundException(request.Id);
 
     try
     {
-      // Удаляем обложку плейлиста из файлового хранилища, если она существует
       await posterStore.DeleteAsync(playlist.PosterKey, token: cancellationToken);
     }
     catch (FileNotFoundException)
     {
-      // Логируем отсутствие файла, но не прерываем выполнение
       logger.LogWarning("Файл обложки {poster} не найден в хранилище", playlist.PosterKey);
     }
 
-    // Удаляем запись о плейлисте из репозитория
     await unitOfWork.PlaylistRepository.Value.DeleteAsync(playlist, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

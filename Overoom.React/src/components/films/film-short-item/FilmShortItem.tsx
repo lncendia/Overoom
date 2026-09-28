@@ -67,12 +67,9 @@ const PosterOverlay = styled(Box, {
 const FilmShortItem = ({ film, onClick }: FilmShortItemProps): ReactElement => {
   return (
     <PosterContainer onClick={onClick}>
-      {/* Изображение постера фильма */}
       <PosterImage alt={`Постер ${film.title}`} src={film.posterUrl} />
 
-      {/* Наложение с информацией о фильме */}
       <PosterOverlay fullCover={!!film.score}>
-        {/* Центральный рейтинг со звездой */}
         {film.score && (
           <Box
             sx={{
@@ -103,7 +100,6 @@ const FilmShortItem = ({ film, onClick }: FilmShortItemProps): ReactElement => {
           </Box>
         )}
 
-        {/* Название фильма */}
         <Typography
           variant="subtitle2"
           color="common.white"
@@ -118,7 +114,6 @@ const FilmShortItem = ({ film, onClick }: FilmShortItemProps): ReactElement => {
         </Typography>
       </PosterOverlay>
 
-      {/* Чипы с рейтингами КиноПоиск и IMDb */}
       {!film.score && (
         <FilmRatingStack sx={{ top: 8, right: 8 }} kp={film.ratingKp} imdb={film.ratingImdb} />
       )}

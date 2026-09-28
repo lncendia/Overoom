@@ -1,23 +1,20 @@
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
+
+using Common.Domain.Aggregates;
 using Films.Domain.Users.Snapshots;
 
 namespace Films.Domain.Users;
 
-public partial class User
+public partial class User : ISnapshotable<User, UserSnapshot>
 {
-  internal static User FromSnapshot(UserSnapshot snapshot)
+  /// <inheritdoc/>
+  static User ISnapshotable<User, UserSnapshot>.Restore(UserSnapshot snapshot)
   {
-    Type type = typeof(User);
-    ConstructorInfo? ctor = type.GetConstructor(
-      BindingFlags.NonPublic | BindingFlags.Instance,
-      null,
-      [typeof(UserSnapshot)],
-      null);
-
-    return (User)ctor!.Invoke([snapshot]);
+    return new User(snapshot);
   }
 
-  internal UserSnapshot GetSnapshot()
+  /// <inheritdoc/>
+  UserSnapshot ISnapshotable<User, UserSnapshot>.ToSnapshot()
   {
     return new UserSnapshot
     {
@@ -25,21 +22,23 @@ public partial class User
       Username = Username,
       PhotoKey = PhotoKey,
       RoomSettings = RoomSettings,
-      Watchlist = _watchlist.ToList(),
-      History = _history.ToList(),
-      Genres = _genres.ToList()
+      Watchlist = [.. _watchlist],
+      History = [.. _history],
+      Genres = [.. _genres]
     };
   }
 
-  // Приватный конструктор для гидратации
-  // ReSharper disable once UnusedMember.Local
+  /// <summary>
+  /// Конструктор для восстановления из снапшота.
+  /// </summary>
+  [SetsRequiredMembers]
   private User(UserSnapshot snapshot) : this(snapshot.Id)
   {
     Username = snapshot.Username;
     PhotoKey = snapshot.PhotoKey;
     RoomSettings = snapshot.RoomSettings;
-    _watchlist = snapshot.Watchlist.ToHashSet();
-    _history = snapshot.History.ToHashSet();
-    _genres = snapshot.Genres.ToHashSet();
+    _watchlist = [.. snapshot.Watchlist];
+    _history = [.. snapshot.History];
+    _genres = [.. snapshot.Genres];
   }
 }

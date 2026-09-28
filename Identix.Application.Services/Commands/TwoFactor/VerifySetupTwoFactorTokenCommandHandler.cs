@@ -29,29 +29,18 @@ public class VerifySetupTwoFactorTokenCommandHandler(UserManager<AppUser> userMa
   public async Task<IReadOnlyCollection<string>> Handle(VerifySetupTwoFactorTokenCommand request,
     CancellationToken cancellationToken)
   {
-    // Ищем пользователя по идентификатору
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Вызываем исключение если пользователь не найден
     if (user == null) throw new UserNotFoundException();
-
-    // Вызываем исключение, если 2FA уже подключена
     if (await userManager.GetTwoFactorEnabledAsync(user)) throw new TwoFactorAlreadyEnabledException();
 
-    // Проверяем токен аутентификатора пользователя с помощью провайдера токена, подключенного при конфигурации
     bool isValid = await userManager.VerifyTwoFactorTokenAsync(user,
       userManager.Options.Tokens.AuthenticatorTokenProvider, request.Code);
 
-    // Если токен не валидный - выбрасываем исключение
     if (!isValid) throw new InvalidCodeException();
 
-    // Подключаем 2FA пользователю
     await userManager.SetTwoFactorEnabledAsync(user, true);
-
-    // Генерируем резервные коды 2fa аутентификации
     IEnumerable<string>? codes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, RecoveryCodesCount);
 
-    // Возвращаем коды
     return codes?.ToArray() ?? [];
   }
 }

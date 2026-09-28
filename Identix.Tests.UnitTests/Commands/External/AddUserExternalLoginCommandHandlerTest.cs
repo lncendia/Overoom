@@ -35,7 +35,6 @@ public class AddUserExternalLoginCommandHandlerTest
   /// </summary>
   public AddUserExternalLoginCommandHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -47,12 +46,9 @@ public class AddUserExternalLoginCommandHandlerTest
       new Mock<IServiceProvider>().Object,
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    // Инициализация обработчика.
     _handler = new AddUserExternalLoginCommandHandler(_userManagerMock.Object);
 
-    // Инициализация ClaimsPrincipal для представления пользователя с указанным email в виде утверждения (claim).
     _claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity([
-      // Создаем claim с типом Email и введенным значением.
       new Claim(ClaimTypes.Email, "test@example.com")
     ]));
   }
@@ -64,7 +60,6 @@ public class AddUserExternalLoginCommandHandlerTest
   public async Task Handle_ValidCommand_AddsExternalLogin()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -75,17 +70,14 @@ public class AddUserExternalLoginCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возвращения пустого списка внешних логинов при вызове GetLoginsAsync.
     _userManagerMock
       .Setup(m => m.GetLoginsAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => new List<UserLoginInfo>());
 
-    // Настройка mock объекта UserManager для успешного добавления внешнего логина при вызове AddLoginAsync.
     _userManagerMock
       .Setup(m => m.AddLoginAsync(It.IsAny<AppUser>(), It.IsAny<ExternalLoginInfo>()))
       .ReturnsAsync(IdentityResult.Success);
 
-    // Создаем команду для добавления внешней аутентификации пользователю.
     var command = new AddUserExternalLoginCommand
     {
       UserId = Guid.NewGuid(),
@@ -93,14 +85,12 @@ public class AddUserExternalLoginCommandHandlerTest
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -111,12 +101,10 @@ public class AddUserExternalLoginCommandHandlerTest
   public async Task Handle_WhenUserNotFoundById_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возврата null при вызове FindByIdAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем команду для добавления внешней аутентификации пользователю.
     var command = new AddUserExternalLoginCommand
     {
       UserId = Guid.NewGuid(),
@@ -124,7 +112,6 @@ public class AddUserExternalLoginCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -135,7 +122,6 @@ public class AddUserExternalLoginCommandHandlerTest
   public async Task Handle_WhenProviderAlreadyExists_ThrowsLoginAlreadyExistsException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возврата пользователя и  при вызове FindByIdAsync
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -146,14 +132,12 @@ public class AddUserExternalLoginCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возврата списка уже существующих провайдеров.
     _userManagerMock
       .Setup(m => m.GetLoginsAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => new List<UserLoginInfo>([
         new UserLoginInfo("TestProvider", "TestKey", "TestDisplayName")
       ]));
 
-    // Создаем команду для добавления внешней аутентификации пользователю.
     var command = new AddUserExternalLoginCommand
     {
       UserId = Guid.NewGuid(),
@@ -161,7 +145,6 @@ public class AddUserExternalLoginCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения LoginAlreadyExistsException.
     await Assert.ThrowsAsync<LoginAlreadyExistsException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -172,7 +155,6 @@ public class AddUserExternalLoginCommandHandlerTest
   public async Task Handle_WhenLoginAlreadyAssociated_ThrowsLoginAlreadyExistsException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возврата пользователя без ассоциированных логинов и неуспешного добавления логина при вызове AddLoginAsync.
     _userManagerMock
       .Setup(m => m.FindByIdAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -183,17 +165,14 @@ public class AddUserExternalLoginCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager
     _userManagerMock
       .Setup(m => m.GetLoginsAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => new List<UserLoginInfo>());
 
-    // Настройка mock объекта UserManager
     _userManagerMock
       .Setup(m => m.AddLoginAsync(It.IsAny<AppUser>(), It.IsAny<ExternalLoginInfo>()))
       .ReturnsAsync(IdentityResult.Failed());
 
-    // Создаем команду для добавления внешней аутентификации пользователю.
     var command = new AddUserExternalLoginCommand
     {
       UserId = Guid.NewGuid(),
@@ -201,7 +180,6 @@ public class AddUserExternalLoginCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения LoginAlreadyAssociatedException.
     await Assert.ThrowsAsync<LoginAlreadyAssociatedException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

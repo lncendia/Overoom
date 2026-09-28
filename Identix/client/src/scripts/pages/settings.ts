@@ -13,71 +13,41 @@ export class Settings {
 
     /** Метод запускает функционал страницы настроек */
     startSettings() {
-
-        // Получаем все элементы с классом "disabled"
         let links = document.querySelectorAll(".disabled");
-
-        // Добавляем обработчик события "click" для каждого элемента, чтоб ссылки были неактивны
         links.forEach(l => l.addEventListener("click", ev => ev.preventDefault()));
-
-        // Получаем элемент с идентификатором "unlinkModal"
         const unlinkModal = document.getElementById('unlink-modal');
 
-        // Добавляем обработчик события "show.bs.modal"
         unlinkModal.addEventListener('show.bs.modal', event => {
-
-            // Получаем кнопку, которая вызвала модальное окно
             const button = (event as MouseEvent).relatedTarget as HTMLElement;
-
-            // Получаем значение атрибута "data-bs-provider" кнопки
             const provider = button.getAttribute('data-bs-provider');
-
-            // Получаем значение атрибута "data-bs-provider-name" кнопки
             const providerName = button.getAttribute('data-bs-provider-name');
-
-            // Получаем элемент с классом "modal-body" внутри модального окна
             const modalBody = unlinkModal.querySelector('.modal-body');
-
-            // Удаляем последнее слово из текста внутри "modal-body", если есть знак вопроса
             modalBody.textContent = `${this.deleteLastWord(modalBody.textContent)} ${providerName}?`;
 
-            // Получаем инпут со значением провайдера внутри модального окна
             const providerInput = unlinkModal.querySelector('input[name="Provider"]') as HTMLInputElement
 
-            // Устанавливаем значение href для ссылки
             providerInput.value = provider;
         });
 
-        // получаем все поля ввода с классом .wrap-input input
         new InputWrapper('.wrap-input input');
 
-        // получаем переключатель видимости пароля
         const showPass = document.querySelector("#show-pass")
 
-        // если переключатель есть
         if (showPass) new PasswordHide('#show-pass');
 
-        // получаем переключатель видимости старого пароля
         const showOldPass = document.querySelector("#show-old-pass")
 
-        // если переключатель есть
         if (showOldPass) new PasswordHide('#show-old-pass');
 
-        // получаем тег span иконки переключателя видимости нрвого пароля и добавляем ей обработчик клика
         new PasswordHide('#show-new-pass');
-
-        // получаем тег span иконки переключателя видимости подтверждения нового пароля и добавляем ей обработчик клика
         new PasswordHide('#show-new-pass-confirm');
 
-        // получаем поле для ввода пароля и добавляем обработчик изменения текста
         document.querySelector('#NewPassword').addEventListener('input', ev =>
             this.validator.checkPasswordStrength((ev.currentTarget as HTMLInputElement).value)
         );
 
-        // получаем форму при отправке для проверки надежности пароля
         document.querySelector('form#change-pass').addEventListener('submit', ev => {
             ev.preventDefault();
-            // Передаем id input элемента с паролем
             this.validator.validateFormPassword('NewPassword');
         })
     }
@@ -86,21 +56,13 @@ export class Settings {
      * Метод удаляет название провайдера, если оно указано
      */
     deleteLastWord(str: string): string {
-
-        // Проверяем, содержит ли строка знак вопроса
         if (str.includes('?')) {
-
-            // Разбиваем строку на слова
             const words = str.split(' ');
-
-            // Удаляем последнее слово
             words.pop();
 
-            // Объединяем оставшиеся слова обратно в строку
             return words.join(' ');
         }
 
-        // Возвращаем исходную строку без изменений
         return str;
     }
 }

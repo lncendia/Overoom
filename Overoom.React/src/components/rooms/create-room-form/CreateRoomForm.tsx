@@ -43,7 +43,6 @@ const CreateRoomForm = ({ callback }: CreateRoomFormProps): ReactElement => {
         width: '100%',
       }}
     >
-      {/* Чекбокс "Публичная комната" */}
       <FormControlLabel
         control={
           <Checkbox
@@ -56,7 +55,6 @@ const CreateRoomForm = ({ callback }: CreateRoomFormProps): ReactElement => {
         label="Публичная комната"
       />
 
-      {/* Кнопка отправки формы */}
       <Button
         type="submit"
         variant="contained"

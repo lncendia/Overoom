@@ -62,9 +62,9 @@ public class UserModel : IModel<UserSnapshot>
     Username = snapshot.Username;
     PhotoKey = snapshot.PhotoKey;
     RoomSettings = snapshot.RoomSettings;
-    Watchlist = snapshot.Watchlist.ToList();
-    History = snapshot.History.ToList();
-    Genres = snapshot.Genres.ToList();
+    Watchlist = [.. snapshot.Watchlist];
+    History = [.. snapshot.History];
+    Genres = [.. snapshot.Genres];
   }
 
   public UserSnapshot GetSnapshot()

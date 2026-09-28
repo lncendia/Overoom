@@ -19,16 +19,9 @@ public class MicrosoftClaimsMapper()
   /// <exception cref="Exception">Когда отсутствует обязательный идентификатор пользователя</exception>
   public override Task<ClaimsIdentity> MapAsync(AuthenticateResult result)
   {
-    // Получаем обязательный идентификатор пользователя из Microsoft
     string? id = result.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
-
-    // Создаем базовую identity с идентификатором
     ClaimsIdentity identity = CreateBaseIdentity(id);
-
-    // Маппим имя пользователя из Microsoft
     identity.TryAddClaim(ClaimTypes.Name, result.Principal?.FindFirstValue("name"));
-
-    // Маппим email пользователя
     identity.TryAddClaim(ClaimTypes.Email, result.Principal?.FindFirstValue(ClaimTypes.Email));
 
     return Task.FromResult(identity);

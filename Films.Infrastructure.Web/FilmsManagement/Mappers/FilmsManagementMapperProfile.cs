@@ -15,19 +15,11 @@ public class FilmsManagementMapperProfile : AutoMapper.Profile
   /// </summary>
   public FilmsManagementMapperProfile()
   {
-    // Карта для AddFilmInputModel в AddFilmCommand
     CreateMap<AddFilmInputModel, AddFilmCommand>();
-
-    // Карта для ChangeFilmInputModel в ChangeFilmCommand
     CreateMap<ChangeFilmInputModel, ChangeFilmCommand>();
-
-    // Карта для ChangeFilmPosterInputModel в ChangeFilmPosterCommand
     CreateMap<ChangeFilmPosterInputModel, ChangeFilmPosterCommand>();
-
-    // Карта для ActorInputModel в Actor
     CreateMap<ActorInputModel, Actor>();
 
-    // Карта для IFormFile в FileDto
     CreateMap<IFormFile, FileDto>()
       .ForMember(f => f.File, opt => opt.MapFrom(form => form.OpenReadStream()))
       .ForMember(f => f.ContentType, opt => opt.MapFrom(form => form.ContentType));

@@ -59,16 +59,14 @@ public class MongoDbContext
   /// <param name="cancellationToken">Токен отмены для прерывания операции.</param>
   private async Task CreateCollectionsAsync(CancellationToken cancellationToken)
   {
-    // Перечень коллекций, необходимых для инициализации БД
-    string[] collections = new[]
-    {
+    string[] collections =
+    [
       "Rooms",
       "Messages"
-    };
+    ];
 
     foreach (string collectionName in collections)
     {
-      // Попытка создать коллекцию; если уже существует — будет выброшено исключение (возможно, стоит обрабатывать)
       await _database.CreateCollectionAsync(collectionName, cancellationToken: cancellationToken);
     }
   }

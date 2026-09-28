@@ -14,19 +14,13 @@ import { ThemeContextProvider } from './contexts/theme-context/ThemeContextProvi
  * @returns {Promise<void>}
  */
 const init = async (): Promise<void> => {
-  // Создаем контейнер зависимостей через Inversify
   const container = await createContainer();
 
-  // Рендерим приложение с провайдерами контекста
   createRoot(document.getElementById('root')!).render(
     <Provider container={container}>
-      {/* Провайдер темы приложения */}
       <ThemeContextProvider>
-        {/* Провайдер уведомлений */}
         <NotifyContextProvider>
-          {/* Провайдер аутентификации */}
           <AuthenticationContextProvider>
-            {/* Основной компонент приложения */}
             <App />
           </AuthenticationContextProvider>
         </NotifyContextProvider>
@@ -35,5 +29,4 @@ const init = async (): Promise<void> => {
   );
 };
 
-// Запускаем инициализацию приложения
 init().then();

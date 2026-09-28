@@ -73,7 +73,6 @@ const RoomInfoModule = (): ReactElement => {
     }
   }, [room?.ownerId, room?.id, currentViewerId, roomsApi]);
 
-  // Отображает скелетон пока данные комнаты не получены
   if (!room) return <FilmInfoSkeleton />;
 
   return (
@@ -83,7 +82,6 @@ const RoomInfoModule = (): ReactElement => {
         onButtonClicked={() => setAlertOpen(true)}
       />
 
-      {/* Диалог подтверждения действия */}
       <Dialog
         open={alertOpen}
         onClose={() => setAlertOpen(false)}

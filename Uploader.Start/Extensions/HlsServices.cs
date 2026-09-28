@@ -15,13 +15,8 @@ public static class HlsServices
   /// <param name="services">Коллекция служб.</param>
   public static void AddHlsServices(this IServiceCollection services)
   {
-    // Добавление сервиса хранения фильмов.
     services.AddScoped<IHlsStorage, HlsS3Storage>();
-
-    // Регистрация именного HttpClient с именем "FileStoreHttpClient".
     services.AddHttpClient(AwsS3ApiClient.HttpClientName);
-
-    // Добавление сервиса транскодирования фильмов.
     services.AddSingleton<IHlsTranscodingService, FfmpegHlsTranscodingService>();
   }
 }

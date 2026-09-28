@@ -12,7 +12,7 @@ namespace Films.Domain.Films;
 /// <summary>
 /// Класс, представляющий фильм.
 /// </summary>
-public partial class Film : AggregateRoot<FilmSnapshot>
+public partial class Film : AggregateRoot
 {
   #region Константы
 
@@ -44,7 +44,7 @@ public partial class Film : AggregateRoot<FilmSnapshot>
   /// <summary>
   /// Описание фильма.
   /// </summary>
-  public required string Description
+  public required string? Description
   {
     get => _description;
     set => _description = value.ValidateLength(nameof(Description), MaxDescriptionLength);
@@ -103,7 +103,7 @@ public partial class Film : AggregateRoot<FilmSnapshot>
   /// <summary>
   /// Жанры фильма.
   /// </summary>
-  public required IReadOnlyCollection<string> Genres
+  public required IReadOnlyCollection<string>? Genres
   {
     get => _genres;
     init
@@ -123,7 +123,7 @@ public partial class Film : AggregateRoot<FilmSnapshot>
   /// <summary>
   /// Страны фильма.
   /// </summary>
-  public required IReadOnlyCollection<string> Countries
+  public required IReadOnlyCollection<string>? Countries
   {
     get => _countries;
     init
@@ -143,7 +143,7 @@ public partial class Film : AggregateRoot<FilmSnapshot>
   /// <summary>
   /// Режиссеры фильма.
   /// </summary>
-  public required IReadOnlyCollection<string> Directors
+  public required IReadOnlyCollection<string>? Directors
   {
     get => _directors;
     init
@@ -163,20 +163,20 @@ public partial class Film : AggregateRoot<FilmSnapshot>
   /// <summary>
   /// Актеры фильма.
   /// </summary>
-  public required IReadOnlyCollection<Actor> Actors
+  public required IReadOnlyCollection<Actor>? Actors
   {
     get => _actors;
     init
     {
       if (value.Count == 0) throw new EmptyTagsCollectionException(nameof(Actors));
-      _actors = value.ToHashSet();
+      _actors = [.. value];
     }
   }
 
   /// <summary>
   /// Сценаристы фильма.
   /// </summary>
-  public required IReadOnlyCollection<string> Screenwriters
+  public required IReadOnlyCollection<string>? Screenwriters
   {
     get => _screenwriters;
     init
@@ -242,18 +242,14 @@ public partial class Film : AggregateRoot<FilmSnapshot>
   /// </exception>
   public void AddVersion(string version, int? seasonNumber = null, int? episodeNumber = null)
   {
-    // Проверяем, добавляем ли мы версию для эпизода сериала
     if (seasonNumber.HasValue && episodeNumber.HasValue)
     {
-      // Если это не сериал (уже есть контент), выбрасываем исключение
       if (Content != null)
         throw new InvalidOperationException(
           "You can't add a version of an episode to a movie. Use the method without specifying the season/episode.");
 
-      // Создаем отсортированный набор для версий с нашей новой версией
       var updatedVersions = new SortedSet<string> { version };
 
-      // Создаем новый эпизод с этой версией
       var updatedEpisodes = new SortedSet<Episode>
       {
         new()
@@ -263,7 +259,6 @@ public partial class Film : AggregateRoot<FilmSnapshot>
         }
       };
 
-      // Создаем новый сезон с этим эпизодом
       var updatedSeasons = new SortedSet<Season>
       {
         new()
@@ -273,64 +268,47 @@ public partial class Film : AggregateRoot<FilmSnapshot>
         }
       };
 
-      // Если сезонов еще нет, просто устанавливаем новый сезон
       if (Seasons == null)
       {
         Seasons = updatedSeasons;
         return;
       }
 
-      // Если сезоны уже существуют, выполняем слияние структур
       foreach (Season season in Seasons)
       {
-        // Пытаемся добавить текущий сезон из существующих в обновленную коллекцию
         // Add вернет false, если сезон с таким номером уже есть (значит это наш обновляемый сезон)
         bool isExistingSeason = !updatedSeasons.Add(season);
-
-        // Если это не наш сезон (добавился успешно), переходим к следующему
         if (!isExistingSeason) continue;
 
-        // Обрабатываем эпизоды сезона, который мы обновляем
         foreach (Episode episode in season.Episodes)
         {
-          // Пытаемся добавить текущий эпизод в обновленную коллекцию
           // Add вернет false, если эпизод с таким номером уже есть (наш обновляемый эпизод)
           bool isExistingEpisode = !updatedEpisodes.Add(episode);
-
-          // Если это не наш эпизод (добавился успешно), переходим к следующему
           if (!isExistingEpisode) continue;
 
-          // Для нашего эпизода добавляем все его существующие версии
           // SortedSet автоматически исключит дубликаты по имени версии
           foreach (string mediaVersion in episode.Versions)
           {
-            // Добавляем существующие версии
             updatedVersions.Add(mediaVersion);
           }
         }
       }
 
-      // Обновляем коллекцию сезонов
       Seasons = updatedSeasons;
     }
     else
     {
-      // Это добавление версии для фильма (не сериала)
-      // Если уже есть сезоны, выбрасываем исключение
       if (Seasons != null)
         throw new InvalidOperationException(
           "You can't add a movie version to a TV series. Specify the season and episode number.");
 
-      // Создаем набор версий с нашей новой версией
       var updatedVersions = new SortedSet<string> { version };
 
-      // Создаем новый медиаконтент с этой версией
       var updatedContent = new MediaContent
       {
         Versions = updatedVersions
       };
 
-      // Если контент уже существует, добавляем все его существующие версии
       if (Content != null)
       {
         foreach (string mediaVersion in Content.Versions)
@@ -339,7 +317,6 @@ public partial class Film : AggregateRoot<FilmSnapshot>
         }
       }
 
-      // Устанавливаем обновленный контент
       Content = updatedContent;
     }
   }

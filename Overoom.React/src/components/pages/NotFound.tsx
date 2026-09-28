@@ -46,15 +46,12 @@ const NotFound = ({ action }: { action: () => void }): ReactElement => {
           alignItems: 'center',
         }}
       >
-        {/* Иллюстрация страницы не найдена */}
         <StyledImage src="/img/not-found.svg" alt="Страница не найдена" />
 
-        {/* Заголовок страницы не найдена */}
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
           Страница не найдена
         </Typography>
 
-        {/* Описание проблемы */}
         <Typography
           variant="body1"
           sx={{
@@ -66,7 +63,6 @@ const NotFound = ({ action }: { action: () => void }): ReactElement => {
           Проверьте адрес или вернитесь на главную страницу.
         </Typography>
 
-        {/* Кнопка возврата на главную страницу */}
         <WildButton
           buttonText="На главную"
           onClick={action}

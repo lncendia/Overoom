@@ -30,7 +30,6 @@ public class RequestRecoverPasswordCommandHandlerTest
   /// </summary>
   public RequestRecoverPasswordCommandHandlerTest()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -42,7 +41,6 @@ public class RequestRecoverPasswordCommandHandlerTest
       new Mock<IServiceProvider>().Object,
       new Mock<ILogger<UserManager<AppUser>>>().Object);
 
-    // Инициализация обработчика.
     _handler = new RequestRecoverPasswordCommandHandler(_userManagerMock.Object, new Mock<IPublishEndpoint>().Object);
   }
 
@@ -53,7 +51,6 @@ public class RequestRecoverPasswordCommandHandlerTest
   public async Task Handle_ValidCommand_SendRequest()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
     _userManagerMock
       .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
       .ReturnsAsync(() => new AppUser
@@ -64,12 +61,10 @@ public class RequestRecoverPasswordCommandHandlerTest
         LastAuthTimeUtc = DateTime.UtcNow
       });
 
-    // Настройка mock объекта UserManager для возврата true(почта подтверждена) при вызове IsEmailConfirmedAsync.
     _userManagerMock
       .Setup(m => m.IsEmailConfirmedAsync(It.IsAny<AppUser>()))
       .ReturnsAsync(() => true);
 
-    // Создаем команду для запроса восстановления пароля.
     var command = new RequestRecoverPasswordCommand
     {
       Email = "test@example.com",
@@ -77,14 +72,12 @@ public class RequestRecoverPasswordCommandHandlerTest
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -95,12 +88,10 @@ public class RequestRecoverPasswordCommandHandlerTest
   public async Task Handle_WhenUserNotFoundByEmail_ThrowsUserNotFoundException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения пользователя при вызове FindByEmailAsync.
     _userManagerMock
       .Setup(m => m.FindByEmailAsync(It.IsAny<string>()))
       .ReturnsAsync(() => null);
 
-    // Создаем команду для запроса восстановления пароля.
     var command = new RequestRecoverPasswordCommand
     {
       Email = "test@example.com",
@@ -108,7 +99,6 @@ public class RequestRecoverPasswordCommandHandlerTest
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения UserNotFoundException.
     await Assert.ThrowsAsync<UserNotFoundException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }

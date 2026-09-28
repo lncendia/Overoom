@@ -25,7 +25,6 @@ interface ChatProps {
  * @returns {ReactElement} JSX элемент списка сообщений
  */
 const MessagesList = (props: ChatProps): ReactElement => {
-  // Настройки для компонента InfiniteScroll
   const scrollProps = {
     dataLength: props.messages.length,
     next: props.next,
@@ -50,7 +49,6 @@ const MessagesList = (props: ChatProps): ReactElement => {
       }}
       {...scrollProps}
     >
-      {/* Отображаем каждое сообщение */}
       {props.messages.map((m) => (
         <Message key={m.id} message={m} />
       ))}

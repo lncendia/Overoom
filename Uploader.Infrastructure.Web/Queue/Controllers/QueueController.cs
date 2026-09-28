@@ -44,7 +44,6 @@ public class QueueController(IPublishEndpoint publishEndpoint) : ControllerBase
 
     await publishEndpoint.Publish(command, token);
 
-    // Возвращаем статус 201 Created
     return Created();
   }
 }

@@ -66,10 +66,7 @@ const RoomsModule = (props: FilmRoomsModuleProps): ReactElement => {
     [navigate]
   );
 
-  // Показ скелетона, если данные ещё загружаются
   if (isLoading) return <FilmsCatalogSkeleton />;
-
-  // Показ сообщения "Нет данных", если комнаты не найдены
   if (rooms.length === 0) return <NoData text="Комнаты не найдены" />;
 
   return <RoomsCatalog rooms={rooms} onSelect={onSelect} next={fetchMore} hasMore={hasMore} />;

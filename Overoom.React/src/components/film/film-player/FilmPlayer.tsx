@@ -35,12 +35,10 @@ const FilmPlayer = ({ content, seasons }: FilmPlayerProps): ReactElement | null 
     return mapMediaToRaw(content);
   }, [content]);
 
-  // Если нет данных — ничего не рендерим
   if (!rawMedia && !rawSeasons) return null;
 
   return (
     <Paper>
-      {/* Встраиваем плеер */}
       <Player id="player" file={rawMedia ?? rawSeasons!} />
     </Paper>
   );
@@ -92,7 +90,6 @@ function useScript(url: string): void {
     script.async = true;
     document.body.appendChild(script);
 
-    // Удаляем скрипт при размонтировании
     return () => {
       document.body.removeChild(script);
     };

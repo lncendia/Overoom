@@ -28,7 +28,6 @@ const useRoom = (
 
   /** Эффект для подписки на события комнаты через hub */
   useEffect(() => {
-    // Если hub не передан, выходим
     if (!hub) return;
 
     /**
@@ -66,13 +65,9 @@ const useRoom = (
       });
     };
 
-    // Подписка на события комнаты
     hub.addHandler(handler);
-
-    // Запрос текущего состояния комнаты
     hub.getRoom().then();
 
-    // Очистка обработчика при размонтировании
     return () => hub.removeHandler(handler);
   }, [hub]);
 
@@ -86,7 +81,6 @@ const useRoom = (
       });
     }, 1000);
 
-    // Очистка интервала при размонтировании
     return () => clearInterval(id);
   }, []);
 
@@ -94,5 +88,4 @@ const useRoom = (
   return [room, setRoom];
 };
 
-// Экспорт хука useRoom по умолчанию
 export default useRoom;

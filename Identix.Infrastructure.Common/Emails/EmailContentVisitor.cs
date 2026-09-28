@@ -31,22 +31,12 @@ public class EmailContentVisitor(
   /// </summary>
   public void Visit(ConfirmRegistrationEmail email)
   {
-    // Задаем значение переменной Subject из локализатора, используя ключ "ConfirmRegistrationEmailSubject"
     Subject = localizer["ConfirmRegistrationEmailSubject"];
-
-    // Создаем переменную text и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailText"
     LocalizedString text = localizer["ConfirmRegistrationEmailText"];
-
-    // Создаем переменную explanation и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailExplanation"
     LocalizedString explanation = localizer["ConfirmRegistrationEmailExplanation"];
-
-    // Создаем переменную buttonName и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailButtonName"
     LocalizedString buttonName = localizer["ConfirmRegistrationEmailButtonName"];
-
-    // Создаем переменную expiration и устанавливаем значение из локализатора "LinkExpires"
     LocalizedString expiration = localizer["LinkExpires"];
 
-    // Вызываем метод EmailTemplate и присваиваем результат переменной HtmlContent
     Body = EmailTemplate(Subject, explanation, text, ButtonTemplate(buttonName, email.ConfirmLink),
       expiration, email.Recipient);
   }
@@ -57,22 +47,12 @@ public class EmailContentVisitor(
   /// </summary>
   public void Visit(ConfirmRecoverPasswordEmail email)
   {
-    // Задаем значение переменной Subject из локализатора, используя ключ "ConfirmRegistrationEmailSubject"
     Subject = localizer["ConfirmRecoverPasswordEmailSubject"];
-
-    // Создаем переменную text и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailText"
     LocalizedString text = localizer["ConfirmRecoverPasswordEmailText"];
-
-    // Создаем переменную explanation и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailExplanation"
     LocalizedString explanation = localizer["ConfirmRecoverPasswordEmailExplanation"];
-
-    // Создаем переменную buttonName и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailButtonName"
     LocalizedString buttonName = localizer["ConfirmRecoverPasswordEmailButtonName"];
-
-    // Создаем переменную expiration и устанавливаем значение из локализатора "LinkExpires"
     LocalizedString expiration = localizer["LinkExpires"];
 
-    // Вызываем метод EmailTemplate и присваиваем результат переменной HtmlContent
     Body = EmailTemplate(Subject, explanation, text, ButtonTemplate(buttonName, email.ConfirmLink),
       expiration,
       email.Recipient);
@@ -84,22 +64,12 @@ public class EmailContentVisitor(
   /// </summary>
   public void Visit(ConfirmMailChangeEmail email)
   {
-    // Задаем значение переменной Subject из локализатора, используя ключ "ConfirmRegistrationEmailSubject"
     Subject = localizer["ConfirmMailChangeEmailSubject"];
-
-    // Создаем переменную text и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailText"
     LocalizedString text = localizer["ConfirmMailChangeEmailText"];
-
-    // Создаем переменную explanation и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailExplanation"
     LocalizedString explanation = localizer["ConfirmMailChangeEmailExplanation"];
-
-    // Создаем переменную buttonName и задаем ей значение из локализатора, используя ключ "ConfirmRegistrationEmailButtonName"
     LocalizedString buttonName = localizer["ConfirmMailChangeEmailButtonName"];
-
-    // Создаем переменную expiration и устанавливаем значение из локализатора "LinkExpires"
     LocalizedString expiration = localizer["LinkExpires"];
 
-    // Вызываем метод EmailTemplate и присваиваем результат переменной HtmlContent
     Body = EmailTemplate(Subject, explanation, text, ButtonTemplate(buttonName, email.ConfirmLink),
       expiration, email.Recipient);
   }
@@ -109,19 +79,12 @@ public class EmailContentVisitor(
   /// </summary>
   public void Visit(TwoFactorCodeEmail email)
   {
-    // Задаем значение переменной Subject из локализатора, используя ключ "TwoFactorCodeEmailSubject"
     Subject = localizer["TwoFactorCodeEmailSubject"];
-
-    // Создаем переменную text и задаем ей значение из локализатора, используя ключ "TwoFactorCodeEmailText"
     LocalizedString text = localizer["TwoFactorCodeEmailText"];
 
     //// Создаем переменную explanation и задаем ей значение из локализатора, используя ключ "TwoFactorCodeEmailExplanation"
     LocalizedString explanation = localizer["TwoFactorCodeEmailExplanation"];
-
-    // Создаем переменную expiration и устанавливаем значение из локализатора "LinkExpires"
     LocalizedString expiration = localizer["CodeExpires"];
-
-    // Вызываем метод EmailTemplate и присваиваем результат переменной HtmlContent
     Body = EmailTemplate(Subject, explanation, text, CodeTemplate(email.Code), expiration, email.Recipient);
   }
 
@@ -133,7 +96,6 @@ public class EmailContentVisitor(
   /// <returns>HTML разметка с кнопкой</returns>
   private static string ButtonTemplate(string buttonName, string buttonLink)
   {
-    // Отдаем контент письма
     return $"""
             <table cellpadding="0" cellspacing="0" width="100%"
                    role="presentation"
@@ -159,7 +121,6 @@ public class EmailContentVisitor(
   /// <returns>HTML разметка с кодом</returns>
   private static string CodeTemplate(string code)
   {
-    // Отдаем контент письма
     return $"""
             <div style="background-color: rgb(51, 51, 51); color: rgb(241, 241, 241); border-radius: 5px; letter-spacing: 2px; padding: 1px;">
                   <h4>{code}</h4>
@@ -180,7 +141,6 @@ public class EmailContentVisitor(
   private string EmailTemplate(string title, string explanation, string text, string content, string expiration,
     string recipient)
   {
-    // Отдаем контент письма
     return
       $$"""
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"

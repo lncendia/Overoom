@@ -26,17 +26,11 @@ public static class OpenId
   /// <param name="builder">Построитель веб-приложения</param>
   public static void AddOpenId(this IHostApplicationBuilder builder)
   {
-    // Получаем путь к сертификату из конфигурации
     string certificatePath = builder.Configuration.GetRequiredValue<string>("Identity:Certificate:Path");
     string certificatePassword = builder.Configuration.GetRequiredValue<string>("Identity:Certificate:Password");
-
-    // Извлекаем имя базы данных из конфигурации
     string openIdDatabaseName = builder.Configuration.GetRequiredValue<string>("MongoDB:OpenIdDB");
-
-    // Извлекаем флаг, разрешающий небезопасные соединения из конфигурации
     bool allowInsecureConnection = builder.Configuration.GetValue<bool>("Identity:InsecureConnection");
 
-    // Загружаем сертификат для подписи и шифрования токенов
     X509Certificate2 certificate = X509CertificateLoader.LoadPkcs12FromFile(
       certificatePath,
       certificatePassword,
@@ -45,11 +39,8 @@ public static class OpenId
       X509KeyStorageFlags.PersistKeySet
     );
 
-    // Регистрируем фабрику для создания claims identity в DI контейнере
     builder.Services.AddScoped<IOpenIdClaimsIdentityFactory, OpenIdClaimsIdentityFactory>();
 
-    // Настраиваем управление сессиями с использованием MongoDB в качестве хранилища
-    // Сессии будут сохраняться между перезапусками приложения и доступны во всех экземплярах
     builder.Services.AddSession(options =>
     {
       options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -57,40 +48,29 @@ public static class OpenId
       options.Cookie.IsEssential = true;
     });
 
-    // Настраиваем Quartz для выполнения фоновых задач и периодических работ
     builder.Services.AddQuartz(options =>
     {
       options.UseSimpleTypeLoader();
       options.UseInMemoryStore();
     });
 
-    // Регистрируем хостинг-сервис для Quartz, который управляет выполнением заданий
     builder.Services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
-    // Конфигурируем OpenIddict сервер для обработки OAuth 2.0 и OpenID Connect запросов
     builder.Services.AddOpenIddict()
 
-      // Настраиваем ядро OpenIddict с использованием MongoDB как хранилища
       .AddCore(options =>
       {
-        // Используем MongoDB для хранения всех сущностей OpenIddict
         options.UseMongoDb().UseDatabase(MongoDbProvider.Client.GetDatabase(openIdDatabaseName));
-
-        // Интегрируем Quartz для выполнения фоновых задач OpenIddict
         options.UseQuartz();
       })
 
-      // Настраиваем клиентскую часть OpenIddict для обработки входящих запросов
       .AddClient(options =>
       {
-        // Регистрируем внешние OAuth-провайдеры
         options.AddExternalProviders(builder, certificate);
       })
 
-      // Настраиваем серверную часть
       .AddServer(options =>
       {
-        // Устанавливаем endpoints OIDC сервера
         options
           .SetAuthorizationEndpointUris("/connect/authorize")
           .SetTokenEndpointUris("/connect/token")
@@ -98,20 +78,17 @@ public static class OpenId
           .SetEndSessionEndpointUris("connect/logout")
           .SetRevocationEndpointUris("/connect/revoke");
 
-        // Разрешаем стандартные OAuth2/OIDC потоки
         options
           .AllowPasswordFlow()
           .AllowClientCredentialsFlow()
           .AllowAuthorizationCodeFlow()
           .AllowRefreshTokenFlow();
 
-        // Настраиваем безопасность токенов
         options
           .AddSigningCertificate(certificate)
           .AddEncryptionCertificate(certificate)
           .DisableAccessTokenEncryption();
 
-        // Интеграция с ASP.NET Core
         OpenIddictServerAspNetCoreBuilder aspBuilder = options.UseAspNetCore()
           .DisableTransportSecurityRequirement()
           .EnableAuthorizationEndpointPassthrough()
@@ -124,45 +101,36 @@ public static class OpenId
         if (allowInsecureConnection)
           aspBuilder.DisableTransportSecurityRequirement();
       })
-      // Добавляем валидацию токенов для API защиты
       .AddValidation(options =>
       {
         options.UseLocalServer();
         options.UseAspNetCore();
       });
 
-    // Настройка аутентификационных cookie для Identity
     builder.Services.ConfigureApplicationCookie(options =>
     {
       options.ExpireTimeSpan = TimeSpan.FromDays(30);
       options.Cookie.IsEssential = true;
-
-      // Убираем ограничение SameSite, чтобы куки работали внутри iframe (например, для authorize endpoint)
       options.Cookie.SameSite = SameSiteMode.None;
     });
 
-    // Настройка внешних куки (используются при логине через внешних провайдеров)
     builder.Services.ConfigureExternalCookie(options => options.Cookie.IsEssential = true);
 
-    // Куки для запоминания устройства при двухфакторной аутентификации (Remember this machine)
     builder.Services.Configure<CookieAuthenticationOptions>(IdentityConstants.TwoFactorRememberMeScheme, options =>
     {
       options.ExpireTimeSpan = TimeSpan.FromDays(30);
       options.Cookie.IsEssential = true;
     });
 
-    // Куки, используемые для хранения идентификатора пользователя при двухфакторной аутентификации
     builder.Services.Configure<CookieAuthenticationOptions>(IdentityConstants.TwoFactorUserIdScheme,
       options => options.Cookie.IsEssential = true);
 
-    // Настройка валидации security stamp — защита от параллельных/украденных сессий.
     builder.Services.Configure<SecurityStampValidatorOptions>(options =>
     {
       options.ValidationInterval = TimeSpan.FromMinutes(15);
       options.OnRefreshingPrincipal = SecurityStampValidatorCallback.UpdatePrincipal;
     });
 
-    // Настройки Identity: указываем, какие claim использовать для UserId, UserName и Role.
     builder.Services.Configure<IdentityOptions>(options =>
     {
       options.ClaimsIdentity.UserIdClaimType = OpenIddictConstants.Claims.Subject;

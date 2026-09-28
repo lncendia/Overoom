@@ -13,12 +13,10 @@ const useDelayedAction = (action: () => void, delay = 1000): (() => void) => {
 
   /** Функция-триггер для запуска отложенного действия */
   const trigger = useCallback(() => {
-    // Очищаем предыдущий таймер, если он есть
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
 
-    // Запускаем новый таймер
     timerRef.current = window.setTimeout(() => {
       action();
       timerRef.current = null; // очищаем ref после выполнения

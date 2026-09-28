@@ -24,26 +24,14 @@ public class ToggleWatchListCommandHandler(IUnitOfWork unitOfWork) : IRequestHan
   /// <exception cref="FilmNotFoundException">Если фильм не найден</exception>
   public async Task Handle(ToggleWatchListCommand request, CancellationToken cancellationToken)
   {
-    // Получаем пользователя по ID из запроса
     User? user = await unitOfWork.UserRepository.Value.GetAsync(request.UserId, cancellationToken);
-
-    // Проверяем существование пользователя
     if (user == null) throw new UserNotFoundException(request.UserId);
 
-    // Получаем фильм по ID из запроса
     Film? film = await unitOfWork.FilmRepository.Value.GetAsync(request.FilmId, cancellationToken);
-
-    // Проверяем существование фильма
     if (film == null) throw new FilmNotFoundException(request.FilmId);
 
-    // Переключаем состояние фильма в списке просмотра пользователя
-    // (метод ToggleWatchlist должен сам определять, добавлять или удалять фильм)
     user.ToggleWatchlist(film);
-
-    // Обновляем данные пользователя в репозитории
     await unitOfWork.UserRepository.Value.UpdateAsync(user, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

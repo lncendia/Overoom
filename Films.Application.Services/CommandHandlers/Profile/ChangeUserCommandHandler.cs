@@ -21,22 +21,12 @@ public class ChangeUserCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
   /// <exception cref="UserNotFoundException">Если пользователь с указанным ID не найден</exception>
   public async Task Handle(ChangeUserCommand request, CancellationToken cancellationToken)
   {
-    // Получаем пользователя по ID из запроса
     User? user = await unitOfWork.UserRepository.Value.GetAsync(request.Id, cancellationToken);
-
-    // Проверяем существование пользователя
     if (user == null) throw new UserNotFoundException(request.Id);
 
-    // Обновляем имя пользователя
     user.Username = request.UserName;
-
-    // Обновляем ключ аватара пользователя
     user.PhotoKey = request.PhotoKey;
-
-    // Сохраняем обновленные данные в репозитории
     await unitOfWork.UserRepository.Value.UpdateAsync(user, cancellationToken);
-
-    // Фиксируем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

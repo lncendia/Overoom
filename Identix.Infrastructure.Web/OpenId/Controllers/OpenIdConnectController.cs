@@ -61,44 +61,30 @@ public class OpenIdConnectController : Controller
   [IgnoreAntiforgeryToken]
   public async Task<IActionResult> Authorize(CancellationToken cancellationToken)
   {
-    // Получаем OIDC запрос из контекста HTTP
     OpenIddictRequest request = HttpContext.GetOpenIddictServerRequest() ?? throw new OpenIdContextException();
-
-    // Проверяем аутентификацию пользователя (если есть активная сессия)
     AuthenticateResult result = await HttpContext.AuthenticateAsync();
-
-    // Получаем сохраненное согласие пользователя из сессии (если есть)
     OpenIdExtensions.ConsentResponse? consent = HttpContext.Session.TakeConsent(request, result.Principal.GetId());
 
-    // Если пользователь ранее явно отказал в согласии (IsGranted = false)
     if (consent is { IsGranted: false })
     {
-      // Немедленно возвращаем отказ в авторизации
       return Forbid(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }
 
-    // Проверяем, требуется ли повторная аутентификация пользователя
     if (RequiresLogin(request, result))
     {
-      // Перенаправляем на страницу логина если требуется аутентификация
       return HandleLoginRequired(request);
     }
 
-    // Если согласие уже было предоставлено ранее
     if (consent is { IsGranted: true })
     {
-      // Обрабатываем успешное согласие и выдаем токен
       return await HandleGrantedConsent(consent, request, cancellationToken);
     }
 
-    // Если требуется явное согласие
     if (request.HasPromptValue(OpenIddictConstants.PromptValues.Consent))
     {
-      // Перенаправляем на страницу согласия
       return RedirectToConsent(request);
     }
 
-    // Если согласие еще не запрашивалось или не принято - переходим к основной логике авторизации
     return await HandleAuthorization(request, cancellationToken);
   }
 
@@ -114,18 +100,14 @@ public class OpenIdConnectController : Controller
   [IgnoreAntiforgeryToken]
   public async Task<IActionResult> Exchange(CancellationToken token)
   {
-    // Получение и валидация OpenID Connect запроса
     OpenIddictRequest request = HttpContext.GetOpenIddictServerRequest() ?? throw new OpenIdContextException();
 
-    // Обработка Authorization Code и Refresh Token flow
     if (request.IsAuthorizationCodeGrantType() || request.IsRefreshTokenGrantType())
       return await HandleCodeOrRefreshAsync(token);
 
-    // Обработка Resource Owner Password Credentials flow
     if (request.IsPasswordGrantType())
       return await HandlePasswordAsync(request, token);
 
-    // Обработка Client Credentials flow
     if (request.IsClientCredentialsGrantType())
       return await HandleClientCredentialsAsync(request, token);
 
@@ -139,15 +121,12 @@ public class OpenIdConnectController : Controller
   [HttpGet("~/connect/logout")]
   public IActionResult Logout()
   {
-    // Если пользователь авторизован
     if (User.Identity?.IsAuthenticated == true)
     {
-      // Перенаправляем в AccountController.Logout, чтобы выполнить прикладную логику выхода
       return RedirectToAction("Logout", "Account",
         new { returnUrl = Request.PathBase + Request.Path + QueryString.Create(Request.Query) });
     }
 
-    // Если пользователь уже не авторизован — инициируем завершение сессии на стороне OpenIddict
     return SignOut(
       authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
       properties: new AuthenticationProperties { RedirectUri = "/" });
@@ -164,17 +143,14 @@ public class OpenIdConnectController : Controller
   [Produces("application/json")]
   public async Task<IActionResult> UserInfo(CancellationToken token)
   {
-    // Формируем запрос для получения информации о пользователе
     var query = new UserInfoQuery
     {
       UserId = User.Id(),
       Scopes = User.GetScopes()
     };
 
-    // Получаем набор claims через медиатор
     UserInfoDto claims = await _mediator.Send(query, token);
 
-    // Возвращаем JSON с данными пользователя
     return Ok(claims);
   }
 
@@ -188,18 +164,13 @@ public class OpenIdConnectController : Controller
   /// <returns>true - если пользователь должен повторно войти в систему</returns>
   private static bool RequiresLogin(OpenIddictRequest request, AuthenticateResult result)
   {
-    // Последовательная проверка условий, требующих повторной аутентификации
     return
-      // Базовая проверка успешности аутентификации
       result is not { Succeeded: true } ||
 
-      // Явное требование повторного входа (prompt=login)
       request.HasPromptValue(OpenIddictConstants.PromptValues.Login) ||
 
-      // Требование немедленной аутентификации (max_age=0)
       request.MaxAge == 0 ||
 
-      // Проверка истечения времени сессии
       (request.MaxAge is not null && result.Properties?.IssuedUtc is not null &&
        TimeProvider.System.GetUtcNow() - result.Properties.IssuedUtc >
        TimeSpan.FromSeconds(request.MaxAge.Value));
@@ -212,10 +183,8 @@ public class OpenIdConnectController : Controller
   /// <returns>Редирект на страницу логина или ошибку</returns>
   private IActionResult HandleLoginRequired(OpenIddictRequest request)
   {
-    // Если запрос содержит prompt=none (тихий режим без взаимодействия)
     if (request.HasPromptValue(OpenIddictConstants.PromptValues.None))
     {
-      // Возвращаем ошибку вместо редиректа на логин
       return Forbid(authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
         properties: new AuthenticationProperties(new Dictionary<string, string?>
         {
@@ -224,13 +193,10 @@ public class OpenIdConnectController : Controller
         }));
     }
 
-    // Сохраняем OIDC запрос в сессии для восстановления после аутентификации
     HttpContext.Session.SetOpenIdRequest(request);
 
-    // Перенаправляем на страницу логина с сохранением текущего URL
     return Challenge(new AuthenticationProperties
     {
-      // URL для возврата после успешной аутентификации
       RedirectUri = HttpContext.Request.GetEncodedUrl()
     });
   }
@@ -245,7 +211,6 @@ public class OpenIdConnectController : Controller
   private async Task<IActionResult> HandleGrantedConsent(OpenIdExtensions.ConsentResponse consent,
     OpenIddictRequest request, CancellationToken cancellationToken)
   {
-    // Создаем команду для выдачи согласия через Mediator pattern
     var grantCommand = new GrantConsentCommand
     {
       UserId = User.Id(), // ID текущего пользователя
@@ -257,10 +222,8 @@ public class OpenIdConnectController : Controller
       AuthenticationScheme = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme
     };
 
-    // Отправляем команду через медиатор для обработки бизнес-логики
     ClaimsPrincipal principal = await _mediator.Send(grantCommand, cancellationToken);
 
-    // Возвращаем подписанный OIDC токен (id_token или access_token)
     return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
   }
 
@@ -273,7 +236,6 @@ public class OpenIdConnectController : Controller
   private async Task<IActionResult> HandleAuthorization(OpenIddictRequest request,
     CancellationToken cancellationToken)
   {
-    // Создаем команду авторизации пользователя
     var command = new AuthorizeUserCommand
     {
       UserId = User.Id(), // ID текущего пользователя
@@ -285,16 +247,12 @@ public class OpenIdConnectController : Controller
 
     try
     {
-      // Пытаемся авторизовать пользователя через медиатор
       ClaimsPrincipal principal = await _mediator.Send(command, cancellationToken);
 
-      // Если успешно - возвращаем подписанный токен
       return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }
-    // Обрабатываем исключение "требуется внешнее согласие"
     catch (ConsentRequiredException ex) when (ex.ConsentType == OpenIddictConstants.ConsentTypes.External)
     {
-      // Возвращаем ошибку для внешнего согласия (не требующего UI)
       return Forbid(authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
         properties: new AuthenticationProperties(new Dictionary<string, string?>
         {
@@ -302,10 +260,8 @@ public class OpenIdConnectController : Controller
           [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = ExternalConsentRequired
         }));
     }
-    // Обрабатываем исключение когда требуется согласие, но запрос в тихом режиме (prompt=none)
     catch (ConsentRequiredException) when (request.HasPromptValue(OpenIddictConstants.PromptValues.None))
     {
-      // Возвращаем ошибку вместо показа формы согласия
       return Forbid(authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
         properties: new AuthenticationProperties(new Dictionary<string, string?>
         {
@@ -313,10 +269,8 @@ public class OpenIdConnectController : Controller
           [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = InteractiveConsentRequired
         }));
     }
-    // Обрабатываем общий случай требования согласия
     catch (ConsentRequiredException)
     {
-      // Перенаправляем на страницу согласия
       return RedirectToConsent(request);
     }
   }
@@ -328,10 +282,8 @@ public class OpenIdConnectController : Controller
   /// <returns>Редирект на страницу согласия</returns>
   private RedirectToActionResult RedirectToConsent(OpenIddictRequest request)
   {
-    // Сохраняем OIDC запрос в сессии для формы согласия
     HttpContext.Session.SetOpenIdRequest(request);
 
-    // Перенаправляем на страницу согласия
     return RedirectToAction("Index", "Consent",
       new { returnUrl = HttpContext.Request.GetEncodedUrl() });
   }
@@ -343,12 +295,10 @@ public class OpenIdConnectController : Controller
   /// <param name="token">Токен отмены для асинхронной операции</param>
   private async Task<IActionResult> HandleCodeOrRefreshAsync(CancellationToken token)
   {
-    // Аутентификация существующего principal из текущего HTTP-контекста
     // В случае refresh token flow здесь будет principal из refresh token
     // В случае authorization code flow здесь будет principal из кода авторизации
     AuthenticateResult result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
-    // Команда для обновления principal с актуальными claims
     var command = new RefreshPrincipalCommand
     {
       UserId = result.Principal!.Id(), // ID пользователя из аутентифицированного principal
@@ -356,10 +306,8 @@ public class OpenIdConnectController : Controller
       AuthenticationScheme = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme
     };
 
-    // Выполнение команды обновления principal через Mediator
     ClaimsPrincipal principal = await _mediator.Send(command, token);
 
-    // Возврат результата с обновленным principal
     return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
   }
 
@@ -374,10 +322,8 @@ public class OpenIdConnectController : Controller
   {
     try
     {
-      // Создает URL-адрес для подтверждения почты
       string callbackUrl = Url.Action("ConfirmEmail", "Registration", null, HttpContext.Request.Scheme)!;
 
-      // Аутентификация пользователя по email и паролю
       var authenticateCommand = new AuthenticateUserByPasswordCommand
       {
         Email = request.Username!,
@@ -385,13 +331,9 @@ public class OpenIdConnectController : Controller
         ConfirmUrl = callbackUrl
       };
 
-      // Выполнение команды аутентификации через Mediator
       AppUser user = await _mediator.Send(authenticateCommand, token);
-
-      // Преобразуем DateTime в Unix timestamp (секунды с 1970-01-01)
       string time = TimeProvider.System.GetUtcNow().ToUnixTimeSeconds().ToString();
 
-      // Создание базовой identity с информацией об аутентификации
       var identity = new ClaimsIdentity(
         [
           new Claim(Constants.Claims.IdentityProvider, Constants.IdentityProviders.Local),
@@ -402,7 +344,6 @@ public class OpenIdConnectController : Controller
         nameType: OpenIddictConstants.Claims.Name,
         roleType: OpenIddictConstants.Claims.Role);
 
-      // Создание principal для аутентифицированного пользователя
       var authorizeCommand = new AuthorizeUserCommand
       {
         UserId = user.Id, // ID текущего пользователя
@@ -412,15 +353,12 @@ public class OpenIdConnectController : Controller
         AuthenticationScheme = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme
       };
 
-      // Получение principal с claims для токена
       ClaimsPrincipal principal = await _mediator.Send(authorizeCommand, token);
 
-      // Возврат результата аутентификации
       return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }
     catch (Exception ex)
     {
-      // Обработка различных типов исключений с маппингом на стандартные ошибки OpenID Connect
       string? error;
       string? description;
 
@@ -451,7 +389,6 @@ public class OpenIdConnectController : Controller
           throw;
       }
 
-      // Возврат ошибки аутентификации в формате OpenID Connect
       return Forbid(
         authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
         properties: new AuthenticationProperties(new Dictionary<string, string?>
@@ -471,17 +408,14 @@ public class OpenIdConnectController : Controller
   /// <param name="token">Токен отмены для асинхронной операции</param>
   private async Task<IActionResult> HandleClientCredentialsAsync(OpenIddictRequest request, CancellationToken token)
   {
-    // Создание principal для аутентифицированного пользователя
     var authorizeCommand = new AuthorizeClientCommand
     {
       ClientId = request.ClientId!,
       Scopes = request.GetScopes()
     };
 
-    // Получение principal с claims для токена
     ClaimsPrincipal principal = await _mediator.Send(authorizeCommand, token);
 
-    // Возврат результата аутентификации
     return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
   }
 

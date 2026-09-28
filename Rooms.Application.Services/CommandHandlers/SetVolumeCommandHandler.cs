@@ -20,19 +20,11 @@ public class SetVolumeCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<S
   /// <exception cref="RoomNotFoundException">Если комната с указанным ID не найдена</exception>
   public async Task Handle(SetVolumeCommand request, CancellationToken cancellationToken)
   {
-    // Получаем комнату по ID из репозитория
     Room? room = await unitOfWork.RoomRepository.Value.GetAsync(request.RoomId, cancellationToken);
-
-    // Проверяем существование комнаты
     if (room == null) throw new RoomNotFoundException(request.RoomId);
 
-    // Устанавливаем состояние звука (включен/выключен) для пользователя
     room.SetMuted(request.ViewerId, request.Muted);
-
-    // Обновляем комнату в репозитории
     await unitOfWork.RoomRepository.Value.UpdateAsync(room, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
   }
 }

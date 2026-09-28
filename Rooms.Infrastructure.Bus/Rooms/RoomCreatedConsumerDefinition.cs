@@ -16,10 +16,8 @@ public class RoomCreatedConsumerDefinition : ConsumerDefinition<RoomCreatedConsu
   protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
     IConsumerConfigurator<RoomCreatedConsumer> consumerConfigurator, IRegistrationContext context)
   {
-    // Настройка повторной обработки
     consumerConfigurator.UseMessageRetry(cfg => { cfg.Interval(5, TimeSpan.FromSeconds(5)); });
 
-    // Настройка отложенной повторной доставки с экспоненциальной политикой
     endpointConfigurator.UseScheduledRedelivery(cfg =>
     {
       cfg.Exponential(10, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(30), TimeSpan.FromSeconds(30));

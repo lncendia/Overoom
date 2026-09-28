@@ -38,13 +38,11 @@ const UserNotificationSettingsModule = (): ReactElement => {
         [setting]: !profile!.roomSettings[setting],
       };
 
-      // Оптимистичное обновление
       editProfile((prev) => ({
         ...prev!,
         roomSettings: newSettings,
       }));
 
-      // Отправка на сервер
       await profileApi.updateRoomSettings(newSettings);
     },
     [profile, editProfile, profileApi]
@@ -54,10 +52,8 @@ const UserNotificationSettingsModule = (): ReactElement => {
     return (
       <Paper>
         <Stack spacing={2}>
-          {/* Заголовок */}
           <Skeleton variant="text" width="50%" height={30} />
 
-          {/* Переключатели */}
           <Skeleton variant="rounded" width="100%" height={28} />
           <Skeleton variant="rounded" width="100%" height={28} />
         </Stack>

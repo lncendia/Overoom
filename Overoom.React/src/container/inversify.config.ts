@@ -16,20 +16,12 @@ import { RoomsApi } from '../services/rooms/rooms.api.ts';
  * @returns {Promise<Container>} - Возвращает промис, который резолвится в настроенный контейнер Inversify
  */
 const createContainer = async (): Promise<Container> => {
-  // Получаем конфигурацию из файла configuration.json
   const response = await axios.get<Configuration>('/configuration.json');
   const config = response.data;
-
-  // Создаем новый контейнер зависимостей
   const container = new Container();
-
-  // Создаем экземпляр axios для работы с Films API
   const filmsAxiosInstance = axios.create(config.services.films);
-
-  // Настраиваем автоматическое добавление токена в заголовки запросов
   configureAxiosAuthorization(filmsAxiosInstance, container);
 
-  // Настройки для UserManager (OIDC)
   const userManagerSettings: UserManagerSettings = {
     ...config.oidc,
     userStore: new WebStorageStateStore({ store: localStorage }),
@@ -38,37 +30,31 @@ const createContainer = async (): Promise<Container> => {
   const posterUrlFormat = `${config.services.films.baseURL}${config.files.filmThumbnailPrefix}`;
   const userThumbnailUrlFormat = `${config.oidc.authority}${config.files.userThumbnailPrefix}`;
 
-  // Привязываем Config к контейнеру
   container
     .bind<Configuration>('Configuration')
     .toDynamicValue(() => config)
     .inSingletonScope();
 
-  // Привязываем UserManager к контейнеру
   container
     .bind<UserManager>('UserManager')
     .toDynamicValue(() => new UserManager(userManagerSettings))
     .inSingletonScope();
 
-  // Привязываем AuthApi к контейнеру
   container
     .bind<AuthApi>('AuthApi')
     .toDynamicValue(() => new AuthApi(container.get('UserManager')))
     .inSingletonScope();
 
-  // Привязка FilmsApi к контейнеру
   container
     .bind<FilmsApi>('FilmsApi')
     .toDynamicValue(() => new FilmsApi(filmsAxiosInstance, posterUrlFormat))
     .inSingletonScope();
 
-  // Привязка PlaylistsApi к контейнеру
   container
     .bind<PlaylistsApi>('PlaylistsApi')
     .toDynamicValue(() => new PlaylistsApi(filmsAxiosInstance, posterUrlFormat))
     .inSingletonScope();
 
-  // Привязка ProfileApi к контейнеру
   container
     .bind<ProfileApi>('ProfileApi')
     .toDynamicValue(
@@ -76,19 +62,16 @@ const createContainer = async (): Promise<Container> => {
     )
     .inSingletonScope();
 
-  // Привязка RoomsApi к контейнеру
   container
     .bind<RoomsApi>('RoomsApi')
     .toDynamicValue(() => new RoomsApi(filmsAxiosInstance, posterUrlFormat, userThumbnailUrlFormat))
     .inSingletonScope();
 
-  // Привязка CommentsApi к контейнеру
   container
     .bind<CommentsApi>('CommentsApi')
     .toDynamicValue(() => new CommentsApi(filmsAxiosInstance, userThumbnailUrlFormat))
     .inSingletonScope();
 
-  // Привязка RoomHubFactory к контейнеру
   container
     .bind<RoomHubFactory>('RoomHubFactory')
     .toDynamicValue(
@@ -101,7 +84,6 @@ const createContainer = async (): Promise<Container> => {
     )
     .inSingletonScope();
 
-  // Возвращаем контейнер
   return container;
 };
 

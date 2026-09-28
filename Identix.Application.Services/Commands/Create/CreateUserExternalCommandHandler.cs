@@ -41,20 +41,14 @@ public class CreateUserExternalCommandHandler(
   /// <exception cref="LoginAlreadyAssociatedException">Вызывается, если логин связан с другим пользователем.</exception>
   public async Task<AppUser> Handle(CreateUserExternalCommand request, CancellationToken cancellationToken)
   {
-    // Пытаемся получить пользователя по логину
     AppUser? loginUser =
       await userManager.FindByLoginAsync(request.LoginInfo.LoginProvider, request.LoginInfo.ProviderKey);
 
-    // Если пользователь существует вызываем исключение
     if (loginUser != null) throw new LoginAlreadyAssociatedException();
 
-    // Пытаемся получить почту из утверждений, если почты нет - вызываем исключение
     string email = request.LoginInfo.Principal.FindFirstValue(ClaimTypes.Email) ?? throw new EmailFormatException();
-
-    // Пытаемся получить имя пользователя из утверждений, если нет - сплитим почту
     string username = request.LoginInfo.Principal.FindFirstValue(ClaimTypes.Name) ?? email.Split('@')[0];
 
-    // Создаем пользователя
     var user = new AppUser
     {
       Email = email,
@@ -64,47 +58,29 @@ public class CreateUserExternalCommandHandler(
       EmailConfirmed = true
     };
 
-    // Начинаем транзакцию в контексте базы данных MongoDB.
     await dbContext.BeginTransaction(cancellationToken);
-
-    // Сохраняем пользователя
     IdentityResult result = await userManager.CreateAsync(user);
 
-    // Если результат неудачный
     if (!result.Succeeded)
     {
-      // Отмена транзакции
       await dbContext.AbortTransaction(cancellationToken);
-
-      // Если хоть одна ошибка DuplicateEmail, то вызываем исключение
       if (result.Errors.Any(e => e.Code == "DuplicateEmail")) throw new EmailAlreadyTakenException();
-
-      // Если хоть одна ошибка InvalidEmail, то вызываем исключение
       if (result.Errors.Any(e => e.Code == "InvalidEmail")) throw new EmailFormatException();
-
-      // Если хоть одна ошибка InvalidUserNameLength, то вызываем исключение
       if (result.Errors.Any(error => error.Code == "InvalidUserNameLength")) throw new UserNameLengthException();
     }
 
-    // Создаем коллекцию утверждений пользователя и добавляем в нее локаль
     List<Claim> claims = [new(OpenIddictConstants.Claims.Locale, request.Locale.GetLocalizationString())];
-
-    // Пытаемся получить ссылку на аватар из утверждений
     string? thumbnailClaim = request.LoginInfo.Principal.FindFirstValue(Constants.Claims.Thumbnail);
 
-    // Если аватар есть в утверждениях, то сохраняем его локально
     if (thumbnailClaim != null)
     {
-      // Формируем новый ключ для фото пользователя
       string newThumbnail = string.Format(Constants.Storage.UserPhotoKeyFormat, user.Id);
 
       try
       {
-        // Сохраняем фото
         await fileStore.UploadAsync(newThumbnail, new Uri(thumbnailClaim), Constants.Storage.JpegMimeType,
           token: cancellationToken);
 
-        // Так же добавляем фото профиля в утверждения пользователя
         claims.Add(new Claim(OpenIddictConstants.Claims.Picture, newThumbnail));
       }
       catch (Exception ex)
@@ -115,13 +91,9 @@ public class CreateUserExternalCommandHandler(
       }
     }
 
-    // Добавляем пользователю утверждения
     await userManager.AddClaimsAsync(user, claims);
-
-    // Связываем пользователя с внешним провайдером
     await userManager.AddLoginAsync(user, request.LoginInfo);
 
-    // Публикуем событие
     await publishEndpoint.Publish(new UserRegisteredIntegrationEvent
     {
       Id = user.Id,
@@ -132,10 +104,8 @@ public class CreateUserExternalCommandHandler(
       Locale = request.Locale.GetLocalizationString()
     }, cancellationToken);
 
-    // Фиксируем транзакцию в контексте базы данных MongoDB.
     await dbContext.CommitTransaction(cancellationToken);
 
-    // Возвращаем пользователя
     return user;
   }
 }

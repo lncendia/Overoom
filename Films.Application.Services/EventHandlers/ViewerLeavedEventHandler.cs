@@ -19,14 +19,12 @@ public class ViewerLeavedEventHandler(IPublishEndpoint publishEndpoint)
   /// <param name="cancellationToken">Токен отмены операции</param>
   protected override async Task Execute(ViewerLeavedEvent notification, CancellationToken cancellationToken)
   {
-    // Создаем событие интеграции для оповещения других сервисов о выходе зрителя
     var integrationEvent = new RoomViewerLeavedIntegrationEvent
     {
       RoomId = notification.Room.Id,
       ViewerId = notification.ViewerId
     };
 
-    // Публикуем событие интеграции через MassTransit
     await publishEndpoint.Publish(integrationEvent, cancellationToken: cancellationToken);
   }
 }

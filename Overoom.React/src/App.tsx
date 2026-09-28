@@ -23,7 +23,6 @@ import SignOutPage from './pages/SignOutPage.tsx';
  * @returns {ReactElement} JSX элемент, содержащий RouterProvider с маршрутизированными страницами
  */
 const App = (): ReactElement => {
-  // Создаем объект BrowserRouter для маршрутизации страниц
   const router = createBrowserRouter([
     {
       path: '/',
@@ -31,7 +30,6 @@ const App = (): ReactElement => {
       errorElement: <ErrorPage />,
     },
     {
-      // Основной элемент-обертка (layout)
       element: <LayoutPage />,
       errorElement: <ErrorPage />,
       children: [
@@ -50,7 +48,6 @@ const App = (): ReactElement => {
     },
   ]);
 
-  // Возвращаем маршрутизированные страницы через RouterProvider
   return <RouterProvider router={router} />;
 };
 

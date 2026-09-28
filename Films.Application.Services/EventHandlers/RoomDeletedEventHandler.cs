@@ -20,13 +20,11 @@ public class RoomDeletedEventHandler(IPublishEndpoint publishEndpoint)
   /// <param name="cancellationToken">Токен отмены операции</param>
   protected override async Task Execute(DeleteEvent<Room> notification, CancellationToken cancellationToken)
   {
-    // Создаем событие интеграции для оповещения других сервисов об удалении комнаты
     var integrationEvent = new RoomDeletedIntegrationEvent
     {
       Id = notification.Id
     };
 
-    // Публикуем событие интеграции через MassTransit
     await publishEndpoint.Publish(integrationEvent, cancellationToken: cancellationToken);
   }
 }

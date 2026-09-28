@@ -51,7 +51,6 @@ export class ProfileApi {
       params: query,
     });
 
-    // Добавляем URL постеров к фильмам
     for (const film of response.data.list) {
       film.posterUrl = this.posterUrlFormat + film.posterKey;
     }

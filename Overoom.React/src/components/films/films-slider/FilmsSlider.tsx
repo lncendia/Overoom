@@ -48,7 +48,6 @@ const FilmsSlider = ({ films, onSelect }: FilmsSliderProps): ReactElement => {
               key={film.id}
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: '5px' }}
             >
-              {/* Карточка фильма внутри слайдера */}
               <FilmShortItem film={film} onClick={() => onSelect(film.id)} />
             </Box>
           );

@@ -36,7 +36,6 @@ internal static class OpenIdConfiguration
     ILoggerFactory loggerFactory = provider.GetRequiredService<ILoggerFactory>();
     ILogger logger = loggerFactory.CreateLogger("OpenIdConfiguration");
 
-    // Проверка существования конфигурационного файла
     if (!File.Exists("openid.json"))
     {
       logger.LogWarning(
@@ -44,7 +43,6 @@ internal static class OpenIdConfiguration
       return;
     }
 
-    // Десериализация конфигурации из JSON файла
     string json = await File.ReadAllTextAsync("openid.json");
     Models.OpenIdConfiguration? config = JsonSerializer.Deserialize<Models.OpenIdConfiguration>(json, _options);
 
@@ -55,11 +53,8 @@ internal static class OpenIdConfiguration
       return;
     }
 
-    // Получение менеджеров приложений и областей видимости
     IOpenIddictApplicationManager applicationManager = provider.GetRequiredService<IOpenIddictApplicationManager>();
     IOpenIddictScopeManager scopeManager = provider.GetRequiredService<IOpenIddictScopeManager>();
-
-    // Инициализация приложений и областей видимости
     await SeedApplicationsAsync(applicationManager, config.Applications, logger);
     await SeedScopesAsync(scopeManager, config.Scopes, logger);
   }
@@ -86,7 +81,6 @@ internal static class OpenIdConfiguration
   private static async Task CreateApplicationAsync(IOpenIddictApplicationManager manager,
     OpenIdApplication application, ILogger logger)
   {
-    // Проверка существования приложения с таким ClientId
     if (await manager.FindByClientIdAsync(application.ClientId) is not null)
     {
       logger.LogInformation("OpenID client application '{ClientId}' already exists", application.ClientId);
@@ -124,7 +118,6 @@ internal static class OpenIdConfiguration
     if (application.LogoKey != null)
       descriptor.SetLogoKey(application.LogoKey);
 
-    // Создание нового приложения
     await manager.CreateAsync(descriptor);
     logger.LogInformation("OpenID client application '{ClientId}' created successfully", application.ClientId);
   }
@@ -149,7 +142,6 @@ internal static class OpenIdConfiguration
   /// <param name="logger">Логгер для записи информации о процессе создания.</param>
   private static async Task CreateScopeAsync(IOpenIddictScopeManager manager, OpenIdScope scope, ILogger logger)
   {
-    // Проверка существования области видимости с таким именем
     if (await manager.FindByNameAsync(scope.Name) is not null)
     {
       logger.LogInformation("OpenID scope '{Scope}' already exists", scope.Name);
@@ -172,7 +164,6 @@ internal static class OpenIdConfiguration
     foreach (string resource in scope.Resources)
       descriptor.Resources.Add(resource);
 
-    // Создание новой области видимости
     await manager.CreateAsync(descriptor);
     logger.LogInformation("OpenID scope '{Scope}' created successfully", scope.Name);
   }

@@ -20,7 +20,6 @@ public static class ExternalProviders
   public static void AddExternalProviders(this OpenIddictClientBuilder options, IHostApplicationBuilder builder,
     X509Certificate2 certificate)
   {
-    // Получение clientId и секретов для всех провайдеров из конфигурации
     string githubClientId = builder.Configuration.GetRequiredValue<string>("OAuth:GitHub:Client");
     string githubSecret = builder.Configuration.GetRequiredValue<string>("OAuth:GitHub:Secret");
 
@@ -41,25 +40,18 @@ public static class ExternalProviders
 
     string discordClientId = builder.Configuration.GetRequiredValue<string>("OAuth:Discord:Client");
     string discordSecret = builder.Configuration.GetRequiredValue<string>("OAuth:Discord:Secret");
-
-    // Разрешаем flow авторизации через authorization code
     options.AllowAuthorizationCodeFlow();
 
-    // Регистрируем сертификаты для шифрования и подписи токенов (для development)
     options.AddEncryptionCertificate(certificate)
       .AddSigningCertificate(certificate);
 
-    // Настраиваем интеграцию с ASP.NET Core
     options.UseAspNetCore()
       .EnableRedirectionEndpointPassthrough();
 
-    // Настраиваем HTTP-клиент и устанавливаем информацию о продукте
     options.UseSystemNetHttp()
       .SetProductInformation(typeof(Program).Assembly);
 
-    // Регистрируем и настраиваем веб-провайдеры
     options.UseWebProviders()
-      // Настройка GitHub провайдера
       .AddGitHub(opts =>
       {
         opts.SetClientId(githubClientId)
@@ -67,7 +59,6 @@ public static class ExternalProviders
           .SetRedirectUri("signin-github")
           .AddScopes("user:email");
       })
-      // Настройка Google провайдера
       .AddGoogle(opts =>
       {
         opts.SetClientId(googleClientId)
@@ -75,7 +66,6 @@ public static class ExternalProviders
           .SetRedirectUri("signin-google")
           .AddScopes("email", "profile");
       })
-      // Настройка Yandex провайдера
       .AddYandex(opts =>
       {
         opts.SetClientId(yandexClientId)
@@ -83,7 +73,6 @@ public static class ExternalProviders
           .SetRedirectUri("signin-yandex")
           .AddScopes("login:email", "login:info", "login:avatar");
       })
-      // Настройка Microsoft провайдера
       .AddMicrosoft(opts =>
       {
         opts.SetClientId(microsoftClientId)
@@ -91,7 +80,6 @@ public static class ExternalProviders
           .SetRedirectUri("signin-microsoft")
           .AddScopes("email", "profile", "User.Read");
       })
-      // Настройка VK ID провайдера
       .AddVkId(opts =>
       {
         opts.SetClientId(vkClientId)
@@ -115,7 +103,6 @@ public static class ExternalProviders
           .AddScopes("email");
       });
 
-    // Регистрируем мапперы claims для каждого провайдера
     builder.Services.AddTransient<IExternalClaimsMapper, GitHubClaimsMapper>();
     builder.Services.AddTransient<IExternalClaimsMapper, GoogleClaimsMapper>();
     builder.Services.AddTransient<IExternalClaimsMapper, YandexClaimsMapper>();

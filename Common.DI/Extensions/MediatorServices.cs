@@ -14,10 +14,9 @@ public static class MediatorServices
   /// <param name="types">Типы, из сборок которых будут загружены обработчики.</param>
   public static void AddMediatorServices(this IServiceCollection services, params Type[] types)
   {
-    // Регистрация сервисов MediatR и обработчиков команд
     services.AddMediatR(configuration =>
     {
-      configuration.RegisterServicesFromAssemblies(types.Select(t => t.Assembly).ToArray());
+      configuration.RegisterServicesFromAssemblies([.. types.Select(t => t.Assembly)]);
     });
   }
 }

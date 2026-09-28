@@ -23,25 +23,15 @@ public class RemoveUserExternalLoginCommandHandler(UserManager<AppUser> userMana
   /// <exception cref="LoginNotFoundException">Вызывается, если внешний логин не найден.</exception>
   public async Task<AppUser> Handle(RemoveUserExternalLoginCommand request, CancellationToken cancellationToken)
   {
-    // Поиск пользователя по идентификатору.
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Вызываем исключение UserNotFoundException.
     if (user == null) throw new UserNotFoundException();
 
-    // Получение всех внешних логинов пользователя.
     IList<UserLoginInfo> logins = await userManager.GetLoginsAsync(user);
-
-    // Поиск внешнего логина по указанному провайдеру
     UserLoginInfo? login = logins.FirstOrDefault(info => info.LoginProvider == request.Provider);
-
-    // Если не найден, вызываем исключение LoginNotFoundException.
     if (login == null) throw new LoginNotFoundException();
 
-    // Удаление внешнего логина с использованием UserManager.
     await userManager.RemoveLoginAsync(user, login.LoginProvider, login.ProviderKey);
 
-    // Возвращаем пользователя
     return user;
   }
 }

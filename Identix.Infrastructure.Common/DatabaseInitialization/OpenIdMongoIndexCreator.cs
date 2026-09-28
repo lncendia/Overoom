@@ -43,7 +43,6 @@ internal static class OpenIdMongoIndexCreator
 
     await applications.Indexes.CreateManyAsync(
     [
-      // Уникальный индекс для ClientId обеспечивает уникальность идентификаторов клиентов
       new CreateIndexModel<OpenIddictMongoDbApplication>(
         Builders<OpenIddictMongoDbApplication>.IndexKeys.Ascending(application => application.ClientId),
         new CreateIndexOptions
@@ -51,7 +50,6 @@ internal static class OpenIdMongoIndexCreator
           Unique = true
         }),
 
-      // Индекс для оптимизации запросов по PostLogoutRedirectUris
       new CreateIndexModel<OpenIddictMongoDbApplication>(
         Builders<OpenIddictMongoDbApplication>.IndexKeys.Ascending(application =>
           application.PostLogoutRedirectUris),
@@ -60,7 +58,6 @@ internal static class OpenIdMongoIndexCreator
           Background = true
         }),
 
-      // Индекс для оптимизации запросов по RedirectUris
       new CreateIndexModel<OpenIddictMongoDbApplication>(
         Builders<OpenIddictMongoDbApplication>.IndexKeys.Ascending(application => application.RedirectUris),
         new CreateIndexOptions
@@ -79,7 +76,6 @@ internal static class OpenIdMongoIndexCreator
   {
     IMongoCollection<OpenIddictMongoDbAuthorization>? authorizations = database.GetCollection<OpenIddictMongoDbAuthorization>(options.AuthorizationsCollectionName);
 
-    // Составной индекс для оптимизации запросов по основным полям авторизации
     await authorizations.Indexes.CreateOneAsync(
       new CreateIndexModel<OpenIddictMongoDbAuthorization>(
         Builders<OpenIddictMongoDbAuthorization>.IndexKeys
@@ -103,7 +99,6 @@ internal static class OpenIdMongoIndexCreator
   {
     IMongoCollection<OpenIddictMongoDbScope>? scopes = database.GetCollection<OpenIddictMongoDbScope>(options.ScopesCollectionName);
 
-    // Уникальный индекс для Name обеспечивает уникальность имен областей видимости
     await scopes.Indexes.CreateOneAsync(
       new CreateIndexModel<OpenIddictMongoDbScope>(
         Builders<OpenIddictMongoDbScope>.IndexKeys.Ascending(scope => scope.Name),
@@ -124,7 +119,6 @@ internal static class OpenIdMongoIndexCreator
 
     await tokens.Indexes.CreateManyAsync(
     [
-      // Уникальный индекс для ReferenceId с частичным фильтром
       new CreateIndexModel<OpenIddictMongoDbToken>(
         Builders<OpenIddictMongoDbToken>.IndexKeys.Ascending(token => token.ReferenceId),
         new CreateIndexOptions<OpenIddictMongoDbToken>
@@ -136,7 +130,6 @@ internal static class OpenIdMongoIndexCreator
           Unique = true
         }),
 
-      // Индекс для AuthorizationId с частичным фильтром
       new CreateIndexModel<OpenIddictMongoDbToken>(
         Builders<OpenIddictMongoDbToken>.IndexKeys.Ascending(token => token.AuthorizationId),
         new CreateIndexOptions<OpenIddictMongoDbToken>()
@@ -145,7 +138,6 @@ internal static class OpenIdMongoIndexCreator
             Builders<OpenIddictMongoDbToken>.Filter.Exists(token => token.AuthorizationId)
         }),
 
-      // Составной индекс для оптимизации запросов по основным полям токенов
       new CreateIndexModel<OpenIddictMongoDbToken>(
         Builders<OpenIddictMongoDbToken>.IndexKeys
           .Ascending(token => token.ApplicationId)

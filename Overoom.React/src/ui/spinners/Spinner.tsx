@@ -33,7 +33,6 @@ const Spinner = ({ size = 40, color, sx }: SpinnerProps): ReactElement => {
   /** Используем хук useTheme из Material-UI для получения текущей темы */
   const theme = useTheme();
 
-  // Определяем цвет спиннера: переданный или из темы
   const spinnerColor = color || theme.palette.primary.light;
 
   return (
@@ -46,7 +45,6 @@ const Spinner = ({ size = 40, color, sx }: SpinnerProps): ReactElement => {
         ...sx,
       }}
     >
-      {/* Вращающийся круг */}
       <Box
         sx={{
           width: size,

@@ -112,7 +112,6 @@ const CommentsModule = (): ReactElement => {
    */
   const addComment = useSafeCallback(
     async (text: string) => {
-      // Если пользователь не авторизован, отображаем предупреждение
       if (!authorizedUser) {
         renderAuthWarning();
         return;
@@ -135,7 +134,6 @@ const CommentsModule = (): ReactElement => {
     [authorizedUser, film?.id, commentsApi, add, renderAuthWarning]
   );
 
-  // Отображаем скелетоны при загрузке
   if (isLoading)
     return (
       <>
@@ -144,7 +142,6 @@ const CommentsModule = (): ReactElement => {
       </>
     );
 
-  // Основной рендер: форма добавления комментариев и список комментариев
   return (
     <>
       <AddCommentForm callback={addComment} />

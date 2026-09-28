@@ -23,7 +23,6 @@ public class GetUserWatchlistQueryHandler(MongoDbContext context)
   public async Task<IReadOnlyList<FilmShortDto>> Handle(GetUserWatchlistQuery request,
     CancellationToken cancellationToken)
   {
-    // Выполняем запрос и получаем результаты в виде списка
     return await context.Users.AsQueryable()
       .Where(u => u.Id == request.Id)
       .SelectMany(u => u.Watchlist)

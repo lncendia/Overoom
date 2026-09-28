@@ -21,10 +21,8 @@ public class AddFilmCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<Add
   /// <returns>ID созданного фильма</returns>
   public async Task<Guid> Handle(AddFilmCommand request, CancellationToken cancellationToken)
   {
-    // Генерируем новый уникальный идентификатор для фильма
     var id = Guid.NewGuid();
 
-    // Создаем объект фильма с основной информацией
     var film = new Film(id)
     {
       Title = request.Title,
@@ -40,17 +38,12 @@ public class AddFilmCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<Add
       PosterKey = Constants.Poster.FilmDefault
     };
 
-    // Опциональное поле короткого описания
     if (!string.IsNullOrEmpty(request.ShortDescription))
       film.ShortDescription = request.ShortDescription;
 
-    // Добавляем фильм в репозиторий
     await unitOfWork.FilmRepository.Value.AddAsync(film, cancellationToken);
-
-    // Сохраняем изменения в базе данных
     await unitOfWork.SaveChangesAsync(cancellationToken: cancellationToken);
 
-    // Возвращаем ID созданного фильма
     return film.Id;
   }
 }

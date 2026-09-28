@@ -22,15 +22,14 @@ public static class SecurityStampValidatorCallback
   /// </remarks>
   public static Task UpdatePrincipal(SecurityStampRefreshingPrincipalContext context)
   {
-    // Получаем типы claims из нового principal
-    string[] newClaimTypes = context.NewPrincipal!.Claims.Select(x => x.Type).ToArray();
+    string[] newClaimTypes = [.. context.NewPrincipal!.Claims.Select(x => x.Type)];
 
-    // Находим claims в текущем principal, которые отсутствуют в новом
-    Claim[] currentClaimsToKeep = context.CurrentPrincipal!.Claims
-      .Where(x => !newClaimTypes.Contains(x.Type))
-      .ToArray();
+    Claim[] currentClaimsToKeep =
+    [
+      .. context.CurrentPrincipal!.Claims
+        .Where(x => !newClaimTypes.Contains(x.Type))
+    ];
 
-    // Добавляем сохраненные claims в новый principal
     ClaimsIdentity identity = context.NewPrincipal.Identities.First();
     identity.AddClaims(currentClaimsToKeep);
 

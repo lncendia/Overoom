@@ -8,7 +8,6 @@ import SignOutModule from '../modules/authorization/SignOutModule.tsx';
  * @returns {ReactElement} JSX-элемент страницы выхода
  */
 const SignOutPage = (): ReactElement => {
-  // Рендерим модуль выхода из системы
   return <SignOutModule />;
 };
 

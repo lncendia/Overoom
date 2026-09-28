@@ -99,16 +99,12 @@ const FilmCard = ({
       }}
       onClick={onClick}
     >
-      {/* Блок с постером и рейтингами */}
       <PosterContainer>
-        {/* Размытый фон */}
         <BlurredBackground sx={{ backgroundImage: `url(${posterUrl})` }} />
 
         <Box sx={{ position: 'relative', display: 'inline-block', verticalAlign: 'middle' }}>
-          {/* Основное изображение */}
           <PosterImage src={posterUrl} alt="Постер фильма" />
 
-          {/* Чипы с рейтингами */}
           <FilmRatingStack
             sx={{
               position: 'absolute',
@@ -122,7 +118,6 @@ const FilmCard = ({
         </Box>
       </PosterContainer>
 
-      {/* Блок с контентом */}
       <Box>
         <CardHeader title={header} />
         <CardContent>{children}</CardContent>

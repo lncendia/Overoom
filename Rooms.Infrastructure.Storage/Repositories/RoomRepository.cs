@@ -46,10 +46,4 @@ public class RoomRepository : RepositoryBase<RoomModel, Room, RoomSnapshot, IRoo
       Id = aggregate.Id
     };
   }
-
-  /// <inheritdoc/>
-  protected override Room FromSnapshot(RoomSnapshot snapshot)
-  {
-    return Room.FromSnapshot(snapshot);
-  }
 }

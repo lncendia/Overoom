@@ -18,18 +18,13 @@ const MessageContainer = styled(Box)(({ theme }) => ({
 const MessageSkeleton = ({ isOutgoing = false }: { isOutgoing?: boolean }): ReactElement => {
   return (
     <MessageContainer sx={{ justifyContent: isOutgoing ? 'flex-end' : 'flex-start' }}>
-      {/* Скелетон аватара для входящих сообщений */}
       {!isOutgoing && <Skeleton variant="circular" width={48} height={48} />}
 
-      {/* Скелетон пузыря сообщения */}
       <MessageBubble isOutgoing={isOutgoing}>
-        {/* Скелетон имени пользователя */}
         <Skeleton variant="text" width={100} height={20} />
 
-        {/* Скелетон текста сообщения */}
         <Skeleton variant="text" width="80%" height={16} />
 
-        {/* Скелетон времени отправки */}
         <Skeleton variant="text" width={40} height={12} sx={{ alignSelf: 'flex-end' }} />
       </MessageBubble>
     </MessageContainer>

@@ -22,25 +22,16 @@ public class RecoverPasswordCommandHandler(UserManager<AppUser> userManager) : I
   /// <exception cref="PasswordValidationException">Вызывается, если валидация пароля не прошла.</exception>
   public async Task Handle(RecoverPasswordCommand request, CancellationToken cancellationToken)
   {
-    // Находим пользователя по email
     AppUser? user = await userManager.FindByIdAsync(request.UserId.ToString());
-
-    // Выкидаем исключение если пользователь не найден
     if (user == null) throw new UserNotFoundException();
 
-    // Сбрасываем пароль, обновляя его на request.NewPassword
     IdentityResult result = await userManager.ResetPasswordAsync(user, request.Code, request.NewPassword);
 
-    // Если результат неудачный
     if (!result.Succeeded)
     {
-      // Если хоть одна ошибка InvalidToken, то вызываем исключение 
       if (result.Errors.Any(e => e.Code == "InvalidToken")) throw new InvalidCodeException();
 
-      // Создаем словарь для хранения ошибок
       var passwordValidationErrors = result.Errors.ToDictionary(e => e.Code, e => e.Description);
-
-      // Вызываем исключение, содержащие в себе словарь ошибок валидации пароля
       throw new PasswordValidationException { ValidationErrors = passwordValidationErrors };
     }
   }

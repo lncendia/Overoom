@@ -32,13 +32,8 @@ public static class MongoDbProvider
     if (_client != null)
       throw new InvalidOperationException("MongoDbProvider is already initialized.");
 
-    // Получаем строку подключения из конфигурации
     string connectionString = builder.Configuration.GetRequiredValue<string>("MongoDB:ConnectionString");
-
-    // Создаем и сохраняем экземпляр MongoClient
     _client = new MongoClient(connectionString);
-
-    // Регистрируем клиент как singleton в DI-контейнере
     builder.Services.AddSingleton<IMongoClient>(_client);
   }
 }

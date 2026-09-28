@@ -32,7 +32,6 @@ public class CreateUserCommandHandlerTests
   /// </summary>
   public CreateUserCommandHandlerTests()
   {
-    // Инициализация mock объекта UserManager.
     _userManagerMock = new Mock<UserManager<AppUser>>(
       new Mock<IUserStore<AppUser>>().Object,
       new Mock<IOptions<IdentityOptions>>().Object,
@@ -47,7 +46,6 @@ public class CreateUserCommandHandlerTests
     var publishEndpointMock = new Mock<IPublishEndpoint>();
     var mongoDbContextMock = new Mock<MongoDbContext>();
 
-    // Инициализация обработчика.
     _handler = new CreateUserCommandHandler(_userManagerMock.Object, publishEndpointMock.Object,
       mongoDbContextMock.Object);
   }
@@ -59,12 +57,10 @@ public class CreateUserCommandHandlerTests
   public async Task Handle_ValidCommand_CreatesUser()
   {
     // Arrange
-    // Настройка mock объекта UserManager для успешного создания пользователя.
     _userManagerMock
       .Setup(m => m.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Success);
 
-    // Создаем команду для создания пользователя.
     var command = new CreateUserCommand
     {
       Email = "test@example.com",
@@ -74,14 +70,12 @@ public class CreateUserCommandHandlerTests
     };
 
     // Act
-    // Вызов обработчика команды и ожидание возникновения исключения (если такое есть).
     Exception? exception = await Record.ExceptionAsync(async () =>
     {
       await _handler.Handle(command, CancellationToken.None);
     });
 
     // Assert
-    // Проверка на отсутствие исключения.
     Assert.Null(exception);
   }
 
@@ -92,12 +86,10 @@ public class CreateUserCommandHandlerTests
   public async Task Handle_WhenEmailIsInvalid_ThrowsEmailFormatException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения ошибки невалидного email.
     _userManagerMock
       .Setup(m => m.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidEmail" }));
 
-    // Создаем команду для создания пользователя.
     var command = new CreateUserCommand
     {
       Email = "test@example.com",
@@ -107,7 +99,6 @@ public class CreateUserCommandHandlerTests
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailFormatException.
     await Assert.ThrowsAsync<EmailFormatException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -118,12 +109,10 @@ public class CreateUserCommandHandlerTests
   public async Task Handle_WhenEmailAlreadyTaken_ThrowsEmailAlreadyTakenException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения ошибки дублирования email.
     _userManagerMock
       .Setup(m => m.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "DuplicateEmail" }));
 
-    // Создаем команду для создания пользователя.
     var command = new CreateUserCommand
     {
       Email = "test@example.com",
@@ -133,7 +122,6 @@ public class CreateUserCommandHandlerTests
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения EmailAlreadyTakenException.
     await Assert.ThrowsAsync<EmailAlreadyTakenException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -144,12 +132,10 @@ public class CreateUserCommandHandlerTests
   public async Task Handle_WhenInvalidPassword_ThrowsPasswordValidationException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возврата неудачного результата при вызове CreateAsync.
     _userManagerMock
       .Setup(m => m.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Failed());
 
-    // Создаем команду для создания пользователя.
     var command = new CreateUserCommand
     {
       Email = "test@example.com",
@@ -159,7 +145,6 @@ public class CreateUserCommandHandlerTests
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения PasswordValidationException.
     await Assert.ThrowsAsync<PasswordValidationException>(() => _handler.Handle(command, CancellationToken.None));
   }
 
@@ -170,12 +155,10 @@ public class CreateUserCommandHandlerTests
   public async Task Handle_WhenUsernameLengthIsInvalid_ThrowsUserNameLengthException()
   {
     // Arrange
-    // Настройка mock объекта UserManager для возвращения ошибки дублирования email.
     _userManagerMock
       .Setup(m => m.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
       .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidUserNameLength" }));
 
-    // Создаем команду для создания пользователя.
     var command = new CreateUserCommand
     {
       Email = "test@example.com",
@@ -185,7 +168,6 @@ public class CreateUserCommandHandlerTests
     };
 
     // Act & Assert
-    // Проверка, что выполнение метода Handle приводит к возникновению исключения PasswordValidationException.
     await Assert.ThrowsAsync<UserNameLengthException>(() => _handler.Handle(command, CancellationToken.None));
   }
 }
