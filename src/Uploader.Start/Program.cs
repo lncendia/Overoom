@@ -1,0 +1,42 @@
+using Uploader.Infrastructure.Web.Queue.Controllers;
+using Uploader.Infrastructure.Web.Queue.Validators;
+using Uploader.Start.Exceptions;
+using Uploader.Start.Extensions;
+using System.Text.Json.Serialization;
+using Common.DI.Extensions;
+using Common.DI.Middlewares;
+using Common.DI.WebApi.Extensions;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using Uploader.Application.Abstractions;
+
+BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.InitializeMongoDb();
+builder.AddLoggingServices();
+builder.AddJwtAuthentication();
+builder.AddSwaggerServices(typeof(QueueController));
+builder.AddFileStorage();
+builder.AddMassTransitServices();
+builder.AddCorsServices();
+builder.AddFilmDownloadServices();
+builder.Services.AddHlsServices();
+builder.Services.AddAuthorizationPolicies();
+builder.Services.AddValidationServices(typeof(QueueValidator));
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ExceptionHandler>();
+builder.Services.AddControllers()
+  .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddOpenTelemetryServices(Constants.OpenTelemetry.ServiceName);
+WebApplication app = builder.Build();
+app.UseExceptionHandler();
+app.UseCors(CorsServices.CorsPolicy);
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseSwagger();
+app.UseAuthorizedSwaggerUI();
+app.MapControllers();
+app.MapPrometheusScrapingEndpointWithBasicAuth();
+await app.RunAsync();

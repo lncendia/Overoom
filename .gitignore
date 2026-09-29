@@ -487,6 +487,6 @@ bundles
 posters
 cache
 ffmpeg*
-appsettings*
+appsettings.D*
 production
 development

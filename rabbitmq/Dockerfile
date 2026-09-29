@@ -1,4 +1,4 @@
-﻿FROM rabbitmq:4.2.0-management
+﻿FROM rabbitmq:4.2.9-management
 
 RUN apt-get update && \
 apt-get install -y wget

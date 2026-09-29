@@ -1,0 +1,40 @@
+using Films.Application.Abstractions.DTOs.Playlists;
+using Films.Application.Abstractions.Exceptions;
+using Films.Application.Abstractions.Queries.Playlists;
+using Films.Infrastructure.Storage.Context;
+using MediatR;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
+
+namespace Films.Infrastructure.Storage.QueryHandlers.Playlists;
+
+/// <summary>
+/// Обработчик запроса для получения плейлиста по идентификатору
+/// </summary>
+/// <param name="context">Контекст базы данных MongoDB для работы с коллекцией плейлистов</param>
+public class GetPlaylistByIdQueryHandler(MongoDbContext context) : IRequestHandler<GetPlaylistByIdQuery, PlaylistDto>
+{
+  /// <summary>
+  /// Обрабатывает запрос на получение плейлиста по ID
+  /// </summary>
+  /// <param name="request">Запрос, содержащий идентификатор плейлиста</param>
+  /// <param name="cancellationToken">Токен отмены операции</param>
+  /// <returns>DTO плейлиста с указанным идентификатором</returns>
+  /// <exception cref="PlaylistNotFoundException">Выбрасывается, если плейлист с указанным ID не найден</exception>
+  public async Task<PlaylistDto> Handle(GetPlaylistByIdQuery request, CancellationToken cancellationToken)
+  {
+    PlaylistDto? playlist = await context.Playlists.AsQueryable()
+      .Select(p => new PlaylistDto
+      {
+        Id = p.Id,
+        Name = p.Name,
+        Genres = p.Genres,
+        Description = p.Description,
+        PosterKey = p.PosterKey,
+        Updated = p.UpdatedAt
+      })
+      .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken: cancellationToken);
+
+    return playlist ?? throw new PlaylistNotFoundException(request.Id);
+  }
+}

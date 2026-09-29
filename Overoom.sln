@@ -1,38 +1,38 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Start", "Films.Start\Films.Start.csproj", "{8E66EFA4-E2DD-41DA-921C-2B7A6CD65C28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Start", "src\Films.Start\Films.Start.csproj", "{8E66EFA4-E2DD-41DA-921C-2B7A6CD65C28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Domain", "Films.Domain\Films.Domain.csproj", "{EEA6571B-3426-42E6-B4BE-DCCDE1691DAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Domain", "src\Films.Domain\Films.Domain.csproj", "{EEA6571B-3426-42E6-B4BE-DCCDE1691DAE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{F19D4E6A-23C2-45A6-A6EB-5A65B308C482}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{BE7B32FB-BF2F-48A0-AD7D-A97042191745}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Application.Abstractions", "Films.Application.Abstractions\Films.Application.Abstractions.csproj", "{8DC0AA84-C5B4-49F8-909E-602D115FEF41}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Application.Abstractions", "src\Films.Application.Abstractions\Films.Application.Abstractions.csproj", "{8DC0AA84-C5B4-49F8-909E-602D115FEF41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Application.Services", "Films.Application.Services\Films.Application.Services.csproj", "{C0FB2B0E-67CA-4E83-81A4-2881417A208E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Application.Services", "src\Films.Application.Services\Films.Application.Services.csproj", "{C0FB2B0E-67CA-4E83-81A4-2881417A208E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{B9DE988A-E294-4E3A-8F3B-88BDA584E98F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Infrastructure.Web", "Films.Infrastructure.Web\Films.Infrastructure.Web.csproj", "{8762F8D0-1806-4D8E-A048-695A76F64F2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Infrastructure.Web", "src\Films.Infrastructure.Web\Films.Infrastructure.Web.csproj", "{8762F8D0-1806-4D8E-A048-695A76F64F2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Infrastructure.Storage", "Films.Infrastructure.Storage\Films.Infrastructure.Storage.csproj", "{BB12186D-D77B-4526-A8EF-7E4D3024B5C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Infrastructure.Storage", "src\Films.Infrastructure.Storage\Films.Infrastructure.Storage.csproj", "{BB12186D-D77B-4526-A8EF-7E4D3024B5C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Start", "Rooms.Start\Rooms.Start.csproj", "{9C37413B-A72C-4191-9920-231639D52548}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Start", "src\Rooms.Start\Rooms.Start.csproj", "{9C37413B-A72C-4191-9920-231639D52548}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Films", "Films", "{C472FF37-1315-4274-9421-17E16C16D12C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rooms", "Rooms", "{359093A2-1DCF-40F9-9F4A-FCE28146660B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Infrastructure.Storage", "Rooms.Infrastructure.Storage\Rooms.Infrastructure.Storage.csproj", "{3837CC4A-4A4B-43FF-B7CB-304E86ECEA87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Infrastructure.Storage", "src\Rooms.Infrastructure.Storage\Rooms.Infrastructure.Storage.csproj", "{3837CC4A-4A4B-43FF-B7CB-304E86ECEA87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Infrastructure.Web", "Rooms.Infrastructure.Web\Rooms.Infrastructure.Web.csproj", "{5658BFE4-74EF-4B44-A651-B01F7E1AD77B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Infrastructure.Web", "src\Rooms.Infrastructure.Web\Rooms.Infrastructure.Web.csproj", "{5658BFE4-74EF-4B44-A651-B01F7E1AD77B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Application.Abstractions", "Rooms.Application.Abstractions\Rooms.Application.Abstractions.csproj", "{EAC8A2E9-93F9-4F5B-9F62-093CE9191BEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Application.Abstractions", "src\Rooms.Application.Abstractions\Rooms.Application.Abstractions.csproj", "{EAC8A2E9-93F9-4F5B-9F62-093CE9191BEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Application.Services", "Rooms.Application.Services\Rooms.Application.Services.csproj", "{37AB26A2-61C3-405E-92F2-54E1F1071077}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Application.Services", "src\Rooms.Application.Services\Rooms.Application.Services.csproj", "{37AB26A2-61C3-405E-92F2-54E1F1071077}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Domain", "Rooms.Domain\Rooms.Domain.csproj", "{59F95A3E-5532-486C-8A7F-39014213ADE4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Domain", "src\Rooms.Domain\Rooms.Domain.csproj", "{59F95A3E-5532-486C-8A7F-39014213ADE4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{245C8FF0-110D-48C8-A6C1-4B07F8B982F0}"
 EndProject
@@ -45,25 +45,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		compose.yml = compose.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.IntegrationEvents", "Common.IntegrationEvents\Common.IntegrationEvents.csproj", "{A3A40E9C-C7D0-4429-9B5A-7F99460F1068}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.IntegrationEvents", "src\Common.IntegrationEvents\Common.IntegrationEvents.csproj", "{A3A40E9C-C7D0-4429-9B5A-7F99460F1068}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Infrastructure.Bus", "Rooms.Infrastructure.Bus\Rooms.Infrastructure.Bus.csproj", "{41819F56-4CA1-4C3E-8708-211FCA276AA8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms.Infrastructure.Bus", "src\Rooms.Infrastructure.Bus\Rooms.Infrastructure.Bus.csproj", "{41819F56-4CA1-4C3E-8708-211FCA276AA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Infrastructure.Bus", "Films.Infrastructure.Bus\Films.Infrastructure.Bus.csproj", "{AF94977C-EE0B-4494-AF56-5F176FE9B52C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Films.Infrastructure.Bus", "src\Films.Infrastructure.Bus\Films.Infrastructure.Bus.csproj", "{AF94977C-EE0B-4494-AF56-5F176FE9B52C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identix", "Identix", "{EA544455-9743-47AF-8486-B569D8640B5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix", "Identix\Identix.csproj", "{743B7893-27E2-4524-BF37-14DCA0429E8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix", "src\Identix\Identix.csproj", "{743B7893-27E2-4524-BF37-14DCA0429E8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Infrastructure.Common", "Identix.Infrastructure.Common\Identix.Infrastructure.Common.csproj", "{73B365B6-919A-4E6A-B57D-9F9BB803FDA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Infrastructure.Common", "src\Identix.Infrastructure.Common\Identix.Infrastructure.Common.csproj", "{73B365B6-919A-4E6A-B57D-9F9BB803FDA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Application.Abstractions", "Identix.Application.Abstractions\Identix.Application.Abstractions.csproj", "{E84C74B9-6373-48EB-AD86-0A569AB9F0CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Application.Abstractions", "src\Identix.Application.Abstractions\Identix.Application.Abstractions.csproj", "{E84C74B9-6373-48EB-AD86-0A569AB9F0CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Infrastructure.Web", "Identix.Infrastructure.Web\Identix.Infrastructure.Web.csproj", "{24A607E3-7440-4A3E-BC3D-4E6E6C961D59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Infrastructure.Web", "src\Identix.Infrastructure.Web\Identix.Infrastructure.Web.csproj", "{24A607E3-7440-4A3E-BC3D-4E6E6C961D59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Application.Services", "Identix.Application.Services\Identix.Application.Services.csproj", "{E4FB0BF8-BD16-4AA9-A293-1FB30D37D24D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Application.Services", "src\Identix.Application.Services\Identix.Application.Services.csproj", "{E4FB0BF8-BD16-4AA9-A293-1FB30D37D24D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Tests.UnitTests", "Identix.Tests.UnitTests\Identix.Tests.UnitTests.csproj", "{750285C0-B6DB-4A48-B6D4-F1A9EA561141}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Tests.UnitTests", "tests\Identix.Tests.UnitTests\Identix.Tests.UnitTests.csproj", "{750285C0-B6DB-4A48-B6D4-F1A9EA561141}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{245F0188-7AC1-491F-9619-1BE17343431D}"
 EndProject
@@ -73,35 +73,35 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0CA3023A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Uploader", "Uploader", "{FF9BA24D-CE10-4CB1-B1D6-75A3F271DF96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Start", "Uploader.Start\Uploader.Start.csproj", "{3F284FC4-A3C1-4891-BB33-AFFC5403AE67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Start", "src\Uploader.Start\Uploader.Start.csproj", "{3F284FC4-A3C1-4891-BB33-AFFC5403AE67}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{E5734EAA-C4BF-456E-B1FF-FE76D7AC8F26}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{09E90E84-DE0A-4168-BC46-6E7122506226}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Application.Abstractions", "Uploader.Application.Abstractions\Uploader.Application.Abstractions.csproj", "{B5766DCF-2697-4A43-B819-EA4FDAD83128}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Application.Abstractions", "src\Uploader.Application.Abstractions\Uploader.Application.Abstractions.csproj", "{B5766DCF-2697-4A43-B819-EA4FDAD83128}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Infrastructure.Films", "Uploader.Infrastructure.Films\Uploader.Infrastructure.Films.csproj", "{1E597935-E1FE-4489-92D2-DBFB0F26BEF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Infrastructure.Films", "src\Uploader.Infrastructure.Films\Uploader.Infrastructure.Films.csproj", "{1E597935-E1FE-4489-92D2-DBFB0F26BEF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Infrastructure.Binaries", "Uploader.Infrastructure.Binaries\Uploader.Infrastructure.Binaries.csproj", "{457F14B7-43F7-439F-9B2C-FF815DED28BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Infrastructure.Binaries", "src\Uploader.Infrastructure.Binaries\Uploader.Infrastructure.Binaries.csproj", "{457F14B7-43F7-439F-9B2C-FF815DED28BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{1360E3CA-E1A7-41C4-9197-0076B9EA2E6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Application", "Common.Application\Common.Application.csproj", "{77336FC2-2B40-43BB-B78A-1DF2BA606FCF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Application", "src\Common.Application\Common.Application.csproj", "{77336FC2-2B40-43BB-B78A-1DF2BA606FCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Infrastructure", "Common.Infrastructure\Common.Infrastructure.csproj", "{3D2D9940-4065-4D67-AA4F-19A76C93AD1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Infrastructure", "src\Common.Infrastructure\Common.Infrastructure.csproj", "{3D2D9940-4065-4D67-AA4F-19A76C93AD1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.DI.WebApi", "Common.DI.WebApi\Common.DI.WebApi.csproj", "{84BAAEBC-AD64-4E70-9199-A5811A0D1105}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.DI.WebApi", "src\Common.DI.WebApi\Common.DI.WebApi.csproj", "{84BAAEBC-AD64-4E70-9199-A5811A0D1105}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.DI", "Common.DI\Common.DI.csproj", "{7FBB9BA0-29E0-4A7E-A6D1-E1C310E30A51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.DI", "src\Common.DI\Common.DI.csproj", "{7FBB9BA0-29E0-4A7E-A6D1-E1C310E30A51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Domain", "Common.Domain\Common.Domain.csproj", "{E70496AC-78C1-4AA2-A5EF-0C6C5F7ECECC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Domain", "src\Common.Domain\Common.Domain.csproj", "{E70496AC-78C1-4AA2-A5EF-0C6C5F7ECECC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Infrastructure.Web", "Uploader.Infrastructure.Web\Uploader.Infrastructure.Web.csproj", "{CF08DC3C-CF1E-4C24-B7D0-3025BEE449FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Infrastructure.Web", "src\Uploader.Infrastructure.Web\Uploader.Infrastructure.Web.csproj", "{CF08DC3C-CF1E-4C24-B7D0-3025BEE449FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Infrastructure.Bus", "Uploader.Infrastructure.Bus\Uploader.Infrastructure.Bus.csproj", "{4AE48464-F04C-4FF5-B31F-38E18FE89F36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Infrastructure.Bus", "src\Uploader.Infrastructure.Bus\Uploader.Infrastructure.Bus.csproj", "{4AE48464-F04C-4FF5-B31F-38E18FE89F36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Infrastructure.Bus", "Identix.Infrastructure.Bus\Identix.Infrastructure.Bus.csproj", "{A2F43106-9288-4481-AFFB-557487DD93AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identix.Infrastructure.Bus", "src\Identix.Infrastructure.Bus\Identix.Infrastructure.Bus.csproj", "{A2F43106-9288-4481-AFFB-557487DD93AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

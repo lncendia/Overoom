@@ -1,0 +1,162 @@
+﻿using AutoMapper;
+using Common.Application.DTOs;
+using Common.Application.Transactions;
+using Films.Application.Abstractions.Commands.Comments;
+using Films.Application.Abstractions.DTOs.Comments;
+using Films.Application.Abstractions.Queries.Comments;
+using Films.Infrastructure.Web.Comments.InputModels;
+using Films.Infrastructure.Web.Extensions;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Films.Infrastructure.Web.Comments.Controllers;
+
+/// <summary>
+/// Контроллер для работы с комментариями к фильмам
+/// </summary>
+/// <param name="mediator">Mediator для обработки CQRS запросов</param>
+/// <param name="mapper">AutoMapper для преобразования объектов</param>
+[ApiController]
+[Route("api/films/{filmId:guid}/comments")]
+public class CommentsController(ISender mediator, IMapper mapper) : ControllerBase
+{
+  /// <summary>
+  /// Получить комментарии к фильму
+  /// </summary>
+  /// <param name="filmId">Идентификатор фильма</param>
+  /// <param name="model">Параметры пагинации и фильтрации</param>
+  /// <param name="token">Токен для отмены операции</param>
+  /// <returns>Список комментариев с информацией о пагинации</returns>
+  /// <response code="200">Запрос успешно выполнен</response>
+  /// <response code="400">Некорректные входные данные или невалидный запрос</response>
+  /// <response code="500">Возникла ошибка на сервере</response>
+  [HttpGet]
+  public async Task<CountResult<CommentDto>> GetComments(
+    Guid filmId,
+    [FromQuery] GetCommentsInputModel model,
+    CancellationToken token = default)
+  {
+    GetFilmCommentsQuery? query = mapper.Map<GetFilmCommentsQuery>(model);
+    query.FilmId = filmId;
+    if (User.Identity?.IsAuthenticated == true) query.UserId = User.GetId();
+
+    return await mediator.Send(query, token);
+  }
+
+  /// <summary>
+  /// Удалить комментарий
+  /// </summary>
+  /// <param name="filmId">Идентификатор фильма</param>
+  /// <param name="commentId">Идентификатор комментария</param>
+  /// <param name="token">Токен для отмены операции</param>
+  /// <returns>Пустой ответ при успешном удалении</returns>
+  /// <response code="204">Комментарий успешно удален</response>
+  /// <response code="401">Пользователь не авторизован</response>
+  /// <response code="403">Нет прав на удаление комментария</response>
+  /// <response code="404">Комментарий не найден</response>
+  [Authorize]
+  [HttpDelete("{commentId:guid}")]
+  public async Task<IActionResult> DeleteComment(Guid filmId, Guid commentId, CancellationToken token = default)
+  {
+    var command = new RemoveCommentCommand
+    {
+      CommentId = commentId,
+      UserId = User.GetId()
+    };
+
+    await mediator.Send(command, token);
+
+    return NoContent();
+  }
+
+  /// <summary>
+  /// Поставить реакцию на комментарий. Повторная установка той же реакции ничего не меняет
+  /// </summary>
+  /// <param name="filmId">Идентификатор фильма</param>
+  /// <param name="commentId">Идентификатор комментария</param>
+  /// <param name="reaction">Код реакции</param>
+  /// <param name="token">Токен для отмены операции</param>
+  /// <returns>Пустой ответ при успешной установке</returns>
+  /// <response code="204">Реакция поставлена</response>
+  /// <response code="400">Неизвестная реакция</response>
+  /// <response code="401">Пользователь не авторизован</response>
+  /// <response code="404">Комментарий не найден</response>
+  [Authorize]
+  [Transactional]
+  [HttpPut("{commentId:guid}/reactions/{reaction}")]
+  public Task<IActionResult> SetReaction(Guid filmId, Guid commentId, string reaction,
+    CancellationToken token = default)
+  {
+    return SendReactionAsync(filmId, commentId, reaction, true, token);
+  }
+
+  /// <summary>
+  /// Снять реакцию с комментария. Снятие отсутствующей реакции ничего не меняет
+  /// </summary>
+  /// <param name="filmId">Идентификатор фильма</param>
+  /// <param name="commentId">Идентификатор комментария</param>
+  /// <param name="reaction">Код реакции</param>
+  /// <param name="token">Токен для отмены операции</param>
+  /// <returns>Пустой ответ при успешном снятии</returns>
+  /// <response code="204">Реакция снята</response>
+  /// <response code="401">Пользователь не авторизован</response>
+  /// <response code="404">Комментарий не найден</response>
+  [Authorize]
+  [Transactional]
+  [HttpDelete("{commentId:guid}/reactions/{reaction}")]
+  public Task<IActionResult> RemoveReaction(Guid filmId, Guid commentId, string reaction,
+    CancellationToken token = default)
+  {
+    return SendReactionAsync(filmId, commentId, reaction, false, token);
+  }
+
+  /// <summary>
+  /// Добавить новый комментарий к фильму
+  /// </summary>
+  /// <param name="filmId">Идентификатор фильма</param>
+  /// <param name="model">Данные нового комментария</param>
+  /// <param name="token">Токен для отмены операции</param>
+  /// <returns>Созданный комментарий</returns>
+  /// <response code="201">Комментарий успешно создан</response>
+  /// <response code="400">Некорректные входные данные</response>
+  /// <response code="401">Пользователь не авторизован</response>
+  [Authorize]
+  [HttpPost]
+  public async Task<IActionResult> AddComment(
+    Guid filmId,
+    [FromBody] AddCommentInputModel model,
+    CancellationToken token = default)
+  {
+    var command = new AddCommentCommand
+    {
+      UserId = User.GetId(),
+      FilmId = filmId,
+      Text = model.Text!
+    };
+
+    Guid result = await mediator.Send(command, token);
+
+    return Created((string?)null, value: new { id = result });
+  }
+
+  /// <summary>
+  /// Отправляет команду установки или снятия реакции
+  /// </summary>
+  private async Task<IActionResult> SendReactionAsync(Guid filmId, Guid commentId, string reaction, bool isSet,
+    CancellationToken token)
+  {
+    var command = new SetCommentReactionCommand
+    {
+      UserId = User.GetId(),
+      FilmId = filmId,
+      CommentId = commentId,
+      Reaction = reaction,
+      IsSet = isSet
+    };
+
+    await mediator.Send(command, token);
+
+    return NoContent();
+  }
+}

@@ -1,0 +1,149 @@
+import { Card, CardHeader, CardContent, Box, styled } from '@mui/material';
+import { ReactElement, ReactNode } from 'react';
+
+import CardLink from '../card-link/CardLink.tsx';
+import FilmRatingStack from '../film-rating-stack/FilmRatingStack.tsx';
+import { handlePosterError } from '../poster-fallback/posterFallback.ts';
+
+/** Свойства для компонента карточки фильма */
+export interface FilmCardProps {
+  /** URL постера фильма */
+  posterUrl: string;
+  /** Рейтинг Кинопоиска, может быть null */
+  ratingKp: number | null;
+  /** Рейтинг IMDB, может быть null */
+  ratingImdb: number | null;
+  /** Заголовок карточки */
+  header: string;
+  /** Дочерние элементы карточки */
+  children: ReactNode;
+  /** Обработчик клика по карточке (используется, если не задан href) */
+  onClick?: () => void;
+  /** Адрес страницы, на которую ведет карточка (карточка становится ссылкой) */
+  href?: string;
+}
+
+/** Контейнер для постера с позиционированием и overflow hidden */
+const PosterContainer = styled(Box)({
+  position: 'relative',
+  overflow: 'hidden',
+  textAlign: 'center',
+  flexShrink: '0',
+});
+
+/** Стилизация изображения постера с адаптивной высотой и анимацией при наведении */
+const PosterImage = styled('img')(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius,
+  display: 'block',
+  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  objectFit: 'contain',
+  '&:hover': {
+    transform: 'scale(1.03)',
+  },
+  [theme.breakpoints.up('xs')]: {
+    minWidth: '230px',
+    height: '330px',
+  },
+  [theme.breakpoints.up('sm')]: {
+    height: '320px',
+  },
+  [theme.breakpoints.up('md')]: {
+    minWidth: '250px',
+    height: '360px',
+  },
+  [theme.breakpoints.up('lg')]: {
+    minWidth: '230px',
+    height: '330px',
+  },
+  [theme.breakpoints.up('xl')]: {
+    height: '330px',
+  },
+}));
+
+/** Размытый фон постера, создающий эффект глубины */
+const BlurredBackground = styled(Box)(() => ({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  filter: 'blur(15px)',
+  zIndex: 0,
+}));
+
+/**
+ * Компонент карточки фильма с постером, рейтингами и контентом
+ * @param props - Свойства компонента
+ * @param props.posterUrl - URL постера фильма
+ * @param props.ratingKp - Рейтинг Кинопоиска
+ * @param props.ratingImdb - Рейтинг IMDB
+ * @param props.header - Заголовок карточки
+ * @param props.children - Дочерние элементы карточки
+ * @param props.onClick - Обработчик клика по карточке
+ * @param props.href - Адрес страницы, на которую ведет карточка
+ * @returns {ReactElement} JSX элемент карточки фильма
+ */
+const FilmCard = ({
+  posterUrl,
+  ratingKp,
+  ratingImdb,
+  header,
+  children,
+  onClick,
+  href,
+}: FilmCardProps): ReactElement => {
+  const card = (
+    <Card
+      sx={{
+        width: '100%',
+        position: 'relative',
+        display: 'flex',
+        flexDirection: { xs: 'column', lg: 'row' },
+        cursor: 'pointer',
+      }}
+      onClick={href ? undefined : onClick}
+    >
+      <PosterContainer>
+        <BlurredBackground sx={{ backgroundImage: `url(${posterUrl})` }} />
+
+        <Box sx={{ position: 'relative', display: 'inline-block', verticalAlign: 'middle' }}>
+          <PosterImage
+            src={posterUrl}
+            alt={`Постер: ${header}`}
+            loading="lazy"
+            decoding="async"
+            onError={handlePosterError}
+          />
+
+          <FilmRatingStack
+            sx={{
+              position: 'absolute',
+              bottom: 8,
+              left: 8,
+              zIndex: 2,
+            }}
+            kp={ratingKp}
+            imdb={ratingImdb}
+          />
+        </Box>
+      </PosterContainer>
+
+      <Box>
+        <CardHeader title={header} />
+        <CardContent>{children}</CardContent>
+      </Box>
+    </Card>
+  );
+
+  if (!href) return card;
+
+  return (
+    <CardLink to={href} sx={{ display: 'flex', width: '100%' }}>
+      {card}
+    </CardLink>
+  );
+};
+
+export default FilmCard;

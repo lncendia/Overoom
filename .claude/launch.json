@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "overoom-react-preview",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": ["src/Overoom.React/node_modules/vite/bin/vite.js", "preview", "src/Overoom.React"],
+      "port": 5173,
+      "url": "http://localhost:5173"
+    },
+    {
+      "name": "overoom-react-dev",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": ["src/Overoom.React/node_modules/vite/bin/vite.js", "src/Overoom.React"],
+      "port": 5173,
+      "url": "http://localhost:5173"
+    }
+  ]
+}

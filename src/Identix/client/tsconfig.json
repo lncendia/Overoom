@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "strict": false,
+    "noImplicitAny": true,
+    "module": "ESNext",
+    "target": "ES2020",
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "sourceMap": true
+  },
+  "include": [
+    "src"
+  ]
+}
