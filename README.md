@@ -1,93 +1,257 @@
-# Overoom
+<div align="center">
 
+# 🎬 Overoom
 
+**Платформа для совместного просмотра фильмов и сериалов**
 
-## Getting started
+Каталог с подборками и рейтингами, комнаты, где друзья смотрят кино синхронно и переписываются в чате, собственный сервер авторизации и конвейер, который превращает торрент в адаптивный HLS-поток.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+![.NET](https://img.shields.io/badge/.NET_10-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![C#](https://img.shields.io/badge/C%23_14-239120?style=for-the-badge&logo=csharp&logoColor=white)
+![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB_8-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+</div>
 
-## Add your files
+---
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Что это такое
+
+Overoom — это не «сайт с плеером», а распределённая система из нескольких сервисов, каждый со своей областью ответственности, своей базой и своими доменными правилами. Сервисы общаются через шину сообщений, фронтенд работает в реальном времени через SignalR, а видео готовится в фоне: от magnet-ссылки до многобитрейтного потока в объектном хранилище.
+
+Весь проект — от доменной модели до nginx-конфига и от ORM до кнопки реакции в чате — спроектирован и написан одним человеком.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🎞 Каталог
+Поиск по названию, жанрам, странам, людям и годам. Подборки, популярное, пользовательские оценки со статистикой, комментарии с реакциями, «Смотреть позже» и история просмотров.
+
+</td>
+<td width="50%" valign="top">
+
+### 🍿 Комнаты
+Совместный просмотр с синхронизацией плеера по владельцу комнаты, чат с реакциями и индикатором «печатает», статусы зрителей, «разбудить» и «напугать», приватные комнаты по коду.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 🔐 Identix
+Собственный OpenID Connect сервер: регистрация с подтверждением почты, восстановление пароля, двухфакторная аутентификация, вход через Google, GitHub, Microsoft, Discord, Яндекс и VK ID.
+
+</td>
+<td width="50%" valign="top">
+
+### 📦 Uploader
+Фоновые задачи загрузки: торрент через DHT, транскодирование ffmpeg с аппаратным кодированием NVENC в HLS от 360p до 4K, загрузка в S3 и админка задач с отменой, повтором и прогрессом по этапам.
+
+</td>
+</tr>
+</table>
+
+---
+
+## Архитектура
+
+```mermaid
+flowchart LR
+    SPA["React SPA<br/>(Vite, MUI, SignalR)"]
+
+    subgraph Services["Сервисы"]
+        ID["Identix<br/>OpenIddict · ASP.NET Identity"]
+        FI["Films<br/>каталог · профиль · комнаты"]
+        RO["Rooms<br/>совместный просмотр · SignalR"]
+        UP["Uploader<br/>торрент → HLS → S3"]
+    end
+
+    MQ[["RabbitMQ<br/>MassTransit"]]
+    DB[("MongoDB 8<br/>replica set")]
+    S3[("RustFS<br/>S3")]
+    PR["Prometheus"]
+
+    SPA -- OIDC + PKCE --> ID
+    SPA -- REST --> FI
+    SPA -- WebSocket --> RO
+    SPA -- REST --> UP
+
+    ID & FI & RO & UP <--> MQ
+    ID & FI & RO & UP --> DB
+    ID & FI & UP --> S3
+    PR -. метрики .-> ID & FI & RO & UP
+```
+
+Каждый бизнес-сервис устроен по принципам **Clean Architecture** и **DDD**. Зависимости направлены строго внутрь:
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/Incendia/overoom.git
-git branch -M main
-git push -uf origin main
+Domain  ←  Application.Abstractions  ←  Application.Services
+   ↑                                           ↑
+   └──────────  Infrastructure.* (Storage, Bus, Web)  ←  Start (composition root)
 ```
 
-## Integrate with your tools
+- **Domain** — агрегаты, объекты-значения, спецификации и доменные события. Ни одной ссылки на инфраструктуру.
+- **Application** — команды и запросы (CQRS на MediatR), обработчики доменных событий.
+- **Infrastructure** — хранилище, шина, веб-слой. Запросы на чтение живут в Storage и читают денормализованные данные напрямую, минуя агрегаты.
+- **Start** — точка сборки: DI, конфигурация, middleware.
 
-- [ ] [Set up project integrations](https://gitlab.com/Incendia/overoom/-/settings/integrations)
+---
 
-## Collaborate with your team
+## Инженерные решения
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+Здесь самое интересное: задачи, которые не решаются «из коробки».
 
-## Test and Deploy
+### 🧬 Собственная мини-ORM для MongoDB
 
-Use the built-in continuous integration in GitLab.
+Официальный драйвер MongoDB не отслеживает изменения: либо заменяй документ целиком (и затирай параллельные правки), либо пиши `$set`/`$push`/`$pull` руками в каждом репозитории. Для DDD с богатыми агрегатами не подходит ни то, ни другое.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Поэтому я написал **[MongoTracker](https://github.com/lncendia/MongoTracker)** — change tracker в духе EF Core, но для документной модели:
 
-***
+- сравнивает снимок документа с текущим состоянием и строит **минимальный набор атомарных операторов** — `$set` только изменённых полей, `$push`/`$pull` для множеств, вложенные объекты любой глубины;
+- **адресует элементы массивов по ключу**, а не по индексу: `Seasons.$[i0].Episodes.$[i1].Versions` через `arrayFilters`. Параллельное удаление одного зрителя больше не сдвигает индексы и не отправляет изменение другому;
+- **оптимистичная конкуренция** через версии и concurrency-токены, с понятным `MongoConcurrencyException`;
+- изменения принимаются только после успешной записи, так что неудачный `BulkWrite` не теряет отслеживаемое состояние;
+- покрыт тестами, включая интеграционные против настоящего MongoDB, опубликован в NuGet.
 
-# Editing this README
+На нём же построен **[Identity.Mongo](https://github.com/lncendia/Identity.Mongo)** — хранилище ASP.NET Core Identity для MongoDB, на котором работает Identix.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### 🔄 Надёжная доставка событий: outbox и inbox
 
-## Suggestions for a good README
+Сервисы обмениваются интеграционными событиями через MassTransit с **transactional outbox** и **inbox** в MongoDB: событие фиксируется в той же транзакции, что и изменение агрегата, а повторная доставка отсекается без побочных эффектов.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Граница транзакции задаётся **на точке входа** — атрибутом `[Transactional]` на действии контроллера или inbox консьюмера, а не внутри обработчиков. Unit of Work подхватывает текущую транзакцию, а если её открыл сам outbox при публикации, фиксирует её вместе с изменениями. Ни одно событие не теряется молча.
 
-## Name
-Choose a self-explaining name for your project.
+### ⚡️ Доменные события с фазами
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Доменные события разделены на две фазы:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+- **до сохранения** — в той же транзакции: проверка инвариантов, публикация интеграционных событий, денормализация через атомарный `$inc`;
+- **после сохранения** — после фиксации транзакции: уведомления в SignalR, которые не должны уходить, если запись откатилась.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### 🧮 Денормализация вместо JOIN
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+MongoDB не любит `$lookup`, поэтому данные для чтения готовятся заранее:
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+- средний рейтинг и число оценок фильма;
+- жанровые предпочтения пользователя;
+- счётчики реакций на комментарии.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Всё обновляется атомарными `$inc` в обработчиках событий, внутри транзакции. Реакция — отдельный агрегат, в документе комментария хранится только счётчик.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### 🎯 Комнаты без блокировок
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Состояние плеера у десятка зрителей меняется десятки раз в минуту. Оптимистичная блокировка здесь превратилась бы в бесконечные повторы, поэтому комнаты работают на **атомарных точечных обновлениях**: каждая команда меняет одного зрителя, а зрители адресуются в массиве по идентификатору. Параллельные изменения не конфликтуют и не затирают друг друга.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### 🎥 Конвейер видео
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Загрузка фильма — это долгая задача на часы, которая должна переживать перезапуски сервиса. Поэтому она построена на job-сагах MassTransit:
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+1. **Торрент.** MonoTorrent со своим входом в DHT: даже если трекер раздачи недоступен, пиры находятся за секунды.
+2. **Транскодирование.** ffmpeg с NVENC в адаптивный HLS: несколько качеств и master-плейлист.
+3. **Загрузка** в S3-совместимое хранилище RustFS.
+4. **Публикация** события о готовности версии фильма.
 
-## License
-For open source projects, say how it is licensed.
+Текущий этап и пути к файлам сохраняются в состоянии задачи, поэтому после сбоя или повтора задача продолжает с того этапа, где остановилась. Отмена честно убивает ffmpeg, а в админке видно этап, прогресс и причину ошибки.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+### 📈 Наблюдаемость
+
+OpenTelemetry во всех сервисах, метрики в Prometheus, включая собственные метрики репозиториев: длительность транзакций, время обработки доменных событий, число активных подключений к комнатам. Структурированные логи на Serilog.
+
+---
+
+## Технологии
+
+| Слой | Стек |
+|---|---|
+| **Backend** | .NET 10, C# 14, ASP.NET Core, SignalR, MediatR, FluentValidation, AutoMapper |
+| **Данные** | MongoDB 8 (replica set, транзакции), MongoTracker, Identity.Mongo |
+| **Интеграция** | RabbitMQ (с delayed exchange), MassTransit: outbox, inbox, job-саги, SignalR backplane |
+| **Авторизация** | OpenIddict 7: authorization code + PKCE, внешние провайдеры, 2FA |
+| **Видео** | MonoTorrent, ffmpeg (NVENC), HLS, RustFS (S3) |
+| **Frontend** | React 19, TypeScript, Vite 8, MUI 9, Inversify, Formik, oidc-client-ts |
+| **Инфраструктура** | Docker Compose, nginx, Prometheus, OpenTelemetry, Serilog, Quartz |
+
+**Масштаб:** 33 проекта в решении, около 38 тысяч строк C# и 16 тысяч строк TypeScript.
+
+---
+
+## Структура репозитория
+
+```
+├── compose.yml              # вся инфраструктура и сервисы одной командой
+├── development/             # локальные конфигурации и данные контейнеров (не в git)
+├── rabbitmq/                # образ RabbitMQ с плагином отложенных сообщений
+├── src/
+│   ├── Common.*             # общее ядро: домен, репозитории, транзакции, DI, контракты событий
+│   ├── Films.*              # каталог, профиль, комнаты (доменная часть)
+│   ├── Rooms.*              # совместный просмотр в реальном времени
+│   ├── Identix*             # сервер авторизации и его клиентская часть
+│   ├── Uploader.*           # загрузка и транскодирование видео
+│   └── Overoom.React/       # SPA
+└── tests/
+```
+
+---
+
+## Запуск
+
+Нужны Docker, .NET 10 SDK и Node.js 24. Для транскодирования в Uploader нужна видеокарта NVIDIA.
+
+```bash
+docker compose up -d
+```
+
+Поднимутся MongoDB, RabbitMQ, RustFS, Prometheus, Identix, Films и Rooms.
+
+```bash
+cd src/Overoom.React && npm install && npm run dev
+```
+
+Фронтенд откроется на `https://localhost:5173`. Сервис загрузки запускается отдельно:
+
+```bash
+dotnet run --project src/Uploader.Start
+```
+
+| Сервис | Адрес |
+|---|---|
+| Frontend | https://localhost:5173 |
+| Identix | https://localhost |
+| Films API | https://localhost:7131 |
+| Rooms (SignalR) | https://localhost:7291 |
+| Uploader API | https://localhost:7159 |
+
+---
+
+## Об авторе
+
+<table>
+<tr>
+<td valign="top">
+
+Меня зовут **Егор**, и Overoom — мой проект от первой строки до последней.
+
+На нём видно, как я работаю:
+
+- **Проектирую, а не просто пишу код.** Границы сервисов, агрегаты, направление зависимостей и место транзакции продуманы заранее, а не появились по ходу дела.
+- **Докапываюсь до корня.** Если торрент не качается, я разбираюсь, какой DHT-узел не отвечает из этой сети. Если данные пропадают, нахожу, какая библиотека незаметно открывает транзакцию.
+- **Делаю инструменты, когда их нет.** Когда драйвер MongoDB не подошёл для DDD, я написал свою ORM и довёл её до NuGet.
+- **Думаю о конкурентности и надёжности.** Outbox и inbox, оптимистичные блокировки там, где они нужны, и атомарные обновления там, где блокировки мешают.
+- **Закрываю весь стек.** Домен, инфраструктура, авторизация, видеоконвейер, фронтенд, деплой и метрики.
+
+</td>
+</tr>
+</table>
+
+<div align="center">
+
+**[GitHub](https://github.com/lncendia)** · **[MongoTracker](https://github.com/lncendia/MongoTracker)** · **[Identity.Mongo](https://github.com/lncendia/Identity.Mongo)**
+
+*Спасибо клоду за написание README :) Если проект показался интересным — поставь ⭐*
+
+</div>

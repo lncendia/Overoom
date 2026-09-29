@@ -17,6 +17,9 @@ namespace Common.Infrastructure.Repositories;
 /// Сам транзакцию не открывает: если точка входа открыла её (<see cref="ITransactionContext"/>),
 /// события до сохранения и запись изменений выполняются в ней, а события после сохранения откладываются
 /// до её фиксации. Без транзакции изменения записываются в отдельной сессии, как независимые операции.
+/// Исключение — транзакция, которую bus outbox MassTransit открыл сам, когда обработчик события до сохранения
+/// опубликовал сообщение: изменения записываются в неё, и она фиксируется здесь же, чтобы сообщение
+/// и изменения сохранились вместе.
 /// </remarks>
 /// <param name="client">Клиент MongoDB для записи вне транзакции.</param>
 /// <param name="transaction">Текущая транзакция области.</param>
@@ -34,17 +37,28 @@ public abstract class UnitOfWorkBase(
   /// </summary>
   public async Task SaveChangesAsync(CancellationToken token = default)
   {
-    await BeforeCommitSessionAsync(token);
+    bool hasEntryPointTransaction = transaction.Session != null;
     var stopwatch = Stopwatch.StartNew();
 
-    if (transaction.Session == null)
+    try
     {
-      await ApplyChanges(transaction.Session, token);
+      await BeforeCommitSessionAsync(token);
+
+      if (transaction.Session != null)
+      {
+        await ApplyChanges(transaction.Session, token);
+        if (!hasEntryPointTransaction) await transaction.CommitImplicitAsync(token);
+      }
+      else
+      {
+        using IClientSessionHandle session = await client.StartSessionAsync(cancellationToken: token);
+        await ApplyChanges(session, token);
+      }
     }
-    else
+    catch when (!hasEntryPointTransaction && transaction.Session != null)
     {
-      using IClientSessionHandle session = await client.StartSessionAsync(cancellationToken: token);
-      await ApplyChanges(session, token);
+      await transaction.AbortImplicitAsync(CancellationToken.None);
+      throw;
     }
 
     stopwatch.Stop();

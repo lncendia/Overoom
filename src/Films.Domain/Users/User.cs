@@ -47,14 +47,20 @@ public partial class User : AggregateRoot
   /// </summary>
   public RoomSettings RoomSettings
   {
-    get;
+    get => _roomSettings;
     set
     {
-      if (field == value) return;
-      field = value;
+      if (_roomSettings == value) return;
+      _roomSettings = value;
       AddDomainEvent(new UserSettingsChangedEvent(this));
     }
-  } = new()
+  }
+
+  /// <summary>
+  /// Настройки разрешений пользователя. Отдельное поле нужно, чтобы восстановление из снапшота
+  /// не считалось изменением настроек и не порождало событие
+  /// </summary>
+  private RoomSettings _roomSettings = new()
   {
     Beep = true,
     Screamer = true

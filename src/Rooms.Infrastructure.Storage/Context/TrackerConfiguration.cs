@@ -24,7 +24,13 @@ public static class TrackerConfiguration
       e.Property(r => r.Viewers).IsTrackedSet();
     });
 
-    builder.Entity<ViewerModel>(e => e.Property(v => v.Tags).IsSet());
+    builder.Entity<ViewerModel>(e =>
+    {
+      // Зрители адресуются по идентификатору, а не по позиции в массиве: иначе параллельный уход другого
+      // зрителя сдвигает индексы, и изменение попадает не тому зрителю
+      e.Property(v => v.Id).IsIdentifier();
+      e.Property(v => v.Tags).IsSet();
+    });
 
     builder.Entity<MessageModel>(e =>
     {

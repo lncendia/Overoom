@@ -13,6 +13,8 @@ namespace Common.Infrastructure.Transactions;
 /// MassTransit хранит сессию в scoped <see cref="MongoDbContext"/>: её же использует bus outbox при публикации
 /// и inbox консьюмеров (UseMongoDbOutbox). Поэтому транзакция, открытая здесь, автоматически включает outbox,
 /// а внутри консьюмера с inbox репозитории работают в транзакции, открытой MassTransit.
+/// Если точка входа транзакцию не открыла, bus outbox при первой публикации открывает её сам и не фиксирует:
+/// её фиксирует единица работы (<see cref="CommitImplicitAsync"/>), иначе и сообщение, и изменения пропадут.
 /// </remarks>
 /// <param name="dbContext">Контекст MongoDB MassTransit</param>
 public class MongoTransactionContext(MongoDbContext dbContext) : ITransactionContext, ITransactionManager
@@ -25,7 +27,7 @@ public class MongoTransactionContext(MongoDbContext dbContext) : ITransactionCon
   private bool _owned;
 
   /// <inheritdoc/>
-  public IClientSessionHandle? Session => dbContext.Session;
+  public IClientSessionHandle? Session => dbContext.Session is { IsInTransaction: true } session ? session : null;
 
   /// <inheritdoc/>
   public async Task BeginAsync(CancellationToken token = default)
@@ -59,6 +61,20 @@ public class MongoTransactionContext(MongoDbContext dbContext) : ITransactionCon
     _onCommitted.Clear();
     _owned = false;
     await dbContext.AbortTransaction(token);
+  }
+
+  /// <inheritdoc/>
+  public Task CommitImplicitAsync(CancellationToken token = default)
+  {
+    if (_owned) throw new InvalidOperationException("Transaction was started by this context and is committed by it.");
+    return dbContext.CommitTransaction(token);
+  }
+
+  /// <inheritdoc/>
+  public Task AbortImplicitAsync(CancellationToken token = default)
+  {
+    if (_owned) throw new InvalidOperationException("Transaction was started by this context and is aborted by it.");
+    return dbContext.AbortTransaction(token);
   }
 
   /// <inheritdoc/>

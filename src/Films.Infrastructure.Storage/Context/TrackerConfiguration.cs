@@ -48,8 +48,17 @@ public static class TrackerConfiguration
     });
 
     builder.Entity<MediaContentModel>(e => e.Property(c => c.Versions).IsSet());
-    builder.Entity<SeasonModel>(e => e.Property(c => c.Episodes).IsTrackedSet());
-    builder.Entity<EpisodeModel>(e => e.Property(c => c.Versions).IsSet());
+    builder.Entity<SeasonModel>(e =>
+    {
+      e.Property(c => c.Number).IsIdentifier();
+      e.Property(c => c.Episodes).IsTrackedSet();
+    });
+
+    builder.Entity<EpisodeModel>(e =>
+    {
+      e.Property(c => c.Number).IsIdentifier();
+      e.Property(c => c.Versions).IsSet();
+    });
 
     builder.Entity<PlaylistModel>(e =>
     {

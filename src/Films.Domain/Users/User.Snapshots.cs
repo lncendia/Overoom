@@ -35,7 +35,7 @@ public partial class User : ISnapshotable<User, UserSnapshot>
   {
     Username = snapshot.Username;
     PhotoKey = snapshot.PhotoKey;
-    RoomSettings = snapshot.RoomSettings;
+    _roomSettings = snapshot.RoomSettings;
     _watchlist = [.. snapshot.Watchlist];
     _history = [.. snapshot.History];
   }

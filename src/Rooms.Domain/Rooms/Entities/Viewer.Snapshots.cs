@@ -49,5 +49,9 @@ public partial class Viewer
     Muted = snapshot.Muted;
     _tagsSet = [.. snapshot.Tags];
     Settings = snapshot.Settings;
+
+    // Восстановление из снапшота — не изменение: иначе события вида «зритель стал онлайн» возникали бы
+    // при установке уже имеющегося значения
+    _changedProperties.Clear();
   }
 }

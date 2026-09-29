@@ -22,4 +22,17 @@ public interface ITransactionContext
   /// <param name="action">Действие</param>
   /// <param name="token">Токен отмены операции</param>
   Task OnCommittedAsync(Func<CancellationToken, Task> action, CancellationToken token = default);
+
+  /// <summary>
+  /// Фиксирует транзакцию, которую bus outbox MassTransit открыл сам при публикации сообщения
+  /// вне транзакции точки входа. Такую транзакцию больше никто не зафиксирует.
+  /// </summary>
+  /// <param name="token">Токен отмены операции</param>
+  Task CommitImplicitAsync(CancellationToken token = default);
+
+  /// <summary>
+  /// Откатывает транзакцию, которую bus outbox MassTransit открыл сам при публикации сообщения.
+  /// </summary>
+  /// <param name="token">Токен отмены операции</param>
+  Task AbortImplicitAsync(CancellationToken token = default);
 }
