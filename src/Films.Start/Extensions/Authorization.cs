@@ -14,7 +14,6 @@ public static class Authorization
   public static void AddAuthorizationPolicies(this IServiceCollection services)
   {
     services.AddAuthorizationBuilder()
-
       .AddPolicy("admin", policy => { policy.RequireClaim(ClaimTypes.Role, "admin"); });
   }
 }

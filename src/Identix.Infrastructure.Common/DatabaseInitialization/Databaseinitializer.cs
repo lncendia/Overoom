@@ -19,7 +19,6 @@ public static class DatabaseInitializer
   /// <returns>Задача, представляющая асинхронную операцию инициализации.</returns>
   public static async Task InitAsync(IServiceProvider serviceProvider, IConfiguration configuration)
   {
-    await IdentityMongoIndexCreator.ConfigureAsync(serviceProvider);
     await IdentityConfiguration.ConfigureAsync(serviceProvider, configuration);
     await OpenIdMongoIndexCreator.ConfigureAsync(serviceProvider);
     await OpenIdConfiguration.ConfigureAsync(serviceProvider);

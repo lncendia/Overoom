@@ -43,13 +43,9 @@ public static class EmailServices
     return new SmtpConfiguration
     {
       Host = smtpHost,
-
       Port = smtpPort,
-
       Login = smtpLogin,
-
       Password = smtpPassword,
-
       DisplayedName = displayedName
     };
   }

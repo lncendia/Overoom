@@ -41,7 +41,11 @@ public static class AspIdentity
         options.Lockout.MaxFailedAccessAttempts = 10;
         options.SignIn.RequireConfirmedEmail = true;
       })
-      .AddMongoStores(options => { options.Database = MongoDbProvider.Client.GetDatabase(database); })
+      .AddMongoStores(options =>
+      {
+        options.CreateIndexes = true;
+        options.Database = MongoDbProvider.Client.GetDatabase(database);
+      })
       .AddDefaultTokenProviders();
 
     builder.Services.AddAuthorization();
